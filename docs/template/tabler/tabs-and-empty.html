@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tab dan Empty State</title>
+  <link href="../../public/assets/tabler/dist/css/tabler.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="page">
+    <main class="page-wrapper">
+      <div class="page-header"><div class="container-xl"><div class="row g-2 align-items-center"><div class="col"><div class="page-pretitle">Referensi UI</div><h1 class="page-title">Tab dan Empty State</h1></div><div class="col-auto ms-auto"><a href="index.html" class="btn">Kembali</a></div></div></div></div>
+      <div class="page-body">
+        <div class="container-xl">
+          <div class="card">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                <li class="nav-item"><a href="#tab-role" class="nav-link active" data-bs-toggle="tab">Roles</a></li>
+                <li class="nav-item"><a href="#tab-user" class="nav-link" data-bs-toggle="tab">Users</a></li>
+                <li class="nav-item"><a href="#tab-perusahaan" class="nav-link" data-bs-toggle="tab">Profil Perusahaan</a></li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <div class="tab-content">
+                <div class="tab-pane active show" id="tab-role">
+                  <div class="row g-4">
+                    <div class="col-md-4">
+                      <div class="list-group list-group-transparent">
+                        <a href="#" class="list-group-item list-group-item-action active">Administrator <span class="badge bg-primary-lt ms-auto">4 modul</span></a>
+                        <a href="#" class="list-group-item list-group-item-action">Operator <span class="badge bg-secondary-lt ms-auto">2 modul</span></a>
+                        <a href="#" class="list-group-item list-group-item-action">Viewer <span class="badge bg-secondary-lt ms-auto">1 modul</span></a>
+                      </div>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="empty py-4">
+                        <div class="empty-icon"><span class="avatar avatar-lg bg-blue-lt">R</span></div>
+                        <p class="empty-title">Pilih role untuk melihat detail</p>
+                        <p class="empty-subtitle text-secondary">Hak akses aplikasi, modul, Pengaturan, dan Log Aktivitas akan tampil di sini.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane" id="tab-user"><div class="empty"><p class="empty-title">Belum ada pengguna tambahan</p><p class="empty-subtitle text-secondary">Tambahkan pengguna ketika role yang diperlukan sudah tersedia.</p><div class="empty-action"><button class="btn btn-primary">Tambah User</button></div></div></div>
+                <div class="tab-pane" id="tab-perusahaan"><div class="alert alert-info mb-0">Gunakan area ini untuk identitas, alamat, kontak, dan logo perusahaan.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../../public/assets/tabler/dist/js/tabler.min.js"></script>
+</body>
+</html>

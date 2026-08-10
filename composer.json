@@ -1,0 +1,63 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "aldhi88/starterkit-larawire",
+    "description": "A Composer-installed Laravel and Livewire starter kit for private company applications.",
+    "keywords": [
+        "laravel",
+        "livewire",
+        "starter-kit",
+        "admin",
+        "internal-application"
+    ],
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.3",
+        "ext-intl": "*",
+        "dedoc/scramble": "^0.13.36",
+        "laravel-lang/common": "^6.8",
+        "laravel/framework": ">=13.8 <15.0",
+        "livewire/livewire": "^4.3",
+        "power-components/livewire-powergrid": "^6.10"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.27",
+        "mockery/mockery": "^1.6",
+        "larastan/larastan": "^3.9",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.7",
+        "pestphp/pest-plugin-laravel": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altekno\\StarterKit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Altekno\\StarterKit\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Altekno\\StarterKit\\Providers\\Starter\\StarterInstallerServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "analyse": "phpstan analyse",
+        "format": "pint",
+        "test": "pest --compact",
+        "check-package": "composer validate --strict"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

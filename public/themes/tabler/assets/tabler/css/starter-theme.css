@@ -1,0 +1,556 @@
+/*
+ * Tabler theme integration for the Starter Kit.
+ * Loaded only when STARTER_THEME=tabler.
+ */
+
+.dt--top-section, .dt--bottom-section {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+}
+
+.dt--top-section {
+    padding-top: 1.25rem;
+    padding-bottom: 0.5rem;
+}
+
+.dt--bottom-section {
+    padding-top: 0.5rem;
+    padding-bottom: 1.25rem;
+}
+
+.starter-pg-filter {
+    display: inline-block;
+    max-width: none;
+    width: fit-content;
+}
+
+.starter-pg-filter-text > div {
+    width: fit-content;
+}
+
+.starter-pg-filter input {
+    field-sizing: content;
+    min-width: 6.5rem;
+    width: 8rem;
+}
+
+.starter-pg-filter select {
+    field-sizing: content;
+    min-width: 0;
+    width: auto;
+}
+
+.starter-pg-filter-text input {
+    max-width: 11rem;
+}
+
+.starter-pg-filter-number input {
+    max-width: 9rem;
+}
+
+.starter-pg-filter-multiselect {
+    min-width: 8rem;
+}
+
+.starter-pg-footer-top,
+.starter-pg-footer-bottom {
+    background: var(--tblr-bg-surface);
+    border-top: 1px solid var(--tblr-border-color);
+    padding: .75rem 1rem;
+    width: 100%;
+}
+
+.starter-pg-footer-top {
+    border-bottom: 1px solid var(--tblr-border-color);
+}
+
+.starter-pg-footer-layout {
+    align-items: center;
+    column-gap: 1rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.starter-pg-footer-left {
+    justify-self: start;
+    min-width: 0;
+}
+
+.starter-pg-footer-center {
+    justify-self: center;
+    min-width: 0;
+}
+
+.starter-pg-footer-right {
+    justify-self: end;
+    min-width: 0;
+}
+
+.starter-pg-per-page .form-select {
+    min-width: 4.75rem;
+    width: auto;
+}
+
+.starter-pg-pagination {
+    margin: 0;
+    min-width: 0;
+    text-align: center;
+}
+
+@media (max-width: 767.98px) {
+    .starter-pg-footer-layout {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: .75rem;
+    }
+
+    .starter-pg-footer-left {
+        justify-self: start;
+    }
+
+    .starter-pg-footer-center {
+        justify-self: center;
+    }
+
+    .starter-pg-footer-right {
+        justify-self: end;
+    }
+}
+
+.starter-client-logo-preview {
+    align-items: center;
+    background: var(--tblr-bg-surface-secondary);
+    border: 1px dashed var(--tblr-border-color);
+    border-radius: var(--tblr-border-radius);
+    display: flex;
+    height: 5rem;
+    justify-content: center;
+    overflow: hidden;
+    padding: .75rem;
+    width: 10rem;
+}
+
+.starter-client-logo-preview-image {
+    height: 100%;
+    object-fit: contain;
+    width: 100%;
+}
+
+.starter-client-logo-placeholder {
+    align-items: center;
+    background: var(--tblr-primary-lt);
+    border-radius: var(--tblr-border-radius);
+    color: var(--tblr-primary);
+    display: inline-flex;
+    font-size: .875rem;
+    font-weight: 600;
+    height: 3rem;
+    justify-content: center;
+    letter-spacing: .04em;
+    width: 3rem;
+}
+
+.navbar-vertical {
+    --tblr-navbar-bg: #182433;
+}
+
+.starter-navbar-horizontal {
+    --tblr-navbar-bg: #182433;
+}
+
+html {
+    /* Prevent classic scrollbars from reserving a mirrored gutter on long pages. */
+    scrollbar-gutter: auto !important;
+}
+
+@supports (-moz-appearance: none) {
+    html {
+        /* Firefox can inset the root box symmetrically when the page scrolls. */
+        margin: 0 !important;
+        overflow-x: clip;
+        width: 100vw !important;
+    }
+}
+
+body[data-starter-layout="horizontal"] {
+    /*
+     * Keep classic browser scrollbar gutters visually continuous with the
+     * horizontal shell. Long pages (for example PowerGrid tables) can expose
+     * the document gutter, while short pages do not have one.
+     */
+    background-color: var(--tblr-body-bg);
+    background-image: linear-gradient(
+        to bottom,
+        #182433 0,
+        #182433 12.5rem,
+        var(--tblr-body-bg) 12.5rem,
+        var(--tblr-body-bg) 100%
+    );
+    background-repeat: no-repeat;
+}
+
+.starter-layout-horizontal::before {
+    background: #182433;
+    content: "";
+    height: 12.5rem;
+    inset: 0 0 auto;
+    position: absolute;
+    z-index: 0;
+}
+
+.starter-layout-horizontal > .page-wrapper {
+    position: relative;
+}
+
+.starter-layout-horizontal > .starter-navbar-horizontal {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+.starter-layout-horizontal > .starter-navbar-horizontal.navbar-overlap::after {
+    display: none;
+}
+
+.livewire-powergrid .table-responsive {
+    padding-bottom: 8rem;
+}
+
+/* PowerGrid Active Filters Style Override */
+[wire\:click\.prevent^="clearAllFilters"],
+[wire\:click\.prevent^="clearFilter("] {
+    margin-bottom: 0.75rem;
+}
+
+/* Fix left margin regardless of whether Clear All is present */
+div[class*="table-responsive"] > [wire\:click\.prevent^="clearAllFilters"]:first-child,
+div[class*="table-responsive"] > [wire\:click\.prevent^="clearFilter("]:first-child {
+    margin-left: 0.75rem;
+}
+
+[wire\:click\.prevent^="clearFilter("] .badge {
+    background-color: var(--tblr-bg-surface-secondary) !important;
+    color: var(--tblr-secondary) !important;
+    border: 1px solid var(--tblr-border-color);
+    border-radius: 4px;
+    font-weight: normal;
+    padding: 0.25rem 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+[wire\:click\.prevent^="clearAllFilters"] .badge {
+    background-color: var(--tblr-danger-lt) !important;
+    color: var(--tblr-danger) !important;
+    border-radius: 4px;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0 !important;
+    gap: 0;
+}
+
+[wire\:click\.prevent^="clearAllFilters"] .badge svg {
+    display: none;
+}
+[wire\:click\.prevent^="clearAllFilters"] .badge::after {
+    content: "Hapus Filter";
+    font-size: 0.75rem;
+}
+
+[wire\:click\.prevent^="clearFilter("] .badge svg {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2.5;
+}
+
+/* Livewire action overlay; page navigation loader is shared across themes. */
+.starter-livewire-loader {
+    background: color-mix(in srgb, var(--tblr-bg-surface) 88%, transparent);
+    bottom: var(--starter-loader-bottom, 0);
+    left: var(--starter-loader-left, 0);
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    right: var(--starter-loader-right, 0);
+    top: var(--starter-loader-top, 0);
+    transition: opacity .14s ease;
+    z-index: 20;
+}
+
+.starter-livewire-loader {
+    background: color-mix(in srgb, var(--tblr-bg-surface) 68%, transparent);
+    z-index: 1045;
+}
+
+.modal-blur {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+body.starter-livewire-is-loading .starter-livewire-loader {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+[data-starter-livewire-loading] {
+    filter: blur(2px);
+    opacity: .55;
+    pointer-events: none;
+    transition: filter .14s ease, opacity .14s ease;
+    user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .starter-page-body,
+    .starter-livewire-loader,
+    [data-starter-livewire-loading] {
+        transition: none;
+    }
+
+    ::view-transition-old(starter-page),
+    ::view-transition-new(starter-page) {
+        animation: none;
+    }
+}
+
+.starter-account-menu[open] .starter-account-panel {
+    display: block;
+}
+
+.starter-account-menu summary::-webkit-details-marker,
+.navbar-vertical .starter-sidebar-details summary::-webkit-details-marker,
+.starter-navbar-horizontal .starter-horizontal-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.starter-account-panel {
+    min-width: 13.5rem;
+}
+
+.starter-account-summary {
+    gap: .5rem;
+}
+
+.starter-account-name {
+    display: block;
+    font-size: .875rem;
+    font-weight: 500;
+    max-width: 9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.starter-account-chevron {
+    height: 1rem;
+    transition: transform .15s ease;
+    width: 1rem;
+}
+
+.starter-account-menu[open] .starter-account-chevron {
+    transform: rotate(180deg);
+}
+
+@media (max-width: 575.98px) {
+    .starter-account-name {
+        display: none;
+    }
+}
+
+.starter-role-access-trigger {
+    appearance: none;
+    color: inherit;
+    font: inherit;
+    line-height: 1.25;
+}
+
+.starter-role-access-trigger:hover,
+.starter-role-access-trigger:active {
+    background: transparent !important;
+    color: inherit;
+}
+
+.starter-role-access-trigger:hover .starter-role-access-title {
+    color: var(--tblr-primary);
+}
+
+.starter-role-access-trigger:focus-visible {
+    border-radius: var(--tblr-border-radius);
+    outline: 2px solid color-mix(in srgb, var(--tblr-primary) 35%, transparent);
+    outline-offset: 4px;
+}
+
+.starter-table-action-link {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: var(--tblr-primary);
+    font: inherit;
+    padding: 0;
+}
+
+.starter-table-action-link:hover,
+.starter-table-action-link:active {
+    background: transparent !important;
+    color: color-mix(in srgb, var(--tblr-primary) 78%, var(--tblr-body-color));
+    text-decoration: underline;
+}
+
+.starter-table-action-link:focus-visible {
+    border-radius: .125rem;
+    outline: 2px solid color-mix(in srgb, var(--tblr-primary) 35%, transparent);
+    outline-offset: 3px;
+}
+
+.starter-page-body {
+    transition: opacity .16s ease;
+}
+
+.starter-slot-area > [wire\:id] > .page-header {
+    margin-bottom: 1rem;
+    margin-top: 0;
+}
+
+[data-starter-layout="horizontal"] .starter-slot-area > [wire\:id] > .page-header {
+    color: #fff;
+}
+
+[data-starter-layout="horizontal"] .starter-slot-area > [wire\:id] > .page-header .text-secondary {
+    color: rgba(255, 255, 255, .72) !important;
+}
+
+.starter-content-container {
+    max-width: 1680px;
+    width: 100%;
+}
+
+.starter-livewire-loader-card {
+    min-width: 10rem;
+}
+
+.modal-backdrop {
+    --tblr-backdrop-opacity: 0.4;
+}
+
+@supports (view-transition-name: starter-page) {
+    ::view-transition-old(starter-page) {
+        animation: starter-page-out .16s ease both;
+    }
+
+    ::view-transition-new(starter-page) {
+        animation: starter-page-in .2s ease both;
+    }
+}
+
+@keyframes starter-page-out {
+    to {
+        opacity: 0;
+        transform: translateY(.35rem);
+    }
+}
+
+@keyframes starter-page-in {
+    from {
+        opacity: 0;
+        transform: translateY(.35rem);
+    }
+}
+
+.navbar-vertical .starter-sidebar-details > summary.nav-link::after,
+.navbar-vertical .starter-sidebar-details > summary.dropdown-item::after {
+    border: 0;
+    content: "";
+    height: 1rem;
+    margin-left: auto;
+    opacity: .7;
+    transform: rotate(0deg);
+    transition: transform .15s ease;
+    width: 1rem;
+    background-color: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6l-6 6'/%3E%3C/svg%3E") center / 1rem 1rem no-repeat;
+}
+
+.navbar-vertical .starter-sidebar-details[open] > summary.nav-link::after,
+.navbar-vertical .starter-sidebar-details[open] > summary.dropdown-item::after {
+    transform: rotate(90deg);
+}
+
+.navbar-vertical .starter-sidebar-details[open] > .starter-sidebar-submenu {
+    display: block;
+}
+
+.starter-navbar-horizontal .starter-horizontal-details > summary.nav-link::after,
+.starter-navbar-horizontal .starter-horizontal-details > summary.dropdown-item::after {
+    border: 0;
+    content: "";
+    flex: 0 0 auto;
+    height: 1rem;
+    margin-left: auto;
+    opacity: .7;
+    transition: transform .15s ease;
+    width: 1rem;
+    background-color: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6l-6 6'/%3E%3C/svg%3E") center / 1rem 1rem no-repeat;
+}
+
+.starter-navbar-horizontal .starter-horizontal-details > summary.nav-link::after {
+    margin-left: .35rem;
+    transform: rotate(90deg);
+}
+
+.starter-navbar-horizontal .starter-horizontal-details[open] > summary.nav-link::after {
+    transform: rotate(270deg);
+}
+
+.starter-navbar-horizontal .starter-horizontal-details[open] > .starter-horizontal-submenu {
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .starter-navbar-horizontal .starter-horizontal-details,
+    .starter-navbar-horizontal .starter-horizontal-details-nested {
+        position: relative;
+    }
+
+    .starter-navbar-horizontal .starter-horizontal-details-nested > .starter-horizontal-submenu {
+        left: calc(100% + .125rem);
+        top: -.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    [data-starter-layout="horizontal"] .starter-slot-area > [wire\:id] > .page-header {
+        background: #182433;
+        box-shadow: 0 0 0 100vmax #182433;
+        clip-path: inset(0 -100vmax);
+        margin-top: calc(-1 * var(--tblr-page-padding-y)) !important;
+        padding-top: var(--tblr-page-padding-y);
+    }
+
+    .starter-navbar-horizontal .navbar-collapse {
+        max-height: calc(100vh - 3.5rem);
+        overflow-y: auto;
+    }
+
+    .starter-navbar-horizontal .starter-horizontal-details > summary.dropdown-item::after {
+        transform: rotate(90deg);
+    }
+
+    .starter-navbar-horizontal .starter-horizontal-details[open] > summary.dropdown-item::after {
+        transform: rotate(270deg);
+    }
+}
+
+/* Custom Brand Logo Dimensions for varying ratios */
+.starter-sidebar-brand-image {
+    height: 2rem;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+    object-position: left center;
+}

@@ -1,0 +1,104 @@
+/*
+ * Theme-neutral Starter Kit CSS contract.
+ * Visual layout and component styles belong to the active theme assets.
+ */
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* Universal page-navigation loader. It is intentionally theme-neutral. */
+.starter-navigate-loader {
+    align-items: center;
+    background: rgba(241, 245, 249, .86);
+    bottom: var(--starter-loader-bottom, 0);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    left: var(--starter-loader-left, 0);
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    right: var(--starter-loader-right, 0);
+    top: var(--starter-loader-top, 0);
+    transition: opacity .14s ease;
+    z-index: 1200;
+}
+
+.starter-navigate-loader-panel {
+    align-items: center;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: .625rem;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, .14);
+    color: #1e293b;
+    display: flex;
+    gap: .875rem;
+    max-width: calc(100vw - 2rem);
+    min-width: 14rem;
+    padding: 1rem 1.125rem;
+}
+
+.starter-navigate-spinner {
+    animation: starter-navigate-spin .75s linear infinite;
+    border: 2px solid #cbd5e1;
+    border-radius: 999px;
+    border-top-color: #465ff1;
+    flex: 0 0 auto;
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.starter-navigate-loader-copy {
+    display: flex;
+    flex-direction: column;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.25;
+}
+
+.starter-navigate-loader-copy strong { font-size: .875rem; font-weight: 600; }
+.starter-navigate-loader-copy span { color: #64748b; font-size: .75rem; margin-top: .2rem; }
+
+.starter-navigate-progress {
+    background: #e2e8f0;
+    border-radius: 999px;
+    display: block;
+    height: .2rem;
+    margin-top: .625rem;
+    overflow: hidden;
+    width: 12rem;
+}
+
+.starter-navigate-progress > span {
+    animation: starter-navigate-progress 1.15s ease-in-out infinite;
+    background: #465ff1;
+    display: block;
+    height: 100%;
+    width: 42%;
+}
+
+body.starter-is-navigating .starter-navigate-loader {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+body.starter-is-navigating .starter-slot-area > [wire\:id] {
+    filter: blur(2px);
+    opacity: .55;
+    pointer-events: none;
+}
+
+@keyframes starter-navigate-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes starter-navigate-progress {
+    from { transform: translateX(-110%); }
+    to { transform: translateX(250%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .starter-navigate-loader { transition: none; }
+    .starter-navigate-spinner,
+    .starter-navigate-progress > span { animation: none; }
+}

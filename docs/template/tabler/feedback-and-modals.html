@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feedback dan Modal</title>
+  <link href="../../public/assets/tabler/dist/css/tabler.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="page">
+    <main class="page-wrapper">
+      <div class="page-header">
+        <div class="container-xl"><div class="row g-2 align-items-center"><div class="col"><div class="page-pretitle">Referensi UI</div><h1 class="page-title">Feedback dan Modal</h1></div><div class="col-auto ms-auto"><a href="index.html" class="btn">Kembali</a></div></div></div>
+      </div>
+      <div class="page-body">
+        <div class="container-xl">
+          <div class="row row-cards">
+            <div class="col-lg-7">
+              <div class="card">
+                <div class="card-header"><h3 class="card-title">Alert</h3></div>
+                <div class="card-body">
+                  <div class="alert alert-success alert-dismissible" role="alert"><div class="d-flex"><div><h4 class="alert-title">Berhasil disimpan</h4><div class="text-secondary">Perubahan pengguna telah tersimpan.</div></div></div><a class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></a></div>
+                  <div class="alert alert-warning" role="alert"><h4 class="alert-title">Perlu perhatian</h4><div class="text-secondary">Simpan kredensial sementara sebelum meninggalkan halaman.</div></div>
+                  <div class="alert alert-danger mb-0" role="alert"><h4 class="alert-title">Tidak dapat diproses</h4><div class="text-secondary">Periksa kembali data yang wajib diisi.</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-5">
+              <div class="card">
+                <div class="card-header"><h3 class="card-title">Aksi dan Loader</h3></div>
+                <div class="card-body">
+                  <div class="btn-list">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDetail">Buka Detail</button>
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalKonfirmasi">Konfirmasi Hapus</button>
+                    <button class="btn" id="toastButton">Tampilkan Toast</button>
+                  </div>
+                  <div class="d-flex align-items-center mt-4 text-secondary"><span class="spinner-border spinner-border-sm me-2" role="status"></span>Memproses perubahan…</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div class="modal modal-blur fade" id="modalDetail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Detail Aktivitas</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button></div>
+        <div class="modal-body">
+          <div class="datagrid">
+            <div class="datagrid-item"><div class="datagrid-title">Pengguna</div><div class="datagrid-content">Budi Santoso</div></div>
+            <div class="datagrid-item"><div class="datagrid-title">Aktivitas</div><div class="datagrid-content">Memperbarui pengguna</div></div>
+            <div class="datagrid-item"><div class="datagrid-title">Waktu</div><div class="datagrid-content">23 Juli 2026, 16:30</div></div>
+            <div class="datagrid-item"><div class="datagrid-title">Action ID</div><div class="datagrid-content"><code>01K…8FD</code></div></div>
+          </div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn" data-bs-dismiss="modal">Tutup</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal modal-blur fade" id="modalKonfirmasi" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        <div class="modal-status bg-danger"></div>
+        <div class="modal-body text-center py-4"><h3>Hapus data?</h3><div class="text-secondary">Tindakan ini tidak dapat dibatalkan.</div></div>
+        <div class="modal-footer"><div class="w-100"><div class="row"><div class="col"><button class="btn w-100" data-bs-dismiss="modal">Batal</button></div><div class="col"><button class="btn btn-danger w-100" data-bs-dismiss="modal">Ya, Hapus</button></div></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div class="toast" id="toastSuccess" role="status" aria-live="polite" aria-atomic="true">
+      <div class="toast-header"><span class="status status-green me-2"></span><strong class="me-auto">Berhasil</strong><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Tutup"></button></div>
+      <div class="toast-body">Perubahan berhasil disimpan.</div>
+    </div>
+  </div>
+  <script src="../../public/assets/tabler/dist/js/tabler.min.js"></script>
+  <script>document.getElementById('toastButton').addEventListener('click', () => bootstrap.Toast.getOrCreateInstance(document.getElementById('toastSuccess')).show())</script>
+</body>
+</html>

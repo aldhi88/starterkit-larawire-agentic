@@ -1,0 +1,21 @@
+* text=auto eol=lf
+
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+
+/.github export-ignore
+CHANGELOG.md export-ignore
+.styleci.yml export-ignore
+/build export-ignore
+/phpstan.neon.dist export-ignore
+/phpunit.xml export-ignore
+/tests export-ignore
+/vendor export-ignore
+/node_modules export-ignore
+
+# Preserve upstream vendor distributions byte-for-byte.
+/docs/template/tabler/** -text -diff
+/public/themes/tabler/assets/tabler/** -text -diff

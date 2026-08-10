@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form dan Filter</title>
+  <link href="../../public/assets/tabler/dist/css/tabler.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="page">
+    <main class="page-wrapper">
+      <div class="page-header">
+        <div class="container-xl">
+          <div class="row g-2 align-items-center">
+            <div class="col"><div class="page-pretitle">Referensi UI</div><h1 class="page-title">Form dan Filter</h1></div>
+            <div class="col-auto ms-auto"><a href="index.html" class="btn">Kembali</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="container-xl">
+          <div class="row row-cards">
+            <div class="col-lg-7">
+              <form class="card">
+                <div class="card-header"><h3 class="card-title">Identitas Pengguna</h3></div>
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-md-6"><label class="form-label required">Nama</label><input class="form-control" placeholder="Nama lengkap"></div>
+                    <div class="col-md-6"><label class="form-label required">Username</label><input class="form-control" placeholder="contoh: budi.santoso"><div class="form-hint">Huruf kecil, angka, titik, atau underscore.</div></div>
+                    <div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" placeholder="nama@perusahaan.co.id"></div>
+                    <div class="col-md-6"><label class="form-label required">Role</label><select class="form-select"><option>Pilih role</option><option>Administrator</option><option>Operator</option></select></div>
+                    <div class="col-12"><label class="form-label">Keterangan</label><textarea class="form-control" rows="4" placeholder="Tambahkan informasi yang dibutuhkan."></textarea></div>
+                    <div class="col-12">
+                      <label class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" checked>
+                        <span class="form-check-label">Akun aktif</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-footer text-end"><div class="btn-list justify-content-end"><button type="button" class="btn">Batal dan Kembali</button><button class="btn btn-primary">Simpan Pengguna</button></div></div>
+              </form>
+            </div>
+            <div class="col-lg-5">
+              <form class="card">
+                <div class="card-header"><div><h3 class="card-title">Filter Data</h3><div class="card-subtitle">Perubahan filter dapat diproses secara live.</div></div></div>
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-12"><label class="form-label">Pencarian</label><div class="input-icon"><span class="input-icon-addon">⌕</span><input class="form-control" placeholder="Nama, username, atau email"></div></div>
+                    <div class="col-sm-6"><label class="form-label">Status</label><select class="form-select"><option>Semua status</option><option>Aktif</option><option>Nonaktif</option></select></div>
+                    <div class="col-sm-6"><label class="form-label">Role</label><select class="form-select"><option>Semua role</option><option>Administrator</option></select></div>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-link px-0" data-bs-toggle="collapse" data-bs-target="#filterLanjutan">Filter lanjutan</button>
+                    <button type="reset" class="btn btn-ghost-secondary ms-auto">Reset Filter</button>
+                  </div>
+                  <div class="collapse mt-3" id="filterLanjutan">
+                    <div class="row g-3">
+                      <div class="col-sm-6"><label class="form-label">Tanggal Mulai</label><input type="date" class="form-control"></div>
+                      <div class="col-sm-6"><label class="form-label">Tanggal Selesai</label><input type="date" class="form-control"></div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../../public/assets/tabler/dist/js/tabler.min.js"></script>
+</body>
+</html>

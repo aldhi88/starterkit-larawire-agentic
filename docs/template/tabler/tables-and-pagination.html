@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tabel dan Pagination</title>
+  <link href="../../public/assets/tabler/dist/css/tabler.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="page">
+    <main class="page-wrapper">
+      <div class="page-header">
+        <div class="container-xl">
+          <div class="row g-2 align-items-center">
+            <div class="col"><div class="page-pretitle">Referensi UI</div><h1 class="page-title">Tabel dan Pagination</h1></div>
+            <div class="col-auto ms-auto"><a href="index.html" class="btn">Kembali</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="container-xl">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Daftar Pengguna</h3><div class="ms-auto text-secondary">Menampilkan 1–4 dari 24</div></div>
+            <div class="table-responsive">
+              <table class="table table-vcenter card-table">
+                <thead><tr><th>Pengguna</th><th>Role</th><th>Status</th><th>Login Terakhir</th><th class="w-1">Aksi</th></tr></thead>
+                <tbody>
+                  <tr><td><div class="d-flex py-1 align-items-center"><span class="avatar me-2">SU</span><div class="flex-fill"><div class="font-weight-medium">Superuser</div><div class="text-secondary">superuser</div></div></div></td><td><span class="badge bg-blue-lt">Superuser</span></td><td><span class="status status-green">Aktif</span></td><td class="text-secondary">Hari ini, 15:20</td><td><button class="btn btn-icon btn-ghost-secondary" aria-label="Lihat detail">•••</button></td></tr>
+                  <tr><td><div class="d-flex py-1 align-items-center"><span class="avatar me-2">BS</span><div class="flex-fill"><div class="font-weight-medium">Budi Santoso</div><div class="text-secondary">budi.santoso</div></div></div></td><td>Administrator</td><td><span class="status status-green">Aktif</span></td><td class="text-secondary">Kemarin, 09:13</td><td><button class="btn btn-icon btn-ghost-secondary" aria-label="Lihat detail">•••</button></td></tr>
+                  <tr><td><div class="d-flex py-1 align-items-center"><span class="avatar me-2">DN</span><div class="flex-fill"><div class="font-weight-medium">Dewi Nuraini</div><div class="text-secondary">dewi.n</div></div></div></td><td>Operator</td><td><span class="status status-green">Aktif</span></td><td class="text-secondary">21 Juli 2026</td><td><button class="btn btn-icon btn-ghost-secondary" aria-label="Lihat detail">•••</button></td></tr>
+                  <tr><td><div class="d-flex py-1 align-items-center"><span class="avatar me-2">AR</span><div class="flex-fill"><div class="font-weight-medium">Agus Rahman</div><div class="text-secondary">agus.r</div></div></div></td><td>Viewer</td><td><span class="status">Nonaktif</span></td><td class="text-secondary">Belum pernah</td><td><button class="btn btn-icon btn-ghost-secondary" aria-label="Lihat detail">•••</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-footer d-flex align-items-center">
+              <p class="m-0 text-secondary">Tampilkan <select class="form-select form-select-sm d-inline-block w-auto mx-1"><option>25</option><option>50</option><option>100</option></select> per halaman</p>
+              <ul class="pagination m-0 ms-auto">
+                <li class="page-item disabled"><a class="page-link" href="#">Sebelumnya</a></li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">Berikutnya</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="card mt-4">
+            <div class="empty">
+              <div class="empty-icon"><span class="avatar avatar-lg">0</span></div>
+              <p class="empty-title">Data tidak ditemukan</p>
+              <p class="empty-subtitle text-secondary">Coba ubah kata kunci atau reset filter yang sedang digunakan.</p>
+              <div class="empty-action"><button class="btn btn-primary">Reset Filter</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../../public/assets/tabler/dist/js/tabler.min.js"></script>
+</body>
+</html>

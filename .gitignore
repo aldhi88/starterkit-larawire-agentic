@@ -1,0 +1,11 @@
+.DS_Store
+.env
+/.codex
+/.cursor
+/.idea
+/.vscode
+/.zed
+/build
+/node_modules
+/vendor
+*.log
