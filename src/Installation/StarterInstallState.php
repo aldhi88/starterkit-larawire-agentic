@@ -23,7 +23,17 @@ class StarterInstallState
 
     public static function runtimeEnabled(): bool
     {
-        return in_array(self::status(), ['installing', 'installed'], true);
+        return in_array(self::status(), [
+            'installing',
+            'database-mutating',
+            'verifying',
+            'installed',
+        ], true);
+    }
+
+    public static function databaseMutationStarted(): bool
+    {
+        return in_array(self::status(), ['database-mutating', 'verifying'], true);
     }
 
     public static function write(string $status): void

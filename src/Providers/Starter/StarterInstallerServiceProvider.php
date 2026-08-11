@@ -16,7 +16,7 @@ class StarterInstallerServiceProvider extends ServiceProvider
 
             if ($status === 'installing') {
                 $this->commands([FinalizeInstallationCommand::class]);
-            } elseif ($status !== 'installed') {
+            } elseif ($status === null) {
                 $this->commands([InstallCommand::class]);
             }
         }

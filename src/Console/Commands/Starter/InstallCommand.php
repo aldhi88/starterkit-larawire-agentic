@@ -96,22 +96,28 @@ class InstallCommand extends Command
         }
 
         $snapshot = null;
+        $databaseMutationStarted = false;
 
         try {
             $snapshot = StarterHostSnapshot::capture();
             $connector->connect();
 
             if (! $this->runFinalizer($environment)) {
+                $databaseMutationStarted = StarterInstallState::databaseMutationStarted();
+
                 throw new RuntimeException('Tahap final instalasi gagal.');
             }
 
             StarterInstallState::write('installed');
             $snapshot->discard();
         } catch (Throwable $exception) {
+            $filesRestored = false;
+
             if ($snapshot instanceof StarterHostSnapshot) {
                 try {
                     $snapshot->restore();
                     $snapshot->discard();
+                    $filesRestored = true;
                     $this->components->warn('Perubahan file instalasi telah dikembalikan.');
                 } catch (Throwable $rollbackException) {
                     $this->components->error('Rollback file gagal: '.$rollbackException->getMessage());
@@ -119,10 +125,10 @@ class InstallCommand extends Command
             }
 
             $this->components->error($exception->getMessage());
-            $this->components->warn(
-                'Jika migrate:fresh sudah dimulai, isi database mungkin telah berubah. '
-                .'Periksa database sebelum mencoba kembali.',
-            );
+
+            if ($databaseMutationStarted && $filesRestored) {
+                $this->restoreFreshDatabaseState($report->migrationsHaveRun);
+            }
 
             return self::FAILURE;
         }
@@ -220,6 +226,34 @@ class InstallCommand extends Command
         });
 
         return $process->isSuccessful();
+    }
+
+    private function restoreFreshDatabaseState(bool $migrationsHadRun): void
+    {
+        $artisanCommand = $migrationsHadRun ? 'migrate:fresh' : 'db:wipe';
+        $process = new Process(
+            [PHP_BINARY, base_path('artisan'), $artisanCommand, '--force', '--ansi'],
+            base_path(),
+            null,
+            null,
+            null,
+        );
+        $process->run(function (string $type, string $buffer): void {
+            $this->output->write($buffer);
+        });
+
+        if ($process->isSuccessful()) {
+            $message = $migrationsHadRun
+                ? 'Struktur database bawaan Laravel telah dibuat ulang setelah rollback.'
+                : 'Database telah dikembalikan ke kondisi kosong setelah rollback.';
+            $this->components->warn($message);
+
+            return;
+        }
+
+        $this->components->error(
+            'Rollback struktur database gagal. Periksa database sebelum mencoba kembali.',
+        );
     }
 
     private function cancelled(): int

@@ -151,6 +151,13 @@ and confirms the selected database, then checks the Laravel source. If source
 code is no longer fresh, installation stops before changing files or data. If
 fresh source already ran migrations, one additional confirmation is required.
 
+The installer automatically runs `starter:security-check` and the complete
+application test suite before resetting the target database. These commands do
+not need to be run manually. Failed verification stops installation, restores
+the changed project files, and leaves the target database untouched. A failure
+after database reset restores either the empty database state or Laravel's
+default fresh migration structure.
+
 The installation runs `migrate:fresh`; every table and row in the selected
 database is deleted.
 

@@ -2,6 +2,7 @@
 
 namespace Altekno\StarterKit\Console\Commands\Starter;
 
+use Altekno\StarterKit\Installation\StarterInstallState;
 use Altekno\StarterKit\Services\Starter\StarterAppScaffolder;
 use Altekno\StarterKit\Services\Starter\StarterAssetPublisher;
 use Altekno\StarterKit\Support\Starter\StarterRouteRegistrar;
@@ -9,6 +10,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Pest\TestSuite;
+use Symfony\Component\Process\Process;
 use Throwable;
 
 class FinalizeInstallationCommand extends Command
@@ -43,6 +45,18 @@ class FinalizeInstallationCommand extends Command
             return self::FAILURE;
         }
 
+        $this->components->info('Memverifikasi keamanan dan menjalankan seluruh test aplikasi.');
+
+        if (! $this->securityCheckPasses() || ! $this->applicationTestsPass()) {
+            $this->components->error(
+                'Verifikasi instalasi gagal. Database target belum di-reset.',
+            );
+
+            return self::FAILURE;
+        }
+
+        StarterInstallState::write('database-mutating');
+
         if ($this->call('migrate:fresh', ['--force' => true]) !== self::SUCCESS) {
             return self::FAILURE;
         }
@@ -57,7 +71,9 @@ class FinalizeInstallationCommand extends Command
             return self::FAILURE;
         }
 
-        if ($this->call('starter:security-check') !== self::SUCCESS) {
+        StarterInstallState::write('verifying');
+
+        if (! $this->securityCheckPasses()) {
             return self::FAILURE;
         }
 
@@ -65,6 +81,29 @@ class FinalizeInstallationCommand extends Command
         $this->info('Starterkit installation completed successfully.');
 
         return self::SUCCESS;
+    }
+
+    /** @phpstan-impure */
+    private function securityCheckPasses(): bool
+    {
+        return $this->call('starter:security-check') === self::SUCCESS;
+    }
+
+    /** @phpstan-impure */
+    private function applicationTestsPass(): bool
+    {
+        $process = new Process(
+            [PHP_BINARY, base_path('artisan'), 'test', '--without-tty'],
+            base_path(),
+            null,
+            null,
+            null,
+        );
+        $process->run(function (string $type, string $buffer): void {
+            $this->output->write($buffer);
+        });
+
+        return $process->isSuccessful();
     }
 
     private function installLocale(): int
@@ -148,6 +187,10 @@ REGEX;
 
     private function installTestBootstrap(): int
     {
+        if ($this->installBaseTestCase() !== self::SUCCESS) {
+            return self::FAILURE;
+        }
+
         if (! class_exists(TestSuite::class)) {
             $this->components->info('Pest is not installed; generated App tests will use PHPUnit.');
 
@@ -180,6 +223,54 @@ pest()->extend(TestCase::class)
 PHP.PHP_EOL);
 
         $this->components->info('Pest project bootstrap created.');
+
+        return self::SUCCESS;
+    }
+
+    private function installBaseTestCase(): int
+    {
+        $path = base_path('tests/TestCase.php');
+
+        if (! File::exists($path)) {
+            $this->components->error('tests/TestCase.php is required for installer verification.');
+
+            return self::FAILURE;
+        }
+
+        $contents = File::get($path);
+
+        if (str_contains($contents, 'use LazilyRefreshDatabase;')) {
+            return self::SUCCESS;
+        }
+
+        $baseImport = 'use Illuminate\\Foundation\\Testing\\TestCase as BaseTestCase;';
+        $lazyImport = 'use Illuminate\\Foundation\\Testing\\LazilyRefreshDatabase;';
+
+        if (! str_contains($contents, $baseImport)
+            || preg_match('/abstract\s+class\s+TestCase\s+extends\s+BaseTestCase\s*\{/', $contents) !== 1) {
+            $this->components->error(
+                'Struktur tests/TestCase.php tidak didukung untuk verifikasi otomatis.',
+            );
+
+            return self::FAILURE;
+        }
+
+        $contents = str_replace($baseImport, $lazyImport.PHP_EOL.$baseImport, $contents);
+        $contents = preg_replace(
+            '/abstract\s+class\s+TestCase\s+extends\s+BaseTestCase\s*\{/',
+            "abstract class TestCase extends BaseTestCase\n{\n    use LazilyRefreshDatabase;",
+            $contents,
+            1,
+        );
+
+        if (! is_string($contents)
+            || File::put($path, $contents) === false) {
+            $this->components->error('tests/TestCase.php tidak dapat disiapkan.');
+
+            return self::FAILURE;
+        }
+
+        $this->components->info('Database testing otomatis disiapkan melalui tests/TestCase.php.');
 
         return self::SUCCESS;
     }

@@ -152,6 +152,13 @@ mengonfirmasi database, lalu memeriksa source Laravel. Jika source tidak lagi
 fresh, instalasi berhenti sebelum mengubah file atau data. Jika source fresh
 sudah menjalankan migration, installer meminta satu konfirmasi tambahan.
 
+Installer otomatis menjalankan `starter:security-check` dan seluruh test
+aplikasi sebelum me-reset database target. Kedua perintah tersebut tidak perlu
+dijalankan manual. Jika verifikasi gagal, instalasi dihentikan, perubahan file
+dikembalikan, dan database target belum disentuh. Jika kegagalan terjadi setelah
+database di-reset, installer mengembalikan kondisi database kosong atau struktur
+migration fresh bawaan Laravel.
+
 Instalasi menjalankan `migrate:fresh`; seluruh tabel dan data pada database yang
 dipilih akan dihapus.
 
