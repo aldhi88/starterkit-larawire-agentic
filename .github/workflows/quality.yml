@@ -17,7 +17,7 @@ jobs:
         php: ['8.3', '8.4', '8.5']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -26,9 +26,7 @@ jobs:
           coverage: none
           tools: composer:v2
 
-      - uses: ramsey/composer-install@v3
-        with:
-          dependency-versions: locked
+      - run: composer install --no-interaction --prefer-dist --no-progress
 
       - run: composer validate --strict
       - run: composer audit --locked --no-interaction --format=summary
@@ -55,7 +53,7 @@ jobs:
     needs: package
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
