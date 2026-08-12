@@ -1,17 +1,23 @@
 <?php
 
-namespace Altekno\StarterKit\Console\Commands\Starter;
+namespace Aldhi88\StarterKit\Console\Commands\Starter;
 
-use Altekno\StarterKit\Models\Starter\App;
-use Altekno\StarterKit\Models\Starter\AppMenu;
-use Altekno\StarterKit\Models\Starter\AppMod;
-use Altekno\StarterKit\Models\Starter\AppRoute;
-use Altekno\StarterKit\Services\Starter\StarterDeploymentService;
+use Aldhi88\StarterKit\Installation\StarterDatabaseProvisioner;
+use Aldhi88\StarterKit\Models\Starter\App;
+use Aldhi88\StarterKit\Models\Starter\AppMenu;
+use Aldhi88\StarterKit\Models\Starter\AppMod;
+use Aldhi88\StarterKit\Models\Starter\AppRoute;
+use Aldhi88\StarterKit\Rules\Starter\StarterPasswordRules;
+use Aldhi88\StarterKit\Services\Starter\StarterDeploymentService;
+use Aldhi88\StarterKit\Services\Starter\StarterIdentityService;
+use Aldhi88\StarterKit\Support\Starter\StarterInternalRunContext;
 use Illuminate\Console\Command;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
+use Throwable;
 
 class SyncCommand extends Command
 {
@@ -24,24 +30,82 @@ class SyncCommand extends Command
         {subdomain? : Sync only one registered subdomain}
         {--force : Run without confirmation}
         {--dry-run : Validate and show changes without writing to the database}
-        {--prepared : Internal flag when deployment preparation was already completed by starter:setup}';
+        {--prepared : Internal flag when deployment preparation was already completed}
+        {--deploying : Internal flag used only by starter:deploy}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Apply migrations, assets, and starter app registry updates';
+    protected $description = 'Sinkronkan migration, asset, route, module, dan menu di local';
 
     /**
      * Execute the console command.
      */
-    public function handle(StarterDeploymentService $deployment): int
-    {
+    public function handle(
+        StarterDeploymentService $deployment,
+        StarterIdentityService $identities,
+        StarterDatabaseProvisioner $databases,
+        StarterInternalRunContext $internal,
+    ): int {
+        $prepared = (bool) $this->option('prepared');
+        $deploying = (bool) $this->option('deploying');
+
+        if ($deploying && (! $prepared || ! $internal->allows('deploy'))) {
+            $this->components->error('Flag internal deployment tidak dapat dipanggil langsung.');
+
+            return self::FAILURE;
+        }
+
+        if ($prepared && ! $internal->allows('app', 'deploy', 'install')) {
+            $this->components->error('Flag internal preparation tidak dapat dipanggil langsung.');
+
+            return self::FAILURE;
+        }
+
+        if (app()->isProduction() && ! $internal->allows('deploy')) {
+            $this->line('<fg=red;options=bold>starter:sync ditolak di production.</>');
+            $this->line('Gunakan php artisan starter:deploy agar seluruh validasi production dijalankan.');
+
+            return self::FAILURE;
+        }
+
+        if (! $this->option('dry-run')) {
+            $this->components->info('Menyelaraskan source App, route, module, dan menu ke database.');
+
+            if (! $this->option('prepared')) {
+                try {
+                    $provisioning = $databases->connectOrCreate();
+
+                    if ($provisioning->created) {
+                        $this->components->info("Database {$provisioning->database} berhasil dibuat otomatis.");
+                    }
+                } catch (Throwable $exception) {
+                    $this->components->error($exception->getMessage());
+
+                    return self::FAILURE;
+                }
+            }
+        }
+
         if (! $this->option('dry-run')
             && ! $this->option('prepared')
             && $deployment->prepare($this) !== self::SUCCESS) {
             return self::FAILURE;
+        }
+
+        if (! $this->option('dry-run') && ! $identities->initialized()) {
+            if (app()->isProduction()) {
+                $this->line('<fg=red;options=bold>Superuser production belum tersedia.</>');
+                $this->line('Jalankan starter:deploy agar password kuat divalidasi sebelum sinkronisasi.');
+
+                return self::FAILURE;
+            }
+
+            if (! $this->createLocalIdentity($identities)) {
+                return self::FAILURE;
+            }
         }
 
         foreach ($this->subdomains() as $subdomain) {
@@ -74,6 +138,64 @@ class SyncCommand extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    private function createLocalIdentity(StarterIdentityService $identities): bool
+    {
+        if (! $this->input->isInteractive()) {
+            $this->components->error('Database kosong memerlukan prompt interaktif untuk membuat Superuser.');
+
+            return false;
+        }
+
+        $this->newLine();
+        $this->components->warn('Database lokal belum memiliki identitas starterkit.');
+        $this->line('Buat Superuser baru. Username tetap: superuser');
+        $this->line('Password local boleh sederhana, tetapi wajib diisi dan dikonfirmasi.');
+        $email = strtolower(trim((string) $this->ask('Email Superuser')));
+
+        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            $this->components->error('Email Superuser tidak valid.');
+
+            return false;
+        }
+
+        while (true) {
+            $password = (string) $this->secret('Password Superuser');
+            $errors = Validator::make(['password' => $password], [
+                'password' => StarterPasswordRules::localBootstrapRules(),
+            ])->errors()->all();
+
+            if ($errors !== []) {
+                $this->components->error(implode(' ', $errors));
+
+                continue;
+            }
+
+            if (! hash_equals($password, (string) $this->secret('Konfirmasi password Superuser'))) {
+                $this->components->error('Konfirmasi password tidak sama.');
+
+                continue;
+            }
+
+            try {
+                $identities->create(
+                    (string) config('app.name'),
+                    $email,
+                    $password,
+                    strongPassword: false,
+                );
+                $password = '';
+                $this->components->info('Superuser lokal berhasil dibuat.');
+
+                return true;
+            } catch (Throwable $exception) {
+                $password = '';
+                $this->components->error($exception->getMessage());
+
+                return false;
+            }
+        }
     }
 
     /**
@@ -173,7 +295,7 @@ class SyncCommand extends Command
             return true;
         }
 
-        $this->warn("App {$subdomain}: {$delete['modules']} module, {$delete['routes']} route, and {$delete['menus']} menu will be deleted.");
+        $this->line("<fg=red;options=bold>DANGER: App {$subdomain} akan menghapus {$delete['modules']} module, {$delete['routes']} route, dan {$delete['menus']} menu.</>");
 
         return $this->confirm('Lanjutkan?', false);
     }
@@ -305,7 +427,7 @@ class SyncCommand extends Command
         Collection $sourceRouteNames,
     ): void {
         foreach ($menus as $menu) {
-            if (! is_array($menu) || blank($menu['label'] ?? null)) {
+            if (blank($menu['label'] ?? null)) {
                 $this->fail("Every menu in module [{$subdomain}.{$modCode}] must define a label.");
             }
 
@@ -381,7 +503,7 @@ class SyncCommand extends Command
     /**
      * Get existing menu keys for the given modules.
      *
-     * @param  Collection<int, AppMod>  $mods
+     * @param  Collection<array-key, AppMod>  $mods
      * @return Collection<int, string>
      */
     private function existingMenuKeys(Collection $mods): Collection
@@ -392,7 +514,7 @@ class SyncCommand extends Command
     /**
      * Get existing menu keys mapped by menu id.
      *
-     * @param  Collection<int, AppMod>  $mods
+     * @param  Collection<array-key, AppMod>  $mods
      * @return Collection<int, string>
      */
     private function existingMenuKeyMap(Collection $mods): Collection
@@ -454,7 +576,7 @@ class SyncCommand extends Command
      * Load the current App route source independently from any route cache that
      * was active when Artisan booted.
      *
-     * @return Collection<int, string>
+     * @return Collection<int, non-falsy-string>
      */
     private function sourceRouteNames(string $subdomain): Collection
     {
@@ -519,7 +641,7 @@ class SyncCommand extends Command
     /**
      * Sync named routes with the app subdomain prefix.
      *
-     * @param  Collection<string, AppMod>  $mods
+     * @param  Collection<array-key, AppMod>  $mods
      * @return Collection<string, AppRoute>
      */
     private function syncRoutes(string $subdomain, Collection $mods, array $configuredMods): Collection

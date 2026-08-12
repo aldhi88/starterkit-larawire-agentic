@@ -1,9 +1,9 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\ClientLoginInterface;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 
 class AuthenticatedLoginService
@@ -28,7 +28,7 @@ class AuthenticatedLoginService
     public function settingsManager(mixed $login = null): ClientLogin
     {
         $login = $this->authenticated($login ?? $this->auth->guard()->user());
-        abort_unless($login->role?->canManageSettings(), 403);
+        abort_unless($login->role->canManageSettings(), 403);
 
         return $login;
     }
@@ -36,7 +36,7 @@ class AuthenticatedLoginService
     public function logViewer(mixed $login = null): ClientLogin
     {
         $login = $this->authenticated($login ?? $this->auth->guard()->user());
-        abort_unless($login->role?->canViewLogs(), 403);
+        abort_unless($login->role->canViewLogs(), 403);
 
         return $login;
     }

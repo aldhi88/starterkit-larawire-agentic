@@ -1,13 +1,13 @@
 <?php
 
-use Altekno\StarterKit\Http\Controllers\Starter\Auth\TouchSessionActivityController;
-use Altekno\StarterKit\Livewire\Starter\Auth\ConfirmPassword;
-use Altekno\StarterKit\Livewire\Starter\Auth\LockScreen;
-use Altekno\StarterKit\Livewire\Starter\Logs\ActivityLogIndex;
-use Altekno\StarterKit\Livewire\Starter\Profile\EditMyProfile;
-use Altekno\StarterKit\Livewire\Starter\Settings\SettingsIndex;
-use Altekno\StarterKit\Livewire\Starter\UserManagement\RoleForm;
-use Altekno\StarterKit\Livewire\Starter\UserManagement\UserForm;
+use Aldhi88\StarterKit\Http\Controllers\Starter\Auth\TouchSessionActivityController;
+use Aldhi88\StarterKit\Livewire\Starter\Auth\ConfirmPassword;
+use Aldhi88\StarterKit\Livewire\Starter\Auth\LockScreen;
+use Aldhi88\StarterKit\Livewire\Starter\Logs\ActivityLogIndex;
+use Aldhi88\StarterKit\Livewire\Starter\Profile\EditMyProfile;
+use Aldhi88\StarterKit\Livewire\Starter\Settings\SettingsIndex;
+use Aldhi88\StarterKit\Livewire\Starter\UserManagement\RoleForm;
+use Aldhi88\StarterKit\Livewire\Starter\UserManagement\UserForm;
 use Illuminate\Support\Facades\Route;
 
 Route::livewire('/confirm-password', ConfirmPassword::class)

@@ -1,8 +1,8 @@
 <?php
 
-namespace Altekno\StarterKit\Http\Controllers\Starter\Auth;
+namespace Aldhi88\StarterKit\Http\Controllers\Starter\Auth;
 
-use Altekno\StarterKit\Services\Starter\StarterConfigService;
+use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

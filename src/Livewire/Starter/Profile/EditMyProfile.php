@@ -1,14 +1,14 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\Profile;
+namespace Aldhi88\StarterKit\Livewire\Starter\Profile;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Rules\Starter\StarterPasswordRules;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
-use Altekno\StarterKit\Services\Starter\ProfileService;
-use Altekno\StarterKit\Services\Starter\StarterConfigService;
-use Altekno\StarterKit\Services\Starter\StarterContextService;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Rules\Starter\StarterPasswordRules;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
+use Aldhi88\StarterKit\Services\Starter\ProfileService;
+use Aldhi88\StarterKit\Services\Starter\StarterContextService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -25,8 +25,6 @@ class EditMyProfile extends Component
     private const DEFAULT_PROFILE_PHOTO = 'assets/starter/images/avatar.png';
 
     private ProfileService $profiles;
-
-    private StarterConfigService $configs;
 
     private StarterContextService $context;
 
@@ -57,13 +55,11 @@ class EditMyProfile extends Component
 
     public function boot(
         ProfileService $profiles,
-        StarterConfigService $configs,
         StarterContextService $context,
         NavigationAuthorizedRedirectService $redirects,
         AuthenticatedLoginService $authenticatedLogins,
     ): void {
         $this->profiles = $profiles;
-        $this->configs = $configs;
         $this->context = $context;
         $this->redirects = $redirects;
         $this->authenticatedLogins = $authenticatedLogins;
@@ -125,7 +121,7 @@ class EditMyProfile extends Component
         $this->dispatch('starter-account-updated',
             avatarUrl: $this->context->avatarUrl($updatedLogin),
             name: $updatedLogin->name,
-            roleName: $updatedLogin->role?->name ?? 'Role',
+            roleName: $updatedLogin->role->name,
         );
 
         $this->dispatch('starter-toast', type: 'success', message: 'Profil berhasil disimpan.');
@@ -149,7 +145,7 @@ class EditMyProfile extends Component
             $this->dispatch('starter-account-updated',
                 avatarUrl: $this->context->avatarUrl($updatedLogin),
                 name: $updatedLogin->name,
-                roleName: $updatedLogin->role?->name ?? 'Role',
+                roleName: $updatedLogin->role->name,
             );
 
             $this->dispatch('starter-toast', type: 'success', message: 'Foto profil berhasil dikembalikan ke default.');
@@ -225,7 +221,7 @@ class EditMyProfile extends Component
     {
         $login = $this->login();
 
-        return view('starter.profile.edit-my-profile', [
+        return view(StarterTheme::viewName('starter.profile.edit-my-profile'), [
             'login' => $login,
             'loginAvatarUrl' => $this->context->avatarUrl($login),
             'profilePhotoPreviewUrl' => $this->profilePhotoPreviewUrl($login),

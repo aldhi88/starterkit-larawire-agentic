@@ -1,13 +1,13 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\AppRouteInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientRoleInterface;
-use Altekno\StarterKit\Models\Starter\AppRoute;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Support\Starter\StarterAppRegistry;
-use Altekno\StarterKit\Support\Starter\StarterNavigation;
+use Aldhi88\StarterKit\Contracts\Starter\AppRouteInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientRoleInterface;
+use Aldhi88\StarterKit\Models\Starter\AppRoute;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Support\Starter\StarterAppRegistry;
+use Aldhi88\StarterKit\Support\Starter\StarterNavigation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
@@ -36,9 +36,7 @@ class NavigationAuthorizedRedirectService
 
     public function forAppAnchor(ClientLogin $login, string $appKey): string
     {
-        $landingMenu = $login->role
-            ? $this->clientRoles->landingMenuForApp($login->role, $appKey)
-            : null;
+        $landingMenu = $this->clientRoles->landingMenuForApp($login->role, $appKey);
         $landingRoute = $landingMenu?->route;
 
         if ($landingRoute instanceof AppRoute && $this->canAccessRouteName($login, $landingRoute->name)) {
@@ -68,7 +66,7 @@ class NavigationAuthorizedRedirectService
             return route($route->name);
         }
 
-        if ($login->role?->hasFullAccess()) {
+        if ($login->role->hasFullAccess()) {
             foreach (StarterAppRegistry::keys() as $appKey) {
                 if (Route::has("{$appKey}.dashboard")) {
                     return route("{$appKey}.dashboard");
@@ -103,20 +101,20 @@ class NavigationAuthorizedRedirectService
         }
 
         if ($routeName === 'starter.logs.index') {
-            return $login->role?->canViewLogs() ?? false;
+            return $login->role->canViewLogs();
         }
 
         if ($routeName === 'starter.client-profile' || $routeName === 'starter.settings') {
-            return $login->role?->canManageSettings() ?? false;
+            return $login->role->canManageSettings();
         }
 
         if (str_starts_with($routeName, 'starter.user-management.')
             || str_starts_with($routeName, 'starter.settings.')) {
-            return $login->role?->canManageSettings() ?? false;
+            return $login->role->canManageSettings();
         }
 
         if (str_starts_with($routeName, 'admin.')) {
-            return $login->role?->isAdmin() ?? false;
+            return $login->role->isAdmin();
         }
 
         if (str_ends_with($routeName, '.anchor')) {
@@ -178,11 +176,8 @@ class NavigationAuthorizedRedirectService
 
     private function firstAuthorizedRoute(ClientLogin $login, ?string $appKey = null): ?AppRoute
     {
-        $hasFullAccess = $login->role?->hasFullAccess() ?? false;
-
-        $modIds = $login->role
-            ? $this->clientRoles->modIds($login->role)
-            : collect();
+        $hasFullAccess = $login->role->hasFullAccess();
+        $modIds = $this->clientRoles->modIds($login->role);
 
         if (! $hasFullAccess && $modIds->isEmpty()) {
             return null;
@@ -193,8 +188,8 @@ class NavigationAuthorizedRedirectService
             ->filter(fn (AppRoute $route): bool => Route::has($route->name))
             ->sortBy(fn (AppRoute $route): array => [
                 $this->routeScore($route->name),
-                $route->mod?->app?->name ?? '',
-                $route->mod?->name ?? '',
+                $route->mod->app->name,
+                $route->mod->name,
                 $route->name,
             ])
             ->first();

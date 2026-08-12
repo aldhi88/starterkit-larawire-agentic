@@ -1,11 +1,12 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\Settings;
+namespace Aldhi88\StarterKit\Livewire\Starter\Settings;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\SecuritySettingsService;
-use Altekno\StarterKit\Services\Starter\StarterConfigService;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\SecuritySettingsService;
+use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Livewire\Component;
 
 class SecuritySettings extends Component
@@ -75,7 +76,7 @@ class SecuritySettings extends Component
     {
         $this->authorizeSettings();
 
-        return view('starter.settings.security-settings');
+        return view(StarterTheme::viewName('starter.settings.security-settings'));
     }
 
     private function authorizeSettings(): ClientLogin

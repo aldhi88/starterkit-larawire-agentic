@@ -3,6 +3,35 @@
 Rule ini berlaku ketika menambah theme baru, mengubah adapter theme, atau
 mengaudit runtime theme yang sudah terpasang.
 
+## Distribusi dan registrasi modular
+
+- Core `aldhi88/starterkit-larawire-agentic` membawa hanya Tabler dan hanya file runtime yang benar-benar dimuat, plus atlas komponen terkurasi yang lisensinya boleh didistribusikan. Jangan menyimpan duplikasi bundle vendor penuh.
+- Theme baru dibuat sebagai package Composer opsional. Menambah theme tidak boleh memperbesar download core bagi developer yang tidak memilihnya; developer memasang package theme yang diperlukan sebelum menjalankan installer.
+- Service provider package theme memanggil `StarterThemeRegistry::register()` dengan `label`, absolute package `root`, relative `views`, `assets`, `docs`, class adapter `powergrid`, serta view layout `vertical` dan `horizontal`. Semua directory, class, dan layout harus ada; registry menolak path traversal dan definisi tidak lengkap.
+- Installer menampilkan pilihan hanya bila lebih dari satu theme valid sudah terpasang. Satu theme dipilih otomatis. `starter:sync` mempublikasikan hanya asset theme aktif ke host; developer tidak menjalankan command publish terpisah.
+- Package theme memiliki lisensi dan third-party notice sendiri. Source premium/non-redistributable tidak boleh disamarkan, dikomit, atau dipaketkan; theme seperti itu hanya boleh diintegrasikan di repository privat yang memiliki hak distribusi sesuai lisensinya.
+
+Minimal registrasi pada service provider package theme:
+
+```php
+StarterThemeRegistry::register('theme-key', [
+    'label' => 'Theme Name',
+    'root' => dirname(__DIR__, 2),
+    'views' => 'resources/views',
+    'assets' => 'public/assets/theme-key',
+    'docs' => 'docs/template/theme-key',
+    'powergrid' => ThemePowerGrid::class,
+    'layouts' => [
+        'vertical' => 'starter.templates.layouts.navigation.vertical',
+        'horizontal' => 'starter.templates.layouts.navigation.horizontal',
+    ],
+]);
+```
+
+Provider tersebut didaftarkan melalui Composer package discovery. Jangan
+menambah key theme baru ke core `config/starter.php` dan jangan meminta user
+menyalin source theme ke `vendor` atau project host.
+
 ## Kontrak yang sama, tampilan yang mandiri
 
 - Kesamaan antar-theme hanya mencakup data, aksi, authorization, validasi,
@@ -22,7 +51,7 @@ Untuk setiap shell, halaman, atau komponen yang terlihat:
 
 1. Tentukan kontrak produk yang harus tersedia tanpa membawa keputusan visual
    dari theme lama.
-2. Cari komponen di `docs/template/<theme>/template.md`, lalu buka satu sampai
+2. Cari komponen di atlas `docs/template/<theme>/template.md`, lalu buka satu sampai
    tiga HTML vendor yang paling dekat.
 3. Catat pemetaan runtime di `docs/template/<theme>/runtime-map.md`: kebutuhan,
    file vendor, pola/class vendor, view runtime, dan state yang diuji.

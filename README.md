@@ -1,133 +1,140 @@
-# Starterkit Larawire Private
+# Starterkit Larawire Agentic
 
-**English** · [Bahasa Indonesia](README.id.md)
+**Bahasa Indonesia** · [English](README.en.md)
 
-Starterkit Larawire is built with and appreciates the work of
+Starterkit Larawire dibangun menggunakan dan mengapresiasi karya
 [Laravel](https://laravel.com/), [Livewire](https://livewire.laravel.com/),
 [Livewire PowerGrid](https://livewire-powergrid.com/),
 [Tabler](https://tabler.io/), [Laravel Lang](https://laravel-lang.com/),
-[Scramble](https://scramble.dedoc.co/), and [Pest](https://pestphp.com/).
+[Scramble](https://scramble.dedoc.co/), dan [Pest](https://pestphp.com/).
 
-> Minimum Laravel version: **13.8**. Later Laravel versions may be used when
-> their fresh application structure remains compatible with the installed
-> Starterkit Larawire release.
+> Versi minimum Laravel: **13.8**. Constraint Composer pada setiap release
+> menentukan versi yang sudah diuji; dukungan major Laravel baru ditambahkan
+> setelah lolos compatibility test.
 
-## A. About
+## A. Tentang
 
-### What is Starterkit Larawire?
+### Apa itu Starterkit Larawire Agentic?
 
-Think of Starterkit Larawire as a larger version of Laravel's authentication
-starter kits. It starts a new private company application with authentication
-and the common foundations normally rebuilt in every internal project:
+Bayangkan Starterkit Larawire seperti Laravel authentication starter kit dengan
+fondasi yang lebih lengkap. Package ini menyiapkan project aplikasi internal
+perusahaan baru dengan fitur yang biasanya dibuat berulang kali:
 
-- login with username or email;
-- Superuser, users, roles, and module authorization;
-- company profile and security settings;
-- activity logs;
-- App and subdomain separation;
-- code-first route, module, and menu synchronization;
-- Livewire PowerGrid tables;
-- optional API gateway and OpenAPI documentation;
-- vertical and horizontal layouts; and
-- an AGENTS AI development contract.
+- login menggunakan username atau email;
+- Superuser, user, role, dan authorization berdasarkan module;
+- profil perusahaan dan pengaturan keamanan;
+- log aktivitas;
+- pemisahan App dan subdomain;
+- sinkronisasi route, module, dan menu dari source code;
+- tabel menggunakan Livewire PowerGrid;
+- API gateway dan dokumentasi OpenAPI opsional;
+- layout vertical dan horizontal; serta
+- kontrak development AGENTS AI.
 
-It is designed for one company/client installation, not a multi-tenant SaaS.
+Satu instalasi digunakan untuk satu perusahaan/client, bukan SaaS multi-tenant.
 
-### How Apps and subdomains work
+### Cara kerja App dan subdomain
 
-Suppose you are building an internal ERP with Sales, HR, Warehouse, and
-Employee areas. They can be separated into Apps:
+Misalnya kamu membuat ERP internal dengan bagian Sales, HR, Gudang, dan
+Karyawan. Setiap bagian dapat dipisahkan menjadi App:
 
-| App | Example address | Responsibility |
+| App | Contoh alamat | Tanggung jawab |
 |---|---|---|
-| Sales | `sales.company.test` | Leads, quotations, and sales orders |
-| HR | `hr.company.test` | Recruitment and HR processes |
-| Warehouse | `warehouse.company.test` | Stock and goods movement |
-| Employee | `employee.company.test` | Employee self-service |
+| Sales | `sales.company.test` | Prospek, penawaran, dan penjualan |
+| HR | `hr.company.test` | Rekrutmen dan proses HR |
+| Gudang | `gudang.company.test` | Stok dan pergerakan barang |
+| Karyawan | `karyawan.company.test` | Layanan mandiri karyawan |
 
-All Apps belong to the same Laravel project, database, company profile, and
-login session. The subdomain separates the work area; it does not create a
-separate Laravel installation.
+Semua App tetap menggunakan satu project Laravel, database, profil perusahaan,
+dan sesi login. Subdomain hanya memisahkan area kerja, bukan membuat instalasi
+Laravel yang berbeda.
 
-In production, point the main domain and every App subdomain to the same
-Laravel `public/` directory. A wildcard DNS entry such as `*.company.com` may
-be used when supported by the hosting provider.
+Di production, arahkan domain utama dan semua subdomain App ke directory
+Laravel `public/` yang sama. Wildcard DNS seperti `*.company.com` dapat dipakai
+jika didukung hosting.
 
-### Files developers normally edit
+### File yang biasa diedit developer
 
-Each App owns its configuration and feature source:
+Setiap App memiliki konfigurasi dan source fiturnya sendiri:
 
 ```text
-config/apps/<app>.php                    App, module, and menu definitions
-routes/apps/<app>.php                   Web routes for the App subdomain
-routes/apps/<app>.api.php               Optional App API routes
-app/Livewire/Apps/<App>/                Livewire components
-resources/views/apps/<app>/             App views
-database/migrations/apps/<app>/         App database migrations
-tests/Feature/Apps/<App>/               App tests
+config/apps/<app>.php                    Definisi App, module, dan menu
+routes/apps/<app>.php                   Route web pada subdomain App
+routes/apps/<app>.api.php               Route API App opsional
+app/Livewire/Apps/<App>/                Komponen Livewire
+resources/views/apps/<app>/             View App
+database/migrations/apps/<app>/         Migration App
+tests/Feature/Apps/<App>/               Test App
 ```
 
-Create the initial structure with:
+Buat struktur awal menggunakan:
 
 ```bash
-php artisan starter:make-app sales --name="Sales"
+php artisan starter:app
 ```
 
-Routes define accessible pages. `config/apps/<app>.php` connects those routes
-to modules and menus. Menus are navigation only; module ownership is the actual
-authorization boundary.
+File route menentukan halaman yang tersedia. `config/apps/<app>.php`
+menghubungkan route dengan module dan menu. Menu hanya navigasi; module adalah
+batas authorization yang sebenarnya.
 
-### Dynamic role access
+### Mengatur akses role secara dinamis
 
-Administrators assign modules to a role from the Settings page. A role may open
-one or many Apps, and each allowed App has a selected landing page. Superuser
-always has full access and is protected as a hidden system account.
+Administrator memberikan module kepada role melalui halaman Pengaturan. Satu
+role dapat membuka satu atau beberapa App, dan setiap App mempunyai halaman
+awal yang dipilih. Superuser selalu memiliki akses penuh dan dilindungi sebagai
+akun sistem tersembunyi.
 
-After route, module, or menu definitions change, synchronize code metadata:
+Setelah route, module, atau menu berubah, sinkronkan metadata source code:
 
 ```bash
 php artisan starter:sync
 ```
 
-### Themes and layouts
+### Theme dan layout
 
-The public package currently provides the redistributable **Tabler** theme with
-two layouts:
+Package publik saat ini menyediakan theme **Tabler** yang aman didistribusikan
+dengan dua layout:
 
 ```dotenv
 STARTER_THEME=tabler
 STARTER_LAYOUT=vertical
 ```
 
-`STARTER_LAYOUT` accepts `vertical` or `horizontal`. Theme registration is
-modular: a future theme supplies its own views, assets, JavaScript handler,
-PowerGrid adapter, component reference, and both layouts. One theme's visual
-components are never forced onto another theme.
+`STARTER_LAYOUT` dapat diisi `vertical` atau `horizontal`. Core hanya membawa
+file Tabler yang benar-benar dipakai agar package tetap kecil.
 
-### AGENTS AI mode
+Theme baru didistribusikan sebagai package Composer opsional. Install package
+theme yang dibutuhkan sebelum `starter:install`; wizard otomatis menampilkan
+semua theme valid yang sudah terpasang. Developer yang hanya memakai Tabler
+tidak ikut mengunduh asset theme lain. Setiap package theme membawa view, asset
+runtime minimum, JavaScript handler, adapter PowerGrid, indeks komponen, serta
+layout vertical dan horizontal miliknya sendiri. Tampilan antar-theme tidak
+dipaksakan sama.
 
-Installation adds a managed block to the Laravel project's `AGENTS.md`. It
-points AI coding agents to the architecture, security, testing, UI, theme, and
-feature-development rules inside this Composer package. Application features
-remain in the Laravel project; `vendor/aldhi88/starterkit-larawire` is read-only.
+### Mode AGENTS AI
 
-## B. Installation
+Installer menambahkan blok terkelola ke `AGENTS.md` project Laravel. Blok ini
+mengarahkan agent AI ke aturan arsitektur, keamanan, testing, UI, theme, dan
+development fitur di dalam Composer package. Fitur aplikasi tetap dibuat pada
+project Laravel; `vendor/aldhi88/starterkit-larawire-agentic` bersifat read-only.
 
-### First local installation
+## B. Instalasi
 
-Prepare:
+### Instalasi local pertama kali
 
-1. a fresh Laravel project;
-2. the correct database connection in `.env`; and
-3. the local main domain in `APP_URL`.
+Persiapkan:
 
-From the Laravel project root:
+1. project Laravel fresh;
+2. koneksi database yang benar di `.env`; dan
+3. domain lokal utama pada `APP_URL`.
+
+Dari root project Laravel:
 
 ```bash
-composer require aldhi88/starterkit-larawire
+composer require aldhi88/starterkit-larawire-agentic
 ```
 
-Example `.env` values:
+Contoh `.env`:
 
 ```dotenv
 APP_URL=http://company.test
@@ -140,103 +147,170 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Run the installer:
+Jalankan installer:
 
 ```bash
-php artisan starterkit:install --company="Company Name"
+php artisan starter:install
 ```
 
-The installer clearly shows the destructive changes, confirms `APP_URL`, tests
-and confirms the selected database, then checks the Laravel source. If source
-code is no longer fresh, installation stops before changing files or data. If
-fresh source already ran migrations, one additional confirmation is required.
+Tabler dipilih otomatis karena menjadi satu-satunya theme bawaan; wizard meminta
+layout vertical/horizontal, lalu lima identitas berikut:
 
-The installer automatically runs `starter:security-check` and the complete
-application test suite before resetting the target database. These commands do
-not need to be run manually. Failed verification stops installation, restores
-the changed project files, and leaves the target database untouched. A failure
-after database reset restores either the empty database state or Laravel's
-default fresh migration structure.
+| Pertanyaan | Boleh memakai spasi? | Contoh input |
+|---|---:|---|
+| Nama perusahaan/client | Ya | `PT Maju Bersama` |
+| Nama App pertama | Ya | `Human Resources` |
+| Domain/subdomain App | Tidak | `hr` |
+| Email Superuser | Tidak | `admin@company.test` |
+| Password Superuser | Tidak | dimasukkan melalui prompt tersembunyi |
 
-The installation runs `migrate:fresh`; every table and row in the selected
-database is deleted.
+Untuk domain App, masukkan hanya bagian subdomain tanpa titik dan tanpa domain
+utama. Contoh `hr` akan menjadi `hr.company.test` jika `APP_URL` menggunakan
+`company.test`.
 
-### Using a new empty database after installation
+Installer menjelaskan perubahan destruktif, mengonfirmasi `APP_URL`, menjalankan
+wizard identitas, mengonfirmasi koneksi database, lalu memeriksa source Laravel.
+Jika database yang dikonfirmasi belum ada, installer membuatnya otomatis selama
+akun database memiliki izin `CREATE DATABASE`. SQLite juga dibuat otomatis jika
+file database belum ada. Jika source tidak lagi fresh, instalasi berhenti sebelum
+mengubah file atau data. Jika source fresh sudah menjalankan migration, installer
+meminta satu konfirmasi tambahan.
 
-Do not run the fresh installer again. Update `.env`, then rebuild required
-starter data with:
+Username Superuser selalu `superuser`. Password hanya dibaca melalui prompt
+tersembunyi, langsung disimpan sebagai hash, dan tidak pernah ditulis ke `.env`,
+argumen command, log, atau file sementara.
+
+Password local boleh sederhana agar development praktis, tetapi tetap wajib
+diisi dan dikonfirmasi. Saat `starter:deploy` perlu membuat Superuser pada
+database production kosong, password wajib minimal 10 karakter serta mengandung
+huruf besar, huruf kecil, dan angka.
+
+Installer otomatis menjalankan validasi keamanan internal dan seluruh test
+aplikasi sebelum me-reset database target. Tidak ada command verifikasi tambahan
+yang perlu dijalankan manual. Jika verifikasi gagal, instalasi dihentikan, perubahan file
+dikembalikan, dan database target belum disentuh. Jika kegagalan terjadi setelah
+database di-reset, installer mengembalikan kondisi database kosong atau struktur
+migration fresh bawaan Laravel.
+
+Instalasi menjalankan `migrate:fresh`; seluruh tabel dan data pada database yang
+dipilih akan dihapus.
+
+### Reset dan instal ulang di local
+
+Gunakan hanya jika seluruh aplikasi lama memang ingin dibuang dan dibuat ulang:
 
 ```bash
-php artisan starter:setup --company="Company Name"
+php artisan starter:reset
 ```
 
-### Synchronize local metadata
+Command ini menampilkan peringatan keras, lalu menjalankan wizard instalasi yang
+sama. Jika disetujui, seluruh database, source App pada boundary `Apps`, asset
+App, upload logo/foto starterkit, role, user, pengaturan, menu, dan log aktivitas
+lama akan dihapus. Jangan gunakan command ini untuk update rutin atau production.
 
-Run this after changing App configuration, routes, modules, menus, migrations,
-or the selected theme/layout:
+### Menggunakan database kosong baru setelah starterkit terpasang
+
+Jangan jalankan installer fresh lagi. Ubah `.env`, kemudian bangun ulang data
+starter menggunakan:
 
 ```bash
 php artisan starter:sync
 ```
 
-Sync also publishes package, PowerGrid, and Livewire runtime assets. There is
-no separate asset-publish command.
+Jika database baru masih kosong, sync menjalankan migration lalu meminta email
+dan password Superuser baru melalui prompt tersembunyi.
 
-### Update the package locally
+### Sinkronisasi local
+
+Jalankan setelah mengubah konfigurasi App, route, module, menu, migration, atau
+pilihan theme/layout:
 
 ```bash
-composer update aldhi88/starterkit-larawire
 php artisan starter:sync
 ```
 
-Review and commit both `composer.json` and `composer.lock` in the Laravel
-application repository.
+Sync juga mempublikasikan asset package, PowerGrid, dan Livewire. Tidak ada
+command publish asset terpisah.
 
-### First production deployment
+### Update starterkit di local
 
 ```bash
-git clone <laravel-repository> <project-folder>
-cd <project-folder>
+composer update aldhi88/starterkit-larawire-agentic
+php artisan starter:sync
+```
+
+Periksa dan commit `composer.json` serta `composer.lock` pada repository
+aplikasi Laravel.
+
+### Deployment production pertama kali
+
+```bash
+git clone <repository-laravel> <folder-project>
+cd <folder-project>
 cp .env.example .env
-# configure production APP_URL, database, and secrets
+# atur APP_URL, database, dan secret production
 composer install --no-dev --optimize-autoloader
-php artisan starter:setup --company="Company Name"
+php artisan starter:deploy
 ```
 
-Point the main domain and App subdomains to `<project-folder>/public`.
+Arahkan domain utama dan subdomain App ke `<folder-project>/public`.
 
-### Routine production update
+### Update production berkala
 
 ```bash
 git pull --ff-only
 composer install --no-dev --optimize-autoloader
-php artisan starter:sync
+php artisan starter:deploy
 ```
 
-Production uses the package version locked by the Laravel project's
-`composer.lock`. It does not run the destructive installer.
+Production memakai versi package yang terkunci di `composer.lock` project
+Laravel. `starter:deploy` khusus production dan melakukan preflight lengkap:
+environment production, debug mati, HTTPS, cookie aman, domain, extension,
+directory runtime, koneksi database, migration, asset, registry App, dan cache.
+Pada database production pertama yang masih kosong, command meminta kredensial
+Superuser melalui prompt aman. Jika preflight gagal, deployment berhenti sebelum
+mutation. `starter:sync` dan `starter:reset` ditolak di production.
 
-## C. Optional API Gateway
+### Command Starterkit
 
-The API gateway is disabled by default. Enable it in `.env`:
+Sebelum instalasi tersedia `starter:install`. Setelah instalasi berhasil:
+
+| Command | Kegunaan |
+|---|---|
+| `starter:reset` | Menghapus instalasi lama dan mengulang wizard; hanya local |
+| `starter:sync` | Menyelaraskan source developer ke database local |
+| `starter:app` | Membuat App/subdomain baru melalui wizard |
+| `starter:deploy` | Deploy production dengan preflight lengkap |
+
+## C. Gateway API Opsional
+
+Gateway API nonaktif secara default. Aktifkan melalui `.env`:
 
 ```dotenv
 STARTER_API_ENABLED=true
 ```
 
-Then run:
+Kemudian jalankan:
 
 ```bash
 php artisan starter:sync
 ```
 
-App API routes live in `routes/apps/<app>.api.php` and are served from
-`api.<APP_DOMAIN>/<app>` without an additional `/api` prefix. Every endpoint
-still requires explicit authentication, authorization, validation, and rate
-limits. Production API documentation is restricted to Superuser.
+Route API App berada di `routes/apps/<app>.api.php` dan tersedia pada
+`api.<APP_DOMAIN>/<app>` tanpa tambahan prefix `/api`. Setiap endpoint tetap
+wajib memiliki authentication, authorization, validation, dan rate limit yang
+jelas. Dokumentasi API production hanya dapat diakses Superuser.
 
-## Documentation
+## Dokumentasi
 
-This README is the concise GitHub guide. Detailed rules and architecture are
-available in `docs/`. A separate official documentation website is planned;
-the public URL will be added when it is ready.
+README ini adalah panduan ringkas GitHub. Aturan dan arsitektur yang lebih rinci
+tersedia di `docs/`. Website dokumentasi resmi direncanakan dan URL publiknya
+akan ditambahkan setelah siap.
+
+## Lisensi
+
+Source tersedia untuk instalasi, modifikasi, dan deployment aplikasi internal
+sesuai [LICENSE](LICENSE). Menjual, melisensikan ulang, atau mempublikasikan
+ulang package/starter yang bersaing tidak diizinkan. Komponen pihak ketiga tetap
+mengikuti lisensinya masing-masing; lihat
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

@@ -3,10 +3,6 @@ includes:
 
 parameters:
     paths:
-        - src/Installation
-        - src/Providers/Starter/StarterInstallerServiceProvider.php
-        - src/Console/Commands/Starter/InstallCommand.php
-        - src/Console/Commands/Starter/FinalizeInstallationCommand.php
-        - src/Services/Starter/StarterAssetPublisher.php
+        - src
     level: 5
     tmpDir: build/phpstan

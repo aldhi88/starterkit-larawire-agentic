@@ -1,11 +1,12 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\UserManagement;
+namespace Aldhi88\StarterKit\Livewire\Starter\UserManagement;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Models\Starter\ClientRole;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\UserManagementRoleService;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Models\Starter\ClientRole;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\UserManagementRoleService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
@@ -97,7 +98,7 @@ class RolesTable extends PowerGridComponent
 
     public function actionsFromView(ClientRole $row): View
     {
-        return view('starter.user-management.powergrid.roles-row-actions', ['row' => $row]);
+        return view(StarterTheme::viewName('starter.user-management.powergrid.roles-row-actions'), ['row' => $row]);
     }
 
     public function prepareBulkAction(string $action): void

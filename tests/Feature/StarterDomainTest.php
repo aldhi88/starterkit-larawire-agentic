@@ -1,6 +1,6 @@
 <?php
 
-use Altekno\StarterKit\Support\Starter\StarterDomain;
+use Aldhi88\StarterKit\Support\Starter\StarterDomain;
 
 it('derives root session settings from the current app URL', function (): void {
     expect(StarterDomain::host('https://ERP.Example.com/path'))->toBe('erp.example.com')

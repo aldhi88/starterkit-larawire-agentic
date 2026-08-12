@@ -1,6 +1,6 @@
 <?php
 
-use Altekno\StarterKit\Support\Starter\StarterBootstrap;
+use Aldhi88\StarterKit\Support\Starter\StarterBootstrap;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;

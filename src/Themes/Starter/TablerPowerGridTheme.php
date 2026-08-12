@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Themes\Starter;
+namespace Aldhi88\StarterKit\Themes\Starter;
 
 use PowerComponents\LivewirePowerGrid\Themes\Bootstrap5;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Altekno\StarterKit\Repositories\Starter;
+namespace Aldhi88\StarterKit\Repositories\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\AppModInterface;
-use Altekno\StarterKit\Models\Starter\App;
-use Altekno\StarterKit\Models\Starter\AppMod;
+use Aldhi88\StarterKit\Contracts\Starter\AppModInterface;
+use Aldhi88\StarterKit\Models\Starter\App;
+use Aldhi88\StarterKit\Models\Starter\AppMod;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
@@ -59,8 +59,8 @@ class AppModRepository implements AppModInterface
             ->first();
 
         return [
-            'apps' => (int) ($stats?->apps_count ?? 0),
-            'modules' => (int) ($stats?->modules_count ?? 0),
+            'apps' => (int) $stats->apps_count,
+            'modules' => (int) $stats->modules_count,
         ];
     }
 

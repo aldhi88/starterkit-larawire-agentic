@@ -1,9 +1,9 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\ClientInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;

@@ -1,8 +1,10 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Support\Starter\StarterPaths;
+use Aldhi88\StarterKit\Support\Starter\StarterPaths;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
+use Aldhi88\StarterKit\Support\Starter\StarterThemeRegistry;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -19,12 +21,12 @@ class StarterAssetPublisher
             'starter' => StarterPaths::path('public/assets/starter'),
         ];
 
-        foreach ((array) config('starter.themes', []) as $theme => $definition) {
-            $path = is_array($definition) ? ($definition['assets'] ?? null) : null;
+        $theme = StarterTheme::key();
+        $definition = StarterThemeRegistry::get($theme);
+        $path = $definition['assets'] ?? null;
 
-            if (is_string($path) && $path !== '' && ! str_contains($path, '..')) {
-                $sources[(string) $theme] = StarterPaths::path($path);
-            }
+        if (is_string($path) && $path !== '' && ! str_contains($path, '..')) {
+            $sources[$theme] = StarterThemeRegistry::path($theme, 'assets');
         }
 
         foreach ($sources as $ownedDirectory => $ownedSource) {

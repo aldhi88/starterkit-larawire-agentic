@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="starter-auth-login-url" content="{{ \Altekno\StarterKit\Support\Starter\StarterNavigation::authLoginUrl() }}">
+    <meta name="starter-auth-login-url" content="{{ \Aldhi88\StarterKit\Support\Starter\StarterNavigation::authLoginUrl() }}">
     <meta name="starter-lock-screen-enabled" content="{{ $lockScreenEnabled ? '1' : '0' }}">
     <meta name="starter-lock-screen-timeout" content="{{ $lockScreenTimeoutSeconds }}">
     <meta name="starter-lock-screen-url" content="{{ $lockScreenUrl }}">
@@ -25,9 +25,9 @@
 </head>
 
 @php
-    $starterTheme = \Altekno\StarterKit\Support\Starter\StarterTheme::key();
-    $starterLayout = \Altekno\StarterKit\Support\Starter\StarterTheme::layout();
-    $starterLayoutView = \Altekno\StarterKit\Support\Starter\StarterTheme::layoutView();
+    $starterTheme = \Aldhi88\StarterKit\Support\Starter\StarterTheme::key();
+    $starterLayout = \Aldhi88\StarterKit\Support\Starter\StarterTheme::layout();
+    $starterLayoutView = \Aldhi88\StarterKit\Support\Starter\StarterTheme::layoutView();
 @endphp
 
 <body data-starter-app-shell data-starter-theme="{{ $starterTheme }}" data-starter-layout="{{ $starterLayout }}">

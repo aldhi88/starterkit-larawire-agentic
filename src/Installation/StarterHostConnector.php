@@ -1,9 +1,9 @@
 <?php
 
-namespace Altekno\StarterKit\Installation;
+namespace Aldhi88\StarterKit\Installation;
 
-use Altekno\StarterKit\Providers\Starter\StarterServiceProvider;
-use Altekno\StarterKit\Support\Starter\StarterPaths;
+use Aldhi88\StarterKit\Providers\Starter\StarterServiceProvider;
+use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use RuntimeException;
 
 class StarterHostConnector
@@ -16,7 +16,7 @@ class StarterHostConnector
         private readonly StarterEnvironmentManager $environment,
     ) {}
 
-    public function connect(): void
+    public function connect(string $theme = 'tabler', string $layout = 'vertical'): void
     {
         $this->assertRequiredFiles();
         $this->removeDefaultMigrations();
@@ -29,11 +29,16 @@ class StarterHostConnector
         $this->connectAgents();
         $this->ensureGitIgnored([
             '/public/assets/starter/',
-            '/public/assets/tabler/',
+            '/public/assets/'.$theme.'/',
             '/public/vendor/',
         ]);
-        $this->environment->apply(base_path('.env'));
-        $this->environment->apply(base_path('.env.example'), example: true);
+        $this->environment->apply(base_path('.env'), theme: $theme, layout: $layout);
+        $this->environment->apply(
+            base_path('.env.example'),
+            example: true,
+            theme: $theme,
+            layout: $layout,
+        );
         StarterInstallState::write('installing');
     }
 
@@ -78,10 +83,10 @@ class StarterHostConnector
     private function configureFrameworkTableNames(): void
     {
         $sessionDomain = <<<'PHP'
-'domain' => env('SESSION_DOMAIN') ?: \Altekno\StarterKit\Support\Starter\StarterDomain::sessionDomain((string) env('APP_URL')),
+'domain' => env('SESSION_DOMAIN') ?: \Aldhi88\StarterKit\Support\Starter\StarterDomain::sessionDomain((string) env('APP_URL')),
 PHP;
         $secureCookie = <<<'PHP'
-'secure' => env('SESSION_SECURE_COOKIE') ?? \Altekno\StarterKit\Support\Starter\StarterDomain::secureCookie((string) env('APP_URL')),
+'secure' => env('SESSION_SECURE_COOKIE') ?? \Aldhi88\StarterKit\Support\Starter\StarterDomain::secureCookie((string) env('APP_URL')),
 PHP;
         $replacements = [
             'config/database.php' => [

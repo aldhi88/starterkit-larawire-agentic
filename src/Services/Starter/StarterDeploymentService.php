@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
 use Illuminate\Console\Command;
 use Throwable;
@@ -9,28 +9,19 @@ class StarterDeploymentService
 {
     public function __construct(
         private readonly StarterAssetPublisher $assets,
+        private readonly StarterSecurityValidator $security,
     ) {}
 
-    public function prepare(Command $command, bool $ensureApplicationKey = false): int
+    public function prepare(Command $command, bool $production = false): int
     {
-        $hadBootCache = app()->configurationIsCached() || app()->routesAreCached();
-
         $command->info('Membersihkan cache config dan route lama...');
         if ($command->call('config:clear') !== Command::SUCCESS
             || $command->call('route:clear') !== Command::SUCCESS) {
             return Command::FAILURE;
         }
 
-        if ($hadBootCache) {
-            $command->info('Cache bootstrap lama telah dibersihkan. Deployment dilanjutkan dalam proses yang sama.');
-        }
-
-        if ($ensureApplicationKey && ! $this->ensureApplicationKey($command)) {
-            return Command::FAILURE;
-        }
-
         $command->info('Memvalidasi konfigurasi keamanan...');
-        if ($command->call('starter:security-check') !== Command::SUCCESS) {
+        if (! $this->security->validate($command, $production)) {
             return Command::FAILURE;
         }
 
@@ -75,29 +66,6 @@ class StarterDeploymentService
         }
 
         return Command::SUCCESS;
-    }
-
-    private function ensureApplicationKey(Command $command): bool
-    {
-        if (filled(config('app.key'))) {
-            return true;
-        }
-
-        if ($command->call('key:generate', ['--force' => true]) !== Command::SUCCESS) {
-            return false;
-        }
-
-        $generatedKey = $this->environmentValue('APP_KEY');
-
-        if ($generatedKey === '') {
-            $command->error('APP_KEY tidak dapat dibaca setelah key:generate.');
-
-            return false;
-        }
-
-        config(['app.key' => $generatedKey]);
-
-        return true;
     }
 
     private function livewireAssetsAreCurrent(): bool

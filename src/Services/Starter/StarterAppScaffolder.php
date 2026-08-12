@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
@@ -210,9 +210,9 @@ PHP.PHP_EOL;
         return <<<PHP
 <?php
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
-use Altekno\StarterKit\Support\Starter\StarterNavigation;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
+use Aldhi88\StarterKit\Support\Starter\StarterNavigation;
 use App\Livewire\Apps\\{$className}\Dashboard\\{$className}DashboardIndex;
 use Illuminate\Support\Facades\Route;
 

@@ -2,14 +2,14 @@
 
 ## Creation
 
-- The installer asks for the first App code/subdomain and name after database-reset confirmation. Empty input is valid: root landing, auth, profile, settings, users/roles, and logs remain usable; never create a dummy App.
+- The installer requires the first App name and code/subdomain after database-reset confirmation. Empty input is invalid because installation must finish with a usable App, route registry, module, menu, and landing page.
 - Create an App with:
 
 ```bash
-php artisan starter:make-app <subdomain> --name="App Name" --description="Short description" --icon=apps
+php artisan starter:app
 ```
 
-- A subdomain contains lowercase letters, digits, and internal hyphens only; `api` is reserved. The generator creates App config/web/API routes, dashboard Livewire/view, route test, and runs `starter:sync` unless `--no-sync` is required before completing the files.
+- The wizard asks for the App name and a short subdomain, then displays the computed URL. A subdomain contains lowercase letters, digits, and internal hyphens only; `api` is reserved. The generator creates App config/web/API routes, dashboard Livewire/view, and route test, then runs `starter:sync`. If sync fails, every newly generated file is rolled back.
 - Complete config modules/menus and routes named `<subdomain>.<module>.<action>`, dry-run then force sync, assign modules to roles, configure DNS/vhost to `public`, confirm session cookie scope, and test generator, route, authorization, and browser behavior.
 
 ## App migration and navigation

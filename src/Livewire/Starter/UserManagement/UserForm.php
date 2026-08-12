@@ -1,10 +1,13 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\UserManagement;
+namespace Aldhi88\StarterKit\Livewire\Starter\UserManagement;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\UserManagementUserService;
+use Aldhi88\StarterKit\Models\Starter\AppMod;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Models\Starter\ClientRole;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\UserManagementUserService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -107,14 +110,18 @@ class UserForm extends Component
     {
         $roles = $this->users()->roles($this->login());
         $selectedRole = $roles->firstWhere('id', (int) $this->userForm['role_id']);
-        $selectedRoleModules = $selectedRole?->isSuperuser()
-            ? $this->users()->availableModules()
-            : ($selectedRole?->mods ?? collect());
+        $selectedRoleModules = match (true) {
+            ! $selectedRole instanceof ClientRole => collect(),
+            $selectedRole->isSuperuser() => $this->users()->availableModules(),
+            default => $selectedRole->mods,
+        };
 
-        return view('starter.user-management.user-form', [
+        return view(StarterTheme::viewName('starter.user-management.user-form'), [
             'roles' => $roles,
             'selectedRole' => $selectedRole,
-            'selectedRoleModules' => $selectedRoleModules->groupBy(fn ($module): string => $module->app?->name ?? 'Tanpa App'),
+            'selectedRoleModules' => $selectedRoleModules->groupBy(
+                fn (AppMod $module): string => $module->app->name,
+            ),
         ])->title($this->userLoginId === null ? 'Tambah User' : 'Edit User');
     }
 

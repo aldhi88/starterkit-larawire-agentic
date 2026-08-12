@@ -1,10 +1,10 @@
 <?php
 
-use Altekno\StarterKit\Http\Controllers\Starter\Auth\LogoutController;
-use Altekno\StarterKit\Livewire\Starter\Auth\Login;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
-use Altekno\StarterKit\Support\Starter\StarterNavigation;
+use Aldhi88\StarterKit\Http\Controllers\Starter\Auth\LogoutController;
+use Aldhi88\StarterKit\Livewire\Starter\Auth\Login;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
+use Aldhi88\StarterKit\Support\Starter\StarterNavigation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

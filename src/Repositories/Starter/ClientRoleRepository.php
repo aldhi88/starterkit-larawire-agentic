@@ -1,18 +1,19 @@
 <?php
 
-namespace Altekno\StarterKit\Repositories\Starter;
+namespace Aldhi88\StarterKit\Repositories\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\ClientRoleInterface;
-use Altekno\StarterKit\Models\Starter\AppMenu;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Models\Starter\ClientRole;
-use Altekno\StarterKit\Models\Starter\ClientRoleAppLanding;
+use Aldhi88\StarterKit\Contracts\Starter\ClientRoleInterface;
+use Aldhi88\StarterKit\Models\Starter\AppMenu;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Models\Starter\ClientRole;
+use Aldhi88\StarterKit\Models\Starter\ClientRoleAppLanding;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class ClientRoleRepository implements ClientRoleInterface
 {
+    /** @return Builder<ClientRole> */
     public function tableQueryForViewer(ClientLogin $viewer, string $archiveStatus = 'active'): Builder
     {
         $query = ClientRole::query()
@@ -25,7 +26,7 @@ class ClientRoleRepository implements ClientRoleInterface
             $query->withTrashed();
         }
 
-        if (! $viewer->role?->isSuperuser()) {
+        if (! $viewer->role->isSuperuser()) {
             $query->where('is_system', false)->where('code', '!=', 'superuser');
         }
 
@@ -36,7 +37,7 @@ class ClientRoleRepository implements ClientRoleInterface
     {
         return ClientRole::query()
             ->with('mods.app')
-            ->when(! $viewer->role?->isSuperuser(), fn (Builder $query): Builder => $query
+            ->when(! $viewer->role->isSuperuser(), fn (Builder $query): Builder => $query
                 ->where('is_system', false)
                 ->where('code', '!=', 'superuser'))
             ->orderBy('name')
@@ -56,7 +57,7 @@ class ClientRoleRepository implements ClientRoleInterface
             ])
             ->withCount('clientLogins');
 
-        if (! $viewer->role?->isSuperuser()) {
+        if (! $viewer->role->isSuperuser()) {
             $query
                 ->where('is_system', false)
                 ->where('code', '!=', 'superuser');
@@ -126,7 +127,7 @@ class ClientRoleRepository implements ClientRoleInterface
     public function countForViewer(ClientLogin $viewer): int
     {
         return ClientRole::query()
-            ->when(! $viewer->role?->isSuperuser(), fn (Builder $query): Builder => $query
+            ->when(! $viewer->role->isSuperuser(), fn (Builder $query): Builder => $query
                 ->where('is_system', false)
                 ->where('code', '!=', 'superuser'))
             ->count();

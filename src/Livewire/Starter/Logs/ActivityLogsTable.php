@@ -1,11 +1,12 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\Logs;
+namespace Aldhi88\StarterKit\Livewire\Starter\Logs;
 
-use Altekno\StarterKit\Contracts\Starter\ActivityLogInterface;
-use Altekno\StarterKit\Models\Starter\ActivityLog;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Contracts\Starter\ActivityLogInterface;
+use Aldhi88\StarterKit\Models\Starter\ActivityLog;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -54,7 +55,7 @@ class ActivityLogsTable extends PowerGridComponent
             ->add('action_id')->add('action_label')->add('action_key')->add('actor_name')->add('actor_role')
             ->add('app_key')->add('route_name')->add('ip_address')->add('changes_count')->add('tables_count')
             ->add('created_at')
-            ->add('created_at_label', fn (ActivityLog $log): string => $log->created_at?->format('d M Y H:i:s') ?? '-');
+            ->add('created_at_label', fn (ActivityLog $log): string => $log->created_at->format('d M Y H:i:s'));
     }
 
     public function columns(): array
@@ -103,7 +104,7 @@ class ActivityLogsTable extends PowerGridComponent
 
     public function actionsFromView(ActivityLog $row): View
     {
-        return view('starter.logs.powergrid.logs-row-actions', ['row' => $row]);
+        return view(StarterTheme::viewName('starter.logs.powergrid.logs-row-actions'), ['row' => $row]);
     }
 
     private function login(): ClientLogin

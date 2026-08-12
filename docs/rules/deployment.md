@@ -3,7 +3,7 @@
 ## Prerequisites and environment
 
 - Deploy the package version locked by the Laravel application's `composer.lock`. PHP must match locked dependencies, `intl` and the selected database driver must exist, document root must be `public`, root/App subdomains point to the same install, and `storage/` plus `bootstrap/cache/` are writable.
-- Production baseline: `APP_ENV=production`, `APP_DEBUG=false`, HTTPS `APP_URL`, matching scheme-free `APP_DOMAIN`, `STARTER_API_ENABLED=false` unless needed, active `STARTER_THEME`, `STARTER_LAYOUT=vertical|horizontal`, production DB credentials, file session/cache, sync queue, secure cookie on HTTPS, strong `STARTER_SUPERUSER_PASSWORD`, and `id`/`id`/`id_ID` locales.
+- Production baseline: `APP_ENV=production`, `APP_DEBUG=false`, HTTPS `APP_URL`, matching scheme-free `APP_DOMAIN`, `STARTER_API_ENABLED=false` unless needed, active `STARTER_THEME`, `STARTER_LAYOUT=vertical|horizontal`, production DB credentials, database session/cache, sync queue, secure cookie on HTTPS, and `id`/`id`/`id_ID` locales. Superuser credentials never belong in environment files.
 - The installer derives `APP_DOMAIN`, `SESSION_DOMAIN`, `SESSION_SECURE_COOKIE`, and a domain-specific `SESSION_COOKIE` from `APP_URL`; verify the generated production values and test root/auth/App cookie sharing on a real domain. If API is enabled, point `api.<APP_DOMAIN>` to the same `public`; docs still require Superuser in production.
 
 ## Deployment flow
@@ -16,7 +16,7 @@ cd <folder-project>
 cp .env.example .env
 # configure production values in .env
 composer install --no-dev --optimize-autoloader
-php artisan starter:setup --company="Company Name"
+php artisan starter:deploy
 ```
 
 Routine update:
@@ -25,13 +25,14 @@ Routine update:
 git status --short
 git pull --ff-only origin master
 composer install --no-dev --optimize-autoloader
-php artisan starter:sync
+php artisan starter:deploy
 ```
 
 - Stop if production `git status --short` is not empty. Do not reset/stash/merge/rebase automatically. Back up database/uploads before risky migrations.
-- Run `composer install` whenever host lock changes; host dependency/lock updates required by a starter release happen before Artisan. Never run `starter:setup --reset-password` during routine deploy.
-- `starter:setup`/`starter:sync` coordinate migration, security check, internal asset publication, App registry, best-effort storage link, Livewire assets, and production optimization. Setup creates an APP key only if missing and creates client/Superuser; sync never resets credentials. Do not add cache commands after sync.
-- `starter:security-check` is read-only and verifies app key/session encryption/cookies/domain/debug/HTTPS/default password/`intl`/runtime permissions. `optimize` is production only; development uses direct config and `optimize:clear` if stale cache exists.
+- Run `composer install` whenever host lock changes; host dependency/lock updates required by a starter release happen before Artisan.
+- `starter:deploy` owns production preflight, database creation/connection, migration, internal asset publication, App registry, best-effort storage link, Livewire assets, final validation, and production optimization. It creates company/Superuser only when the production database is empty and never resets existing credentials. Do not add cache commands afterward.
+- If configuration or route cache exists when deployment starts, `starter:deploy` clears it and restarts itself in a fresh PHP process before reading preflight values. Never validate production with configuration booted from stale cache, and never expose or invoke internal installer/deployer flags manually.
+- Preflight runs before mutation and verifies app key, environment, debug, HTTPS, session encryption/cookies, domain, active theme/layout, `intl`, and runtime directory permissions. Direct `starter:sync` and `starter:reset` are blocked in production.
 - Keep the solution shared-hosting compatible: use Laravel middleware/config/static assets and add no daemon, worker, Redis, CDN, reverse proxy, or web-server customization without approved need.
 
 Run `composer audit --locked --no-dev --format=summary --no-interaction` only when requested, in a security review, or after dependency changes; report affected package/advisory and do not update dependencies without approval.

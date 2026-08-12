@@ -1,14 +1,15 @@
 <?php
 
-namespace Altekno\StarterKit\Repositories\Starter;
+namespace Aldhi88\StarterKit\Repositories\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\ClientLoginInterface;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class ClientLoginRepository implements ClientLoginInterface
 {
+    /** @return Builder<ClientLogin> */
     public function tableQueryForViewer(ClientLogin $viewer, string $archiveStatus = 'active'): Builder
     {
         $query = ClientLogin::query()
@@ -26,7 +27,7 @@ class ClientLoginRepository implements ClientLoginInterface
             $query->withTrashed();
         }
 
-        if (! $viewer->role?->isSuperuser()) {
+        if (! $viewer->role->isSuperuser()) {
             $query->where('list_role.is_system', false)->where('list_role.code', '!=', 'superuser');
         }
 
@@ -61,7 +62,7 @@ class ClientLoginRepository implements ClientLoginInterface
                     ->withCount('mods'),
             ]);
 
-        if (! $viewer->role?->isSuperuser()) {
+        if (! $viewer->role->isSuperuser()) {
             $query
                 ->where('list_role.is_system', false)
                 ->where('list_role.code', '!=', 'superuser');
@@ -137,7 +138,7 @@ class ClientLoginRepository implements ClientLoginInterface
     public function countForViewer(ClientLogin $viewer): int
     {
         return ClientLogin::query()
-            ->when(! $viewer->role?->isSuperuser(), fn (Builder $query): Builder => $query->whereHas(
+            ->when(! $viewer->role->isSuperuser(), fn (Builder $query): Builder => $query->whereHas(
                 'role',
                 fn (Builder $roleQuery): Builder => $roleQuery
                     ->where('is_system', false)

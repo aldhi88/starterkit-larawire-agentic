@@ -1,16 +1,17 @@
 <?php
 
-namespace Altekno\StarterKit\Contracts\Starter;
+namespace Aldhi88\StarterKit\Contracts\Starter;
 
-use Altekno\StarterKit\Models\Starter\ActivityLog;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Support\Starter\ActivityLogFilters;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Aldhi88\StarterKit\Models\Starter\ActivityLog;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Support\Starter\ActivityLogFilters;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 interface ActivityLogInterface
 {
+    /** @return Builder<ActivityLog> */
     public function tableQueryForViewer(ClientLogin $viewer): Builder;
 
     /**

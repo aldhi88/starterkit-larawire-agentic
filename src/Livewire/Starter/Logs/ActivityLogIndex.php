@@ -1,18 +1,21 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\Logs;
+namespace Aldhi88\StarterKit\Livewire\Starter\Logs;
 
-use Altekno\StarterKit\Contracts\Starter\ActivityLogInterface;
-use Altekno\StarterKit\Models\Starter\ActivityLog;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Support\Starter\ActivityLogFilters;
+use Aldhi88\StarterKit\Contracts\Starter\ActivityLogInterface;
+use Aldhi88\StarterKit\Models\Starter\ActivityLog;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Support\Starter\ActivityLogFilters;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
+use LogicException;
 
 #[Layout('layouts::app')]
 #[Title('Log Aktivitas')]
@@ -123,17 +126,28 @@ class ActivityLogIndex extends Component
         $actionIds = $actionPage->getCollection()->pluck('action_id');
         $entries = $this->activityLogs->entriesGroupedByActionForViewer($login, $actionIds);
 
-        $actionPage->setCollection($actionPage->getCollection()->map(
+        $actionSummaries = $actionPage->getCollection()->map(
             fn (ActivityLog $summary): array => $this->actionSummary($summary, $entries->get($summary->action_id, collect()), $login),
-        ));
+        );
+        $actions = new LengthAwarePaginator(
+            $actionSummaries,
+            $actionPage->total(),
+            $actionPage->perPage(),
+            $actionPage->currentPage(),
+            [
+                'path' => request()->url(),
+                'query' => request()->query(),
+                'pageName' => 'logsPage',
+            ],
+        );
 
         $metrics = $this->activityLogs->metricsForViewer($login);
         $selectedLogs = $this->selectedActionId
             ? $this->activityLogs->entriesForActionForViewer($login, $this->selectedActionId)
             : collect();
 
-        return view('starter.logs.activity-log-index', [
-            'actions' => $actionPage,
+        return view(StarterTheme::viewName('starter.logs.activity-log-index'), [
+            'actions' => $actions,
             'selectedLogs' => $selectedLogs,
             'filterOptions' => $this->activityLogs->filterOptionsForViewer($login),
             'totalChanges' => $metrics['total_changes'],
@@ -149,23 +163,28 @@ class ActivityLogIndex extends Component
     private function actionSummary(ActivityLog $summary, Collection $entries, ClientLogin $viewer): array
     {
         $first = $entries->first();
-        $actorIsMasked = ! $viewer->role?->isSuperuser() && ($first?->actor_is_superuser ?? false);
+
+        if (! $first instanceof ActivityLog) {
+            throw new LogicException("Activity log action [{$summary->action_id}] has no entries.");
+        }
+
+        $actorIsMasked = ! $viewer->role->isSuperuser() && $first->actor_is_superuser;
 
         return [
             'action_id' => $summary->action_id,
-            'created_at' => $first?->created_at,
-            'action_key' => $first?->action_key,
-            'action_label' => $first?->action_label ?: 'Aktivitas data',
-            'actor_name' => $actorIsMasked ? 'Sistem' : ($first?->actor_name ?: 'User tidak tersedia'),
-            'actor_username' => $actorIsMasked ? null : $first?->actor_username,
-            'actor_role' => $actorIsMasked ? 'Sistem' : ($first?->actor_role ?: '-'),
+            'created_at' => $first->created_at,
+            'action_key' => $first->action_key,
+            'action_label' => $first->action_label ?: 'Aktivitas data',
+            'actor_name' => $actorIsMasked ? 'Sistem' : ($first->actor_name ?: 'User tidak tersedia'),
+            'actor_username' => $actorIsMasked ? null : $first->actor_username,
+            'actor_role' => $actorIsMasked ? 'Sistem' : ($first->actor_role ?: '-'),
             'changes_count' => (int) $summary->changes_count,
             'tables_count' => (int) $summary->tables_count,
             'events' => $entries->pluck('event')->filter()->unique()->values()->all(),
-            'app_key' => $first?->app_key,
-            'route_name' => $first?->route_name,
-            'ip_address' => $first?->ip_address,
-            'source' => $first?->source,
+            'app_key' => $first->app_key,
+            'route_name' => $first->route_name,
+            'ip_address' => $first->ip_address,
+            'source' => $first->source,
         ];
     }
 

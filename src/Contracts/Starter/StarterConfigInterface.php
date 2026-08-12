@@ -1,8 +1,8 @@
 <?php
 
-namespace Altekno\StarterKit\Contracts\Starter;
+namespace Aldhi88\StarterKit\Contracts\Starter;
 
-use Altekno\StarterKit\Models\Starter\StarterConfig;
+use Aldhi88\StarterKit\Models\Starter\StarterConfig;
 
 interface StarterConfigInterface
 {

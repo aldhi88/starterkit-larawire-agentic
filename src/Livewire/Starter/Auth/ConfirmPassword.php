@@ -1,12 +1,13 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\Auth;
+namespace Aldhi88\StarterKit\Livewire\Starter\Auth;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuditLogService;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
-use Altekno\StarterKit\Services\Starter\StarterConfigService;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuditLogService;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
+use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
@@ -102,7 +103,7 @@ class ConfirmPassword extends Component
 
     public function render()
     {
-        return view('starter.auth.confirm-password', [
+        return view(StarterTheme::viewName('starter.auth.confirm-password'), [
             'cancelUrl' => $this->redirects->firstAuthorizedUrl($this->login()),
         ]);
     }

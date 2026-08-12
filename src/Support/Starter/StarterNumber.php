@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Support\Starter;
+namespace Aldhi88\StarterKit\Support\Starter;
 
 use Illuminate\Support\Number;
 

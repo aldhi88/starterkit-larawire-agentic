@@ -1,59 +1,59 @@
 <?php
 
-namespace Altekno\StarterKit\Providers\Starter;
+namespace Aldhi88\StarterKit\Providers\Starter;
 
-use Altekno\StarterKit\Console\Commands\Starter\AdminCommand;
-use Altekno\StarterKit\Console\Commands\Starter\MakeAppCommand;
-use Altekno\StarterKit\Console\Commands\Starter\SecurityCheckCommand;
-use Altekno\StarterKit\Console\Commands\Starter\SetupCommand;
-use Altekno\StarterKit\Console\Commands\Starter\SyncCommand;
-use Altekno\StarterKit\Contracts\Starter\ActivityLogInterface;
-use Altekno\StarterKit\Contracts\Starter\AppInterface;
-use Altekno\StarterKit\Contracts\Starter\AppModInterface;
-use Altekno\StarterKit\Contracts\Starter\AppRouteInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientLoginInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientRoleInterface;
-use Altekno\StarterKit\Contracts\Starter\StarterConfigInterface;
-use Altekno\StarterKit\Http\Middleware\Starter\StarterAuthorize;
-use Altekno\StarterKit\Http\Middleware\Starter\StarterEnsureActiveUser;
-use Altekno\StarterKit\Http\Middleware\Starter\StarterForcePasswordChange;
-use Altekno\StarterKit\Http\Middleware\Starter\StarterLockScreen;
-use Altekno\StarterKit\Installation\StarterInstallState;
-use Altekno\StarterKit\Livewire\Starter\Auth\ConfirmPassword;
-use Altekno\StarterKit\Livewire\Starter\Auth\LockScreen as LockScreenComponent;
-use Altekno\StarterKit\Livewire\Starter\Auth\Login;
-use Altekno\StarterKit\Livewire\Starter\Logs\ActivityLogIndex;
-use Altekno\StarterKit\Livewire\Starter\Logs\ActivityLogsTable;
-use Altekno\StarterKit\Livewire\Starter\Profile\EditMyProfile;
-use Altekno\StarterKit\Livewire\Starter\Settings\ClientProfile;
-use Altekno\StarterKit\Livewire\Starter\Settings\SecuritySettings;
-use Altekno\StarterKit\Livewire\Starter\Settings\SettingsIndex;
-use Altekno\StarterKit\Livewire\Starter\UserManagement\RoleForm;
-use Altekno\StarterKit\Livewire\Starter\UserManagement\Roles;
-use Altekno\StarterKit\Livewire\Starter\UserManagement\RolesTable;
-use Altekno\StarterKit\Livewire\Starter\UserManagement\UserForm;
-use Altekno\StarterKit\Livewire\Starter\UserManagement\Users;
-use Altekno\StarterKit\Livewire\Starter\UserManagement\UsersTable;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Repositories\Starter\ActivityLogRepository;
-use Altekno\StarterKit\Repositories\Starter\AppModRepository;
-use Altekno\StarterKit\Repositories\Starter\AppRepository;
-use Altekno\StarterKit\Repositories\Starter\AppRouteRepository;
-use Altekno\StarterKit\Repositories\Starter\ClientLoginRepository;
-use Altekno\StarterKit\Repositories\Starter\ClientRepository;
-use Altekno\StarterKit\Repositories\Starter\ClientRoleRepository;
-use Altekno\StarterKit\Repositories\Starter\StarterConfigRepository;
-use Altekno\StarterKit\Services\Starter\AuditLogService;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\SecuritySettingsService;
-use Altekno\StarterKit\Services\Starter\SettingsOverviewService;
-use Altekno\StarterKit\Services\Starter\StarterConfigService;
-use Altekno\StarterKit\Services\Starter\StarterContextService;
-use Altekno\StarterKit\Services\Starter\UserManagementRoleService;
-use Altekno\StarterKit\Services\Starter\UserManagementUserService;
-use Altekno\StarterKit\Support\Starter\StarterPaths;
-use Altekno\StarterKit\Support\Starter\StarterTheme;
+use Aldhi88\StarterKit\Console\Commands\Starter\AppCommand;
+use Aldhi88\StarterKit\Console\Commands\Starter\DeployCommand;
+use Aldhi88\StarterKit\Console\Commands\Starter\ResetCommand;
+use Aldhi88\StarterKit\Console\Commands\Starter\SyncCommand;
+use Aldhi88\StarterKit\Contracts\Starter\ActivityLogInterface;
+use Aldhi88\StarterKit\Contracts\Starter\AppInterface;
+use Aldhi88\StarterKit\Contracts\Starter\AppModInterface;
+use Aldhi88\StarterKit\Contracts\Starter\AppRouteInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientRoleInterface;
+use Aldhi88\StarterKit\Contracts\Starter\StarterConfigInterface;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterAuthorize;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterEnsureActiveUser;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterForcePasswordChange;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterLockScreen;
+use Aldhi88\StarterKit\Installation\StarterInstallState;
+use Aldhi88\StarterKit\Livewire\Starter\Auth\ConfirmPassword;
+use Aldhi88\StarterKit\Livewire\Starter\Auth\LockScreen as LockScreenComponent;
+use Aldhi88\StarterKit\Livewire\Starter\Auth\Login;
+use Aldhi88\StarterKit\Livewire\Starter\Logs\ActivityLogIndex;
+use Aldhi88\StarterKit\Livewire\Starter\Logs\ActivityLogsTable;
+use Aldhi88\StarterKit\Livewire\Starter\Profile\EditMyProfile;
+use Aldhi88\StarterKit\Livewire\Starter\Settings\ClientProfile;
+use Aldhi88\StarterKit\Livewire\Starter\Settings\SecuritySettings;
+use Aldhi88\StarterKit\Livewire\Starter\Settings\SettingsIndex;
+use Aldhi88\StarterKit\Livewire\Starter\UserManagement\RoleForm;
+use Aldhi88\StarterKit\Livewire\Starter\UserManagement\Roles;
+use Aldhi88\StarterKit\Livewire\Starter\UserManagement\RolesTable;
+use Aldhi88\StarterKit\Livewire\Starter\UserManagement\UserForm;
+use Aldhi88\StarterKit\Livewire\Starter\UserManagement\Users;
+use Aldhi88\StarterKit\Livewire\Starter\UserManagement\UsersTable;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Repositories\Starter\ActivityLogRepository;
+use Aldhi88\StarterKit\Repositories\Starter\AppModRepository;
+use Aldhi88\StarterKit\Repositories\Starter\AppRepository;
+use Aldhi88\StarterKit\Repositories\Starter\AppRouteRepository;
+use Aldhi88\StarterKit\Repositories\Starter\ClientLoginRepository;
+use Aldhi88\StarterKit\Repositories\Starter\ClientRepository;
+use Aldhi88\StarterKit\Repositories\Starter\ClientRoleRepository;
+use Aldhi88\StarterKit\Repositories\Starter\StarterConfigRepository;
+use Aldhi88\StarterKit\Services\Starter\AuditLogService;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\SecuritySettingsService;
+use Aldhi88\StarterKit\Services\Starter\SettingsOverviewService;
+use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
+use Aldhi88\StarterKit\Services\Starter\StarterContextService;
+use Aldhi88\StarterKit\Services\Starter\UserManagementRoleService;
+use Aldhi88\StarterKit\Services\Starter\UserManagementUserService;
+use Aldhi88\StarterKit\Support\Starter\StarterInternalRunContext;
+use Aldhi88\StarterKit\Support\Starter\StarterPaths;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Dedoc\Scramble\Http\Middleware\RestrictedDocsAccess;
 use Dedoc\Scramble\Scramble;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -78,6 +78,7 @@ class StarterServiceProvider extends ServiceProvider
         }
 
         $this->mergeConfigFrom(StarterPaths::path('config/starter.php'), 'starter');
+        $this->app->singleton(StarterInternalRunContext::class);
         $this->configurePowerGrid();
         $this->configureEmbeddedApplication();
         $this->registerViewPaths();
@@ -102,10 +103,9 @@ class StarterServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                AdminCommand::class,
-                MakeAppCommand::class,
-                SecurityCheckCommand::class,
-                SetupCommand::class,
+                AppCommand::class,
+                DeployCommand::class,
+                ResetCommand::class,
                 SyncCommand::class,
             ]);
         }

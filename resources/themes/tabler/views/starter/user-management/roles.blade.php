@@ -25,7 +25,7 @@
         <div class="card-header">
             <div>
                 <h3 class="card-title">Daftar Role</h3>
-                <p class="card-subtitle">{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($roleCount) }} role terdaftar</p>
+                <p class="card-subtitle">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($roleCount) }} role terdaftar</p>
             </div>
             <div class="card-actions">
                 <a
@@ -53,7 +53,7 @@
                     >
                 </div>
                 <div class="col-12 col-lg-auto text-secondary small">
-                    Menampilkan {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($roles->firstItem() ?? 0) }}–{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($roles->lastItem() ?? 0) }} dari {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($roles->total()) }} role
+                    Menampilkan {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($roles->firstItem() ?? 0) }}–{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($roles->lastItem() ?? 0) }} dari {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($roles->total()) }} role
                 </div>
             </div>
         </div>
@@ -138,9 +138,9 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="starter-role-access-title d-block fw-semibold text-truncate">
-                                            {{ $role->isSuperuser() ? 'Akses penuh' : \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($roleAppCount).' app' }}
+                                            {{ $role->isSuperuser() ? 'Akses penuh' : \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($roleAppCount).' app' }}
                                         </span>
-                                        <span class="d-block small text-secondary fw-normal" data-role-module-count>{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($roleModuleCount) }} module</span>
+                                        <span class="d-block small text-secondary fw-normal" data-role-module-count>{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($roleModuleCount) }} module</span>
                                     </span>
                                     @include('starter.templates.layouts.icon', ['name' => 'chevron-right', 'class' => 'icon-sm text-secondary flex-shrink-0'])
                                 </button>
@@ -205,7 +205,7 @@
                     <div class="modal-header">
                         <div>
                             <h3 class="modal-title" id="role-users-modal-title">User dalam Role</h3>
-                            <div class="text-secondary small">{{ $roleUsersRoleName }} · {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal(count($roleUsers)) }} user</div>
+                            <div class="text-secondary small">{{ $roleUsersRoleName }} · {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal(count($roleUsers)) }} user</div>
                         </div>
                         <button type="button" class="btn-close" aria-label="Tutup" wire:click="closeRoleUsersModal"></button>
                     </div>
@@ -309,7 +309,7 @@
                                     <div class="d-flex align-items-center gap-2 bg-body-tertiary px-3 py-2 border-bottom">
                                         @include('starter.templates.layouts.icon', ['name' => 'apps', 'class' => 'icon-sm text-primary flex-shrink-0'])
                                         <div class="fw-semibold">{{ $app['name'] }}</div>
-                                        <span class="badge bg-secondary-lt ms-auto">{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal(count($app['modules'])) }} module</span>
+                                        <span class="badge bg-secondary-lt ms-auto">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal(count($app['modules'])) }} module</span>
                                     </div>
                                     <div class="list-group list-group-flush">
                                         @foreach ($app['modules'] as $module)
@@ -338,7 +338,7 @@
                     </div>
                     <div class="modal-footer">
                         <div class="text-secondary small me-auto">
-                            {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($roleAccessAppCount) }} app · {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($roleAccessModuleCount) }} module
+                            {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($roleAccessAppCount) }} app · {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($roleAccessModuleCount) }} module
                         </div>
                         <button type="button" class="btn" wire:click="closeRoleAccessModal">Tutup</button>
                     </div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Support\Starter;
+namespace Aldhi88\StarterKit\Support\Starter;
 
 use Illuminate\Support\Facades\View;
 use RuntimeException;
@@ -15,7 +15,7 @@ class StarterTheme
         $key = strtolower(trim((string) config('starter.theme', 'tabler')));
 
         if (preg_match('/^[a-z0-9][a-z0-9_-]*$/', $key) !== 1
-            || ! array_key_exists($key, (array) config('starter.themes', []))) {
+            || ! array_key_exists($key, StarterThemeRegistry::all())) {
             throw new RuntimeException("Unsupported starter theme [{$key}].");
         }
 
@@ -48,7 +48,7 @@ class StarterTheme
             return false;
         }
 
-        $view = config('starter.themes.'.self::key().'.layouts.'.$layout);
+        $view = StarterThemeRegistry::get(self::key())['layouts'][$layout] ?? null;
 
         return self::isSafeViewName($view);
     }
@@ -59,9 +59,9 @@ class StarterTheme
             return false;
         }
 
-        return View::exists((string) config(
-            'starter.themes.'.self::key().'.layouts.'.strtolower(trim($layout)),
-        ));
+        $definition = StarterThemeRegistry::get(self::key());
+
+        return View::exists((string) ($definition['layouts'][strtolower(trim($layout))] ?? ''));
     }
 
     public static function hasCompleteLayoutRegistry(): bool
@@ -78,12 +78,23 @@ class StarterTheme
     public static function layoutView(): string
     {
         $layout = self::layout();
-        $view = (string) config('starter.themes.'.self::key().'.layouts.'.$layout);
+        $definition = StarterThemeRegistry::get(self::key());
+        $view = (string) ($definition['layouts'][$layout] ?? '');
 
         if (! View::exists($view)) {
             throw new RuntimeException(
                 'Starter theme ['.self::key()."] layout [{$layout}] view [{$view}] was not found.",
             );
+        }
+
+        return $view;
+    }
+
+    /** @return view-string */
+    public static function viewName(string $view): string
+    {
+        if (! self::isSafeViewName($view) || ! View::exists($view)) {
+            throw new RuntimeException("Starter theme view [{$view}] was not found.");
         }
 
         return $view;
@@ -102,7 +113,7 @@ class StarterTheme
     /** @return class-string */
     public static function powerGridTheme(): string
     {
-        $theme = config('starter.themes.'.self::key().'.powergrid');
+        $theme = StarterThemeRegistry::get(self::key())['powergrid'] ?? null;
 
         if (! is_string($theme) || $theme === '') {
             throw new RuntimeException('The active starter theme does not define a PowerGrid theme.');
@@ -113,13 +124,7 @@ class StarterTheme
 
     private static function configuredPath(string $key, string $path): string
     {
-        $relative = config('starter.themes.'.self::key().'.'.$key);
-
-        if (! is_string($relative) || $relative === '' || str_contains($relative, '..')) {
-            throw new RuntimeException("The active starter theme does not define a safe [{$key}] path.");
-        }
-
-        return StarterPaths::path($relative.($path === '' ? '' : '/'.ltrim($path, '/\\')));
+        return StarterThemeRegistry::path(self::key(), $key, $path);
     }
 
     private static function isSafeViewName(mixed $view): bool

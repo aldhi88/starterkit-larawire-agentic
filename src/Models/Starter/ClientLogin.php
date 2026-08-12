@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Models\Starter;
+namespace Aldhi88\StarterKit\Models\Starter;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -8,7 +8,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property int $client_role_id
+ * @property string $name
+ * @property string $username
+ * @property string $email
+ * @property Carbon|null $email_verified_at
+ * @property string|null $password
+ * @property string|null $profile_photo
+ * @property string $status
+ * @property bool $must_change_password
+ * @property Carbon|null $password_changed_at
+ * @property int $failed_login_count
+ * @property Carbon|null $locked_until
+ * @property Carbon|null $last_login_at
+ * @property string|null $last_login_ip
+ * @property string|null $remember_token
+ * @property int $auth_version
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read ClientRole $role
+ */
 #[Fillable([
     'client_role_id',
     'name',
@@ -60,6 +84,7 @@ class ClientLogin extends Authenticatable
     /**
      * Get the role assigned to this login account.
      */
+    /** @return BelongsTo<ClientRole, $this> */
     public function role(): BelongsTo
     {
         return $this->belongsTo(ClientRole::class, 'client_role_id');

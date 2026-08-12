@@ -1,9 +1,9 @@
 <?php
 
-namespace Altekno\StarterKit\Http\Middleware\Starter;
+namespace Aldhi88\StarterKit\Http\Middleware\Starter;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuditLogService;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuditLogService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -1,10 +1,10 @@
 <?php
 
-namespace Altekno\StarterKit\Http\Controllers\Starter\Auth;
+namespace Aldhi88\StarterKit\Http\Controllers\Starter\Auth;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuditLogService;
-use Altekno\StarterKit\Support\Starter\StarterNavigation;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuditLogService;
+use Aldhi88\StarterKit\Support\Starter\StarterNavigation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

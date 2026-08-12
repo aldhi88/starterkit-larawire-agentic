@@ -1,17 +1,17 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\AppInterface;
-use Altekno\StarterKit\Contracts\Starter\AppModInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientLoginInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientRoleInterface;
-use Altekno\StarterKit\Models\Starter\App;
-use Altekno\StarterKit\Models\Starter\AppMenu;
-use Altekno\StarterKit\Models\Starter\AppMod;
-use Altekno\StarterKit\Models\Starter\Client;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Contracts\Starter\AppInterface;
+use Aldhi88\StarterKit\Contracts\Starter\AppModInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientRoleInterface;
+use Aldhi88\StarterKit\Models\Starter\App;
+use Aldhi88\StarterKit\Models\Starter\AppMenu;
+use Aldhi88\StarterKit\Models\Starter\AppMod;
+use Aldhi88\StarterKit\Models\Starter\Client;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
@@ -58,7 +58,7 @@ class StarterContextService
 
         $accessibleApps = $this->accessibleApps($login, $modIds);
         $currentApp = $this->resolveCurrentApp($accessibleApps);
-        $currentAppKey = $currentApp?->subdomain ?? 'landing';
+        $currentAppKey = $currentApp instanceof App ? $currentApp->subdomain : 'landing';
         $sidebarMods = $this->sidebarMods($login, $currentApp, $modIds);
         $sidebarPayload = $this->sidebarPayload($sidebarMods);
 
@@ -169,7 +169,7 @@ class StarterContextService
             return new EloquentCollection;
         }
 
-        if ($login->role?->hasFullAccess()) {
+        if ($login->role->hasFullAccess()) {
             return $this->apps->allOrderedByName();
         }
 
@@ -198,7 +198,7 @@ class StarterContextService
             },
         ];
 
-        if ($login->role?->hasFullAccess()) {
+        if ($login->role->hasFullAccess()) {
             return $this->appMods->forApp($currentApp, $with);
         }
 
@@ -218,10 +218,6 @@ class StarterContextService
             return null;
         }
 
-        if (! $login->role) {
-            return collect();
-        }
-
         if ($login->role->hasFullAccess()) {
             return null;
         }
@@ -231,7 +227,7 @@ class StarterContextService
 
     /**
      * @param  EloquentCollection<int, App>  $apps
-     * @return Collection<int, array<string, mixed>>
+     * @return Collection<int, array{name: string, subdomain: string, icon: string, url: string, active: bool}>
      */
     private function appOptions(EloquentCollection $apps, ?App $currentApp): Collection
     {
@@ -248,7 +244,7 @@ class StarterContextService
 
     /**
      * @param  EloquentCollection<int, AppMod>  $mods
-     * @return Collection<int, array<string, mixed>>
+     * @return Collection<int, array{name: string, menus: Collection<int, array<string, mixed>>, menuLabels: string}>
      */
     private function sidebarPayload(EloquentCollection $mods): Collection
     {
@@ -258,7 +254,9 @@ class StarterContextService
                 'menus' => $mod->menus
                     ->map(fn (AppMenu $menu): array => $this->menuPayload($menu))
                     ->values(),
-                'menuLabels' => $mod->menus->pluck('label')->join(', '),
+                'menuLabels' => implode(', ', $mod->menus
+                    ->map(fn (AppMenu $menu): string => $menu->label)
+                    ->all()),
             ])
             ->values();
     }

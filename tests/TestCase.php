@@ -1,8 +1,8 @@
 <?php
 
-namespace Altekno\StarterKit\Tests;
+namespace Aldhi88\StarterKit\Tests;
 
-use Altekno\StarterKit\Providers\Starter\StarterInstallerServiceProvider;
+use Aldhi88\StarterKit\Providers\Starter\StarterInstallerServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra

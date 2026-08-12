@@ -1,13 +1,13 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\Settings;
+namespace Aldhi88\StarterKit\Livewire\Starter\Settings;
 
-use Altekno\StarterKit\Contracts\Starter\ClientInterface;
-use Altekno\StarterKit\Models\Starter\Client;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\ProfileService;
-use Altekno\StarterKit\Services\Starter\StarterConfigService;
+use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
+use Aldhi88\StarterKit\Models\Starter\Client;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\ProfileService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -22,8 +22,6 @@ class ClientProfile extends Component
     private ClientInterface $clients;
 
     private ProfileService $profiles;
-
-    private StarterConfigService $configs;
 
     private AuthenticatedLoginService $authenticatedLogins;
 
@@ -44,12 +42,10 @@ class ClientProfile extends Component
     public function boot(
         ClientInterface $clients,
         ProfileService $profiles,
-        StarterConfigService $configs,
         AuthenticatedLoginService $authenticatedLogins,
     ): void {
         $this->clients = $clients;
         $this->profiles = $profiles;
-        $this->configs = $configs;
         $this->authenticatedLogins = $authenticatedLogins;
     }
 
@@ -137,7 +133,7 @@ class ClientProfile extends Component
     {
         $client = $this->client();
 
-        return view('starter.settings.client-profile', [
+        return view(StarterTheme::viewName('starter.settings.client-profile'), [
             'client' => $client,
             'clientLogoPreviewUrl' => $this->clientLogoPreviewUrl($client),
             'clientInitials' => $this->clientInitials(),

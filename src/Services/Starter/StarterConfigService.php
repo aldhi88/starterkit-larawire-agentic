@@ -1,9 +1,9 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\StarterConfigInterface;
-use Altekno\StarterKit\Models\Starter\StarterConfig;
+use Aldhi88\StarterKit\Contracts\Starter\StarterConfigInterface;
+use Aldhi88\StarterKit\Models\Starter\StarterConfig;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 

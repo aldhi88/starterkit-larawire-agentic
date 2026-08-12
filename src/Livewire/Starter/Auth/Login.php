@@ -1,9 +1,10 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\Auth;
+namespace Aldhi88\StarterKit\Livewire\Starter\Auth;
 
-use Altekno\StarterKit\Services\Starter\AuthLoginService;
-use Altekno\StarterKit\Services\Starter\StarterConfigService;
+use Aldhi88\StarterKit\Services\Starter\AuthLoginService;
+use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -66,7 +67,7 @@ class Login extends Component
 
     public function render()
     {
-        return view('starter.auth.login', [
+        return view(StarterTheme::viewName('starter.auth.login'), [
             'rememberMeEnabled' => $this->configs->boolean('security.remember_me_enabled'),
         ]);
     }

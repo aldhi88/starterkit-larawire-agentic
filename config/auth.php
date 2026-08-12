@@ -1,6 +1,6 @@
 <?php
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 
 return [
 

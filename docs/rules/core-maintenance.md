@@ -1,7 +1,7 @@
 # Canonical Starter Core Maintenance
 
 Rule ini berlaku ketika repository yang sedang dikerjakan adalah repository
-canonical Composer package `aldhi88/starterkit-larawire`.
+canonical Composer package `aldhi88/starterkit-larawire-agentic`.
 
 ## Eksekusi langsung
 
@@ -44,3 +44,7 @@ canonical Composer package `aldhi88/starterkit-larawire`.
 - Jika verifikasi host diperintahkan, pasang package melalui Composer path/VCS
   repository, jalankan `starter:sync`, dan verifikasi relevan. Jangan mengedit
   source di dalam `vendor`.
+- Commit/push yang diminta untuk maintenance tidak otomatis mengizinkan tag,
+  GitHub Release, Packagist publication, deployment, atau perubahan repository
+  Laravel host. Untuk publikasi versi baca dan penuhi `release.md`, lalu gunakan
+  authority eksplisit yang diberikan developer pada task tersebut.

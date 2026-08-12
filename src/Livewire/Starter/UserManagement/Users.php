@@ -1,10 +1,11 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\UserManagement;
+namespace Aldhi88\StarterKit\Livewire\Starter\UserManagement;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\UserManagementUserService;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\UserManagementUserService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -79,7 +80,7 @@ class Users extends Component
 
     public function render()
     {
-        return view('starter.user-management.users', [
+        return view(StarterTheme::viewName('starter.user-management.users'), [
             'appCount' => $this->users()->appCount(),
         ])->title('Manajemen User');
     }

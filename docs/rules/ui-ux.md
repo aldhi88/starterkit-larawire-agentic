@@ -2,14 +2,14 @@
 
 ## UI source and selection
 
-Use the installed active theme. `docs/template/<theme>/` is the complete upstream vendor bundle: paste its `assets/` and HTML there unchanged. Runtime starter Blade remains in `resources/themes/<theme>/views/starter/`; runtime assets remain in `public/themes/<theme>/assets/`. The bundle's `template.md` is a non-binding search atlas, not a design checklist.
+Use the installed active theme. `docs/template/<theme>/` is its curated, license-safe component reference and `template.md` search atlas—not a design checklist. Runtime starter Blade remains in `resources/themes/<theme>/views/starter/`; only assets actually loaded by those views remain in `public/themes/<theme>/assets/`. A separate optional theme package owns the same paths relative to its own registered package root.
 
 1. Identify the page goal, data type/volume, statuses, primary action, and required interaction.
 2. Search the atlas with context plus component terms using `rg`; choose 3–5 candidates and open only 1–3 closest HTML sources.
 3. Compare hierarchy and information density, then compose the closest active-theme pattern. Search targeted preview/shared/template documentation only when the atlas is insufficient.
 4. Never read the whole atlas/template tree or design from personal taste.
 
-When introducing a new theme, first verify that its license permits Composer redistribution. If permitted, place its vendor distribution intact in `docs/template/<theme>/`; then generate the starter Blade contract in `resources/themes/<theme>/views/starter/`, copy required runtime assets to `public/themes/<theme>/assets/`, register paths, PowerGrid adapter, and the layout-to-view map in `config/starter.php`, and verify internal asset sync, every registered layout, modal, auth/error pages, and PowerGrid. Keep non-redistributable premium source outside the public repository and package dist.
+When introducing a new theme, first verify that its license permits Composer redistribution. Build it as a separate optional Composer package, keep only a curated reference/index and the assets actually used at runtime, register it from the package service provider, and verify internal asset sync, both layouts, modal, auth/error pages, and PowerGrid. Keep non-redistributable premium source outside every public repository and Composer dist.
 
 The evidence gate, runtime component map, forbidden compatibility skin, and
 acceptance matrix for a new or audited theme are mandatory in

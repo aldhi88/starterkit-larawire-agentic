@@ -1,9 +1,9 @@
 <?php
 
-namespace Altekno\StarterKit\Repositories\Starter;
+namespace Aldhi88\StarterKit\Repositories\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\AppInterface;
-use Altekno\StarterKit\Models\Starter\App;
+use Aldhi88\StarterKit\Contracts\Starter\AppInterface;
+use Aldhi88\StarterKit\Models\Starter\App;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class AppRepository implements AppInterface

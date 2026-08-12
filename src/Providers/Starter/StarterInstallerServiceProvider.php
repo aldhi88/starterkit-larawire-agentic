@@ -1,22 +1,20 @@
 <?php
 
-namespace Altekno\StarterKit\Providers\Starter;
+namespace Aldhi88\StarterKit\Providers\Starter;
 
-use Altekno\StarterKit\Console\Commands\Starter\FinalizeInstallationCommand;
-use Altekno\StarterKit\Console\Commands\Starter\InstallCommand;
-use Altekno\StarterKit\Installation\StarterInstallState;
+use Aldhi88\StarterKit\Console\Commands\Starter\InstallCommand;
+use Aldhi88\StarterKit\Installation\StarterInstallState;
+use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use Illuminate\Support\ServiceProvider;
 
 class StarterInstallerServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        if ($this->app->runningInConsole()) {
-            $status = StarterInstallState::status();
+        $this->mergeConfigFrom(StarterPaths::path('config/starter.php'), 'starter');
 
-            if ($status === 'installing') {
-                $this->commands([FinalizeInstallationCommand::class]);
-            } elseif ($status === null) {
+        if ($this->app->runningInConsole()) {
+            if (StarterInstallState::status() === null) {
                 $this->commands([InstallCommand::class]);
             }
         }

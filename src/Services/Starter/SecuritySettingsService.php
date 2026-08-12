@@ -1,9 +1,9 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\ClientLoginInterface;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Illuminate\Support\Facades\DB;
 
 class SecuritySettingsService
@@ -25,7 +25,7 @@ class SecuritySettingsService
      */
     public function update(ClientLogin $actor, array $values): void
     {
-        abort_unless($actor->role?->canManageSettings() ?? false, 403);
+        abort_unless($actor->role->canManageSettings(), 403);
 
         $this->auditLogs->withinAction(
             'config.security.update',

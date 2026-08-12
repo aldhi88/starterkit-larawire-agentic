@@ -1,11 +1,11 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\ClientInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientLoginInterface;
-use Altekno\StarterKit\Models\Starter\Client;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Models\Starter\Client;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -87,7 +87,7 @@ class ProfileService
     private function ensureAdmin(ClientLogin $login): void
     {
         $login = $this->clientLogins->loadRole($login);
-        abort_unless($login->role?->canManageSettings(), 403);
+        abort_unless($login->role->canManageSettings(), 403);
     }
 
     private function nullableTrim(?string $value): ?string

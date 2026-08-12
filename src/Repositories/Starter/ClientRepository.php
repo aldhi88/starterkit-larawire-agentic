@@ -1,9 +1,9 @@
 <?php
 
-namespace Altekno\StarterKit\Repositories\Starter;
+namespace Aldhi88\StarterKit\Repositories\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\ClientInterface;
-use Altekno\StarterKit\Models\Starter\Client;
+use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
+use Aldhi88\StarterKit\Models\Starter\Client;
 
 class ClientRepository implements ClientInterface
 {

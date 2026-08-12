@@ -1,10 +1,10 @@
 <?php
 
-namespace Altekno\StarterKit\Repositories\Starter;
+namespace Aldhi88\StarterKit\Repositories\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\AppRouteInterface;
-use Altekno\StarterKit\Models\Starter\AppRoute;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Contracts\Starter\AppRouteInterface;
+use Aldhi88\StarterKit\Models\Starter\AppRoute;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Illuminate\Support\Collection;
 
 class AppRouteRepository implements AppRouteInterface
@@ -12,10 +12,6 @@ class AppRouteRepository implements AppRouteInterface
     public function viewerCanAccessNamedRoute(ClientLogin $viewer, string $routeName): bool
     {
         $role = $viewer->loadMissing('role')->role;
-
-        if (! $role) {
-            return false;
-        }
 
         return AppRoute::query()
             ->where('name', $routeName)

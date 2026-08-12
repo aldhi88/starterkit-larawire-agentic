@@ -1,10 +1,10 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\ClientLoginInterface;
-use Altekno\StarterKit\Models\Starter\ActivityLog;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Models\Starter\ActivityLog;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Closure;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
@@ -137,13 +137,21 @@ class AuditLogService
             return;
         }
 
+        $targetId = 'unknown';
+        $targetLabel = 'Akun tidak dikenal';
+
+        if ($target instanceof ClientLogin) {
+            $targetId = (string) $target->getKey();
+            $targetLabel = $target->name;
+        }
+
         try {
             $this->insert(
                 login: $actor,
                 event: 'security',
                 auditableType: ClientLogin::class,
-                auditableId: $target ? (string) $target->getKey() : 'unknown',
-                auditableLabel: $target?->name ?? 'Akun tidak dikenal',
+                auditableId: $targetId,
+                auditableLabel: $targetLabel,
                 tableName: 'starter_client_logins',
                 oldValues: [],
                 newValues: [],

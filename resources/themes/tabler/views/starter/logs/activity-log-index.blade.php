@@ -61,7 +61,7 @@
                         </span>
                         <div>
                             <div class="text-secondary">Total Perubahan</div>
-                            <div class="h2 mb-0">{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($totalChanges) }}</div>
+                            <div class="h2 mb-0">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($totalChanges) }}</div>
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                         </span>
                         <div>
                             <div class="text-secondary">Perubahan Hari Ini</div>
-                            <div class="h2 mb-0">{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($todayChanges) }}</div>
+                            <div class="h2 mb-0">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($todayChanges) }}</div>
                         </div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
                         </span>
                         <div>
                             <div class="text-secondary">Pengguna Tercatat</div>
-                            <div class="h2 mb-0">{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($activeActorCount) }}</div>
+                            <div class="h2 mb-0">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($activeActorCount) }}</div>
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
             </div>
             <div class="card-actions">
                 @if ($activeFilterCount > 0)
-                    <span class="badge bg-primary-lt text-primary me-2">{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($activeFilterCount) }} filter aktif</span>
+                    <span class="badge bg-primary-lt text-primary me-2">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($activeFilterCount) }} filter aktif</span>
                 @endif
                 <button type="button" class="btn btn-sm" wire:click="resetFilters" x-on:click="advancedFiltersOpen = false">
                     @include('starter.templates.layouts.icon', ['name' => 'circle-x', 'class' => 'icon-sm me-1'])
@@ -240,7 +240,7 @@
             <div>
                 <h3 class="card-title">Riwayat Aktivitas</h3>
                 <p class="card-subtitle">
-                    Menampilkan {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($actions->firstItem() ?? 0) }}–{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($actions->lastItem() ?? 0) }} dari {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($actions->total()) }} aktivitas
+                    Menampilkan {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($actions->firstItem() ?? 0) }}–{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($actions->lastItem() ?? 0) }} dari {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($actions->total()) }} aktivitas
                 </p>
             </div>
         </div>
@@ -283,7 +283,7 @@
                                         <span class="badge {{ $eventMeta['class'] }}">{{ $eventMeta['label'] }}</span>
                                     @endforeach
                                     <span class="small text-secondary">
-                                        {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($action['changes_count']) }} perubahan · {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($action['tables_count']) }} tabel
+                                        {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($action['changes_count']) }} perubahan · {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($action['tables_count']) }} tabel
                                     </span>
                                 </div>
                             </td>
@@ -372,7 +372,7 @@
                                         <div class="d-flex flex-wrap align-items-center gap-2">
                                             <span class="fw-bold">{{ $firstLog->action_label }}</span>
                                                 <span class="badge bg-primary-lt text-primary">
-                                                    {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($selectedLogs->count()) }} aktivitas · {{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($selectedLogs->pluck('table_name')->filter()->unique()->count()) }} tabel
+                                                    {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($selectedLogs->count()) }} aktivitas · {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($selectedLogs->pluck('table_name')->filter()->unique()->count()) }} tabel
                                             </span>
                                         </div>
                                         <div class="small text-secondary mt-1">
@@ -426,7 +426,7 @@
                             <div class="px-3 py-3 bg-body-tertiary">
                                 <div class="d-flex align-items-center justify-content-between mb-2">
                                     <h4 class="mb-0">Rincian Aktivitas</h4>
-                                    <span class="small text-secondary">{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($selectedLogs->count()) }} item</span>
+                                    <span class="small text-secondary">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($selectedLogs->count()) }} item</span>
                                 </div>
                                 <div class="vstack gap-2">
                                     @foreach ($selectedLogs as $log)

@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Http\Middleware\Starter;
+namespace Aldhi88\StarterKit\Http\Middleware\Starter;
 
 use Closure;
 use Illuminate\Contracts\Foundation\Application;

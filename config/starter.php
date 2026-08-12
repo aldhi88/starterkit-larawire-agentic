@@ -1,7 +1,7 @@
 <?php
 
-use Altekno\StarterKit\Support\Starter\StarterDomain;
-use Altekno\StarterKit\Themes\Starter\TablerPowerGridTheme;
+use Aldhi88\StarterKit\Support\Starter\StarterDomain;
+use Aldhi88\StarterKit\Themes\Starter\TablerPowerGridTheme;
 
 $configuredDomain = strtolower(rtrim((string) env('APP_DOMAIN'), '.'));
 $domain = $configuredDomain !== ''
@@ -17,6 +17,8 @@ return [
 
     'themes' => [
         'tabler' => [
+            'label' => 'Tabler',
+            'root' => dirname(__DIR__),
             'views' => 'resources/themes/tabler/views',
             'assets' => 'public/themes/tabler/assets/tabler',
             'docs' => 'docs/template/tabler',
@@ -38,9 +40,4 @@ return [
         'configure_shared_session' => env('STARTER_CONFIGURE_SHARED_SESSION', true),
     ],
 
-    'superuser' => [
-        'username' => env('STARTER_SUPERUSER_USERNAME', 'superuser'),
-        'email' => env('STARTER_SUPERUSER_EMAIL', 'developer@example.test'),
-        'password' => env('STARTER_SUPERUSER_PASSWORD'),
-    ],
 ];

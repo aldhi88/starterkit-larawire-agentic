@@ -1,9 +1,8 @@
 <?php
 
-namespace Altekno\StarterKit\Installation;
+namespace Aldhi88\StarterKit\Installation;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
@@ -95,7 +94,11 @@ class FreshLaravelChecker
         $migrationsHaveRun = false;
 
         try {
-            $migrationsHaveRun = Schema::getTableListing() !== [];
+            $connection = DB::connection();
+            $schema = in_array($connection->getDriverName(), ['mysql', 'mariadb'], true)
+                ? $connection->getDatabaseName()
+                : null;
+            $migrationsHaveRun = $connection->getSchemaBuilder()->getTableListing($schema) !== [];
         } catch (\Throwable $exception) {
             throw new RuntimeException(
                 'Status migration tidak dapat diperiksa: '.$exception->getMessage(),

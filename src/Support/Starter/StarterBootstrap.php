@@ -1,16 +1,16 @@
 <?php
 
-namespace Altekno\StarterKit\Support\Starter;
+namespace Aldhi88\StarterKit\Support\Starter;
 
-use Altekno\StarterKit\Http\Middleware\Starter\StarterAdmin;
-use Altekno\StarterKit\Http\Middleware\Starter\StarterAuthorize;
-use Altekno\StarterKit\Http\Middleware\Starter\StarterEnsureActiveUser;
-use Altekno\StarterKit\Http\Middleware\Starter\StarterForcePasswordChange;
-use Altekno\StarterKit\Http\Middleware\Starter\StarterLockScreen;
-use Altekno\StarterKit\Http\Middleware\Starter\StarterLogAccess;
-use Altekno\StarterKit\Http\Middleware\Starter\StarterSecurityHeaders;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterAdmin;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterAuthorize;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterEnsureActiveUser;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterForcePasswordChange;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterLockScreen;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterLogAccess;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterSecurityHeaders;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;

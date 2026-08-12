@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Support\Starter;
+namespace Aldhi88\StarterKit\Support\Starter;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
@@ -57,7 +57,7 @@ final readonly class ActivityLogFilters
 
         $parsed = CarbonImmutable::createFromFormat('!Y-m-d', $date);
 
-        return $parsed !== false && $parsed->format('Y-m-d') === $date
+        return $parsed !== null && $parsed->format('Y-m-d') === $date
             ? $parsed
             : null;
     }

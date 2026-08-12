@@ -1,8 +1,8 @@
 <?php
 
-namespace Altekno\StarterKit\Http\Middleware\Starter;
+namespace Aldhi88\StarterKit\Http\Middleware\Starter;
 
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

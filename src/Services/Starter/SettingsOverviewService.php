@@ -1,13 +1,13 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\AppInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientLoginInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientRoleInterface;
-use Altekno\StarterKit\Models\Starter\Client;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Contracts\Starter\AppInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientRoleInterface;
+use Aldhi88\StarterKit\Models\Starter\Client;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 
 class SettingsOverviewService
 {
@@ -23,7 +23,7 @@ class SettingsOverviewService
      */
     public function forViewer(ClientLogin $viewer): array
     {
-        abort_unless($viewer->role?->canManageSettings() ?? false, 403);
+        abort_unless($viewer->role->canManageSettings(), 403);
 
         return [
             'client' => $this->clients->current(),

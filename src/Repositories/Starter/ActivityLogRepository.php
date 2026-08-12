@@ -1,15 +1,16 @@
 <?php
 
-namespace Altekno\StarterKit\Repositories\Starter;
+namespace Aldhi88\StarterKit\Repositories\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\ActivityLogInterface;
-use Altekno\StarterKit\Models\Starter\ActivityLog;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Models\Starter\ClientRole;
-use Altekno\StarterKit\Support\Starter\ActivityLogFilters;
+use Aldhi88\StarterKit\Contracts\Starter\ActivityLogInterface;
+use Aldhi88\StarterKit\Models\Starter\ActivityLog;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Models\Starter\ClientRole;
+use Aldhi88\StarterKit\Support\Starter\ActivityLogFilters;
 use Carbon\CarbonImmutable;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -21,6 +22,7 @@ class ActivityLogRepository implements ActivityLogInterface
     /** @var list<string>|null */
     private ?array $protectedUserIds = null;
 
+    /** @return Builder<ActivityLog> */
     public function tableQueryForViewer(ClientLogin $viewer): Builder
     {
         $actions = $this->viewerQuery($viewer)
@@ -67,12 +69,18 @@ class ActivityLogRepository implements ActivityLogInterface
             return collect();
         }
 
-        return $this->viewerQuery($viewer)
+        $groups = $this->viewerQuery($viewer)
             ->whereIn('action_id', $actionIds->all())
             ->orderBy('sequence')
             ->orderBy('id')
             ->get()
             ->groupBy('action_id');
+
+        return collect($groups->all())->mapWithKeys(
+            fn (EloquentCollection $logs, int|string $actionId): array => [
+                (string) $actionId => collect($logs->all()),
+            ],
+        );
     }
 
     public function entriesForActionForViewer(ClientLogin $viewer, string $actionId): Collection
@@ -102,15 +110,15 @@ class ActivityLogRepository implements ActivityLogInterface
             ->first();
 
         return [
-            'total_changes' => (int) ($metrics?->total_changes ?? 0),
-            'today_changes' => (int) ($metrics?->today_changes ?? 0),
-            'active_actor_count' => (int) ($metrics?->active_actor_count ?? 0),
+            'total_changes' => (int) $metrics->total_changes,
+            'today_changes' => (int) $metrics->today_changes,
+            'active_actor_count' => (int) $metrics->active_actor_count,
         ];
     }
 
     public function filterOptionsForViewer(ClientLogin $viewer): array
     {
-        $isSuperuser = $viewer->role?->isSuperuser() ?? false;
+        $isSuperuser = $viewer->role->isSuperuser();
         $actors = ClientLogin::query()
             ->when(! $isSuperuser, fn (Builder $query): Builder => $query->whereHas(
                 'role',
@@ -150,6 +158,7 @@ class ActivityLogRepository implements ActivityLogInterface
         ];
     }
 
+    /** @return Builder<ActivityLog> */
     private function filteredQuery(ClientLogin $viewer, ActivityLogFilters $filters): Builder
     {
         $query = $this->viewerQuery($viewer);
@@ -167,7 +176,7 @@ class ActivityLogRepository implements ActivityLogInterface
                     ->orWhere('route_name', 'like', $term)
                     ->orWhere('ip_address', 'like', $term)
                     ->orWhere(function (Builder $actorQuery) use ($term, $viewer): void {
-                        if (! $viewer->role?->isSuperuser()) {
+                        if (! $viewer->role->isSuperuser()) {
                             $actorQuery->where('actor_is_superuser', false);
                         }
 
@@ -207,11 +216,12 @@ class ActivityLogRepository implements ActivityLogInterface
             ->values();
     }
 
+    /** @return Builder<ActivityLog> */
     private function viewerQuery(ClientLogin $viewer): Builder
     {
         $query = ActivityLog::query();
 
-        if ($viewer->role?->isSuperuser()) {
+        if ($viewer->role->isSuperuser()) {
             return $query;
         }
 

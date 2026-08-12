@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Installation;
+namespace Aldhi88\StarterKit\Installation;
 
 use RuntimeException;
 
@@ -19,6 +19,9 @@ class StarterEnvironmentManager
         'STARTER_THEME',
         'STARTER_LAYOUT',
         'STARTER_API_ENABLED',
+        'SESSION_DRIVER',
+        'CACHE_STORE',
+        'QUEUE_CONNECTION',
         'DB_MIGRATIONS_TABLE',
         'DB_CACHE_TABLE',
         'DB_CACHE_LOCK_TABLE',
@@ -33,13 +36,14 @@ class StarterEnvironmentManager
         'SESSION_ENCRYPT',
         'SESSION_HTTP_ONLY',
         'SESSION_SAME_SITE',
-        'STARTER_SUPERUSER_USERNAME',
-        'STARTER_SUPERUSER_EMAIL',
-        'STARTER_SUPERUSER_PASSWORD',
     ];
 
-    public function apply(string $path, bool $example = false): void
-    {
+    public function apply(
+        string $path,
+        bool $example = false,
+        string $theme = 'tabler',
+        string $layout = 'vertical',
+    ): void {
         if (! is_file($path)) {
             throw new RuntimeException("File environment tidak ditemukan: {$path}");
         }
@@ -69,9 +73,12 @@ class StarterEnvironmentManager
             'APP_LOCALE' => 'id',
             'APP_FALLBACK_LOCALE' => 'id',
             'APP_FAKER_LOCALE' => 'id_ID',
-            'STARTER_THEME' => 'tabler',
-            'STARTER_LAYOUT' => 'vertical',
+            'STARTER_THEME' => $theme,
+            'STARTER_LAYOUT' => $layout,
             'STARTER_API_ENABLED' => 'false',
+            'SESSION_DRIVER' => 'database',
+            'CACHE_STORE' => 'database',
+            'QUEUE_CONNECTION' => 'sync',
             'DB_MIGRATIONS_TABLE' => 'x_migrations',
             'DB_CACHE_TABLE' => 'x_cache',
             'DB_CACHE_LOCK_TABLE' => 'x_cache_locks',
@@ -86,9 +93,6 @@ class StarterEnvironmentManager
             'SESSION_ENCRYPT' => 'true',
             'SESSION_HTTP_ONLY' => 'true',
             'SESSION_SAME_SITE' => 'lax',
-            'STARTER_SUPERUSER_USERNAME' => 'superuser',
-            'STARTER_SUPERUSER_EMAIL' => 'developer@example.test',
-            'STARTER_SUPERUSER_PASSWORD' => 'superuser123',
         ];
 
         foreach ($defaults as $key => $default) {
@@ -109,6 +113,11 @@ class StarterEnvironmentManager
             'SESSION_ENCRYPT',
             'SESSION_HTTP_ONLY',
             'SESSION_SAME_SITE',
+            'STARTER_THEME',
+            'STARTER_LAYOUT',
+            'SESSION_DRIVER',
+            'CACHE_STORE',
+            'QUEUE_CONNECTION',
         ] as $derived) {
             $values[$derived] = $defaults[$derived];
         }
@@ -141,6 +150,23 @@ class StarterEnvironmentManager
     public function appUrl(string $path): string
     {
         return trim($this->value($this->read($path), 'APP_URL'), "\"' ");
+    }
+
+    public function setApplicationName(string $path, string $name): void
+    {
+        $contents = $this->read($path);
+        $escaped = str_replace(['\\', '"'], ['\\\\', '\\"'], trim($name));
+        $line = 'APP_NAME="'.$escaped.'"';
+
+        if (preg_match('/^APP_NAME=.*$/m', $contents) === 1) {
+            $contents = preg_replace('/^APP_NAME=.*$/m', $line, $contents, 1) ?? $contents;
+        } else {
+            $contents = $line.PHP_EOL.$contents;
+        }
+
+        if (file_put_contents($path, $contents, LOCK_EX) === false) {
+            throw new RuntimeException("File environment tidak dapat ditulis: {$path}");
+        }
     }
 
     /** @return array<string, string> */
@@ -193,6 +219,7 @@ class StarterEnvironmentManager
             ],
             'Theme and layout' => ['STARTER_THEME', 'STARTER_LAYOUT'],
             'API gateway' => ['STARTER_API_ENABLED'],
+            'Runtime drivers' => ['SESSION_DRIVER', 'CACHE_STORE', 'QUEUE_CONNECTION'],
             'Starterkit database tables' => [
                 'DB_MIGRATIONS_TABLE', 'DB_CACHE_TABLE', 'DB_CACHE_LOCK_TABLE',
                 'DB_QUEUE_TABLE', 'DB_QUEUE_BATCH_TABLE', 'DB_QUEUE_FAILED_TABLE',
@@ -201,10 +228,6 @@ class StarterEnvironmentManager
             'Shared root and subdomain session' => [
                 'SESSION_DOMAIN', 'SESSION_COOKIE', 'SESSION_SECURE_COOKIE',
                 'SESSION_ENCRYPT', 'SESSION_HTTP_ONLY', 'SESSION_SAME_SITE',
-            ],
-            'Initial superuser' => [
-                'STARTER_SUPERUSER_USERNAME', 'STARTER_SUPERUSER_EMAIL',
-                'STARTER_SUPERUSER_PASSWORD',
             ],
         ];
         $lines = [

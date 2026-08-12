@@ -1,10 +1,12 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\UserManagement;
+namespace Aldhi88\StarterKit\Livewire\Starter\UserManagement;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\UserManagementRoleService;
+use Aldhi88\StarterKit\Models\Starter\AppMod;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\UserManagementRoleService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -190,9 +192,9 @@ class RoleForm extends Component
             ? null
             : $this->roles()->findRole($this->login(), $this->roleId);
         $modules = $this->roles()->availableModules()
-            ->groupBy(fn ($mod): string => $mod->app?->name ?? 'Tanpa App');
+            ->groupBy(fn (AppMod $mod): string => $mod->app->name);
 
-        return view('starter.user-management.role-form', [
+        return view(StarterTheme::viewName('starter.user-management.role-form'), [
             'selectedRole' => $selectedRole,
             'modules' => $modules,
         ])->title($this->roleId === null ? 'Tambah Role' : 'Edit Role');

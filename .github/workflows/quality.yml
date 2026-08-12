@@ -1,0 +1,103 @@
+name: Quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package / PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.4', '8.5']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: intl, mbstring, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      - uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: locked
+
+      - run: composer validate --strict
+      - run: composer audit --locked --no-interaction --format=summary
+      - run: composer analyse
+      - run: vendor/bin/pint --test
+      - run: composer test
+
+      - if: matrix.php == '8.4'
+        run: composer archive --format=zip --dir=build
+
+      - if: matrix.php == '8.4'
+        run: |
+          archive="$(find build -maxdepth 1 -name '*.zip' -print -quit)"
+          test -n "$archive"
+          unzip -t "$archive"
+          if unzip -Z1 "$archive" | grep -E '(^|/)(\.env($|\.)|vendor/|node_modules/|Dashcode|dashcode|\.DS_Store$)'; then
+            echo 'Composer archive contains a forbidden file.'
+            exit 1
+          fi
+
+  fresh-host:
+    name: Fresh Laravel host
+    runs-on: ubuntu-latest
+    needs: package
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: intl, mbstring, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      - run: composer create-project laravel/laravel:^13.8 host --no-interaction --prefer-dist
+      - working-directory: host
+        run: composer config repositories.starterkit path "$GITHUB_WORKSPACE"
+      - working-directory: host
+        run: composer require aldhi88/starterkit-larawire-agentic:@dev --no-interaction
+      - working-directory: host
+        run: |
+          php -r '$path = ".env"; $env = file_get_contents($path); $env = preg_replace("/^APP_URL=.*$/m", "APP_URL=http://company.test:8123", $env); file_put_contents($path, $env);'
+          php -r 'file_put_contents("database/database.sqlite", "");'
+      - run: php tests/Integration/install-fresh-host.php "$GITHUB_WORKSPACE/host"
+      - working-directory: host
+        run: php artisan starter:sync --dry-run
+      - working-directory: host
+        run: php artisan route:list
+      - working-directory: host
+        run: php artisan test --compact
+      - name: Verify app wizard
+        working-directory: host
+        run: |
+          printf 'Finance\nfinance\nyes\n' | php artisan starter:app
+          test -f config/apps/finance.php
+          php artisan starter:sync --dry-run finance
+      - name: Verify destructive reset wizard
+        working-directory: host
+        run: |
+          printf 'yes\nRESET\nyes\n0\nStarterkit Reset\nreset@example.test\nreset-password\nreset-password\nOperations\nops\nyes\n' | php artisan starter:reset
+          test -f config/apps/ops.php
+          test ! -e config/apps/hr.php
+          test ! -e config/apps/finance.php
+          php artisan test --compact
+      - working-directory: host
+        run: php artisan config:cache
+      - working-directory: host
+        run: |
+          php -r '$path = ".env"; $env = file_get_contents($path); foreach (["APP_ENV" => "production", "APP_DEBUG" => "false", "APP_URL" => "https://company.test", "SESSION_SECURE_COOKIE" => "true"] as $key => $value) { $env = preg_replace("/^".preg_quote($key, "/")."=.*$/m", $key."=".$value, $env); } file_put_contents($path, $env);'
+      - working-directory: host
+        run: php artisan starter:deploy --force

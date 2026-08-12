@@ -1,13 +1,13 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\AppModInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientLoginInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientRoleInterface;
-use Altekno\StarterKit\Models\Starter\AppMod;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Models\Starter\ClientRole;
+use Aldhi88\StarterKit\Contracts\Starter\AppModInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientRoleInterface;
+use Aldhi88\StarterKit\Models\Starter\AppMod;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Models\Starter\ClientRole;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -45,6 +45,7 @@ class UserManagementUserService
         );
     }
 
+    /** @return Builder<ClientLogin> */
     public function tableQuery(ClientLogin $login, string $archiveStatus = 'active'): Builder
     {
         return $this->clientLogins->tableQueryForViewer($login, $archiveStatus);
@@ -79,7 +80,7 @@ class UserManagementUserService
         $login = $this->clientLogins->findForManagement($id);
 
         abort_unless($login instanceof ClientLogin, 404);
-        abort_if($login->role?->isSuperuser() && ! $currentLogin->role?->isSuperuser(), 404);
+        abort_if($login->role->isSuperuser() && ! $currentLogin->role->isSuperuser(), 404);
 
         return $login;
     }
@@ -89,7 +90,7 @@ class UserManagementUserService
         $login = $this->findUser($currentLogin, $id);
 
         abort_if(
-            $login->role?->isSuperuser(),
+            $login->role->isSuperuser(),
             403,
             'Password Superuser hanya dapat diubah melalui Edit Profil Saya.',
         );
@@ -114,7 +115,7 @@ class UserManagementUserService
             abort(404);
         }
 
-        abort_if($login?->role?->isSuperuser() && ! $currentLogin->role?->isSuperuser(), 404);
+        abort_if($login?->role?->isSuperuser() && ! $currentLogin->role->isSuperuser(), 404);
 
         if ($role->isSuperuser() && ! $login?->role?->isSuperuser()) {
             throw ValidationException::withMessages(['userForm.role_id' => 'Role sistem Superuser tidak dapat diberikan ke akun lain.']);
@@ -201,7 +202,7 @@ class UserManagementUserService
         foreach ($ids as $id) {
             $login = $this->clientLogins->findWithTrashedForManagement($id);
 
-            if (! $login instanceof ClientLogin || $login->id === $currentLogin->id || $login->role?->isSuperuser()) {
+            if (! $login instanceof ClientLogin || $login->id === $currentLogin->id || $login->role->isSuperuser()) {
                 continue;
             }
 

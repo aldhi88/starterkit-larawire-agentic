@@ -1,13 +1,14 @@
 <?php
 
-namespace Altekno\StarterKit\Contracts\Starter;
+namespace Aldhi88\StarterKit\Contracts\Starter;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 interface ClientLoginInterface
 {
+    /** @return Builder<ClientLogin> */
     public function tableQueryForViewer(ClientLogin $viewer, string $archiveStatus = 'active'): Builder;
 
     /** Find a login account by its username or email address. */

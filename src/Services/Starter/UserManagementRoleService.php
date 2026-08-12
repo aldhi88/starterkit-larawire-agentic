@@ -1,12 +1,12 @@
 <?php
 
-namespace Altekno\StarterKit\Services\Starter;
+namespace Aldhi88\StarterKit\Services\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\AppModInterface;
-use Altekno\StarterKit\Contracts\Starter\ClientRoleInterface;
-use Altekno\StarterKit\Models\Starter\AppMod;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Models\Starter\ClientRole;
+use Aldhi88\StarterKit\Contracts\Starter\AppModInterface;
+use Aldhi88\StarterKit\Contracts\Starter\ClientRoleInterface;
+use Aldhi88\StarterKit\Models\Starter\AppMod;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Models\Starter\ClientRole;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -42,6 +42,7 @@ class UserManagementRoleService
         );
     }
 
+    /** @return Builder<ClientRole> */
     public function tableQuery(ClientLogin $login, string $archiveStatus = 'active'): Builder
     {
         return $this->clientRoles->tableQueryForViewer($login, $archiveStatus);
@@ -86,7 +87,7 @@ class UserManagementRoleService
         $role = $this->clientRoles->findForManagement($id);
 
         abort_unless($role instanceof ClientRole, 404);
-        abort_if($role->isSuperuser() && ! $login->role?->isSuperuser(), 404);
+        abort_if($role->isSuperuser() && ! $login->role->isSuperuser(), 404);
 
         return $role;
     }
@@ -239,7 +240,8 @@ class UserManagementRoleService
         $landings = [];
 
         foreach ($mods->groupBy('app_id') as $appId => $appMods) {
-            $appName = $appMods->first()?->app?->name ?? 'app terpilih';
+            $firstModule = $appMods->first();
+            $appName = $firstModule instanceof AppMod ? $firstModule->app->name : 'app terpilih';
             $candidateMenuIds = $appMods
                 ->flatMap(fn (AppMod $mod): Collection => $mod->menus)
                 ->pluck('id')

@@ -1,12 +1,19 @@
 <?php
 
-namespace Altekno\StarterKit\Support\Starter;
+namespace Aldhi88\StarterKit\Support\Starter;
 
 class StarterNavigation
 {
     public static function rootHost(): string
     {
         return (string) config('app.domain');
+    }
+
+    public static function rootAuthority(): string
+    {
+        $port = parse_url((string) config('app.url'), PHP_URL_PORT);
+
+        return self::rootHost().(is_int($port) ? ':'.$port : '');
     }
 
     public static function authUrl(string $path = ''): string
@@ -18,7 +25,7 @@ class StarterNavigation
             $scheme = request()->isSecure() ? 'https' : 'http';
         }
 
-        return $scheme.'://'.self::rootHost().'/auth'.($path === '' ? '' : '/'.$path);
+        return $scheme.'://'.self::rootAuthority().'/auth'.($path === '' ? '' : '/'.$path);
     }
 
     public static function authLoginUrl(?string $redirect = null): string

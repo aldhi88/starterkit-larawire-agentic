@@ -1,10 +1,12 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\UserManagement;
+namespace Aldhi88\StarterKit\Livewire\Starter\UserManagement;
 
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\UserManagementRoleService;
+use Aldhi88\StarterKit\Models\Starter\AppMod;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\UserManagementRoleService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -110,7 +112,7 @@ class Roles extends Component
         $this->roleAccessCanViewLogs = $role->canViewLogs();
         $this->roleAccessModuleCount = $modules->count();
         $this->roleAccessApps = $modules
-            ->groupBy(fn ($module): string => $module->app?->name ?? 'Tanpa App')
+            ->groupBy(fn (AppMod $module): string => $module->app->name)
             ->sortKeys(SORT_NATURAL | SORT_FLAG_CASE)
             ->map(function ($appModules, string $appName): array {
                 return [
@@ -151,7 +153,7 @@ class Roles extends Component
         $roles = $this->roles()->paginateRoles($login, $this->search);
         $moduleStats = $this->roles()->moduleStats();
 
-        return view('starter.user-management.roles', [
+        return view(StarterTheme::viewName('starter.user-management.roles'), [
             'roles' => $roles,
             'roleCount' => $roles->total(),
             'totalAppCount' => $moduleStats['apps'],

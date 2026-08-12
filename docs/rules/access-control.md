@@ -14,4 +14,4 @@
 
 ## Synchronization
 
-`starter:sync` maps a module from the second route-name segment: `hr.employee.index` matches module `employee`; `hr.employee-data.index` does not. Always dry-run before a database-writing sync.
+`starter:sync` maps a module from the second route-name segment: `hr.employee.index` matches module `employee`; `hr.employee-data.index` does not. A developer-initiated database-writing sync must be preceded by `starter:sync <app> --dry-run` and inspection of its plan. Install/reset/App/deploy workflows may invoke their guarded internal sync directly because they already validate source, own rollback, and verify the resulting state; internal flags are never a public shortcut.

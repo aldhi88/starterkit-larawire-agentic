@@ -1,9 +1,9 @@
 <?php
 
-namespace Altekno\StarterKit\Repositories\Starter;
+namespace Aldhi88\StarterKit\Repositories\Starter;
 
-use Altekno\StarterKit\Contracts\Starter\StarterConfigInterface;
-use Altekno\StarterKit\Models\Starter\StarterConfig;
+use Aldhi88\StarterKit\Contracts\Starter\StarterConfigInterface;
+use Aldhi88\StarterKit\Models\Starter\StarterConfig;
 
 class StarterConfigRepository implements StarterConfigInterface
 {

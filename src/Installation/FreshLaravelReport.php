@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Installation;
+namespace Aldhi88\StarterKit\Installation;
 
 class FreshLaravelReport
 {

@@ -1,7 +1,11 @@
 <?php
 
-use Altekno\StarterKit\Installation\FreshLaravelChecker;
+use Aldhi88\StarterKit\Installation\FreshLaravelChecker;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Schema\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Mockery\MockInterface;
 
 beforeEach(function (): void {
     $this->fixture = sys_get_temp_dir().'/starterkit-checker-'.bin2hex(random_bytes(6));
@@ -88,6 +92,27 @@ afterEach(function (): void {
 
 it('accepts a supported fresh Laravel source tree', function (): void {
     expect((new FreshLaravelChecker($this->fixture))->sourceFindings())->toBe([]);
+});
+
+it('checks only the selected mysql database for existing tables', function (): void {
+    $schema = Mockery::mock(Builder::class, function (MockInterface $mock): void {
+        $mock->shouldReceive('getTableListing')
+            ->once()
+            ->with('target_database')
+            ->andReturn([]);
+    });
+    $connection = Mockery::mock(Connection::class, function (MockInterface $mock) use ($schema): void {
+        $mock->shouldReceive('getPdo')->once()->andReturn(new PDO('sqlite::memory:'));
+        $mock->shouldReceive('getDriverName')->once()->andReturn('mysql');
+        $mock->shouldReceive('getDatabaseName')->once()->andReturn('target_database');
+        $mock->shouldReceive('getSchemaBuilder')->once()->andReturn($schema);
+    });
+    DB::shouldReceive('connection')->twice()->andReturn($connection);
+
+    $report = (new FreshLaravelChecker($this->fixture))->inspectDatabase();
+
+    expect($report->migrationsHaveRun)->toBeFalse()
+        ->and($report->isFresh())->toBeTrue();
 });
 
 it('rejects Laravel versions below the documented minimum', function (): void {

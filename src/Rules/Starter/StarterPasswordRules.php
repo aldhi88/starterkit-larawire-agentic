@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Rules\Starter;
+namespace Aldhi88\StarterKit\Rules\Starter;
 
 use Illuminate\Validation\Rules\Password;
 
@@ -10,5 +10,11 @@ class StarterPasswordRules
     public static function rules(): array
     {
         return ['required', 'string', 'max:255', Password::min(10)->mixedCase()->numbers()];
+    }
+
+    /** @return list<string> */
+    public static function localBootstrapRules(): array
+    {
+        return ['required', 'string', 'max:255'];
     }
 }

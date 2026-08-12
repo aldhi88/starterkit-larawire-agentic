@@ -1,6 +1,6 @@
 # Performance and Resource Efficiency
 
-This standard applies automatically to the starter and derived projects. Target is one shared-hosting instance with file cache/session and sync queue; no Redis, Octane, daemon, worker, CDN, reverse proxy, or special server tuning may be required. Optimize proven flow/query behavior without weakening validation, authorization, transactions, audits, session security, or data integrity.
+This standard applies automatically to the starter and derived projects. Target is one shared-hosting instance with database cache/session and sync queue; no Redis, Octane, daemon, worker, CDN, reverse proxy, or special server tuning may be required. Optimize proven flow/query behavior without weakening validation, authorization, transactions, audits, session security, or data integrity.
 
 ## Database queries and PowerGrid
 
@@ -14,7 +14,7 @@ This standard applies automatically to the starter and derived projects. Target 
 
 - `render()` is read-only/idempotent and loads only current-view data. Public Livewire properties are untrusted/minimal and never retain large collections/models/credentials/sensitive payloads. Layout composers do not make heavy unused partial queries.
 - Small presentation interactions stay in Alpine/JavaScript. Stable reference data is loaded once, request-memoized, or safely cached with explicit TTL/invalidation.
-- Use the default file cache only for safe derived data. Namespace/scope keys correctly, including authorization user/role scope when relevant; define TTL/invalidation and never let cache alter authorization or indefinitely hide important data. Config cache/optimize is production only.
+- Use the configured database cache only for safe derived data. Namespace/scope keys correctly, including authorization user/role scope when relevant; define TTL/invalidation and never let cache alter authorization or indefinitely hide important data. Config cache/optimize is production only.
 - Global theme/Livewire/Alpine/runtime assets remain local and load once. Page assets stay beside their owner view and use `@assets`/`@script` (or provided non-Livewire stacks); local third-party vendor files are page-scoped. No unused bundle/build pipeline/CDN; use deferred noncritical scripts and approved/pinned exception SDKs only.
 
 ## Audited bulk operations and verification

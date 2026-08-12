@@ -1,9 +1,10 @@
 <?php
 
-namespace Altekno\StarterKit\Livewire\Starter\Settings;
+namespace Aldhi88\StarterKit\Livewire\Starter\Settings;
 
-use Altekno\StarterKit\Services\Starter\AuthenticatedLoginService;
-use Altekno\StarterKit\Services\Starter\SettingsOverviewService;
+use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\SettingsOverviewService;
+use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -37,7 +38,7 @@ class SettingsIndex extends Component
         $login = $this->authenticatedLogins->settingsManager();
 
         return view(
-            'starter.settings.settings-index',
+            StarterTheme::viewName('starter.settings.settings-index'),
             $this->overview->forViewer($login),
         );
     }

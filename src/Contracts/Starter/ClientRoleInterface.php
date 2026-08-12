@@ -1,16 +1,17 @@
 <?php
 
-namespace Altekno\StarterKit\Contracts\Starter;
+namespace Aldhi88\StarterKit\Contracts\Starter;
 
-use Altekno\StarterKit\Models\Starter\AppMenu;
-use Altekno\StarterKit\Models\Starter\ClientLogin;
-use Altekno\StarterKit\Models\Starter\ClientRole;
+use Aldhi88\StarterKit\Models\Starter\AppMenu;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Models\Starter\ClientRole;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 interface ClientRoleInterface
 {
+    /** @return Builder<ClientRole> */
     public function tableQueryForViewer(ClientLogin $viewer, string $archiveStatus = 'active'): Builder;
 
     /**

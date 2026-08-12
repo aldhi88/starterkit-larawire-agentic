@@ -1,9 +1,9 @@
 <?php
 
-namespace Altekno\StarterKit\Contracts\Starter;
+namespace Aldhi88\StarterKit\Contracts\Starter;
 
-use Altekno\StarterKit\Models\Starter\App;
-use Altekno\StarterKit\Models\Starter\AppMod;
+use Aldhi88\StarterKit\Models\Starter\App;
+use Aldhi88\StarterKit\Models\Starter\AppMod;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
@@ -31,7 +31,7 @@ interface AppModInterface
     public function accessStats(): array;
 
     /**
-     * @param  array<int, string>  $with
+     * @param  array<int|string, mixed>  $with
      * @param  array<int, int>  $onlyIds
      * @return EloquentCollection<int, AppMod>
      */

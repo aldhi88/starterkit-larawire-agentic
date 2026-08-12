@@ -104,7 +104,7 @@
                         @if ($selectedRole)
                             <div class="card-actions">
                                 <span class="badge {{ $selectedRole->isSuperuser() ? 'bg-danger-lt text-danger' : 'bg-primary-lt text-primary' }}">
-                                    {{ $selectedRole->isSuperuser() ? 'Akses Penuh' : \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($selectedRoleModules->flatten(1)->count()).' Module' }}
+                                    {{ $selectedRole->isSuperuser() ? 'Akses Penuh' : \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($selectedRoleModules->flatten(1)->count()).' Module' }}
                                 </span>
                             </div>
                         @endif
@@ -129,7 +129,7 @@
                                     <div wire:key="role-access-app-{{ $modules->first()?->app_id ?? 'none' }}">
                                         <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
                                             <div class="fw-semibold">{{ $appName }}</div>
-                                            <span class="badge bg-secondary-lt">{{ \Altekno\StarterKit\Support\Starter\StarterNumber::decimal($modules->count()) }} module</span>
+                                            <span class="badge bg-secondary-lt">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($modules->count()) }} module</span>
                                         </div>
                                         <div class="list-group list-group-flush border rounded">
                                             @foreach ($modules as $module)

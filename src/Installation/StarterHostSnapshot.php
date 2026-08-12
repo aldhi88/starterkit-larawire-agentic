@@ -1,6 +1,6 @@
 <?php
 
-namespace Altekno\StarterKit\Installation;
+namespace Aldhi88\StarterKit\Installation;
 
 use Illuminate\Support\Facades\File;
 use RuntimeException;
@@ -24,8 +24,12 @@ class StarterHostSnapshot
         'resources/views',
         'routes',
         'storage/framework/cache/starterkit',
+        'storage/app/public/starter',
         'tests',
     ];
+
+    /** @var list<string> */
+    private const MEMORY_ONLY_FILES = ['.env'];
 
     /** @var array<string, bool> */
     private array $existing = [];
@@ -33,13 +37,19 @@ class StarterHostSnapshot
     /** @var array<string, string> */
     private array $links = [];
 
+    /** @var array<string, string> */
+    private array $memoryFiles = [];
+
+    /** @var array<string, int> */
+    private array $fileModes = [];
+
     private function __construct(
         private readonly string $directory,
     ) {}
 
     public static function capture(): self
     {
-        $directory = sys_get_temp_dir().'/starterkit-larawire-'.bin2hex(random_bytes(8));
+        $directory = sys_get_temp_dir().'/starterkit-larawire-agentic-'.bin2hex(random_bytes(8));
 
         if (! File::makeDirectory($directory, 0700, true)) {
             throw new RuntimeException('Tidak dapat membuat snapshot instalasi sementara.');
@@ -64,6 +74,19 @@ class StarterHostSnapshot
                 }
 
                 $snapshot->links[$relative] = $target;
+
+                continue;
+            }
+
+            if (in_array($relative, self::MEMORY_ONLY_FILES, true)) {
+                $contents = @file_get_contents($source);
+
+                if ($contents === false) {
+                    throw new RuntimeException("Tidak dapat membaca snapshot file {$relative}.");
+                }
+
+                $snapshot->memoryFiles[$relative] = $contents;
+                $snapshot->fileModes[$relative] = fileperms($source) & 0777;
 
                 continue;
             }
@@ -114,6 +137,18 @@ class StarterHostSnapshot
                 if (! symlink($this->links[$relative], $target)) {
                     throw new RuntimeException("Tidak dapat memulihkan symlink {$relative}.");
                 }
+
+                continue;
+            }
+
+            if (array_key_exists($relative, $this->memoryFiles)) {
+                File::ensureDirectoryExists(dirname($target));
+
+                if (file_put_contents($target, $this->memoryFiles[$relative], LOCK_EX) === false) {
+                    throw new RuntimeException("Tidak dapat memulihkan file {$relative} dari memory.");
+                }
+
+                chmod($target, $this->fileModes[$relative] ?? 0600);
 
                 continue;
             }
