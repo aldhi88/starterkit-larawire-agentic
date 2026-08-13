@@ -351,7 +351,7 @@ REGEX;
 
         if ($method === 'withExceptions') {
             $body = preg_replace(
-                '~\$[A-Za-z_][A-Za-z0-9_]*->shouldRenderJsonWhen\(\s*fn\s*\([^)]*\)\s*=>\s*\$[A-Za-z_][A-Za-z0-9_]*->is\(\s*[\'"]api/\*[\'"]\s*\)\s*,?\s*\)\s*;~s',
+                '~\$[A-Za-z_][A-Za-z0-9_]*->shouldRenderJsonWhen\(\s*fn\s*\([^)]*\)\s*=>\s*\$[A-Za-z_][A-Za-z0-9_]*->is\(\s*[\'"]api/\*[\'"]\s*\)(?:\s*\|\|\s*\$[A-Za-z_][A-Za-z0-9_]*->expectsJson\(\s*\))?\s*,?\s*\)\s*;~s',
                 '',
                 $body,
             ) ?? $body;

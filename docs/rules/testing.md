@@ -24,4 +24,13 @@ Test mutable lifecycles (create/update/archive/filter archived/restore/permanent
 
 Public release CI runs package validation, full `src/` PHPStan, Pint, and package tests on every supported PHP version. A release additionally installs the package through Composer into a clean supported Laravel host and exercises the wizard/install result, `starter:sync`, route listing, tests, and a production-like `starter:deploy` preflight. Claims for database auto-creation are tested per supported driver or clearly marked as environment-dependent.
 
+Theme tests must validate `theme-package-contract.json`: every intake HTML is
+accounted for in `source-index.json`; every required capability maps to an
+indexed vendor reference, runtime view, and tested state; the asset recipe
+rejects missing/tampered/orphan files and produces an exact host directory;
+required runtime groups and both layouts exist; license/distribution evidence
+is explicit; Composer archive contains no raw vendor HTML/assets; and the
+fresh-host browser matrix proves both layouts without cross-theme residue. A
+scaffold-only or manifest-only integration is not a passing theme.
+
 Done means: acceptance criteria met; no unexplained TODO/TBD; relevant tests and Pint pass; App config/routes were dry-run synced; browser verification was completed for UX changes; no unapproved scope/dependency/config/business decision exists; and the confirmed/approved single issue specification is archived only after verified completion. Core changes must be focused-committed and released canonically before the Laravel host updates its Composer lock.

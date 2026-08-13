@@ -5,7 +5,8 @@
 Starterkit Larawire dibangun menggunakan dan mengapresiasi karya
 [Laravel](https://laravel.com/), [Livewire](https://livewire.laravel.com/),
 [Livewire PowerGrid](https://livewire-powergrid.com/),
-[Tabler](https://tabler.io/), [Laravel Lang](https://laravel-lang.com/),
+[Tabler](https://tabler.io/), [DashCode](https://dashcode-html.codeshaper.tech/),
+[Laravel Lang](https://laravel-lang.com/),
 [Scramble](https://scramble.dedoc.co/), dan [Pest](https://pestphp.com/).
 
 > Versi minimum Laravel: **13.8**. Constraint Composer pada setiap release
@@ -92,24 +93,31 @@ php artisan starter:sync
 
 ### Theme dan layout
 
-Package publik saat ini menyediakan theme **Tabler** yang aman didistribusikan
-dengan dua layout:
+Starterkit menyediakan dua integrasi theme. Masing-masing mendukung layout `vertical` dan `horizontal`:
+
+| Theme | Lisensi source | Catatan |
+|---|---|---|
+| Tabler | MIT | Bebas digunakan sesuai lisensi Tabler |
+| DashCode | Komersial/premium | Wajib memiliki lisensi sah dari vendor DashCode |
+
+Pilihan disimpan di environment:
 
 ```dotenv
 STARTER_THEME=tabler
 STARTER_LAYOUT=vertical
 ```
 
-`STARTER_LAYOUT` dapat diisi `vertical` atau `horizontal`. Core hanya membawa
-file Tabler yang benar-benar dipakai agar package tetap kecil.
+Wizard `starter:install` meminta user memilih Tabler atau DashCode, kemudian layout. Package membawa implementasi Blade, adapter PowerGrid, recipe aset, indeks seluruh HTML, dan peta komponen untuk keduanya. File HTML/aset vendor tidak ikut Composer agar package kecil dan source premium tidak didistribusikan ulang.
 
-Theme baru didistribusikan sebagai package Composer opsional. Install package
-theme yang dibutuhkan sebelum `starter:install`; wizard otomatis menampilkan
-semua theme valid yang sudah terpasang. Developer yang hanya memakai Tabler
-tidak ikut mengunduh asset theme lain. Setiap package theme membawa view, asset
-runtime minimum, JavaScript handler, adapter PowerGrid, indeks komponen, serta
-layout vertical dan horizontal miliknya sendiri. Tampilan antar-theme tidak
-dipaksakan sama.
+Source template disimpan pemilik di arsip eksternal. Di local, salin source yang diperlukan ke `theme-intake/tabler/` atau `theme-intake/dashcode/`. Installer memverifikasi hash dan hanya menyalin dependency runtime minimum ke `public/assets/<theme>/`. Folder `theme-intake/` diabaikan Git; hasil runtime di `public/assets/<theme>/` wajib di-commit bersama project Laravel sehingga production tidak perlu mengakses Google Drive.
+
+Untuk menambah theme, taruh distribusi HTML/aset vendor di `theme-intake/<theme-key>/`, lalu instruksikan agent AI:
+
+```text
+Integrasikan theme <theme-key> dari theme-intake/<theme-key> sampai siap dipilih installer.
+```
+
+Agent wajib menangani audit lisensi, indexing seluruh HTML, filtering aset, seluruh halaman/komponen starter, kedua layout, PowerGrid, dan pengujian. Source demo penuh serta aset vendor tetap hanya di intake lokal/arsip pemilik; indeks, recipe, implementasi, dan peta referensinya masuk ke core package.
 
 ### Mode AGENTS AI
 
@@ -134,6 +142,20 @@ Dari root project Laravel:
 composer require aldhi88/starterkit-larawire-agentic
 ```
 
+Composer menampilkan pengingat source template. Download arsip theme dari:
+
+<https://drive.google.com/drive/folders/1ZtJiaL7bgxwiKZCEUb8yttCwUjXXJ-X0?usp=sharing>
+
+Salin hanya theme yang akan dipakai ke root project Laravel:
+
+```text
+theme-intake/tabler/      untuk Tabler
+theme-intake/dashcode/    untuk DashCode
+```
+
+DashCode memerlukan lisensi penggunaan yang sah. Jangan commit
+`theme-intake/`; installer hanya menghasilkan aset runtime minimum.
+
 Contoh `.env`:
 
 ```dotenv
@@ -153,8 +175,8 @@ Jalankan installer:
 php artisan starter:install
 ```
 
-Tabler dipilih otomatis karena menjadi satu-satunya theme bawaan; wizard meminta
-layout vertical/horizontal, lalu lima identitas berikut:
+Wizard meminta theme (Tabler/DashCode), layout vertical/horizontal, lalu lima
+identitas berikut:
 
 | Pertanyaan | Boleh memakai spasi? | Contoh input |
 |---|---:|---|
@@ -229,8 +251,9 @@ pilihan theme/layout:
 php artisan starter:sync
 ```
 
-Sync juga mempublikasikan asset package, PowerGrid, dan Livewire. Tidak ada
-command publish asset terpisah.
+Sync juga memverifikasi recipe theme dan mempublikasikan asset package,
+PowerGrid, dan Livewire. Tidak ada command publish asset terpisah. Commit hasil
+`public/assets/<theme>/`; jangan commit `theme-intake/`.
 
 ### Update starterkit di local
 
@@ -248,12 +271,18 @@ aplikasi Laravel.
 git clone <repository-laravel> <folder-project>
 cd <folder-project>
 cp .env.example .env
-# atur APP_URL, database, dan secret production
+# atur APP_URL, database, secret production, serta pertahankan STARTER_THEME dan STARTER_LAYOUT dari local
 composer install --no-dev --optimize-autoloader
 php artisan starter:deploy
 ```
 
 Arahkan domain utama dan subdomain App ke `<folder-project>/public`.
+`STARTER_THEME` dan `STARTER_LAYOUT` wajib sama dengan pilihan di local. Kedua
+nilai ini tetap berada di `.env` local dan production agar tidak membutuhkan
+file konfigurasi tambahan. Source Google Drive dan folder `theme-intake/` tidak
+boleh disiapkan di server: production memakai aset runtime theme terpilih yang
+sudah dihasilkan oleh `starter:sync` dan di-commit dari local ke
+`public/assets/<theme>/`.
 
 ### Update production berkala
 
@@ -265,8 +294,9 @@ php artisan starter:deploy
 
 Production memakai versi package yang terkunci di `composer.lock` project
 Laravel. `starter:deploy` khusus production dan melakukan preflight lengkap:
-environment production, debug mati, HTTPS, cookie aman, domain, extension,
-directory runtime, koneksi database, migration, asset, registry App, dan cache.
+environment production, debug mati, HTTPS, cookie aman, domain, theme/layout
+eksplisit, aset runtime theme dari repository, extension, directory runtime,
+koneksi database, migration, registry App, dan cache.
 Pada database production pertama yang masih kosong, command meminta kredensial
 Superuser melalui prompt aman. Jika preflight gagal, deployment berhenti sebelum
 mutation. `starter:sync` dan `starter:reset` ditolak di production.

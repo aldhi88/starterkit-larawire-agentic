@@ -9,7 +9,7 @@
 @if ($level === 1)
     <li class="nav-item {{ $isExpanded || $isActive ? 'active' : '' }}" data-starter-menu-item>
         @if ($menu['hasChildren'])
-            <details class="starter-horizontal-details starter-navigation-details" data-starter-details data-starter-navigation-details @if ($isExpanded) open @endif>
+            <details class="starter-horizontal-details starter-navigation-details" data-starter-details data-starter-navigation-details>
                 <summary class="nav-link cursor-pointer user-select-none" role="button" aria-controls="{{ $menuId }}">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         @include('starter.templates.layouts.icon', ['name' => $icon])
@@ -39,7 +39,7 @@
         @endif
     </li>
 @elseif ($menu['hasChildren'])
-    <details class="starter-horizontal-details starter-horizontal-details-nested starter-navigation-details" data-starter-details data-starter-navigation-details @if ($isExpanded) open @endif>
+    <details class="starter-horizontal-details starter-horizontal-details-nested starter-navigation-details" data-starter-details data-starter-navigation-details>
         <summary class="dropdown-item cursor-pointer user-select-none {{ $isExpanded ? 'active' : '' }}" role="button" aria-controls="{{ $menuId }}">
             <span>{{ $menu['label'] }}</span>
         </summary>

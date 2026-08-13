@@ -7,48 +7,81 @@ use Aldhi88\StarterKit\Console\Commands\Starter\ResetCommand;
 use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use Illuminate\Support\Facades\File;
 
-it('ships only redistributable registered themes', function (): void {
+it('registers both prepared themes without redistributing vendor sources or assets', function (): void {
     $config = require StarterPaths::path('config/starter.php');
 
-    expect(array_keys($config['themes']))->toBe(['tabler'])
+    expect(array_keys($config['themes']))->toBe(['tabler', 'dashcode'])
         ->and($config['themes']['tabler']['layouts'])->toHaveKeys(['vertical', 'horizontal'])
-        ->and(is_file(StarterPaths::path('public/themes/tabler/LICENSE')))->toBeTrue();
+        ->and($config['themes']['dashcode']['layouts'])->toHaveKeys(['vertical', 'horizontal'])
+        ->and(File::allFiles(StarterPaths::path('public/themes')))->toBe([]);
 });
 
-it('maps the Tabler asset payload directly to public assets', function (): void {
+it('maps generated host assets without carrying the payload in Composer', function (): void {
     $config = require StarterPaths::path('config/starter.php');
 
-    expect($config['themes']['tabler']['assets'])
-        ->toBe('public/themes/tabler/assets/tabler')
-        ->and(is_file(StarterPaths::path(
-            $config['themes']['tabler']['assets'].'/dist/css/tabler.min.css',
-        )))->toBeTrue();
+    expect($config['themes']['tabler']['assets'])->toBe('assets/tabler')
+        ->and($config['themes']['dashcode']['assets'])->toBe('assets/dashcode')
+        ->and(glob(StarterPaths::path('docs/template/*/*.html')) ?: [])->toBe([]);
 });
 
-it('ships only the Tabler files loaded by starter runtime layouts', function (): void {
-    $root = StarterPaths::path('public/themes/tabler/assets/tabler');
-    $files = collect(File::allFiles($root))
-        ->map(fn (SplFileInfo $file): string => str_replace('\\', '/', $file->getRelativePathname()))
-        ->sort()
-        ->values()
-        ->all();
+it('keeps active vertical branches open without forcing horizontal dropdowns open', function (): void {
+    $runtime = file_get_contents(StarterPaths::path('public/assets/starter/js/starter-runtime.js'));
 
-    expect($files)->toBe([
-        'css/starter-theme.css',
-        'dist/css/tabler-vendors.min.css',
-        'dist/css/tabler.min.css',
-        'dist/js/tabler-theme.min.js',
-        'dist/js/tabler.min.js',
-        'js/starter-theme.js',
-        'static/logo-small.svg',
-        'static/logo-white.svg',
-    ])->and(is_dir(StarterPaths::path('docs/template/tabler/assets')))->toBeFalse();
+    expect($runtime)->toContain("! detail.classList.contains('starter-horizontal-details')");
+
+    foreach (['tabler', 'dashcode'] as $theme) {
+        $horizontalMenu = file_get_contents(StarterPaths::path(
+            'resources/themes/'.$theme.'/views/starter/templates/layouts/menu-item-horizontal.blade.php',
+        ));
+
+        expect($horizontalMenu)->not->toContain('@if ($isExpanded) open @endif');
+    }
 });
 
-it('keeps the AI contract and Tabler source atlas inside the package', function (): void {
+it('keeps complete AI contracts and indexed atlases for both themes', function (): void {
+    $contract = json_decode(
+        (string) file_get_contents(StarterPaths::path('docs/rules/theme-package-contract.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
     expect(is_file(StarterPaths::path('AGENTS.md')))->toBeTrue()
-        ->and(is_file(StarterPaths::path('docs/template/tabler/template.md')))->toBeTrue()
-        ->and(is_file(StarterPaths::path('docs/template/tabler/runtime-map.md')))->toBeTrue();
+        ->and(is_file(StarterPaths::path('docs/rules/theme-package-contract.json')))->toBeTrue()
+        ->and(is_file(StarterPaths::path('tools/build-theme-source-index.php')))->toBeTrue()
+        ->and(is_dir(StarterPaths::path('docs/template/tabler/tabler-components')))->toBeFalse();
+
+    foreach (['tabler' => 395, 'dashcode' => 74] as $theme => $htmlCount) {
+        $root = StarterPaths::path('docs/template/'.$theme);
+        $sourceIndex = json_decode((string) file_get_contents($root.'/source-index.json'), true, flags: JSON_THROW_ON_ERROR);
+        $manifest = json_decode((string) file_get_contents($root.'/component-manifest.json'), true, flags: JSON_THROW_ON_ERROR);
+        $source = json_decode((string) file_get_contents($root.'/source.json'), true, flags: JSON_THROW_ON_ERROR);
+
+        expect(is_file($root.'/template.md'))->toBeTrue()
+            ->and(is_file($root.'/runtime-map.md'))->toBeTrue()
+            ->and(is_file($root.'/asset-manifest.json'))->toBeTrue()
+            ->and($sourceIndex['html_files'])->toBe(count($sourceIndex['files']))
+            ->and($sourceIndex['html_files'])->toBe($htmlCount)
+            ->and(array_diff($contract['required_components'], collect($manifest['components'])->pluck('id')->all()))->toBe([])
+            ->and($source['url'])->toContain('drive.google.com/drive/folders/')
+            ->and(File::size($root.'/source-index.json'))->toBeLessThan(250_000);
+    }
+});
+
+it('defines a complete theme from one intake instruction without vendor visual locks', function (): void {
+    $agents = file_get_contents(StarterPaths::path('AGENTS.md'));
+    $integration = file_get_contents(StarterPaths::path('docs/rules/theme-integration.md'));
+    $ui = file_get_contents(StarterPaths::path('docs/rules/ui-ux.md'));
+    $ignore = file_get_contents(StarterPaths::path('.gitignore'));
+
+    expect($agents)->toContain('theme-intake/<theme-key>/')
+        ->and($integration)->toContain('Integrasikan theme <theme-key> dari theme-intake/<theme-key> sampai siap dipilih installer.')
+        ->and($integration)->toContain('Dependency closure')
+        ->and($integration)->toContain('source-index.json')
+        ->and($integration)->toContain('component-manifest.json')
+        ->and($integration)->toContain('asset-manifest.json')
+        ->and($ignore)->toContain('/theme-intake')
+        ->and($ui)->not->toContain('Tabler PowerGrid follows')
+        ->and($ui)->not->toContain('Always wrap tables inside a white background card')
+        ->and($ui)->not->toContain('outermost `.modal`');
 });
 
 it('uses a required interactive installation wizard without public identity shortcuts', function (): void {
@@ -74,4 +107,10 @@ it('does not store initial superuser credentials in package configuration', func
 
     expect($config)->not->toContain('STARTER_SUPERUSER')
         ->and($environment)->not->toContain('STARTER_SUPERUSER');
+});
+
+it('generates app tests in a PSR-4 namespace matching their directory', function (): void {
+    $scaffolder = file_get_contents(StarterPaths::path('src/Services/Starter/StarterAppScaffolder.php'));
+
+    expect($scaffolder)->toContain('namespace Tests\\Feature\\Apps\\\\{$className};');
 });

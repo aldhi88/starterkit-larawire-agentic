@@ -7,5 +7,6 @@
 /.zed
 /build
 /node_modules
+/theme-intake
 /vendor
 *.log

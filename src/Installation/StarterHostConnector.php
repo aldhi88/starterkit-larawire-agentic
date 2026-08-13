@@ -28,10 +28,11 @@ class StarterHostConnector
         $this->connectProvider();
         $this->connectAgents();
         $this->ensureGitIgnored([
+            '/theme-intake/',
             '/public/assets/starter/',
-            '/public/assets/'.$theme.'/',
             '/public/vendor/',
         ]);
+        $this->ensureGitTracked('/public/assets/'.$theme.'/');
         $this->environment->apply(base_path('.env'), theme: $theme, layout: $layout);
         $this->environment->apply(
             base_path('.env.example'),
@@ -192,6 +193,19 @@ PHP;
                 $lines[] = $entry;
             }
         }
+
+        $this->write($path, rtrim(implode(PHP_EOL, $lines)).PHP_EOL);
+    }
+
+    private function ensureGitTracked(string $entry): void
+    {
+        $path = base_path('.gitignore');
+        $contents = is_file($path) ? $this->read($path) : '';
+        $lines = preg_split('/\R/', $contents) ?: [];
+        $lines = array_values(array_filter(
+            $lines,
+            static fn (string $line): bool => trim($line) !== $entry,
+        ));
 
         $this->write($path, rtrim(implode(PHP_EOL, $lines)).PHP_EOL);
     }

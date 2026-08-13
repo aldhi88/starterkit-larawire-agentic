@@ -161,7 +161,7 @@ PHP.PHP_EOL;
         return <<<PHP
 <?php
 
-namespace Tests\Feature\Apps;
+namespace Tests\Feature\Apps\\{$className};
 
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;

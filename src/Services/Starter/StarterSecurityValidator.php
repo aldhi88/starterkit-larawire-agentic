@@ -8,6 +8,10 @@ use Illuminate\Encryption\Encrypter;
 
 class StarterSecurityValidator
 {
+    public function __construct(
+        private readonly StarterAssetPublisher $assets,
+    ) {}
+
     public function validate(Command $command, bool $production = false): bool
     {
         $checks = $this->checks($production);
@@ -103,6 +107,10 @@ class StarterSecurityValidator
     {
         $domain = strtolower(trim((string) config('app.domain'), '.'));
         $scheme = strtolower((string) parse_url((string) config('app.url'), PHP_URL_SCHEME));
+        $theme = strtolower((string) config('starter.theme'));
+        $layout = strtolower((string) config('starter.layout'));
+        $environmentTheme = strtolower((string) $this->environmentValue('STARTER_THEME'));
+        $environmentLayout = strtolower((string) $this->environmentValue('STARTER_LAYOUT'));
 
         return [
             $this->check('Production environment', app()->isProduction(), 'APP_ENV harus production.'),
@@ -113,6 +121,21 @@ class StarterSecurityValidator
                 'Production application domain',
                 $domain !== '' && ! in_array($domain, ['localhost', '127.0.0.1'], true),
                 'APP_DOMAIN harus berisi root domain production.',
+            ),
+            $this->check(
+                'Explicit production UI theme',
+                $environmentTheme !== '' && hash_equals($theme, $environmentTheme),
+                'STARTER_THEME wajib ada di .env production dan sama dengan pilihan theme local.',
+            ),
+            $this->check(
+                'Explicit production UI layout',
+                $environmentLayout !== '' && hash_equals($layout, $environmentLayout),
+                'STARTER_LAYOUT wajib ada di .env production dan sama dengan pilihan layout local.',
+            ),
+            $this->check(
+                'Committed theme runtime assets',
+                $theme !== '' && $this->assets->themeAssetsReady($theme),
+                'public/assets/<theme> harus sudah dihasilkan di local dan ikut repository aplikasi.',
             ),
             $this->check('Internationalization extension', extension_loaded('intl'), 'PHP extension intl wajib tersedia.'),
             $this->check(
@@ -164,5 +187,19 @@ class StarterSecurityValidator
         };
 
         return is_string($extension) && extension_loaded($extension);
+    }
+
+    private function environmentValue(string $key): ?string
+    {
+        $contents = @file_get_contents(base_path('.env'));
+
+        if ($contents === false
+            || preg_match('/^'.preg_quote($key, '/').'=(.*)$/m', $contents, $matches) !== 1) {
+            return null;
+        }
+
+        $value = trim(trim($matches[1]), "\"'");
+
+        return $value !== '' ? $value : null;
     }
 }

@@ -118,7 +118,9 @@ class DeployCommand extends Command
         $this->newLine();
         $this->line('APP_ENV : '.(string) config('app.env'));
         $this->line('APP_URL : '.(string) config('app.url'));
+        $this->line('Theme UI: '.(string) config('starter.theme').' / '.(string) config('starter.layout'));
         $this->line('Database: '.(string) config('database.default').' / '.(string) config('database.connections.'.config('database.default').'.database'));
+        $this->line('Source template vendor tidak diperlukan di production; deployment memakai aset runtime dari repository aplikasi.');
 
         if (! $security->validate($this, production: true)) {
             $this->line('<fg=red>Deployment dihentikan sebelum file atau database diubah.</>');

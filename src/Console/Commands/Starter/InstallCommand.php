@@ -10,6 +10,7 @@ use Aldhi88\StarterKit\Installation\StarterHostConnector;
 use Aldhi88\StarterKit\Installation\StarterHostSnapshot;
 use Aldhi88\StarterKit\Installation\StarterInstallState;
 use Aldhi88\StarterKit\Rules\Starter\StarterPasswordRules;
+use Aldhi88\StarterKit\Services\Starter\StarterAssetPublisher;
 use Aldhi88\StarterKit\Support\Starter\StarterInternalRunContext;
 use Aldhi88\StarterKit\Support\Starter\StarterThemeRegistry;
 use Illuminate\Console\Command;
@@ -35,6 +36,7 @@ class InstallCommand extends Command
         StarterHostConnector $connector,
         StarterDatabaseProvisioner $databaseProvisioner,
         StarterInternalRunContext $internal,
+        StarterAssetPublisher $assetPublisher,
     ): int {
         if ((bool) $this->option('reset') && ! $internal->allows('reset')) {
             $this->components->error('Mode reset internal tidak dapat dipanggil langsung. Gunakan starter:reset.');
@@ -43,7 +45,7 @@ class InstallCommand extends Command
         }
 
         try {
-            return $this->executeInstallation($checker, $environment, $connector, $databaseProvisioner);
+            return $this->executeInstallation($checker, $environment, $connector, $databaseProvisioner, $assetPublisher);
         } finally {
             $this->installation['password'] = '';
         }
@@ -54,6 +56,7 @@ class InstallCommand extends Command
         StarterEnvironmentManager $environment,
         StarterHostConnector $connector,
         StarterDatabaseProvisioner $databaseProvisioner,
+        StarterAssetPublisher $assetPublisher,
     ): int {
         $reset = (bool) $this->option('reset');
 
@@ -93,6 +96,14 @@ class InstallCommand extends Command
         }
 
         if (! $this->resolvePresentation()) {
+            return self::FAILURE;
+        }
+
+        $theme = (string) $this->installation['theme'];
+
+        if (! $assetPublisher->themeAssetsReady($theme) && ! $assetPublisher->themeSourceReady($theme)) {
+            $assetPublisher->explainMissingThemeSource($this, $theme);
+
             return self::FAILURE;
         }
 
@@ -376,6 +387,10 @@ class InstallCommand extends Command
             $theme = (string) array_key_first($labels);
             $this->line('Theme UI: '.$labels[$theme].' (satu-satunya theme yang terpasang)');
         } else {
+            if (array_key_exists('dashcode', $labels)) {
+                $this->line('<fg=yellow>Catatan: DashCode memerlukan lisensi vendor yang sah.</>');
+            }
+
             $selectedLabel = (string) $this->choice('Pilih theme UI', array_values($labels));
             $theme = (string) array_search($selectedLabel, $labels, true);
         }

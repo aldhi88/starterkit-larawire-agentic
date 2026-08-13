@@ -14,7 +14,6 @@
 /tests export-ignore
 /vendor export-ignore
 /node_modules export-ignore
+/theme-intake export-ignore
 
-# Preserve upstream vendor distributions byte-for-byte.
-/docs/template/tabler/** -text -diff
-/public/themes/tabler/assets/tabler/** -text -diff
+# Preserve runtime vendor distributions byte-for-byte.

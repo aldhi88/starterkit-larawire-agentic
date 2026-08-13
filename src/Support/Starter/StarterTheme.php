@@ -102,7 +102,13 @@ class StarterTheme
 
     public static function assetPath(string $path = ''): string
     {
-        return self::configuredPath('assets', $path);
+        $relative = StarterThemeRegistry::get(self::key())['assets'] ?? null;
+
+        if (! is_string($relative) || $relative === '' || str_contains($relative, '..')) {
+            throw new RuntimeException('The active starter theme does not define a safe public asset path.');
+        }
+
+        return public_path(trim($relative, '/').($path === '' ? '' : '/'.ltrim($path, '/')));
     }
 
     public static function docsPath(string $path = ''): string

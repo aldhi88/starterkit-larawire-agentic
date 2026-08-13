@@ -94,6 +94,17 @@ it('accepts a supported fresh Laravel source tree', function (): void {
     expect((new FreshLaravelChecker($this->fixture))->sourceFindings())->toBe([]);
 });
 
+it('accepts the current fresh Laravel JSON exception callback', function (): void {
+    $path = $this->fixture.'/bootstrap/app.php';
+    File::put($path, str_replace(
+        "\$request->is('api/*')",
+        "\$request->is('api/*') || \$request->expectsJson()",
+        (string) File::get($path),
+    ));
+
+    expect((new FreshLaravelChecker($this->fixture, '13.25.0'))->sourceFindings())->toBe([]);
+});
+
 it('checks only the selected mysql database for existing tables', function (): void {
     $schema = Mockery::mock(Builder::class, function (MockInterface $mock): void {
         $mock->shouldReceive('getTableListing')

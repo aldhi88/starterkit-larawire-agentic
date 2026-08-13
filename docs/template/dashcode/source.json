@@ -1,0 +1,11 @@
+{
+    "schema_version": 1,
+    "theme": "dashcode",
+    "provider": "google-drive",
+    "url": "https://drive.google.com/drive/folders/1ZtJiaL7bgxwiKZCEUb8yttCwUjXXJ-X0?usp=sharing",
+    "folder_id": "1ZtJiaL7bgxwiKZCEUb8yttCwUjXXJ-X0",
+    "required_local_path": "theme-intake/dashcode",
+    "license": "Commercial license required from DashCode vendor",
+    "distribution": "private",
+    "html_files": 74
+}

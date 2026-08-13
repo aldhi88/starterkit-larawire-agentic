@@ -238,7 +238,9 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             let detail = activeLink.closest('[data-starter-navigation-details]');
 
             while (detail && navigation.contains(detail)) {
-                detail.setAttribute('open', '');
+                if (! detail.classList.contains('starter-horizontal-details')) {
+                    detail.setAttribute('open', '');
+                }
                 detail.closest('[data-starter-menu-item]')?.classList.add('active');
                 detail = detail.parentElement?.closest('[data-starter-navigation-details]') ?? null;
             }

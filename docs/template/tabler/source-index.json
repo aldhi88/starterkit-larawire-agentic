@@ -1,0 +1,3500 @@
+{
+    "schema_version": 1,
+    "theme": "tabler",
+    "source_root": "theme-intake/tabler",
+    "html_files": 395,
+    "files": [
+        {
+            "path": "preview/pages/2-step-verification-code.html",
+            "sha256": "c18779f687fadabc5a4f1c05adcb4a1d7a6c4c90d3f75c4bea3ec4b6eb90b59c",
+            "signals": [
+                "auth",
+                "button-action",
+                "card-statistic",
+                "empty-error",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/2-step-verification.html",
+            "sha256": "062d6ae3771364a8fb5ade8ad3955ef66e19e47fca5d30d5acb0b8822a516edf",
+            "signals": [
+                "auth",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/accordion.html",
+            "sha256": "613615800af230a401a99cf9e870f3fd525146fc448a05dd113178fdeef7fe56",
+            "signals": [
+                "accordion",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/activity.html",
+            "sha256": "38c3f7bb806b6b9789e20a972356e8a17e665d645053a438455a14311b850e56",
+            "signals": [
+                "card-statistic",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/alerts.html",
+            "sha256": "5917ffaf20af00cb6085ae7c5c1d625fe12fdf22ecb01057484a2fe69391e549",
+            "signals": [
+                "alert",
+                "auth",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/auth-lock.html",
+            "sha256": "b46caa69df08ce12e81f5bdcd8b18f3031d741ebf451bb890c94939fd45cacae",
+            "signals": [
+                "auth"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/avatars.html",
+            "sha256": "cc163c1e1861ea272396bbf68aa50e444664d17fe03747da234f43994b61e72e",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/badges.html",
+            "sha256": "6d3f3fb067e03fd82152cfb39ea3abe84e3620c78b0ad5df6fbf1aca0c8f6887",
+            "signals": [
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/blank.html",
+            "sha256": "674803e5f9df2e8f1331846d0977a6f675bda03c34c2b176be8deef67091bf81",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/buttons.html",
+            "sha256": "9532d39b055ddb7ff46b013800916cdb00b1bc43aa6858d0dba98d3661ba4500",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/card-actions.html",
+            "sha256": "de93d3bede11181ae5a06ea0241652ed25ae0cd8dbd602265a76fee3878dc705",
+            "signals": [
+                "avatar",
+                "button-action",
+                "card-statistic",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/cards-masonry.html",
+            "sha256": "e9a03d8fb66a63f41b5e0e2601a019313300df575dcfd5fe67a68b782b76f03f",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/cards.html",
+            "sha256": "fa70e0b41d1bcd284591bca2307c87ed2509b8434161499c3942c777d350017c",
+            "signals": [
+                "badge-status",
+                "card-statistic",
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/carousel.html",
+            "sha256": "4c0a44696a128652893b1c221976516df5ac0debf4ad55876cbb18c9090694de",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/changelog.html",
+            "sha256": "ab75b9e85e874259e520acaa021f289fd2f15f9be151ccc1829960dcd39c13c6",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/charts.html",
+            "sha256": "210156c99f334e3f9bb1e1b8c54b3f8086655016a2a05275c909a35db06a6265",
+            "signals": [
+                "card-statistic",
+                "dropdown",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/chat.html",
+            "sha256": "d11372d37159a826d0233f0a3a26493e0416af6ce9134d894796075f289ce551",
+            "signals": [
+                "avatar",
+                "card-statistic",
+                "feedback-modal",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/colorpicker.html",
+            "sha256": "f0b760924c3bba442496ae342d87932b2c1b965826c678d0b367398aef7cf5d8",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/colors.html",
+            "sha256": "53db4ac1ac9945675a48ad21e044ac805b3eb891e26a75ad95b867e6f1da03d3",
+            "signals": [
+                "avatar",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/cookie-banner.html",
+            "sha256": "be5fd6fd27f915a8ca8ffd119f91a5e478934736e3309888b48542dd912bf909",
+            "signals": [
+                "button-action",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/datagrid.html",
+            "sha256": "cd682a60172a49779c97d5ab89ac831790f7d7153476c6702fe7ae0e06d52cd7",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/datatables.html",
+            "sha256": "7af009b2d9093829cf171546c8b79f34259410cf251aa8ea7c74eebb92e69b89",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/docs/index.html",
+            "sha256": "ee46761457eabf0ad6f4af37348eee9d81a7850f09db984f89ccffe401b1a222",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/dropdowns.html",
+            "sha256": "9efa48b421849a38380b6d528799b5e68c81e3dff0e3a1244ab55c685ed51842",
+            "signals": [
+                "badge-status",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/dropzone.html",
+            "sha256": "c1ba46e5d5209b656f176b4b7eb23f2d40ee29049766fda7141c1aac2d9fc94b",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/emails.html",
+            "sha256": "d8ec3fe81b6dfe6c777931c7aedbe90c6fb82c5b057485cbd197d0cd08a49112",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/empty.html",
+            "sha256": "a900ab9180d0d81e18440ab407bfcabf9c980e8912b7b45ab75ffe752f968fde",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/error-404.html",
+            "sha256": "7e475e163ba56536837b45c5a5e671e3669e9eda3c7d263dd6acb8a0ca96f59d",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/error-500.html",
+            "sha256": "bfe89009e21b3790c042ed6c2e8d794039f7899b4d38fc8350aa8152117435ed",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/error-maintenance.html",
+            "sha256": "bb4ecde1d9b8f8c8d9f4a6c1066d94ed4d95d0674673d5fb962be2b6a05e2f22",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/faq.html",
+            "sha256": "d484cc16ad2b7158b9a3229ed33eff24d4db8b2178f9e1a33f463fa94cdd617d",
+            "signals": [
+                "accordion",
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/flags.html",
+            "sha256": "e3a270ae17d887d7b97faf0ac4559f119269a9b25874416e0aa3f5b6466a11ee",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/forgot-password.html",
+            "sha256": "24f6edcafa13462fb7ec7255a2cb5ca3bf02ddf715463d0c662eb8ddf8e5c4b1",
+            "signals": [
+                "auth"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/form-elements.html",
+            "sha256": "88bd1ff1e33c6df68568845180c58a5ae3b93146e67b197ff8ce0466e236d483",
+            "signals": [
+                "auth",
+                "avatar",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "empty-error",
+                "form-control",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/form-layout.html",
+            "sha256": "2aadb17303d890b406c0ade948dfe1aaee4cecf4d9ab86f9adf841981510b106",
+            "signals": [
+                "auth",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/fullcalendar.html",
+            "sha256": "6d4027e290d12d43bcabee2f0b6e9c04818e4bdc150823e9d0a7c044e0666fe2",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/gallery.html",
+            "sha256": "6c3f4bcbded29777c309ca7d0d855c2f847d98255d50f7994737eaee7ece6247",
+            "signals": [
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/icons.html",
+            "sha256": "5cc6687c680db200312c80bf7586f5daa62015483a5aa959ac439df2981ea513",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/illustrations.html",
+            "sha256": "69625b33b899aa122490b75c228a21a6c9eeef6365c434837b077e67634a8e90",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/index.html",
+            "sha256": "cde8eeaaf77980d6cb2d6690c65945f22ddda02d295b30113e805a2356239b62",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/inline-player.html",
+            "sha256": "70013feb3ebbfde3331d20687e4040663a49e672b609808aaface85bbd279958",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/invoice.html",
+            "sha256": "6ea3573ded59807a8aed62d430f82fa8f7273c92a3ad2b35c10e362f89ddc0cf",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/job-listing.html",
+            "sha256": "b46bef63426439debabc7268ed22e7ee3ff9982022b86beacd2abe9fbd094e49",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-boxed.html",
+            "sha256": "12735e039275eccd58cdbc2cdb6adc60de1e05ed19fcd762836f58a43e26d3c2",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-combo.html",
+            "sha256": "89062394b9e2fb0ce5601a4b5a7ad73a8b9d901120d38bc797bb23833e7051cb",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-condensed.html",
+            "sha256": "601a9eb0ab1b38877093c856b2a3c2616b0f79998a205dd8ceb9fc804e511603",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-fluid-vertical.html",
+            "sha256": "712c0bfbe2733db524f233a80a79678a3050e92931a57b991368b9b5aae35c9f",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-fluid.html",
+            "sha256": "834f02113aac5b8568d652dd4297677c703ac48d63bc7193129809e5e55dc43d",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-horizontal.html",
+            "sha256": "9d0df2b7dbcc7f924a0fd741f92efcbbc2e30703b3a8ba44d1e743ea5fcd1098",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-navbar-dark.html",
+            "sha256": "34f6100a5e301e6d98baff2a1de87314a7453b9d8d0edf72c53accb69e8c5951",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-navbar-overlap.html",
+            "sha256": "99d538c18dd33aa3e156a4e98e4d76aeafa30d88f20f56e0830f542969412c66",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-navbar-sticky.html",
+            "sha256": "5866de3947f33f393e391409236a6b7689a2093452cf56ffb132b80e0005a98e",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-rtl.html",
+            "sha256": "1bddffe6891eb848cf8516d63cbc45f8baabcea921d76b22687e27d47b8dd1de",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-vertical-right.html",
+            "sha256": "87d8a38c963ff36066ef2337dc1a65269076f72c8933ecae8c2541db128906ec",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-vertical-transparent.html",
+            "sha256": "82e4b6577bca6ee8c6a603d7f812cfae3ee71ead9b5ad5c260448b5f22b2c7f9",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/layout-vertical.html",
+            "sha256": "ef030b763e5fb2022675aea096fcf1751e3198735e02ba8933ce5d1e709320a8",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/license.html",
+            "sha256": "c273cf53fedae19cdb155fe4002bdd4095005eb2967113206c2c035a7c6f46df",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/lightbox.html",
+            "sha256": "dd2670d505e535ac14023979b049c3f6dcfbe50d88c2d50ecd3560b9da324f65",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/lists.html",
+            "sha256": "b37c67ebc2e4b58ccc5a274795cdd2f8e6f3b3091cc16d5ebb6667b18860cc47",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/logs.html",
+            "sha256": "d383828d7607d7955ed530b62112d25caa186c2017d2b210e85960e974b5415a",
+            "signals": [
+                "card-statistic",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/map-fullsize.html",
+            "sha256": "ebc5ac2de070c6b89e9c7358673a73a3aa8d62cfab6c9627ba6671b36a778267",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/maps-vector.html",
+            "sha256": "863637302f261393eab4be3aa6e15ee67453a50d4a6fafe0baef1d9414c207de",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/maps.html",
+            "sha256": "ce6f9a5aae3b81010fdc062f2b3ba0d0d28d8a5d2acc42c365a47d9acf3359d0",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/marketing/about.html",
+            "sha256": "ab1bf052cb77333718af063294065c78eedc84b796fdbc99f617c78c29d8a323",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/marketing/hero.html",
+            "sha256": "94c6d35a70e605878d853a4e44e4bca0a03ff3293dfe738efe0b1bdb55f13547",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/marketing/index.html",
+            "sha256": "226ecbf0671e11cce46a47fa91d5175d232c0cac0951873f6a837ee9fa5636d7",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/marketing/pricing.html",
+            "sha256": "cb6d53a2b3860335ef5d97711a25756b357feec33105f56688ac6c50504021f3",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/marketing/real-estate.html",
+            "sha256": "6ad9d87183a57bba3a9c8a235dc1c216e148abe2c9fbcbc5fcd1b4b53993c44f",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/marketing/testimonials.html",
+            "sha256": "2ecbda2ba8dd0a050da0f4a6d7f7b42bdd252768c2d9bc2d7ee95004a4a89f6e",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/marketing/text.html",
+            "sha256": "ce3ed697ea380d3eb4ccee8459f8fd25f2f56cb353d1a606a479188a025861c3",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/modals.html",
+            "sha256": "e5f1a03eb6ac3dce1a67b58a78223bcd84cdfa1480ce76fb538d749cd4ca9fe4",
+            "signals": [
+                "card-statistic",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/music.html",
+            "sha256": "b61f1fac40d844ca177ec7e6eb7ae178b3702fab8c39c7792215fb58c3018aed",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/navigation.html",
+            "sha256": "ef8313c80d3c7da3b51c753344c5ca82e2579bb438b764f0301aae7fec79fed3",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/offcanvas.html",
+            "sha256": "42342868289edd4a955d0e71c529e6640c0a7e9dfd02a39eb0053acc7bbbd0e9",
+            "signals": [
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/page-loader.html",
+            "sha256": "b1eb71e02e8eb718374076d220b5747dd0677a008542ca33338bbab8e42175d8",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/pagination.html",
+            "sha256": "e925d99f3c70f0afad88c4a75e188e574a559c850e9a475a11eec0a2c9f5a9da",
+            "signals": [
+                "card-statistic",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/payment-providers.html",
+            "sha256": "4d15bc80d4c6ea8073ef4ceac010eacb3d0803e6422e08b026c1a81825447222",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/photogrid.html",
+            "sha256": "0a3dbbae6ff9300a6b6bccaf9b498593203318416af81263ff8c7a18afb8ff63",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/placeholder.html",
+            "sha256": "e785415c3fb2c591f23c9b208473b4d19f3294916f41665363d280348084d493",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/pricing-table.html",
+            "sha256": "acbf88f3be8d18544c8bc806975022245ad744c58fa1b536f8a6c0e1d2b8ea2c",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/pricing.html",
+            "sha256": "12cb47ba79439c9c293ff03880100dd983ec40aed0175480e64bec3cfe7c7244",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/profile.html",
+            "sha256": "0d3bcc7a91d06cb57e599ef707e7b1e3c7afddc4ed23b05f73352a45bab60923",
+            "signals": [
+                "card-statistic",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/scroll-spy.html",
+            "sha256": "7eac183e8e5561d71d9573ac0bff5fc26ec295f9dc05c85f4845f32f155d6a45",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/search-results.html",
+            "sha256": "7fdaeae90b7622418db3bac707c995cb0b6d11b44d3f8178b27101b37725afa1",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/segmented-control.html",
+            "sha256": "2da94c83a0dac1a13305c7468265d76591acd349e4d84317377d7583a9391468",
+            "signals": [
+                "auth",
+                "card-statistic",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/settings-plan.html",
+            "sha256": "1288dd42c91211705e2f95f96bfaf4d5fe30f68984ecad07e66180f8aa1683d7",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/settings.html",
+            "sha256": "6805d8b281c1cf97655d364a85bf15d5d89766ce022e6c66f4a62c3a9b9c9a85",
+            "signals": [
+                "auth",
+                "avatar",
+                "button-action",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/sign-in-cover.html",
+            "sha256": "e114a78204a8f9ec08d64f8789f88e2be47be3696b08677f1d5bd072b9ff31f7",
+            "signals": [
+                "auth",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/sign-in-illustration.html",
+            "sha256": "28065c4a54d1bd1c1f17bb827e70606f70b7339a05040e42d702ca25526dc19b",
+            "signals": [
+                "auth",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/sign-in-link.html",
+            "sha256": "6c789d3768fc3becfdf7b84a584438edc701fa00dc1a318c58bb7c88aaed35d1",
+            "signals": [
+                "auth"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/sign-in.html",
+            "sha256": "550e765574d1be32f44722a1b9e4cd1316e351a8f2ac1102e125bfa8d0e877aa",
+            "signals": [
+                "auth"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/sign-up.html",
+            "sha256": "30a94d7003bb1ce22eb7c8b54949230696209ecb3dedc53fd1206e474be21283",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/signatures.html",
+            "sha256": "4ba3163aabe7af5ec34037895ebcecbc2f581f0718d59ccf775954f9728e2d8d",
+            "signals": [
+                "auth",
+                "button-action",
+                "card-statistic",
+                "feedback-modal",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/social-icons.html",
+            "sha256": "05e04985c49eac709c01228fb2291a04b45927c76a2212fe1493ec805060756a",
+            "signals": [
+                "auth",
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/stars-rating.html",
+            "sha256": "b9f88a1d6775bd96650f6f26d97005818485dff7bbdf1bcf652cf6fb54709cfe",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/steps.html",
+            "sha256": "3c0509153dbc2da54337ff6af2ed4bd68033cc1c2a17070ebbd52b1950fe0b47",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/tables.html",
+            "sha256": "3fe1611de07c9dfeb420c7d31d9bae706906a566165e484b8a97ea0a94486521",
+            "signals": [
+                "card-statistic",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/tabs.html",
+            "sha256": "701a9b6248f448b1eb313b6f4ab5468e064f7ab07c99d180aa5e7a881c214805",
+            "signals": [
+                "dropdown",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/tags.html",
+            "sha256": "f8383773f740c7b0dcf6dc8f65952417f19307ba684a98d76e8259a7f235e9ca",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/tasks.html",
+            "sha256": "276e24cdce2243b3de4bf875e8638b1b9ba0d9356a0346bdf34cd1fffaa70e75",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/terms-of-service.html",
+            "sha256": "9f04d3b28b9c905156cb3d2dc143ad92a7faf311d233580475b3f7ba8e2f732a",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/text-features.html",
+            "sha256": "3851d77724f67c0deb459c11ee4867ef52889110283e80f4d404609f9481ede3",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/toasts.html",
+            "sha256": "185152a65f3b843efbb11fb2ca7d5d408b3da2fa921530670e113107926e6881",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/trial-ended.html",
+            "sha256": "2f6b74441e89d29e33363ab70fb2cec39e8cbe04fa455213d60453b75d1d5d47",
+            "signals": [
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/turbo-loader.html",
+            "sha256": "2e71aea1c13b3f9195af4b7cf99e3557e7abe863e5352c03f0ef99eb38e5e127",
+            "signals": [
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/typography.html",
+            "sha256": "d0cda634d387212182b349de80f0c1f19ba24047eb2e5c56f2a2c319ab765554",
+            "signals": [
+                "card-statistic",
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/uptime.html",
+            "sha256": "c88939eb3271a83a44473ae564c5cf32b5489265848b971da6a7af446fa1dc6d",
+            "signals": [
+                "card-statistic",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/users.html",
+            "sha256": "f363a54c74d848d32ae0f70bc278140b73aa8f89ba56dfa3757c95099a6461eb",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/widgets.html",
+            "sha256": "e2a66a455589e1ae14305cee77dde12fb7b2957b807fbbc3e92ed447a76d410b",
+            "signals": [
+                "badge-status",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/wizard.html",
+            "sha256": "cd2ced6138fa4588a74c7ab7ff39e59af40bc5f831aca5a80c39fb28acb16264",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "preview/pages/wysiwyg.html",
+            "sha256": "376fb2659ac203fa5da1d0bb294692caf4b313361e064029a83c219bde414bd8",
+            "signals": [
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/activity.html",
+            "sha256": "1640d372c1b1286e012561832f45c344746311c372717253ee275b1750f92535",
+            "signals": [
+                "card-statistic",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/auth-lock.html",
+            "sha256": "b90fec470faa4a00cc23b87ac934371f06cde980bce04c45f68576bd74ada7ce",
+            "signals": [
+                "auth",
+                "avatar",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/blog-single.html",
+            "sha256": "f9fc24c399e0e9bff61b579d021557926f42f33959d73a0e87bdf3055e68a27e",
+            "signals": [
+                "auth",
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/body-placeholder.html",
+            "sha256": "4a1e99f2b47e2cee58ea2fa5804a4511209ebe7800ed69195bd56bb5446fd915",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/card-group.html",
+            "sha256": "2ee013b073eb150e4ffcb6909c2146fd4472f7dc19d6d21e2a4c04543b2ed039",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/card-image.html",
+            "sha256": "4832f47cfed60dc65f95e289699487b2ebba760c308a8d7a2746dcb065300149",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/card-tabs.html",
+            "sha256": "b512aea365127163503195e15fbfe0a9edc1fe4ed5ae4e7d2de36d0aadd4c72c",
+            "signals": [
+                "card-statistic",
+                "layout-navigation",
+                "tabs"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/card.html",
+            "sha256": "e0c151a3361c2b7a945ebb5aa0cc8af6c8d17d1af24c1eaa91ab0f4308caa656",
+            "signals": [
+                "alert",
+                "avatar",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/carousel.html",
+            "sha256": "e983ad39762f77623c39877073467afec93bb93381ed0275e77096e9f7e264d6",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/charts/active-users.html",
+            "sha256": "804f3bf2162b65d63b9ab0c2205f7993bc73336b5d122d9c882e3a9684951309",
+            "signals": [
+                "card-statistic",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/charts/heatmap.html",
+            "sha256": "f98c4eb666d3543131f2c7d8b10ff6304487c32cc81d09b8ac2449df6ab4152d",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/charts/new-clients.html",
+            "sha256": "953b74ecf257a1e2c62c345293595504ceb87096d628fd7bd672ff1572634911",
+            "signals": [
+                "card-statistic",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/charts/revenue.html",
+            "sha256": "f603636a0e9001e0893a1fefc01207e18242f2ad59da88e6d9e15368b45b4230",
+            "signals": [
+                "card-statistic",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/charts/sales.html",
+            "sha256": "92373f9f4c2b2c84b773d768f5df8c8c9c85c7a9d303f2326832f108fcba002f",
+            "signals": [
+                "card-statistic",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/charts/total-sales.html",
+            "sha256": "f7ce74e0ca07b5b45d3032f4d0785615af486a86a1160f9b9fd2d855fdf3b3cb",
+            "signals": [
+                "card-statistic",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/code.html",
+            "sha256": "e873a463f4d6e32eea8c4c5e865025cc240c1fbf05fd7ead9f37cf89094b6f8c",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/comments.html",
+            "sha256": "aec50d2ab194e508093b2fe130c27ac9f6c2687554d720e4243010ddb7c4ff86",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/company-employees.html",
+            "sha256": "29dca6e8cb808d2c3cd520c317c830cd47212c0a181e158005db97eafb9ad8e0",
+            "signals": [
+                "avatar",
+                "card-statistic",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/company-lookup.html",
+            "sha256": "ab27a2881c7908357a86988de4a773e44747ec31fa038a56e7bf9b089c7771af",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/configuration.html",
+            "sha256": "22877d0de834a370e5dbf7ca8b0138482d621bf9fa873ad4c3e5c08dd18d4045",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/credit-card.html",
+            "sha256": "a560d554c0aadd3042f4ce4df7e2457b0d23a24fff3b72b09dbaf766b9e00aa8",
+            "signals": [
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/development-activity.html",
+            "sha256": "f794a47d8583bfcf9c1ecf05a1f84aed002da290f70d2230e9e3af5be7015ded",
+            "signals": [
+                "avatar",
+                "card-statistic",
+                "table",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/forgot-password.html",
+            "sha256": "328e97ae89629e264f7d6897f790e7662f85e9444c7d2076adaf816f27b2740d",
+            "signals": [
+                "auth",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/form/layout.html",
+            "sha256": "b78964f41194b8f82a3d9b8c3c79ec7668d8a29081acc01a49d93653b5becec4",
+            "signals": [
+                "auth",
+                "button-action",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/gallery-photo.html",
+            "sha256": "e64cf042504f26b074b90de1a3b4a5539dc341d37ee87574d2290eb4925c7673",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/icons-banner.html",
+            "sha256": "65264342d88b1693e0d6c447b2c3f000575c9e84ac8977b0ae11ba8e66d826b9",
+            "signals": [
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/icons.html",
+            "sha256": "c20d307ea63e3c124dbbb60cb8663a884bb7a5d32d5298bbc6d2cf6a1d741073",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/invoice.html",
+            "sha256": "9af1d2c7f1dd816a30030ee00adab259095ffb4334fbf81caf3d20935450271f",
+            "signals": [
+                "card-statistic",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/invoices.html",
+            "sha256": "083603398b50fd765347edec8178f74ce2d74b9f4d9f394eaa9f4c83290dc788",
+            "signals": [
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "form-control",
+                "pagination",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/map-vector.html",
+            "sha256": "260a7f187d8ca54e578920d8610f2487b55ef40fbaf5f9b4dd1c18cdc9181715",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/most-visited-pages.html",
+            "sha256": "4c5b0db65ebe20989a77ddd61164299730181a404a574c74566e4abc989a2ad4",
+            "signals": [
+                "card-statistic",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/music/track-info.html",
+            "sha256": "572726385f39514768e5da1d10041f77ad3da3d3ddca6c2ac8e579badf43196a",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/music/tracks-list.html",
+            "sha256": "6a2ae9e92738c12bb08702eae04e3aeb620763bf28d17399e6da4bb6bd5073c6",
+            "signals": [
+                "card-statistic",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/navbar-apps.html",
+            "sha256": "93c994283454eebb5f8537aa1e49df9edf0a233c291b76f0366cffacb5aaf816",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/navbar-notifications.html",
+            "sha256": "bc8d224e6beb700952645d2d59432b2deb18c0e1089265efc2724274b1644993",
+            "signals": [
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/order-statistics.html",
+            "sha256": "6ccf07a83e5635110804005f54db7fa68e2d45d69e1f66cfebca316a9e85ec04",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/placeholder/card-1.html",
+            "sha256": "9689b07a7e0f4a79b98415aa722cb15fcfbfdf270e38ac28e5d7fb0a2969f01d",
+            "signals": [
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/placeholder/card-2.html",
+            "sha256": "e03f29016625dcbedc4046d5ea133462f6b4fb96afbbebbddca6191d6cf2b41f",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/placeholder/card-3.html",
+            "sha256": "520b446adf5883abb4b91254f03b63a3d666d106918659a096bd19ed2fcb20e3",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/placeholder/card-4.html",
+            "sha256": "aa74fed3e6a13a0d66c4bf877f5b399c7faea3cbda32af5fa5c14c5fa2158e4c",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/placeholder/card-5.html",
+            "sha256": "0645b7678e173a64b04fa5e50e27f9f1bee15284d9016a18649f6039095c7e9d",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/placeholder/card-6.html",
+            "sha256": "5d6171554b27fd90e51f434812778089da5366d79cf77b1f68f4a7e01db9defa",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/pricing-card-enterprise.html",
+            "sha256": "5a07d213612637dfb9d3e3f8a02e4547e6221a1a4aa1620605dfeac590ed7e47",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/pricing-card.html",
+            "sha256": "bc18df21ca868dfdaf580f8a7835be820878e11960d96c5979e459afb8857395",
+            "signals": [
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/profile-2.html",
+            "sha256": "ce6120d408a974fa8d9c02d323defd7adfc82daec2f312bd42f5eef35eac74cb",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/profile-edit-big.html",
+            "sha256": "053c01b5088bc9bd25485515a5996669c1886196180872f55cb5c97180cfdfc5",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/profile-edit.html",
+            "sha256": "e3f5d55f649d378d9ea66d30cf9d5564d7d58bcc4c270461c406d07161b7eb20",
+            "signals": [
+                "auth",
+                "avatar",
+                "button-action",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/profile-timeline.html",
+            "sha256": "67b16ee865e68cd8529577cee1f82aa6481e8c819d757667db8323180283da09",
+            "signals": [
+                "avatar",
+                "card-statistic",
+                "form-control",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/profile.html",
+            "sha256": "f3f1481f1330d935d1dc42af86e25340833a59fcd34ebee218667fa9babcd34d",
+            "signals": [
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/project-kanban.html",
+            "sha256": "2b0d42c453e284b3fbb87cbb84b664cd5aecfb76f63e5ee39b32e32278973f88",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/project-progress.html",
+            "sha256": "b82f322175a15670931a359e201f56edf2327f97a37b09b4d91df603113b6448",
+            "signals": [
+                "card-statistic",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/project-summary.html",
+            "sha256": "ba4a61f1f8938381e8afc76f113027b18d68999a0c3be4bb7a28a43696cf593b",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/ribbon.html",
+            "sha256": "dcbfedb2b4458e349267cdfaaefc89ad599e492a3cca4b3a5a992c6e7f4dfcb4",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/sign-in.html",
+            "sha256": "121dc73981e5160c4231a7a9aca96a3a78a1ecbefba4098c2fa91c2a749fece0",
+            "signals": [
+                "auth",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/sign-up.html",
+            "sha256": "54d65a7ea5596260a0b9efc2211060da50f321d5a6ba999b8f313baa2fce40d2",
+            "signals": [
+                "auth",
+                "button-action",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/small-stats-2.html",
+            "sha256": "20964e9eaa14b8996a7962c536628e7e799eeef7614c76f0344fb1c3c76d55ea",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/small-stats-3.html",
+            "sha256": "e9fe517bd465f44af1ab612cdf9e4efe8e7a0fab31fa3cebb064d67495d96613",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/small-stats.html",
+            "sha256": "c9951716f5384296a978c4c0b044c76459092622b2dc67f27f0aeaa1c777500c",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/social-traffic.html",
+            "sha256": "16769d50c7bc6f14a24ac16f845becb8cea6bbc533f75680399ca96e4df15c09",
+            "signals": [
+                "card-statistic",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/sponsor.html",
+            "sha256": "91206ae71662598db692b8fd1124d60a90e9821c654a473b3a58886c5ce2f555",
+            "signals": [
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/store-list.html",
+            "sha256": "8835946bfe2cc70938025730c153896f29d57faeeedba97e1eb6be3237f2e963",
+            "signals": [
+                "badge-status",
+                "card-statistic",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/store-product-grid.html",
+            "sha256": "5fe708a928a5b218307919818cc88f26967d648bc1af3661804568c526e50404",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/store-product.html",
+            "sha256": "dc2b649bdb382adaedbc4efd812fa8929d5fd63fe985af70e466ae290a5c29d9",
+            "signals": [
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/subscribe.html",
+            "sha256": "032f654ac1999364a2247aaf92814978611b6a11790fd14fe9bf603378b999c6",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/table-users.html",
+            "sha256": "55bac312127db992c49d230d9b8315d02c8720d3e7e63cea0f3f6fc559c95f45",
+            "signals": [
+                "auth",
+                "avatar",
+                "card-statistic",
+                "table",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/tables/progressbg.html",
+            "sha256": "f59ac8c8a796bb23fcf15858a8f48fdc199b501cf71df49bdb922e2b94dbfb36",
+            "signals": [
+                "card-statistic",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/tabs.html",
+            "sha256": "4e1d583029d497caee438259860974774d65cd40796ecc40ce957fde8de3441c",
+            "signals": [
+                "card-statistic",
+                "dropdown",
+                "tabs",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/tasks.html",
+            "sha256": "20e2c7b2fb6620b25ebdf9ab32fecf5b1f57ec76531d3cdb225dc9dca34c8b08",
+            "signals": [
+                "avatar",
+                "card-statistic",
+                "form-control",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/user-card-bg.html",
+            "sha256": "bb2a355725574b7d29f64ffbac4fc3d908606bb636965e6523f72029784c741a",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/user-card-big.html",
+            "sha256": "1cc8373762671d3970e5f1550f5eb520bc95cfb6518a37a75312c0383336443c",
+            "signals": [
+                "avatar",
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/user-card.html",
+            "sha256": "b294e27bbd981706a424545aa9065fa5f06122ebba68df96e814222e76b401a6",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/user-info.html",
+            "sha256": "979a376dfc6a5182f6519f451a87e418fed9f017630649e77e9d709fd6b78d61",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/users-list-2.html",
+            "sha256": "88de0c7a5a1f1708c7d2b0f5d8d1ca756a1b2f70d02bc01face659bd04f6c508",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/users-list-headers.html",
+            "sha256": "270876b39096b123a35c696ce703bcff31592863fd03c73fbfebe238060868a5",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/users-list.html",
+            "sha256": "b0aa0398a954e98e6c8e8560876c59d2cdde72417998c3cdedc8f76190730538",
+            "signals": [
+                "auth",
+                "avatar",
+                "badge-status",
+                "card-statistic",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/cards/welcome.html",
+            "sha256": "99a4bd8407d1eb478b9402c1565c88efb895d53dd54558fafd49ec922b27547d",
+            "signals": [
+                "card-statistic",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/colors.html",
+            "sha256": "54739b847d7c499794e1f689c28b390957dfad1853d9a31bb65ab27797de898e",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/docs-card.html",
+            "sha256": "9a52009ae2292302d987b15ba506a21d3ac88a6b65312b55e787a57859f151ed",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/download-button.html",
+            "sha256": "2aa79d762b9a8aa7b2d60d86d9e5953fc18ea0a65ae7ea9f0f61b55c6cde4690",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/example.html",
+            "sha256": "987451981c49548d9ddbf53a25f6bc38cad41dbfb5faf0a67a8b10025447937b",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/flags.html",
+            "sha256": "9f7f150be4c601758c68ae536ce32e60cb9ac787e457aff281ee2c1f0150994a",
+            "signals": [
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/logo.html",
+            "sha256": "9e8d73fb3f1585151f72351628ec4fb2c25f5894a87fae87f2123211d49934e8",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/menu.html",
+            "sha256": "cbf9bbbec50046530647f4c45c2af6c9fdda393ae55afe55bacf2e9451449be8",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/navbar.html",
+            "sha256": "be57f8830c6476e7c6e76dca29c9d6884976af03ec8a82ecada5ff8067175c97",
+            "signals": [
+                "badge-status",
+                "button-action",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/open-source-resources.html",
+            "sha256": "e147bef3de28c11f9e2981d5556375228f9d81cbba09597148450b45509bf02f",
+            "signals": [
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/pagination.html",
+            "sha256": "32f785c9e62b898cb0a8640955ea237dc8604d642512bf26e0ae983b60c62986",
+            "signals": [
+                "card-statistic",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/payments.html",
+            "sha256": "0a56306dfa897df0be283c2bba3795e97bdcf85f1fcf63824ee24aa308d5ba55",
+            "signals": [
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/socials.html",
+            "sha256": "16196b101a47dda48b6d4e7508da5bdf37ca35476b8103e8b1e4ff5d8246e13a",
+            "signals": [
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/tabs-package.html",
+            "sha256": "cd034f2d2968c7210146e06aa1808513d20dafe64bd931f16cc842de70ea129b",
+            "signals": [
+                "button-action",
+                "tabs"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/toc.html",
+            "sha256": "9fdc46c41d8babcb09f6d8f9d658b1397390d1dcf27aa429dcbd9199fe8f2c83",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/docs/ui/icon.html",
+            "sha256": "7da702a276474c27ae480f707e330d1a6ffd3edd3967a8e06085260615d5fad4",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/example/colors-table.html",
+            "sha256": "7ef718f69a1a834c039cfdb4a1758d377d33b668f3b50bf5bb3736dac8510265",
+            "signals": [
+                "avatar"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/forms/form-elements-1.html",
+            "sha256": "a6796a973b74608e6378132e5fcc49699d3a2818db8b83c6b265d3de7a9820ba",
+            "signals": [
+                "auth",
+                "button-action",
+                "dropdown",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/forms/form-elements-2.html",
+            "sha256": "bb5b6d86e3c6d55727a9c7955065cb9be9fc0c80f7507f518fc8b3df2faa25d3",
+            "signals": [
+                "auth",
+                "feedback-modal",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/forms/form-elements-3.html",
+            "sha256": "882986073821575665cfb94d5eb46a084d2d618867bac23b1ec22319d2112e43",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/forms/form-elements-4.html",
+            "sha256": "a365873f3af67de95de5e0f13c06f0477d5ae2be2a7e1d69accf00b10128b84f",
+            "signals": [
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/forms/form-elements-5.html",
+            "sha256": "303487b35f620bf44be3b41b51323b0f8cfef041f8ae12fd1d927790f357384c",
+            "signals": [
+                "feedback-modal",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/forms/form-elements-6.html",
+            "sha256": "29402cc58d7197ce0de5328a7bc0821b5aaee3cbeacb97ba0880b8967352c6f3",
+            "signals": [
+                "auth",
+                "avatar"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/forms/sign-in.html",
+            "sha256": "2c39d16bc13ae0be5e0e7e57664b708c28933ff63739dd7444315c4e43833766",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/js/countup.html",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/js/nouislider.html",
+            "sha256": "e83b11b16b0f6719e6dbf42b97df80fca08f885fb46dee180ed72c3fc9d670a1",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/js/tabler-list.html",
+            "sha256": "48859ea7c4f83d861c5f29a2fe876f35751fc414ada1642cc349697819e8bb9f",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/analytics.html",
+            "sha256": "cf26b4206461402c9ac56cd3b7d2db98de4ec24d4965bbb0d6823218d4f900ce",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/banner.html",
+            "sha256": "f9fc64b53650497713f1ae8f14d3d4a94cb119735a83ff8333880dae49055f54",
+            "signals": [
+                "auth"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/css.html",
+            "sha256": "96ec80375318880d5219cd9b15b6a82c603daff92c65f5b779b2324db9d90800",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/footer.html",
+            "sha256": "651b1321d993653a3c73b99c10de3717bfa42cab87d52a83296f51df76514a54",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/header-actions/add-board.html",
+            "sha256": "f3e044f8bf2006de550d52654f64e5d4cd0b4d206354c52c06c7e6c9d6ccf4bc",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/header-actions/add-job.html",
+            "sha256": "40491d2e868a6dc2820076bc014db633877daecfffb05cdc38ab0baa7a1ab3e8",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/header-actions/breadcrumb.html",
+            "sha256": "e3cea4fde0ca6fd06f25e96634d5906769089f51ac68b5ca5187f4ed42addfaa",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/header-actions/buttons.html",
+            "sha256": "8c2a41f97569427723a533b5f96a81f36f5801de3c99568605ac8417df7e5f85",
+            "signals": [
+                "button-action",
+                "feedback-modal",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/header-actions/calendar.html",
+            "sha256": "96b547b3d378ab7d165e6e185c765492a5274e34ff23cfca242e80233c2becc8",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/header-actions/new-project.html",
+            "sha256": "244cfbfa639e4ff9a6568c8dfad33725bfb5f7e6de3c40d8e98187f2570cbdfb",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/header-actions/photos.html",
+            "sha256": "199f794230b2a61362346efbe5f53425ef60e34a825e5de91cd06f58a48f87c8",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/header-actions/print.html",
+            "sha256": "f5c8615f0e44d08bd2a550b4ff1ee113637c3a8ff0dbc1f198c1172a722fcaf8",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/header-actions/users.html",
+            "sha256": "9f8dc58db514a13751111c7b3c37576c0cf55479393d706ac60cf3238c2f32a2",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/headers/page-header-1.html",
+            "sha256": "acae35b3a979e893bd81608cb847d9f20ae4e8b23f8ea71a6ad8166e223b94ae",
+            "signals": [
+                "avatar"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/headers/page-header-2.html",
+            "sha256": "55915f2be97613da9b7509b5db8e9c6a99e75550cb6138628e0dba0389633a2c",
+            "signals": [
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/headers/page-header-3.html",
+            "sha256": "1e2059497c275658f2f564b321670b5e7f239ae9571e99d072b159576e6b2a4f",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/headers/page-header-4.html",
+            "sha256": "26a3901f16666a6e5e611b7e94e7c620cfe8b18ebf54c02505c05c7f4b6b181c",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/headers/page-header-5.html",
+            "sha256": "2e14091be4983611b4045e0eee32bbbea50da9e02390469476d2f8c85950ea0a",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/headers/profile.html",
+            "sha256": "ea196067adda403c107cda1dbf20f2b402131c823ff6b2c6801368eecb788968",
+            "signals": [
+                "avatar",
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/headers/uptime.html",
+            "sha256": "d6f0c63e0a5d7a162c4a953d398184107dec476dc430d67de96f7eefd2b8fd67",
+            "signals": [
+                "badge-status",
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/homepage.html",
+            "sha256": "aa6f75911091a92567d4e22997209034aa45f7c09d3dbdf7cbf8da74e407884c",
+            "signals": [
+                "card-statistic",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/js-libs.html",
+            "sha256": "14262b81601efc190645181f8bfdd0d2979ea9d84bd737d1a2674897ba21391e",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/js.html",
+            "sha256": "9bba2f975d8b3f60aa80c75b1273f9c99f60112e7f4bb564a8d083ae1f783090",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/layouts-list.html",
+            "sha256": "b30356aac0f6b60af4c61e71113df52cfcb3ffcb128f423c9b1efe6856e875e6",
+            "signals": [
+                "badge-status"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/layouts.html",
+            "sha256": "8c4ff48ab8fcd736c5f2cc4033b132016c7959abaa0c35a88e91395c773a8e1f",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/navbar-logo.html",
+            "sha256": "26ce9e2d94034631fecde54d8046cc667f1b31d6bf31350ec49aca8645d52d5a",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/navbar-menu.html",
+            "sha256": "ebe6300f30e32a146df3548dc5c715a61cac43ca448c0a71caa5c0941af880ec",
+            "signals": [
+                "badge-status",
+                "dropdown",
+                "feedback-modal",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/navbar-search.html",
+            "sha256": "f7184dd012b6dd499a0abe7ea2edb90ec00fdac2f173088dfb12eb114021adeb",
+            "signals": [
+                "form-control",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/navbar-side.html",
+            "sha256": "9a48f7e7659e144c290967703ff7f5fe28fd036f16950ef85387786b1bf4e9ee",
+            "signals": [
+                "auth",
+                "avatar",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/navbar-toggler.html",
+            "sha256": "bc0f9557460d3cbeeb78344a12dc274b2a74b470081a6bf939146be44246b422",
+            "signals": [
+                "button-action",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/navbar.html",
+            "sha256": "40e5844f9f06b0e20c74ec705dd1be2153395bb8faf6edf12ca8c69ad0f49598",
+            "signals": [
+                "badge-status",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/og.html",
+            "sha256": "1325131251cb8e097cf54ecdb12a089b94fc6ddb2d3c9c3cb0ed170b43a00993",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/page-header.html",
+            "sha256": "ece96aac9887be1e30047710ec40a45cc6fd8bbbc54b32f79d94322043cbae20",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/sentry.html",
+            "sha256": "0bd3431c292df0067cfc466064d5221a31947be7c1d3c1076d65e123f1385a33",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/layout/sidebar.html",
+            "sha256": "a7b58170d49e553003a19aae72987591fc9d95ef9a3fdce475ea2cf626af1e94",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/hero/browser.html",
+            "sha256": "f36df7368d50ff32df9b066149fa4650cac54e14da80c4147ebc28faaeb087e0",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/hero/side.html",
+            "sha256": "f97cb2aa2bcfe4803c4040a0f0d98713be5c343b456a18ab67995e7bc0d82e34",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/navbar.html",
+            "sha256": "25fa3d0ec2721ce2e45d2752949d863ef1173443c217ba4b138bab503fb7e970",
+            "signals": [
+                "button-action",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/section-divider.html",
+            "sha256": "b47998843d751dd004aedea2e08848d5553ffe3c7b1e58b6da6f445ca147df3a",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/companies.html",
+            "sha256": "7a5269dd41526c684cf9dfc553bd2ffd25c27e83a46c0d00db4c82d1027e97bf",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/counters.html",
+            "sha256": "5dd544805c8f739183125d4c8fa458fc3ad1a8995a2e5249c96398072aec91a1",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/cta.html",
+            "sha256": "4e7b55b62cb8cd7446a65649a93cb66f94a624ca6f7102eac2f4904d699e077b",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/faq-2.html",
+            "sha256": "e00bf190dd04cb33bcae5a5a47b92b3ae498b56032c0cd7d2cca8f19d74124e1",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/faq.html",
+            "sha256": "2078bcc83cffa5655b58bd69ac1b2ea1806ed37ffbe187b78f5d95e5495a0e0d",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/features-2.html",
+            "sha256": "71fb031337022f367be3117ff03c13ae7c5ec8ed7ee56cf48934dc08a70a4c76",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/features-3.html",
+            "sha256": "cc6c9e74e489cdc0cb6e04168a4a4bd63e2e7bf62432fd19872eecfff8476894",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/features.html",
+            "sha256": "62b17dada86db0a54afbbc7b839c1421d9c68474789decafe96edbf91bdf2dc5",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/pricing-banner.html",
+            "sha256": "6390463b80250d933d4d626b66cef77b17c2c95d5dc816a069e10728b3048303",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/pricing.html",
+            "sha256": "9935edd8dd056a83ceffbd5e584dc78a78f2b0dcfa95df735927b2c4fde6bd7c",
+            "signals": [
+                "badge-status",
+                "button-action",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/subscribe.html",
+            "sha256": "c79580ff698d7fd6ae18dd5774ce5aea1d40c1d08b2c4b2b93bf3cd88ac499a7",
+            "signals": [
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/marketing/sections/testimonials.html",
+            "sha256": "1b0c047caab727d733df30ae15d5a445b172bef0b6b508178a5cb9437a7fc2fb",
+            "signals": [
+                "avatar",
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/activity.html",
+            "sha256": "79c80f3df891ae00f5cef241ea83d4d706f73af78ae563019728f52a144c3c5f",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/calendar.html",
+            "sha256": "74973d0b3111d4ec9c6c4210cf9473b6bc72a25685284af27ef12fbf2c6dee8c",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/charts/activity.html",
+            "sha256": "e1489d343c43eecb10664d8f194de7c00dc62601ceadf197fb3211d4f5af0973",
+            "signals": [
+                "badge-status",
+                "card-statistic",
+                "dropdown",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/datagrid.html",
+            "sha256": "ed64fcfd2e924dce60f4d13de69d6efd94c6ff22d72fa2253b576003840c89b1",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/demo-layout.html",
+            "sha256": "92ba5a8cb5f10f68ee1398f710a678a01b8f5b6959bb4faca96aaf3b49821ceb",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/dropdown/days.html",
+            "sha256": "e3da394c22528525b6415825af4b95d3801f491ac954e1f60aeda12d088229e2",
+            "signals": [
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/dropdown/months.html",
+            "sha256": "1d8f2234f0b81e4982eff4803837b45bfbca3dbecc9249e820dacbca08188593",
+            "signals": [
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/checkboxes-list.html",
+            "sha256": "240f9283c3f7060ee367e6b818be5229c1205bf485461b80be2e24e9af970284",
+            "signals": [
+                "feedback-modal",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/fieldset.html",
+            "sha256": "db56c1c598183ff430c963aa5b77ba924ea376b2226b44d102bd66762f1160bb",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-checkboxes-inline.html",
+            "sha256": "f9f2c9fdedd3d9a72a91d15b433d42a2e3b45577389f77f08389d96224152808",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-checkboxes.html",
+            "sha256": "10fa26784ccee40bdab3ef99c8ef28cc247da7236e98b55b5ce82aa9749a1552",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-color.html",
+            "sha256": "48c9fd4fdf5cd9d11a0e209b506207a14315949bdcd7ede18e04d3e228a3d7ec",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-colorpicker.html",
+            "sha256": "3341cc5e370f858bd8e6100ec1c510173dafe995bdf8178d26850a7bcc2b4b38",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-datalist.html",
+            "sha256": "e500ca4d69b15241883a67bc533b7e0d06edfcb0dbbc92b9bfd28bc6d70e5bd9",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-file.html",
+            "sha256": "13bdecf6044c9c5a43488dcfb208d9e5c48e81d83c11cd6f0feadf573634f0b8",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-icon-separated.html",
+            "sha256": "e9d40f44d2817fa1870dbc35606711225ffc6e899a5f8417c9bd23654b85a366",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-icon.html",
+            "sha256": "29d94f4fe76037869a11a99547b5e1008c95120190bcd3dfa7447933df9892a8",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-image-people.html",
+            "sha256": "a9e2637af25449df8a05afe1a17daa97e167e4b58658334a7a50c26bee0daac1",
+            "signals": [
+                "avatar",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-image-radio.html",
+            "sha256": "82fece21bb59fb01a05d664acff2f0737d172a7f42eeb47569eaa3c32401882e",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-image.html",
+            "sha256": "5abdfb158dcdbb193aa4b99a685f362c0217f89eeaa707ad5b97c5096f577303",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-radios-inline.html",
+            "sha256": "4d471ff0aeb2182f7d811f63839793129f746e0f1cbdc9074a2d0b96cbce338b",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-radios.html",
+            "sha256": "2a6a92a70e33c7ef76dfd99bf224a5584336281e5d2c676c4688460e2eba743d",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-range.html",
+            "sha256": "3a37e4b36bea45a9a8f50dd7b9704295d7483be63ee90d61f471ec95340c1127",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-selectgroups.html",
+            "sha256": "df37a10c286e245bce78cc9bc1f12625977db85ee78e4b8f1083b8a7990811b6",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-sizes.html",
+            "sha256": "e67b45b4fca0d08f99112255611e995dd064a0bc03feffc608cb04f9ed12faef",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-toggle-single.html",
+            "sha256": "59f89541dfc8939029bc27e618fb31658d3b5cd665fd5f6306c4be638e602e45",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input-toggle.html",
+            "sha256": "d8ed71466a8053a896a82f9655c52fedff1702f59f2930d242d3b7969cce4f12",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/input.html",
+            "sha256": "836da9dcab8c5bfe4c7a29e02950b0d81ac781a653fb485faeb7dace275bf287",
+            "signals": [
+                "auth",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/select.html",
+            "sha256": "eac210de3a0cad30029613efea8c2a58185e76d5987062f4bcc6b36e7921c056",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/selectgroup-payments.html",
+            "sha256": "b24b859dc8e320b18fa40472859ff3736859f17e726ef2b8f08dc010095cd96a",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/selectgroup-project-manager.html",
+            "sha256": "5bcdea7653bdd07dff32709c7c31cf9677c15e98502799301ea542b3fd26ef80",
+            "signals": [
+                "avatar",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/form/validation-states.html",
+            "sha256": "b89e5d7fa7897cb3115d66c8c24da0ffa6ccfd356f8cf14d13dc528ca621f396",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/danger.html",
+            "sha256": "52743002dc9fc4c6fea7bd7b87e7ffae49c8e4f4b80a92c02587fb2f8be741c8",
+            "signals": [
+                "alert",
+                "badge-status",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/deactivate.html",
+            "sha256": "144ba12dc7976bf7dbdebe5e72127462cd480477156d7bb42f5ea7e0457a1d55",
+            "signals": [
+                "alert",
+                "avatar",
+                "button-action",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/full-width.html",
+            "sha256": "e1ca5c300aa0b4c27e2fbf58c45ebd2875f76259bcd6bf287434600f8ad97461",
+            "signals": [
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/large.html",
+            "sha256": "34b1006134420345eef68ff5457b3d3585c9d2e78f6937a19188adf1322090a9",
+            "signals": [
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/report.html",
+            "sha256": "49421f89d070415e8c27a46aaff7c27679399f1c194746b91a808c800ccc3389",
+            "signals": [
+                "feedback-modal",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/scrollable.html",
+            "sha256": "4e574b99cae7f950efe3e36fb82d585a945e8cd6efd06ed8f1ec8b6f7a240629",
+            "signals": [
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/signature.html",
+            "sha256": "0bf940f1770ba783b9d2d73fd8a696d0885e8613ad882ee668727abe75ef748a",
+            "signals": [
+                "auth",
+                "button-action",
+                "card-statistic",
+                "feedback-modal",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/simple.html",
+            "sha256": "8346b6af97d1c32f8db637ae397a0a9313bddaecc4f19efb5950bdce6e292a33",
+            "signals": [
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/small.html",
+            "sha256": "a58834d26970c1f5d8e68bbdb1ed5622af3ac110db0d5361c98147fe0a426b43",
+            "signals": [
+                "button-action",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/success.html",
+            "sha256": "2f02d2e28065757304f0e6378c6d106562ea80e6cbeb8c2b41b02ddf31b9b3d8",
+            "signals": [
+                "badge-status",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/modals/team.html",
+            "sha256": "15605068645ff6f227e903778f33355dfb36bf12ba93228d13bdf96332fb23e9",
+            "signals": [
+                "avatar",
+                "button-action",
+                "feedback-modal",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/nav/nav-aside.html",
+            "sha256": "293d198b2e4654774c91e772e3dbd5ab1f6c818cd8e92c57706660a0c3b1e2d5",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/parts/tasks.html",
+            "sha256": "f96bf96a507833fb89087c4c59767bfe3f58cc7e007571ef9ffdb1b9f92b9300",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "card-statistic",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/redirect.html",
+            "sha256": "d6c612618b3e51bed5be584628207f62529d02bc518e9c28f3eb34996a180e15",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/settings.html",
+            "sha256": "079705e129c4e4a6393850245ff8894cb00afef047b06db35193a84ba8721315",
+            "signals": [
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/accordion.html",
+            "sha256": "1874f97c1806d370d1e7106e2e0bea4e715301304ffe70e828555cab65af8687",
+            "signals": [
+                "accordion",
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/advanced-table.html",
+            "sha256": "927106870a2843cf275f23e9adac0586f890194b6d0d1c9213706ebc5aafd743",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "form-control",
+                "pagination",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/alert.html",
+            "sha256": "54fe3cf1a7f76bc55d8aa943f84c05255d3e053fc2a82a29afacaf3c689efad2",
+            "signals": [
+                "alert",
+                "avatar",
+                "button-action",
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/avatar-list.html",
+            "sha256": "da16d22b7e1c81cb5bd7d0f2f77a5eec35048b8176e27798f194262bbb9b04f9",
+            "signals": [
+                "avatar"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/avatar-upload.html",
+            "sha256": "ad8fb4cdf17b3fcc877064fcf4c93f492410f8a1aa05989508435921db227ea1",
+            "signals": [
+                "avatar"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/avatar.html",
+            "sha256": "965d4f8b34950f4a0361a17f7973461dd37f82bb5cd7caafced9d4fc8715b909",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/badge.html",
+            "sha256": "ce152774f07fe4034d1e3e9e9e3863fb1c519143f3b65fc77d7d8b8f1fd9c2a2",
+            "signals": [
+                "avatar",
+                "badge-status"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/breadcrumb.html",
+            "sha256": "cd9e704e098b45086d79968de43ff86055697ce33b29c70b9298d9b3b5df5021",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/button-group.html",
+            "sha256": "203918e4bfa752439ab8e61dc801b2611d0f0e1679ded2d8bb4cab2ba411740b",
+            "signals": [
+                "button-action",
+                "dropdown",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/button.html",
+            "sha256": "9215dacf07148b688706cb4ab233b7f47d8d719d60d08adf2ffd9f11e622db78",
+            "signals": [
+                "button-action",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/card-dropdown.html",
+            "sha256": "d7cea33cccbc36d0d05205ea1fe4b2a1668e1ebccf8a7eeec556ab3ef8d8bb48",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/carousel.html",
+            "sha256": "05779a93329327fc4a1f734016b30769ec51a743f01d78533f42df0e0ba6c4cd",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/chart-heatmap.html",
+            "sha256": "f676c15d6459833187a01c965519e68f6f8c7ab2a3f29cf385b3e1492aec28b0",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/chart-sparkline.html",
+            "sha256": "a94c19c61ec0ee544f1df3aaa785df0df1d51af5d5f5fb467b49003724ae146a",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/chart.html",
+            "sha256": "d4cab5e11010a3b153afc98078cc0131c3bffff9fa17b9cc6a95c09f5fa42a27",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/chat.html",
+            "sha256": "fd9d519d116e7c7fc38fdc2c8cd39cfb4b33376c82fdd5f533859b377d52a562",
+            "signals": [
+                "auth",
+                "avatar"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/colorpicker.html",
+            "sha256": "e389d86915fa2d5dcb943308b73ac168df135f724ab65f27f3423d7cc24ce6ae",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/datepicker.html",
+            "sha256": "e4cbb7cee602b882a022ab0c484e73b63b4dda822b333b4e515b1bf9e67e5f05",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/dropdown-menu-all.html",
+            "sha256": "8a9f9394d25aa62b47250882d3760fd084fe59582e124a0e2c37b6df2be55696",
+            "signals": [
+                "avatar",
+                "dropdown",
+                "form-control",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/dropdown-menu.html",
+            "sha256": "cb6e48f258b0ffc9e431438b4d0c06ed9108bf1d7675d09e394ec448974d7b76",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "dropdown",
+                "form-control",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/dropdown.html",
+            "sha256": "55d8bcb196ad87b4ff4380f3f1b72b1bef54e17ed913586c98bc07dbc4fdce73",
+            "signals": [
+                "button-action",
+                "dropdown"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/dropzone.html",
+            "sha256": "9419e3107e3a0b11954b5aab440e726ff89c0ff92a980fea53671baa72cdd00b",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/empty.html",
+            "sha256": "8bf02f2f033229c8b3adefbb250edd41d229142550f67b36639d2eb01b22d7d3",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/flag.html",
+            "sha256": "b7f7f8d7ddd5499cf6bffef83900155643c6c17887ec5f355ff84e1998e7741a",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/form/check.html",
+            "sha256": "fdd851fe768edac179138feff910c07c3c3df7aa7ae3883fee0c489b9e22bfcf",
+            "signals": [
+                "empty-error",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/form/input-file.html",
+            "sha256": "11a7e8c043c31f5af31ca6f551e422dc10329af9f9801933d58e085e0f8e9f82",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/form/input-group.html",
+            "sha256": "4be86d5e4272b9ab44957a91061525b225f5f9f5ce71650280c983f555a87f26",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/form/input-icon.html",
+            "sha256": "4e73a6ab9df2ffa32d4237bb1427607c59e293a63f62de9d092502df0d3ac3e6",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/form/input-mask.html",
+            "sha256": "ae147d4fde0550ae3f4e61ad66e244b084bc8eb86224e67b2310854e8cbf4707",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/form/input-selectgroup.html",
+            "sha256": "ad069c5be4d36903b135bd083ee39044d446567e61904c4131d15bc0a627b972",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/form/textarea-autosize.html",
+            "sha256": "079cd7dd187f558094b25ccf2be017255a58e4297f998b884ab2935658555406",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/fullcalendar.html",
+            "sha256": "27346b349cc3ae8331cb10ecaefa81aeeaf236fbc9bd58fa1417aade75aff54d",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/hr.html",
+            "sha256": "c2c0b61f06177de0fc19d4d76d50ab2ee8aa010b757432e8262e807194111d15",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/icon.html",
+            "sha256": "c8796374105f23df815b4e9cb38ee96fd87bbb072132efd5c04c85b6c64094df",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/illustration.html",
+            "sha256": "0245de2fa7bdc83da3b2de6ecb79c49ddf6b8f7bc11e0e6f9f1ab7b893f808a2",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/inline-player.html",
+            "sha256": "631c5e3ebc7bfbaede56775b86965c582ad702d87e22c5d8a74a90879d8a5d67",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/map-vector.html",
+            "sha256": "bb9a53cf1b5dd22f76725f426be51d20987dddeb1c34f2759553aa19460340a5",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/map.html",
+            "sha256": "fc5948f1bb07ce9ca6d2a67e89123de512d11c368a5bfb85a838cad176f228da",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/marketing/browser.html",
+            "sha256": "08c356d9fade93d7a8e21cbdca7e52bbd5725bb2d1491845aa80d47935593304",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/modal.html",
+            "sha256": "b64b14367d0b9d12cffea1aababfc42a7112792660828d15429a7517d7900be4",
+            "signals": [
+                "auth",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/modal/close.html",
+            "sha256": "d56622185147d95f143283ff3df8e9091754d96d9dc979d4d3026efdc0217f1a",
+            "signals": [
+                "button-action",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/modal/footer.html",
+            "sha256": "05e40c880835325f92b36b6825c395e4d5d7461b477994c6b07efff26929f425",
+            "signals": [
+                "button-action",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/modal/header.html",
+            "sha256": "5f49bcbe07e169353425356a8c18766529b740bd7a1b024547c49fbd191326f1",
+            "signals": [
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/nav-segmented.html",
+            "sha256": "6713acd0a834eec023d5099293bfc73cb58f51b8886578531b25bd887e8eccb8",
+            "signals": [
+                "auth",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/nav.html",
+            "sha256": "6417becb7392275631bccfd1dd25437470cf8d36557a1f54477d41b7d05957d3",
+            "signals": [
+                "card-statistic",
+                "tabs"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/pagination.html",
+            "sha256": "bdd86d704b100448f6198766466f726b9f04f99b7716d19f247c1c1345152fbe",
+            "signals": [
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/payment.html",
+            "sha256": "e1a84104dc5a81abdcc2106163febbe8a099810e48fecb63a94d3da796825f11",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/photo.html",
+            "sha256": "f40067b9174afe5311e288f0c767eb67d9d6b4ca35529991a3127b711008704f",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/progress-description.html",
+            "sha256": "aded5c036974fb6393ce44dc1586c6550b13a7704a3a9307f3d53d387dd667d9",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/progress.html",
+            "sha256": "a04e1cdbd389b34babc616fe6661a9a66c3fa528e2ff2836764fa4cc79b17768",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/range.html",
+            "sha256": "22fb5f5d48e99b1d438455c717dc12f12d4723a99c98647da59be8df0645a2c9",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/rating.html",
+            "sha256": "19cf0d1f3cc64a1a466ce91898aa0ef7f96b42e7254a6921b50265fde4ed9e16",
+            "signals": [
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/responsive-image.html",
+            "sha256": "096610ff640f33a0c417389dc46ee33cf2beaed3fdaa5f53ea9ad18e7d0c907b",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/ribbon.html",
+            "sha256": "d54e9478b924fade7f1a23ff63da389def81cbc4c485c007fbe6bd7d0fc26178",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/select.html",
+            "sha256": "59e0e0f2ee2cdfbb2a5497d24bbe7ef309739fd7b9285a967d622288e55085ff",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "dropdown",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/shape.html",
+            "sha256": "70058d2fb03bbd2cb97d9de75ac60ecf9119110566750b83d5fb5987272c3be3",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/signature.html",
+            "sha256": "40bd68bae53fa7877cb6c244b33c374462f631cb0d9d6f76c1f55e38abf57f68",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/spinner.html",
+            "sha256": "b60f6138ab5973bef4de81407fa94bfcb0e21eb534322bc165906d77348ecff8",
+            "signals": [
+                "badge-status"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/stars.html",
+            "sha256": "74d1f10d2d3bcd875477e84e71c073cad3040d11bc853111ac3c7d73a2f3517c",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/status-dot.html",
+            "sha256": "da683a01eacb5542a06c9efa8fdbc7a72b1fd5679646de576c4a10ed7b8105ab",
+            "signals": [
+                "badge-status"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/status-indicator.html",
+            "sha256": "1ba9d2f82e9780bcc4c96fd64ad23434a9b3b92dc5fac8b2db1eb2e4d7fb881c",
+            "signals": [
+                "badge-status"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/status.html",
+            "sha256": "4e592a224d59e58f32d872564974fa2a8ae99f298c7899f2cd75af60ecb3c92e",
+            "signals": [
+                "badge-status"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/steps.html",
+            "sha256": "7460ab0daea6f355f666981a0bcdf7877a7a2f3e6be4341640bdea1411952d54",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/svg.html",
+            "sha256": "d6e3fbbf2bc4ff34796edd8b49d4333cc62afb34646e7f845454ade8e093b1cd",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/switch-icon.html",
+            "sha256": "3de7cdf24dc326eda450efbf27131229f92fa26618b820f85ec635d359098b30",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/table.html",
+            "sha256": "3942234dba7d1bb4c91194de6c960a5fc628021595748cc9a4ef662168c77f46",
+            "signals": [
+                "avatar",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/tag.html",
+            "sha256": "18b83d8d543703a9ce9188ee770f08f9458f7251fd1fe14ce056bca804903e23",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/timeline.html",
+            "sha256": "232d614e88165b12c8b1dda1933932b08ad4e5cac07a7540ca8358c217e31924",
+            "signals": [
+                "avatar",
+                "badge-status",
+                "card-statistic",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/toast.html",
+            "sha256": "42ef38263e78cf7e8609d4ed47a3f6d155282bde0878c7193501fe7fcc564fa7",
+            "signals": [
+                "alert",
+                "avatar",
+                "button-action",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/tracking.html",
+            "sha256": "ebb6eddeb1c678bad2698289b50ceb92301569d5dca59e6d7d09d66866908f73",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/trending.html",
+            "sha256": "1d481749a1936453a7242d525b8244ae7290ddb85a3ba08c970ac426a03df230",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/typed.html",
+            "sha256": "54ae973d8d5363507eb5fb134c53e2f2ac4d9c173bb67f1ef639a958aa4c9d5e",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/includes/ui/wysiwyg.html",
+            "sha256": "93ea0e48fe863fd21b82d651acf209c80c0ad2fa402f9ef4e3dd1de8f6252f5f",
+            "signals": [
+                "empty-error",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/base.html",
+            "sha256": "bf58f35005f8cc36dd1bb9ca2e4ffbe1f456d0969131678e599002d4edeb5e7b",
+            "signals": [
+                "badge-status",
+                "feedback-modal",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/card.html",
+            "sha256": "972d9c606e7f116914b1fcf64363f30e353193f3005d70829180ff732fe7d56e",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/default.html",
+            "sha256": "cd5f8b2f4ec734339e42a98bfeb9ded54a92c4743b1cf222881efc012c2c1278",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/docs/default.html",
+            "sha256": "835fb8b6015deedad8027e526b50670d2b2d6377f67152919b3e7f79a10d49bf",
+            "signals": [
+                "button-action",
+                "card-statistic",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/error.html",
+            "sha256": "ec7aff8ad1bd973a620a43e325274da98fe367b7cb8316452acffc1e8a08e7ba",
+            "signals": [
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/homepage.html",
+            "sha256": "114044559658a85d3adf411b57352fa1ff05585c1f5633d6a76deb80ccf85f28",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/markdown.html",
+            "sha256": "0a2aee5e4ad7ee362da2b600b6595815668a29fe972f2d43ce3fb972d623c85a",
+            "signals": [
+                "card-statistic"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/marketing.html",
+            "sha256": "8f1d5f10d3336323537fcf9c46e1527fa0ec9b6b870edaa2a0e57d4c5142d715",
+            "signals": [
+                "badge-status",
+                "button-action",
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/redirect.html",
+            "sha256": "695a6d593f5a0156298152b3953409c185bb8931a3503b08dc3167d071a1bbf2",
+            "signals": [
+                "uncategorized"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/settings.html",
+            "sha256": "fe866efe720e6a58f52976f4e845f956000f1fd2f2e39784d1658c51ece82458",
+            "signals": [
+                "card-statistic",
+                "feedback-modal"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "shared/layouts/single.html",
+            "sha256": "cb70845a98491270471430d6db748b208a0d79eb9e89c688b08eddec818a1a50",
+            "signals": [
+                "layout-navigation"
+            ],
+            "decision": "indexed-only"
+        }
+    ]
+}

@@ -1,0 +1,651 @@
+{
+    "schema_version": 1,
+    "theme": "dashcode",
+    "source": {
+        "name": "DashCode",
+        "license": "Commercial license required",
+        "distribution": "private",
+        "homepage": "https://dashcode-html.codeshaper.tech/"
+    },
+    "components": [
+        {
+            "id": "layout.vertical",
+            "references": [
+                "blank-page.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/templates/layouts/navigation/vertical.blade.php"
+            ],
+            "states": [
+                "desktop",
+                "mobile",
+                "short-page",
+                "long-page"
+            ]
+        },
+        {
+            "id": "layout.horizontal",
+            "references": [
+                "blank-page.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/templates/layouts/navigation/horizontal.blade.php"
+            ],
+            "states": [
+                "desktop",
+                "mobile",
+                "sticky",
+                "overflow"
+            ]
+        },
+        {
+            "id": "navigation.primary",
+            "references": [
+                "blank-page.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/templates/layouts/menu-item.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/menu-item-horizontal.blade.php"
+            ],
+            "states": [
+                "active",
+                "inactive",
+                "parent-open",
+                "parent-closed"
+            ]
+        },
+        {
+            "id": "navigation.account-menu",
+            "references": [
+                "blank-page.html",
+                "profile.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/templates/layouts/account-menu.blade.php"
+            ],
+            "states": [
+                "closed",
+                "open",
+                "keyboard"
+            ]
+        },
+        {
+            "id": "navigation.app-switcher",
+            "references": [
+                "blank-page.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/templates/layouts/app-switcher.blade.php"
+            ],
+            "states": [
+                "single-app",
+                "multiple-apps",
+                "open"
+            ]
+        },
+        {
+            "id": "auth.login",
+            "references": [
+                "signin-one.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/auth/login.blade.php"
+            ],
+            "states": [
+                "default",
+                "invalid",
+                "loading"
+            ]
+        },
+        {
+            "id": "auth.confirm-password",
+            "references": [
+                "signin-two.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/auth/confirm-password.blade.php"
+            ],
+            "states": [
+                "default",
+                "invalid",
+                "loading"
+            ]
+        },
+        {
+            "id": "auth.lock-screen",
+            "references": [
+                "lock-screen-one.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/auth/lock-screen.blade.php"
+            ],
+            "states": [
+                "default",
+                "invalid",
+                "loading"
+            ]
+        },
+        {
+            "id": "error.http",
+            "references": [
+                "404.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/errors/layout.blade.php"
+            ],
+            "states": [
+                "4xx",
+                "5xx",
+                "safe-return"
+            ]
+        },
+        {
+            "id": "page.header",
+            "references": [
+                "blank-page.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/settings/settings-index.blade.php"
+            ],
+            "states": [
+                "title-only",
+                "description",
+                "actions"
+            ]
+        },
+        {
+            "id": "content.card",
+            "references": [
+                "card.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/settings/settings-index.blade.php"
+            ],
+            "states": [
+                "default",
+                "header",
+                "footer"
+            ]
+        },
+        {
+            "id": "content.statistic",
+            "references": [
+                "statistics-widgets.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/settings/settings-index.blade.php"
+            ],
+            "states": [
+                "single-line",
+                "wrapped-value",
+                "responsive"
+            ]
+        },
+        {
+            "id": "content.empty-state",
+            "references": [
+                "placeholder.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/roles.blade.php"
+            ],
+            "states": [
+                "no-data",
+                "no-results",
+                "with-action"
+            ]
+        },
+        {
+            "id": "identity.avatar",
+            "references": [
+                "profile.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/profile/edit-my-profile.blade.php"
+            ],
+            "states": [
+                "image",
+                "initials",
+                "fallback"
+            ]
+        },
+        {
+            "id": "status.badge",
+            "references": [
+                "badges.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/role-form.blade.php"
+            ],
+            "states": [
+                "neutral",
+                "success",
+                "warning",
+                "danger"
+            ]
+        },
+        {
+            "id": "action.button",
+            "references": [
+                "buttons.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/role-form.blade.php"
+            ],
+            "states": [
+                "primary",
+                "secondary",
+                "danger",
+                "disabled",
+                "loading"
+            ]
+        },
+        {
+            "id": "form.input",
+            "references": [
+                "input.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/user-form.blade.php"
+            ],
+            "states": [
+                "default",
+                "focus",
+                "disabled",
+                "invalid"
+            ]
+        },
+        {
+            "id": "form.textarea",
+            "references": [
+                "textarea.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/role-form.blade.php"
+            ],
+            "states": [
+                "default",
+                "focus",
+                "invalid"
+            ]
+        },
+        {
+            "id": "form.select",
+            "references": [
+                "select.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/user-form.blade.php"
+            ],
+            "states": [
+                "default",
+                "focus",
+                "disabled",
+                "invalid"
+            ]
+        },
+        {
+            "id": "form.file",
+            "references": [
+                "file-input.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/settings/client-profile.blade.php"
+            ],
+            "states": [
+                "empty",
+                "selected",
+                "invalid"
+            ]
+        },
+        {
+            "id": "form.validation",
+            "references": [
+                "form-validation.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/user-form.blade.php"
+            ],
+            "states": [
+                "valid",
+                "invalid",
+                "invalid-focus"
+            ]
+        },
+        {
+            "id": "form.checkbox",
+            "references": [
+                "checkbox.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/role-form.blade.php"
+            ],
+            "states": [
+                "checked",
+                "unchecked",
+                "disabled"
+            ]
+        },
+        {
+            "id": "form.radio",
+            "references": [
+                "radio.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/role-form.blade.php"
+            ],
+            "states": [
+                "checked",
+                "unchecked",
+                "disabled"
+            ]
+        },
+        {
+            "id": "form.switch",
+            "references": [
+                "switch.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/settings/security-settings.blade.php"
+            ],
+            "states": [
+                "checked",
+                "unchecked",
+                "disabled"
+            ]
+        },
+        {
+            "id": "interaction.tabs",
+            "references": [
+                "tab-accordion.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/settings/settings-index.blade.php"
+            ],
+            "states": [
+                "active",
+                "inactive",
+                "keyboard"
+            ]
+        },
+        {
+            "id": "interaction.accordion",
+            "references": [
+                "tab-accordion.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/role-form.blade.php"
+            ],
+            "states": [
+                "open",
+                "closed",
+                "keyboard"
+            ]
+        },
+        {
+            "id": "interaction.dropdown",
+            "references": [
+                "dropdown.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/templates/layouts/account-menu.blade.php"
+            ],
+            "states": [
+                "closed",
+                "open",
+                "overflow"
+            ]
+        },
+        {
+            "id": "feedback.alert",
+            "references": [
+                "alert.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/templates/components/alert.blade.php"
+            ],
+            "states": [
+                "success",
+                "warning",
+                "danger"
+            ]
+        },
+        {
+            "id": "feedback.toast",
+            "references": [
+                "alert.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/templates/components/toast.blade.php"
+            ],
+            "states": [
+                "success",
+                "error",
+                "dismissed"
+            ]
+        },
+        {
+            "id": "feedback.modal",
+            "references": [
+                "modal.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/templates/components/alert-modal.blade.php"
+            ],
+            "states": [
+                "closed",
+                "open",
+                "backdrop-close",
+                "validation"
+            ]
+        },
+        {
+            "id": "feedback.destructive-confirmation",
+            "references": [
+                "modal.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/templates/components/danger-modal.blade.php",
+                "resources/themes/dashcode/views/starter/templates/components/danger-password-modal.blade.php"
+            ],
+            "states": [
+                "closed",
+                "open",
+                "cancel",
+                "confirm",
+                "loading"
+            ]
+        },
+        {
+            "id": "table.powergrid",
+            "references": [
+                "advance-table.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/powergrid/table-base.blade.php"
+            ],
+            "states": [
+                "empty",
+                "low-data",
+                "high-data",
+                "wide-data"
+            ]
+        },
+        {
+            "id": "table.toolbar",
+            "references": [
+                "advance-table.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/logs/powergrid/activity-logs-toolbar.blade.php"
+            ],
+            "states": [
+                "default",
+                "selection-active",
+                "responsive"
+            ]
+        },
+        {
+            "id": "table.search",
+            "references": [
+                "advance-table.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/logs/powergrid/activity-logs-toolbar.blade.php"
+            ],
+            "states": [
+                "empty",
+                "query",
+                "no-results"
+            ]
+        },
+        {
+            "id": "table.filter.text",
+            "references": [
+                "advance-table.html",
+                "input.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/powergrid/table-base.blade.php"
+            ],
+            "states": [
+                "empty",
+                "query",
+                "cleared"
+            ]
+        },
+        {
+            "id": "table.filter.select",
+            "references": [
+                "advance-table.html",
+                "select.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/powergrid/table-base.blade.php"
+            ],
+            "states": [
+                "all",
+                "selected",
+                "cleared"
+            ]
+        },
+        {
+            "id": "table.filter.date-range",
+            "references": [
+                "advance-table.html",
+                "date-picker.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/powergrid/table-base.blade.php"
+            ],
+            "states": [
+                "empty",
+                "from-only",
+                "to-only",
+                "range"
+            ]
+        },
+        {
+            "id": "table.sort",
+            "references": [
+                "advance-table.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/powergrid/table-base.blade.php"
+            ],
+            "states": [
+                "none",
+                "ascending",
+                "descending"
+            ]
+        },
+        {
+            "id": "table.selection",
+            "references": [
+                "advance-table.html",
+                "checkbox.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/powergrid/table-base.blade.php"
+            ],
+            "states": [
+                "none",
+                "single",
+                "all-page"
+            ]
+        },
+        {
+            "id": "table.bulk-action",
+            "references": [
+                "advance-table.html",
+                "dropdown.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/user-management/powergrid/users-toolbar.blade.php"
+            ],
+            "states": [
+                "disabled",
+                "enabled",
+                "confirmed"
+            ]
+        },
+        {
+            "id": "table.horizontal-scroll",
+            "references": [
+                "advance-table.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/powergrid/table-base.blade.php"
+            ],
+            "states": [
+                "narrow",
+                "wide",
+                "keyboard"
+            ]
+        },
+        {
+            "id": "table.per-page",
+            "references": [
+                "advance-table.html",
+                "select.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/powergrid/footer.blade.php"
+            ],
+            "states": [
+                "default",
+                "changed"
+            ]
+        },
+        {
+            "id": "table.record-count",
+            "references": [
+                "advance-table.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/powergrid/footer.blade.php"
+            ],
+            "states": [
+                "zero",
+                "one",
+                "many"
+            ]
+        },
+        {
+            "id": "table.pagination",
+            "references": [
+                "advance-table.html",
+                "pagination.html"
+            ],
+            "runtime": [
+                "resources/themes/dashcode/views/starter/powergrid/pagination.blade.php"
+            ],
+            "states": [
+                "first",
+                "middle",
+                "last",
+                "single-page"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,1237 @@
+{
+    "schema_version": 1,
+    "theme": "dashcode",
+    "source_root": "theme-intake/dashcode",
+    "html_files": 74,
+    "files": [
+        {
+            "path": "404.html",
+            "sha256": "a48a3799ff51367e4a3a75b600fa495faf10ffe3e68b554e8443ad8b7f90e101",
+            "signals": [
+                "button-action",
+                "empty-error"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "advance-table.html",
+            "sha256": "726831948c9ff0bc6ba4de7cc0de352a51deae4bd7b5a6d1b331b0403a4a27c4",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "alert.html",
+            "sha256": "23b6107117c561a94ae59c2cc9878ce5d68fe8d5a80855198c9b60ecb720e9e5",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "apex-chart.html",
+            "sha256": "83492e4761755e93120e9bd2287dd2720bf17a2225f8916fb6af7e46ec03d711",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "badges.html",
+            "sha256": "8531f1aaed89f03110aea3289e545006f3ebe9c0aa6da495977ee7250921a011",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "banking-dashboard.html",
+            "sha256": "873c66fdbb8f62ee018d12e63d96ca19deb2d1d49771c836d837dc6010a430dd",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "basic-table.html",
+            "sha256": "1a14a87caf22fdf467590a3c8d621ba068bcc8d4a4df05dd54769910796f60e2",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "basic-widgets.html",
+            "sha256": "2aee67ad0cc34db449399abce001d94d9baac433568dc3d3396e4c4ab2bb9238",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "blank-page.html",
+            "sha256": "ad2ff1b8f88fc1cc37996a035d334cb966cf992e8ed0a2062506a1eba8e96f1f",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "blog-details.html",
+            "sha256": "23dde9a1d7ed6983d86c3e6dcb0d57542332337c8b16e174e6b6db724b2b5df4",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "blog.html",
+            "sha256": "e71403bb9aab235df05672551da2424887e25212c5ea6c7d6bac47a79cdd5cda",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "buttons.html",
+            "sha256": "2184007c4c06603f75f661ff729234163ac8f548cb835c4c9d8c410020226a5e",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "calander.html",
+            "sha256": "55f7a4d6c2106a05bf78d2307d30b8c66f5f542f123fc89b38a84c22620a74f1",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "card.html",
+            "sha256": "eb21770e473c7e30013889b1fb394501d4079f208761819c8d35333bf49a8e68",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "carousel.html",
+            "sha256": "880e9277dc644f8f281635ceb430833bd229c2479316beec5e0491b0422f6726",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "chartjs.html",
+            "sha256": "8e1a6fa529f8223ba0ab872a75a6ac26c7dcf5b1988bcbd8d953bea6aaaf617f",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "chat.html",
+            "sha256": "d3f890231fbd41f69b748f322459ff786a3c37d0cde87aeeba88d3e01decb7e5",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "checkbox.html",
+            "sha256": "a10d128fcbf029d018b829322b3c4f574d6db7a3c23bc9d7a5be6b70edbda57e",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "colors.html",
+            "sha256": "289da1fcecb1f37bf6dab9c5e3c2b6d9d36944e28e786d8f98c710da963f1796",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "comming-soon.html",
+            "sha256": "1d7823fbc4b750c26e0b5a322726b2cac2866cec4be26d377518b4907ed6e1d9",
+            "signals": [
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "crm-dashboard.html",
+            "sha256": "93515392bf7bef3725cc26bfc3e6b35b82504abde685be607e0d3674d896350f",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "date-picker.html",
+            "sha256": "f99da72e6b0d6b378f27c8509cf9a7713b7ae8aca107f39d6dda1dcab6287a45",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "dropdown.html",
+            "sha256": "edf4bfed8a01d12761121388e0c77c38cd449e87edfcd48db2f49470820eadf8",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "ecommerce-dashboard.html",
+            "sha256": "36486e95a1c5c67e2f45d65494b4f98bf8bb89f775569b7c87b0197937a06d2f",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "email.html",
+            "sha256": "74512ba650e286351ad075403417fe78057cef165bc8a85585bf81517f4a23e5",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "avatar",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "file-input.html",
+            "sha256": "3cb6436ee055307081092c5ffc4227830333b3a84400e2873e9200e02230776a",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "forget-password-one.html",
+            "sha256": "879c41f62ca59085305c500eaa69e4e9c7a94ea467f46fd924ee5e38e94b06fb",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "forget-password-three.html",
+            "sha256": "f923ddbdf72715def443bede7698bab8d94269e2a57554a64576971d20a08e37",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "forget-password-two.html",
+            "sha256": "48420ee0648b23931d281e6f6cdf17c8e91a557e3c82acec02ba21cc3726e8a4",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "form-repeater.html",
+            "sha256": "e6b99c9e33672ad9637c7b10ba69906cc8d93247dfe98491dbd92fb8535d9657",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "form-validation.html",
+            "sha256": "b2a6a97dbae0c80554ff9b589adb7de12a06d70ab9f36c2c0c40144916a7ec2d",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "icons.html",
+            "sha256": "11770d7c599b9e3fc10a3e310c1016a3f30051ff3858d8375d6250b5f133dfe4",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "image.html",
+            "sha256": "6435bf86721e5ec44a584dabab07dd1e04fc8fdd77eaee52bc4a5a20300b1dfb",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "index.html",
+            "sha256": "9ed8d9052ccbd78528731cfe6d51b1accb6aa9f2aa19c9b09cd3916707442f49",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "input-group.html",
+            "sha256": "64faca7664aa5dc42bcdc6a3d001cf02c59cb15a8929faed40b63976ccffe6e7",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "input-layout.html",
+            "sha256": "de6a80ee141b5292ce4bb8e32d2af149b577468a22589ea7da6cd043bbe0f0ea",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "input-mask.html",
+            "sha256": "3098fbb7b3f744ff993a52242675bee76660d0ddbe8d0e9c93ba4cc5ab200ec7",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "input.html",
+            "sha256": "214c4ae38eea9233e27c85350e47d3c05d2c05f1b50002db8727ad64c8e7e12b",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "invoice.html",
+            "sha256": "674b95bc6709f7fd685cb45dd92bfd5390d37cdf4363ddbcd2eb6ba53a3f395f",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "invoive-add.html",
+            "sha256": "f327a501ada6f9bcdd6de1562de67acea47455c60d29ffd1c95204c53acc738a",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "invoive-preview.html",
+            "sha256": "3b3c9a2ff3f282515d02820a145e05731f796db2c0d545508ad5660e2f625d6e",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "kanban.html",
+            "sha256": "89fd6f219a13804f0e44a4dc8007cd91885151e4efbf06a6d3ac189250a37d5f",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "lock-screen-one.html",
+            "sha256": "abbc79d281139311bace914d8e3360ee237e7c95eec9a29e4ed02a8ca47a7a38",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "lock-screen-three.html",
+            "sha256": "e3ad759731e0e960abaf8d2ec6b4af09c1bbb2e2fd7fb82d0d9269a8fff9e54f",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "lock-screen-two.html",
+            "sha256": "3b15ced1b27a1a37902fc9633dabd865f1de97e6c39f4fba9a743f118580f2f1",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "map.html",
+            "sha256": "1d5ca58e725f31db529eeabea906b6c4868bcb15a8abc305e97b8bc882b9b8c2",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "modal.html",
+            "sha256": "ceb677dc212e3e284774db5e429eeea3d0b07d6660bf0b95cd77ff58ac913d7c",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "pagination.html",
+            "sha256": "d39a481bd61a196a5ce7e3913fee7e305b1bcfefa515f7a08ccce3e026c6c416",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "placeholder.html",
+            "sha256": "7e963de412bfbb9de8ae0766e7ee219a29a8dba0459be15636e6c91c87abe220",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "pricing.html",
+            "sha256": "fe7750f6a21a155cd5c35b55e29a3b5335f75ee205bf5e2ac1b178b7aeb581bc",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "profile.html",
+            "sha256": "6c295085f780f96ee8f1fc4412d04fbed06940a3ab7c078c1558fd883af74450",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "progressbar.html",
+            "sha256": "6d23fa46b1cd65b287ea010ebb7eaa1b25b41e27d44b9f4b1d8f984c284dcbcb",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "project-dashboard.html",
+            "sha256": "10bff8eb9d389c5ee1352a9708f1c3c49662953e3505360760ac78cddc29b152",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "project-details.html",
+            "sha256": "aeafc57482c47193981e58eb062e13ca609583db17b3b0b6471f1c6b6c9f5a27",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table",
+                "timeline-activity"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "project.html",
+            "sha256": "68efe8898a3d8c572f4fc037f956e8ae9e5903b782006078cd4d02d5d8681ced",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table",
+                "tabs"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "radio.html",
+            "sha256": "dd18de608af430c6f164a2df5fc4bf7ee7933ab458ed6db7978959d49dea99a1",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "select.html",
+            "sha256": "80151fd304164d059b09a7631cb34b4602194f23b4f1372e12b74d874f2c505b",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "settings.html",
+            "sha256": "a989242cae34a4676c76e0f9bd109b5f8b7cab449eb38a64ae5585c1e04b4e6a",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "signin-one.html",
+            "sha256": "6200cb3854e05afa1f9d442d5cdd86151c981bb9c02f2cedf421f6db8a0d4731",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "signin-three.html",
+            "sha256": "ec4ad798bfcb1e07af0c73604f78cbb7400254295187afca685de0ac665789cf",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "signin-two.html",
+            "sha256": "1caf148b45115cb43bd9e2fd99b58f6713e4f242b440109d691819b79eb54996",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "signup-one.html",
+            "sha256": "f39d9d16d25fae69ddfb607cb353a0dfd552e81a43bd8a59d10691bd34ac01e4",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "signup-three.html",
+            "sha256": "3549a34a5e42d8c9417abd1c05010bda5511baf00cbbe857a5bd3c2724908190",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "signup-two.html",
+            "sha256": "873dc66c99e437ac221eeb8e8b3a878b8953314231e94f18d6a91f13bdfbecae",
+            "signals": [
+                "auth",
+                "button-action",
+                "form-control"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "statistics-widgets.html",
+            "sha256": "60e07702efe8c2c0b9b53b2531bf8aaf80ed522c5b0d1d0cf8f6354b639d40f1",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "switch.html",
+            "sha256": "f17deb229f1f5586d0cccceb1178c34542e0cd236db7dc2211430a05e86faa5f",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "tab-accordion.html",
+            "sha256": "408b0a95d556229a1c4c10b65ad2a17871074c1d455662ae30785f97bda013b5",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "tabs"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "textarea.html",
+            "sha256": "42c4a0db941a15d37ecb8df1ab73e4b4d39557b39b6e2f811172399a0b6fbbb1",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "todo.html",
+            "sha256": "ca10a794ddcd848e9485dda644e2dfe9071ee4b5244a204e5d4ed978accfd03b",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "avatar",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "tooltip-popover.html",
+            "sha256": "90c6f049749674937f6dca4a1b9b1826e5e2a945bccf5dd3c3d8a59369036277",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "typography.html",
+            "sha256": "29e96a27b70b309335ebe5e7e190ccac094f53a45a73df5188ee6ee724784d6f",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination",
+                "table"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "under-maintanance.html",
+            "sha256": "2b7fb8d2210bbb8219d7f3b038669a7f067bfead367fa7afb2c242fb6a421877",
+            "signals": [
+                "button-action"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "video.html",
+            "sha256": "1ecd287c7c8f978db61a8f48c7b40267bc31a3f0fd17fd00f104fc612fae2ae4",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        },
+        {
+            "path": "wizard.html",
+            "sha256": "e38847af6503fba93c6d7809713d577eb2f02cbd48b74bb94498591018b48dc8",
+            "signals": [
+                "accordion",
+                "alert",
+                "auth",
+                "badge-status",
+                "button-action",
+                "card-statistic",
+                "dropdown",
+                "feedback-modal",
+                "form-control",
+                "layout-navigation",
+                "pagination"
+            ],
+            "decision": "indexed-only"
+        }
+    ]
+}

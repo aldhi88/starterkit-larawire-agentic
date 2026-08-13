@@ -5,7 +5,8 @@
 Starterkit Larawire is built with and appreciates the work of
 [Laravel](https://laravel.com/), [Livewire](https://livewire.laravel.com/),
 [Livewire PowerGrid](https://livewire-powergrid.com/),
-[Tabler](https://tabler.io/), [Laravel Lang](https://laravel-lang.com/),
+[Tabler](https://tabler.io/), [DashCode](https://dashcode-html.codeshaper.tech/),
+[Laravel Lang](https://laravel-lang.com/),
 [Scramble](https://scramble.dedoc.co/), and [Pest](https://pestphp.com/).
 
 > Minimum Laravel version: **13.8**. Each release's Composer constraint defines
@@ -91,23 +92,31 @@ php artisan starter:sync
 
 ### Themes and layouts
 
-The public package currently provides the redistributable **Tabler** theme with
-two layouts:
+Starterkit includes two prepared theme integrations. Each supports `vertical` and `horizontal` layouts:
+
+| Theme | Source license | Notes |
+|---|---|---|
+| Tabler | MIT | Use under the Tabler license |
+| DashCode | Commercial/premium | A valid DashCode vendor license is required |
+
+The selection is stored in the environment:
 
 ```dotenv
 STARTER_THEME=tabler
 STARTER_LAYOUT=vertical
 ```
 
-`STARTER_LAYOUT` accepts `vertical` or `horizontal`. Core ships only the Tabler
-files loaded at runtime so the package stays small.
+The `starter:install` wizard asks for Tabler or DashCode and then the layout. Composer contains both Blade implementations, PowerGrid adapters, asset recipes, complete HTML indexes, and component maps. Vendor HTML and assets are excluded, keeping the package small and preventing redistribution of premium source.
 
-Future themes are separate optional Composer packages. Require the theme package
-you need before `starter:install`; the wizard automatically lists every valid
-installed theme. Developers who use only Tabler do not download another theme's
-assets. Each theme package owns its minimum runtime views/assets, JavaScript
-handler, PowerGrid adapter, component index, and vertical/horizontal layouts.
-Themes share capabilities, not visual implementation.
+The owner stores template source in an external archive. Locally, copy only the required source into `theme-intake/tabler/` or `theme-intake/dashcode/`. The installer verifies hashes and publishes only the minimum runtime dependency set to `public/assets/<theme>/`. Git ignores `theme-intake/`, while the generated `public/assets/<theme>/` must be committed to the Laravel project. Production therefore never depends on Google Drive.
+
+To add a theme, place its vendor HTML/assets distribution in `theme-intake/<theme-key>/`, then instruct the AI agent:
+
+```text
+Integrate theme <theme-key> from theme-intake/<theme-key> until it is ready for installer selection.
+```
+
+The agent must complete license review, full HTML indexing, asset filtering, every starter page/component, both layouts, PowerGrid, and verification. Vendor demo source/assets stay only in local intake or the owner archive; the core package keeps the indexes, recipes, implementation, and reference map.
 
 ### AGENTS AI mode
 
@@ -132,6 +141,20 @@ From the Laravel project root:
 composer require aldhi88/starterkit-larawire-agentic
 ```
 
+Composer prints a template-source reminder. Download the archive from:
+
+<https://drive.google.com/drive/folders/1ZtJiaL7bgxwiKZCEUb8yttCwUjXXJ-X0?usp=sharing>
+
+Copy only the selected theme into the Laravel project root:
+
+```text
+theme-intake/tabler/      for Tabler
+theme-intake/dashcode/    for DashCode
+```
+
+DashCode requires a valid usage license. Never commit `theme-intake/`; the
+installer generates only the minimal runtime assets.
+
 Example `.env` values:
 
 ```dotenv
@@ -151,8 +174,8 @@ Run the installer:
 php artisan starter:install
 ```
 
-Tabler is selected automatically as the only bundled theme. The wizard asks for
-the vertical/horizontal layout, then these five identities:
+The wizard asks for the theme (Tabler/DashCode), the vertical/horizontal layout,
+then these five identities:
 
 | Question | Spaces allowed? | Example input |
 |---|---:|---|
@@ -227,8 +250,9 @@ or the selected theme/layout:
 php artisan starter:sync
 ```
 
-Sync also publishes package, PowerGrid, and Livewire runtime assets. There is
-no separate asset-publish command.
+Sync also verifies the theme recipe and publishes package, PowerGrid, and
+Livewire runtime assets. There is no separate asset-publish command. Commit the
+generated `public/assets/<theme>/`; never commit `theme-intake/`.
 
 ### Update the package locally
 
@@ -246,12 +270,17 @@ application repository.
 git clone <laravel-repository> <project-folder>
 cd <project-folder>
 cp .env.example .env
-# configure production APP_URL, database, and secrets
+# configure production APP_URL, database, and secrets; preserve local STARTER_THEME and STARTER_LAYOUT
 composer install --no-dev --optimize-autoloader
 php artisan starter:deploy
 ```
 
 Point the main domain and App subdomains to `<project-folder>/public`.
+`STARTER_THEME` and `STARTER_LAYOUT` must match the local selection. Both values
+remain in local and production `.env` files, avoiding an additional configuration
+file. Never prepare Google Drive source or `theme-intake/` on the server:
+production uses the selected theme runtime generated by `starter:sync` and
+committed locally into `public/assets/<theme>/`.
 
 ### Routine production update
 
@@ -263,8 +292,9 @@ php artisan starter:deploy
 
 Production uses the package version locked by the Laravel project's
 `composer.lock`. `starter:deploy` is production-only. It validates the complete
-environment before mutation, then applies migrations, assets, App registry
-synchronization, and production caches. For the first empty production database,
+environment—including explicit theme/layout values and committed theme runtime
+assets—before mutation, then applies migrations, App registry synchronization,
+and production caches. For the first empty production database,
 it securely prompts for Superuser credentials. `starter:sync` and
 `starter:reset` are rejected in production.
 

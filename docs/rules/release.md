@@ -1,7 +1,7 @@
 # Package Release and Publication
 
 Rule ini berlaku untuk tag versi, GitHub Release, Packagist, atau publikasi
-package/theme opsional. Commit dan push branch bukan release.
+package. Commit dan push branch bukan release.
 
 ## Authority dan versioning
 
@@ -24,10 +24,10 @@ Sebelum tag, seluruh poin berikut wajib memiliki bukti current-run:
 2. CI pada supported PHP/Laravel matrix lulus. Constraint Composer, minimum
    version checker, README, dan matrix harus selaras; jangan mengklaim versi
    Laravel yang belum diuji.
-3. `composer archive` hanya memuat source runtime, rules/docs yang dibutuhkan
-   AGENTS, Tabler minimum, lisensi, dan notices. Tidak ada `.env`, credential,
-   database/dump, log, cache, host project, asset premium, vendor/node_modules,
-   atau bundle theme duplikat. Ukuran dan daftar archive diperiksa.
+3. `composer archive` hanya memuat source runtime, rules/docs AGENTS, view dan
+   adapter theme, indeks/recipe, lisensi, dan notices. Tidak ada HTML/aset vendor,
+   `theme-intake`, `.env`, credential, database/dump, log, cache, host project,
+   vendor/node_modules, atau bundle theme duplikat. Ukuran dan daftar archive diperiksa.
 4. Fresh supported Laravel host memasang package melalui Composer, menolak
    source non-fresh sebelum mutation, menyelesaikan wizard install, login/route
    registry/test, `starter:sync`, rollback failure, dan production-like deploy
@@ -38,6 +38,12 @@ Sebelum tag, seluruh poin berikut wajib memiliki bukti current-run:
 6. Worktree dan staged diff diperiksa; perubahan unrelated tidak ikut. Secret
    scan dan pencarian nama package/namespace/theme lama tidak menemukan residu
    material.
+
+Setiap integrasi theme wajib memenuhi `theme-package-contract.json`: source index
+lengkap, manifest capability/runtime, recipe aset exact beserta hash,
+license/distribution yang sah, package test, fresh-host Composer install, dan
+browser matrix kedua layout. Raw intake dan seluruh HTML/aset vendor tidak boleh
+masuk archive.
 
 ## Publication dan handoff
 
