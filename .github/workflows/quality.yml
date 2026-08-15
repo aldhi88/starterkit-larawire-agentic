@@ -87,7 +87,7 @@ jobs:
       - name: Verify destructive reset wizard
         working-directory: host
         run: |
-          printf 'yes\nRESET\nyes\n0\nStarterkit Reset\nreset@example.test\nreset-password\nreset-password\nOperations\nops\nyes\n' | php artisan starter:reset
+          printf 'yes\nRESET\nyes\n0\n0\nStarterkit Reset\nreset@example.test\nreset-password\nreset-password\nOperations\nops\nyes\n' | php artisan starter:reset
           test -f config/apps/ops.php
           test ! -e config/apps/hr.php
           test ! -e config/apps/finance.php
