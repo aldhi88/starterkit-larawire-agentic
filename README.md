@@ -5,7 +5,7 @@
 Starterkit Larawire dibangun menggunakan dan mengapresiasi karya
 [Laravel](https://laravel.com/), [Livewire](https://livewire.laravel.com/),
 [Livewire PowerGrid](https://livewire-powergrid.com/),
-[Tabler](https://tabler.io/), [DashCode](https://dashcode-html.codeshaper.tech/),
+[Tabler](https://tabler.io/),
 [Laravel Lang](https://laravel-lang.com/),
 [Scramble](https://scramble.dedoc.co/), dan [Pest](https://pestphp.com/).
 
@@ -93,12 +93,11 @@ php artisan starter:sync
 
 ### Theme dan layout
 
-Starterkit menyediakan dua integrasi theme. Masing-masing mendukung layout `vertical` dan `horizontal`:
+Saat ini Starterkit menyediakan Tabler dengan layout `vertical` dan `horizontal`:
 
 | Theme | Lisensi source | Catatan |
 |---|---|---|
 | Tabler | MIT | Bebas digunakan sesuai lisensi Tabler |
-| DashCode | Komersial/premium | Wajib memiliki lisensi sah dari vendor DashCode |
 
 Pilihan disimpan di environment:
 
@@ -107,9 +106,16 @@ STARTER_THEME=tabler
 STARTER_LAYOUT=vertical
 ```
 
-Wizard `starter:install` meminta user memilih Tabler atau DashCode, kemudian layout. Package membawa implementasi Blade, adapter PowerGrid, recipe aset, indeks seluruh HTML, dan peta komponen untuk keduanya. File HTML/aset vendor tidak ikut Composer agar package kecil dan source premium tidak didistribusikan ulang.
+Wizard `starter:install` tetap meminta pilihan theme dan layout. Untuk saat ini
+pilihan theme hanya Tabler sehingga mekanismenya siap menerima theme open-source
+lain tanpa mengubah alur instalasi. Aset runtime minimum diunduh otomatis dari
+arsip GitHub yang dipin, diperiksa ukuran dan checksum-nya, lalu dipublikasikan
+ke `public/assets/tabler/`. Tidak ada download atau copy template manual.
+Archive dikelola terpisah di
+[`starterkit-larawire-agentic-template`](https://github.com/aldhi88/starterkit-larawire-agentic-template).
 
-Source template disimpan pemilik di arsip eksternal. Di local, salin source yang diperlukan ke `theme-intake/tabler/` atau `theme-intake/dashcode/`. Installer memverifikasi hash dan hanya menyalin dependency runtime minimum ke `public/assets/<theme>/`. Folder `theme-intake/` diabaikan Git; hasil runtime di `public/assets/<theme>/` wajib di-commit bersama project Laravel sehingga production tidak perlu mengakses Google Drive.
+Hasil runtime `public/assets/<theme>/` wajib di-commit bersama project Laravel.
+Production menggunakan hasil tersebut dan tidak mengunduh arsip theme.
 
 Untuk menambah theme, taruh distribusi HTML/aset vendor di `theme-intake/<theme-key>/`, lalu instruksikan agent AI:
 
@@ -142,19 +148,9 @@ Dari root project Laravel:
 composer require aldhi88/starterkit-larawire-agentic
 ```
 
-Composer menampilkan pengingat source template. Download arsip theme dari:
-
-<https://drive.google.com/drive/folders/1ZtJiaL7bgxwiKZCEUb8yttCwUjXXJ-X0?usp=sharing>
-
-Salin hanya theme yang akan dipakai ke root project Laravel:
-
-```text
-theme-intake/tabler/      untuk Tabler
-theme-intake/dashcode/    untuk DashCode
-```
-
-DashCode memerlukan lisensi penggunaan yang sah. Jangan commit
-`theme-intake/`; installer hanya menghasilkan aset runtime minimum.
+Tidak perlu mengunduh atau menyalin template secara manual. Installer akan
+mengunduh aset Tabler dari GitHub setelah theme dipilih dan memvalidasinya
+sebelum source atau database project diubah.
 
 Contoh `.env`:
 
@@ -175,7 +171,7 @@ Jalankan installer:
 php artisan starter:install
 ```
 
-Wizard meminta theme (Tabler/DashCode), layout vertical/horizontal, lalu lima
+Wizard meminta theme (saat ini hanya Tabler), layout vertical/horizontal, lalu lima
 identitas berikut:
 
 | Pertanyaan | Boleh memakai spasi? | Contoh input |
@@ -253,7 +249,8 @@ php artisan starter:sync
 
 Sync juga memverifikasi recipe theme dan mempublikasikan asset package,
 PowerGrid, dan Livewire. Tidak ada command publish asset terpisah. Commit hasil
-`public/assets/<theme>/`; jangan commit `theme-intake/`.
+`public/assets/<theme>/`. Jika cache aset local belum tersedia, sync dapat
+mengunduh ulang arsip GitHub yang terverifikasi.
 
 ### Update starterkit di local
 
@@ -279,8 +276,8 @@ php artisan starter:deploy
 Arahkan domain utama dan subdomain App ke `<folder-project>/public`.
 `STARTER_THEME` dan `STARTER_LAYOUT` wajib sama dengan pilihan di local. Kedua
 nilai ini tetap berada di `.env` local dan production agar tidak membutuhkan
-file konfigurasi tambahan. Source Google Drive dan folder `theme-intake/` tidak
-boleh disiapkan di server: production memakai aset runtime theme terpilih yang
+file konfigurasi tambahan. Production tidak mengunduh arsip GitHub atau
+menyiapkan `theme-intake/`: server memakai aset runtime theme terpilih yang
 sudah dihasilkan oleh `starter:sync` dan di-commit dari local ke
 `public/assets/<theme>/`.
 

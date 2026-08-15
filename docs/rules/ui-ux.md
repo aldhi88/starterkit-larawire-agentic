@@ -2,7 +2,7 @@
 
 ## UI source and selection
 
-Use the installed active theme. `docs/template/<theme>/` contains the indexed component contract and `template.md` search atlas; raw HTML is resolved by its paths in ignored `theme-intake/<theme>/`, not shipped in Composer. Runtime starter Blade remains in `resources/themes/<theme>/views/starter/`; the exact asset recipe publishes only loaded dependencies to the host's committed `public/assets/<theme>/`.
+Use the installed active theme. `docs/template/<theme>/` contains the indexed component contract and `template.md` search atlas; raw HTML is resolved by its paths in ignored `theme-intake/<theme>/`, not shipped in Composer. Runtime starter Blade remains in `resources/themes/<theme>/views/starter/`; the exact asset recipe publishes only loaded dependencies from the verified GitHub archive to the host's committed `public/assets/<theme>/`.
 
 1. Identify the page goal, data type/volume, statuses, primary action, and required interaction.
 2. Search the atlas with context plus component terms using `rg`; choose 3–5 candidates and open only 1–3 closest HTML sources.

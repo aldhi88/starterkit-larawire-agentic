@@ -7,20 +7,26 @@ use Aldhi88\StarterKit\Console\Commands\Starter\ResetCommand;
 use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use Illuminate\Support\Facades\File;
 
-it('registers both prepared themes without redistributing vendor sources or assets', function (): void {
+it('registers only the prepared Tabler theme without storing its archive in the package repository', function (): void {
     $config = require StarterPaths::path('config/starter.php');
 
-    expect(array_keys($config['themes']))->toBe(['tabler', 'dashcode'])
+    expect(array_keys($config['themes']))->toBe(['tabler'])
         ->and($config['themes']['tabler']['layouts'])->toHaveKeys(['vertical', 'horizontal'])
-        ->and($config['themes']['dashcode']['layouts'])->toHaveKeys(['vertical', 'horizontal'])
+        ->and(is_dir(StarterPaths::path('theme-packages')))->toBeFalse()
         ->and(File::allFiles(StarterPaths::path('public/themes')))->toBe([]);
 });
 
 it('maps generated host assets without carrying the payload in Composer', function (): void {
     $config = require StarterPaths::path('config/starter.php');
+    $source = json_decode(
+        (string) file_get_contents(StarterPaths::path('docs/template/tabler/source.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
 
     expect($config['themes']['tabler']['assets'])->toBe('assets/tabler')
-        ->and($config['themes']['dashcode']['assets'])->toBe('assets/dashcode')
+        ->and($source['url'])->toBe('https://raw.githubusercontent.com/aldhi88/starterkit-larawire-agentic-template/main/tabler.zip')
+        ->and($source['archive_sha256'])->toBe('473ccd5f40f99e3ad7c5965946705007feafaf2a411450f3263b1561ead864a9')
         ->and(glob(StarterPaths::path('docs/template/*/*.html')) ?: [])->toBe([]);
 });
 
@@ -29,7 +35,7 @@ it('keeps active vertical branches open without forcing horizontal dropdowns ope
 
     expect($runtime)->toContain("! detail.classList.contains('starter-horizontal-details')");
 
-    foreach (['tabler', 'dashcode'] as $theme) {
+    foreach (['tabler'] as $theme) {
         $horizontalMenu = file_get_contents(StarterPaths::path(
             'resources/themes/'.$theme.'/views/starter/templates/layouts/menu-item-horizontal.blade.php',
         ));
@@ -38,7 +44,7 @@ it('keeps active vertical branches open without forcing horizontal dropdowns ope
     }
 });
 
-it('keeps complete AI contracts and indexed atlases for both themes', function (): void {
+it('keeps the complete AI contract and indexed Tabler atlas', function (): void {
     $contract = json_decode(
         (string) file_get_contents(StarterPaths::path('docs/rules/theme-package-contract.json')),
         true,
@@ -49,7 +55,7 @@ it('keeps complete AI contracts and indexed atlases for both themes', function (
         ->and(is_file(StarterPaths::path('tools/build-theme-source-index.php')))->toBeTrue()
         ->and(is_dir(StarterPaths::path('docs/template/tabler/tabler-components')))->toBeFalse();
 
-    foreach (['tabler' => 395, 'dashcode' => 74] as $theme => $htmlCount) {
+    foreach (['tabler' => 395] as $theme => $htmlCount) {
         $root = StarterPaths::path('docs/template/'.$theme);
         $sourceIndex = json_decode((string) file_get_contents($root.'/source-index.json'), true, flags: JSON_THROW_ON_ERROR);
         $manifest = json_decode((string) file_get_contents($root.'/component-manifest.json'), true, flags: JSON_THROW_ON_ERROR);
@@ -61,7 +67,9 @@ it('keeps complete AI contracts and indexed atlases for both themes', function (
             ->and($sourceIndex['html_files'])->toBe(count($sourceIndex['files']))
             ->and($sourceIndex['html_files'])->toBe($htmlCount)
             ->and(array_diff($contract['required_components'], collect($manifest['components'])->pluck('id')->all()))->toBe([])
-            ->and($source['url'])->toContain('drive.google.com/drive/folders/')
+            ->and($source['provider'])->toBe('github')
+            ->and($source['url'])->toContain('raw.githubusercontent.com/')
+            ->and($source['archive_sha256'])->toMatch('/^[a-f0-9]{64}$/')
             ->and(File::size($root.'/source-index.json'))->toBeLessThan(250_000);
     }
 });

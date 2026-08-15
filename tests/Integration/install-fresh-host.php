@@ -31,12 +31,14 @@ $tester->setInputs([
     'yes',
     'yes',
     '0',
+    '0',
     'Starterkit Test',
     'developer@example.test',
     'local-password',
     'local-password',
     'Human Resources',
     'hr',
+    'yes',
     'yes',
 ]);
 

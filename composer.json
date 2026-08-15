@@ -27,6 +27,7 @@
     "require": {
         "php": ">=8.3",
         "ext-intl": "*",
+        "ext-zip": "*",
         "dedoc/scramble": "^0.13.36",
         "laravel-lang/common": "^6.8",
         "laravel/framework": ">=13.8 <14.0",

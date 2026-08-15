@@ -40,13 +40,13 @@ it('fails production validation when selected theme runtime is unavailable', fun
     $host = sys_get_temp_dir().'/starter-production-assets-'.bin2hex(random_bytes(6));
     $originalBasePath = base_path();
     File::ensureDirectoryExists($host);
-    File::put($host.'/.env', "STARTER_THEME=dashcode\nSTARTER_LAYOUT=vertical\n");
+    File::put($host.'/.env', "STARTER_THEME=tabler\nSTARTER_LAYOUT=vertical\n");
     app()->setBasePath($host);
-    config()->set('starter.theme', 'dashcode');
+    config()->set('starter.theme', 'tabler');
     config()->set('starter.layout', 'vertical');
 
     $assets = Mockery::mock(StarterAssetPublisher::class);
-    $assets->shouldReceive('themeAssetsReady')->with('dashcode')->once()->andReturn(false);
+    $assets->shouldReceive('themeAssetsReady')->with('tabler')->once()->andReturn(false);
 
     try {
         $checks = collect((new StarterSecurityValidator($assets))->checks(production: true))->keyBy('label');

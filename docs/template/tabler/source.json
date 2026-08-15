@@ -1,9 +1,10 @@
 {
     "schema_version": 1,
     "theme": "tabler",
-    "provider": "google-drive",
-    "url": "https://drive.google.com/drive/folders/1ZtJiaL7bgxwiKZCEUb8yttCwUjXXJ-X0?usp=sharing",
-    "folder_id": "1ZtJiaL7bgxwiKZCEUb8yttCwUjXXJ-X0",
+    "provider": "github",
+    "url": "https://raw.githubusercontent.com/aldhi88/starterkit-larawire-agentic-template/main/tabler.zip",
+    "archive_sha256": "473ccd5f40f99e3ad7c5965946705007feafaf2a411450f3263b1561ead864a9",
+    "archive_max_bytes": 5242880,
     "required_local_path": "theme-intake/tabler",
     "license": "MIT",
     "distribution": "public",

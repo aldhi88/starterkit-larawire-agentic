@@ -5,6 +5,7 @@ use Aldhi88\StarterKit\Support\Starter\StarterThemeRegistry;
 use Aldhi88\StarterKit\Tests\Fixtures\FixturePowerGridTheme;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 
 function createCompleteFixtureTheme(string $root): void
 {
@@ -31,11 +32,13 @@ function createCompleteFixtureTheme(string $root): void
     file_put_contents($root.'/docs/source.json', json_encode([
         'schema_version' => 1,
         'theme' => 'fixture',
-        'provider' => 'google-drive',
-        'url' => 'https://drive.google.com/fixture',
+        'provider' => 'github',
+        'url' => 'https://github.com/example/themes/releases/download/fixture/theme.zip',
+        'archive_sha256' => hash('sha256', 'fixture archive'),
+        'archive_max_bytes' => 1024,
         'required_local_path' => 'theme-intake/fixture',
         'license' => 'Fixture license',
-        'distribution' => 'private',
+        'distribution' => 'public',
     ], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
     file_put_contents($root.'/docs/template.md', '# Fixture');
     file_put_contents($root.'/docs/runtime-map.md', '# Runtime map');
@@ -82,10 +85,10 @@ afterEach(function (): void {
     StarterThemeRegistry::flushRegistered();
 });
 
-it('validates and resolves both bundled theme integrations', function (): void {
+it('validates and resolves the bundled Tabler theme integration', function (): void {
     $themes = StarterThemeRegistry::all();
 
-    expect($themes)->toHaveKeys(['tabler', 'dashcode'])
+    expect($themes)->toHaveKeys(['tabler'])
         ->and(StarterThemeRegistry::path('tabler', 'views'))->toBeDirectory();
 });
 
@@ -107,7 +110,7 @@ it('registers a complete owner-prepared theme integration', function (): void {
             ],
         ]);
 
-        expect(StarterThemeRegistry::all())->toHaveKeys(['tabler', 'dashcode', 'fixture'])
+        expect(StarterThemeRegistry::all())->toHaveKeys(['tabler', 'fixture'])
             ->and(StarterThemeRegistry::path('fixture', 'assets'))->toBe($root.'/assets');
     } finally {
         File::deleteDirectory($root);
@@ -256,5 +259,61 @@ it('publishes an exact theme recipe and reuses committed production assets', fun
         config()->set('starter.theme', 'tabler');
         File::deleteDirectory($root);
         File::deleteDirectory($host);
+    }
+});
+
+it('downloads and verifies a registered GitHub theme archive before publishing it', function (): void {
+    $root = sys_get_temp_dir().'/starter-theme-download-package-'.bin2hex(random_bytes(5));
+    $host = sys_get_temp_dir().'/starter-theme-download-host-'.bin2hex(random_bytes(5));
+    $archivePath = sys_get_temp_dir().'/starter-theme-download-'.bin2hex(random_bytes(5)).'.zip';
+    $originalBasePath = base_path();
+    createCompleteFixtureTheme($root);
+    File::ensureDirectoryExists($host);
+
+    $zip = new ZipArchive;
+    expect($zip->open($archivePath, ZipArchive::CREATE | ZipArchive::OVERWRITE))->toBeTrue();
+    $zip->addFromString('runtime/theme.css', 'body{}');
+    $zip->close();
+    $archive = (string) file_get_contents($archivePath);
+    $metadata = json_decode((string) file_get_contents($root.'/docs/source.json'), true, flags: JSON_THROW_ON_ERROR);
+    $metadata['archive_sha256'] = hash('sha256', $archive);
+    $metadata['archive_max_bytes'] = strlen($archive) + 100;
+    file_put_contents($root.'/docs/source.json', json_encode($metadata, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
+    app()->setBasePath($host);
+    Http::fake([$metadata['url'] => Http::response($archive)]);
+
+    try {
+        StarterThemeRegistry::register('fixture', [
+            'label' => 'Fixture',
+            'root' => $root,
+            'views' => 'views',
+            'assets' => 'assets/fixture',
+            'docs' => 'docs',
+            'powergrid' => FixturePowerGridTheme::class,
+            'layouts' => [
+                'vertical' => 'starter.templates.layouts.navigation.vertical',
+                'horizontal' => 'starter.templates.layouts.navigation.horizontal',
+            ],
+        ]);
+        config()->set('starter.theme', 'fixture');
+        $command = Mockery::mock(Command::class);
+        $command->shouldReceive('info')->zeroOrMoreTimes();
+        $command->shouldReceive('line')->zeroOrMoreTimes();
+        $command->shouldReceive('error')->zeroOrMoreTimes();
+        $publisher = new StarterAssetPublisher;
+
+        expect($publisher->themeSourceReady('fixture'))->toBeFalse()
+            ->and($publisher->prepareTheme($command, 'fixture'))->toBeTrue()
+            ->and($publisher->themeSourceReady('fixture'))->toBeTrue()
+            ->and($publisher->publishSelectedTheme($command))->toBeTrue()
+            ->and(file_get_contents($host.'/public/assets/fixture/theme.css'))->toBe('body{}');
+
+        Http::assertSentCount(1);
+    } finally {
+        app()->setBasePath($originalBasePath);
+        config()->set('starter.theme', 'tabler');
+        File::deleteDirectory($root);
+        File::deleteDirectory($host);
+        File::delete($archivePath);
     }
 });

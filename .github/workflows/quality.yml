@@ -42,7 +42,7 @@ jobs:
           archive="$(find build -maxdepth 1 -name '*.zip' -print -quit)"
           test -n "$archive"
           unzip -t "$archive"
-          if unzip -Z1 "$archive" | grep -E '^(\.env($|\.)|vendor/|node_modules/|build/|tests/|\.github/)|(^|/)(Dashcode|dashcode|\.DS_Store$)'; then
+          if unzip -Z1 "$archive" | grep -E '^(\.env($|\.)|vendor/|node_modules/|build/|tests/|\.github/)|(^|/)(\.DS_Store$)'; then
             echo 'Composer archive contains a forbidden file.'
             exit 1
           fi

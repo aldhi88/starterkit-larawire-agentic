@@ -101,9 +101,7 @@ class InstallCommand extends Command
 
         $theme = (string) $this->installation['theme'];
 
-        if (! $assetPublisher->themeAssetsReady($theme) && ! $assetPublisher->themeSourceReady($theme)) {
-            $assetPublisher->explainMissingThemeSource($this, $theme);
-
+        if (! $assetPublisher->prepareTheme($this, $theme)) {
             return self::FAILURE;
         }
 
@@ -383,17 +381,12 @@ class InstallCommand extends Command
                 : ucfirst((string) $key);
         }
 
-        if (count($labels) === 1) {
-            $theme = (string) array_key_first($labels);
-            $this->line('Theme UI: '.$labels[$theme].' (satu-satunya theme yang terpasang)');
-        } else {
-            if (array_key_exists('dashcode', $labels)) {
-                $this->line('<fg=yellow>Catatan: DashCode memerlukan lisensi vendor yang sah.</>');
-            }
-
-            $selectedLabel = (string) $this->choice('Pilih theme UI', array_values($labels));
-            $theme = (string) array_search($selectedLabel, $labels, true);
-        }
+        $selectedLabel = (string) $this->choice(
+            'Pilih theme UI',
+            array_values($labels),
+            (string) reset($labels),
+        );
+        $theme = (string) array_search($selectedLabel, $labels, true);
 
         $layouts = array_keys((array) ($themes[$theme]['layouts'] ?? []));
 

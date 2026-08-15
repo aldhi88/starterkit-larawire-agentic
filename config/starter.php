@@ -1,7 +1,6 @@
 <?php
 
 use Aldhi88\StarterKit\Support\Starter\StarterDomain;
-use Aldhi88\StarterKit\Themes\Starter\DashcodePowerGridTheme;
 use Aldhi88\StarterKit\Themes\Starter\TablerPowerGridTheme;
 
 $configuredDomain = strtolower(rtrim((string) env('APP_DOMAIN'), '.'));
@@ -24,18 +23,6 @@ return [
             'assets' => 'assets/tabler',
             'docs' => 'docs/template/tabler',
             'powergrid' => TablerPowerGridTheme::class,
-            'layouts' => [
-                'vertical' => 'starter.templates.layouts.navigation.vertical',
-                'horizontal' => 'starter.templates.layouts.navigation.horizontal',
-            ],
-        ],
-        'dashcode' => [
-            'label' => 'DashCode',
-            'root' => dirname(__DIR__),
-            'views' => 'resources/themes/dashcode/views',
-            'assets' => 'assets/dashcode',
-            'docs' => 'docs/template/dashcode',
-            'powergrid' => DashcodePowerGridTheme::class,
             'layouts' => [
                 'vertical' => 'starter.templates.layouts.navigation.vertical',
                 'horizontal' => 'starter.templates.layouts.navigation.horizontal',

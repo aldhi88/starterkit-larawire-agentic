@@ -7,11 +7,16 @@ use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Aldhi88\StarterKit\Support\Starter\StarterThemeRegistry;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use RuntimeException;
+use Throwable;
+use ZipArchive;
 
 class StarterAssetPublisher
 {
-    public const TEMPLATE_SOURCE_URL = 'https://drive.google.com/drive/folders/1ZtJiaL7bgxwiKZCEUb8yttCwUjXXJ-X0?usp=sharing';
+    private const MAX_ARCHIVE_ENTRIES = 5000;
+
+    private const MAX_EXTRACTED_BYTES = 104857600;
 
     public function publish(Command $command): bool
     {
@@ -74,10 +79,22 @@ class StarterAssetPublisher
 
     public function themeSourceReady(string $theme): bool
     {
-        return $this->sourceMatchesManifest(
-            base_path('theme-intake/'.$theme),
-            $this->themeAssetFiles($theme),
-        );
+        return $this->themeSourceRoot($theme, $this->themeAssetFiles($theme)) !== null;
+    }
+
+    public function prepareTheme(Command $command, string $theme): bool
+    {
+        if ($this->themeAssetsReady($theme) || $this->themeSourceReady($theme)) {
+            return true;
+        }
+
+        if (app()->isProduction()) {
+            $this->explainMissingThemeSource($command, $theme);
+
+            return false;
+        }
+
+        return $this->downloadThemeSource($command, $theme);
     }
 
     public function explainMissingThemeSource(Command $command, string $theme): void
@@ -86,18 +103,16 @@ class StarterAssetPublisher
             $command->line('<fg=red;options=bold>ASET RUNTIME THEME PRODUCTION TIDAK TERSEDIA ATAU TIDAK VALID.</>');
             $command->line("Theme aktif: {$theme}");
             $command->line('Jangan download atau menyalin source template ke server production.');
-            $command->line('Di local: pastikan theme-intake tersedia, jalankan starter:sync, lalu commit dan push public/assets/'.$theme.'/');
+            $command->line('Di local: jalankan starter:sync agar arsip GitHub diunduh dan aset runtime dibuat ulang, lalu commit public/assets/'.$theme.'/');
             $command->line('Di production: pull commit tersebut dan jalankan kembali starter:deploy.');
 
             return;
         }
 
-        $command->line('<fg=red;options=bold>FILE SOURCE TEMPLATE WAJIB BELUM TERSEDIA.</>');
+        $command->line('<fg=red;options=bold>ASET THEME GAGAL DISIAPKAN.</>');
         $command->line("Theme: {$theme}");
-        $command->line('Download source template dari:');
-        $command->line(self::TEMPLATE_SOURCE_URL);
-        $command->line("Salin foldernya ke: theme-intake/{$theme}/");
-        $command->line('Folder theme-intake diabaikan Git dan tidak ikut package Composer.');
+        $command->line('Periksa koneksi internet dan pastikan URL arsip GitHub theme dapat diakses.');
+        $command->line('Installer menolak arsip yang URL, ukuran, checksum, atau isinya tidak sesuai manifest package.');
     }
 
     public function publishSelectedTheme(Command $command): bool
@@ -113,9 +128,13 @@ class StarterAssetPublisher
             return true;
         }
 
-        $sourceRoot = base_path('theme-intake/'.$theme);
+        $sourceRoot = $this->themeSourceRoot($theme, $files);
 
-        if (! $this->sourceMatchesManifest($sourceRoot, $files)) {
+        if ($sourceRoot === null && ! app()->isProduction() && $this->downloadThemeSource($command, $theme)) {
+            $sourceRoot = $this->themeSourceRoot($theme, $files);
+        }
+
+        if ($sourceRoot === null) {
             $this->explainMissingThemeSource($command, $theme);
 
             return false;
@@ -145,7 +164,7 @@ class StarterAssetPublisher
             if (! File::moveDirectory($staging, $destination)) {
                 throw new RuntimeException("Unable to publish theme assets for [{$theme}].");
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             File::deleteDirectory($staging);
             $command->error($exception->getMessage());
 
@@ -155,6 +174,171 @@ class StarterAssetPublisher
         $command->info("Theme assets published: public/{$definition['assets']}");
 
         return true;
+    }
+
+    private function downloadThemeSource(Command $command, string $theme): bool
+    {
+        try {
+            $source = $this->themeSourceMetadata($theme);
+            $url = (string) $source['url'];
+            $expectedHash = (string) $source['archive_sha256'];
+            $maximumBytes = (int) $source['archive_max_bytes'];
+            $workingRoot = storage_path('framework/cache/starterkit/theme-downloads');
+            $archivePath = $workingRoot.'/'.$theme.'-'.bin2hex(random_bytes(6)).'.zip';
+            $staging = $workingRoot.'/'.$theme.'-'.bin2hex(random_bytes(6));
+            $cacheRoot = $this->downloadedThemeSourcePath($theme);
+
+            File::ensureDirectoryExists($workingRoot);
+            $command->info("Mengunduh aset theme {$theme} dari GitHub...");
+            $response = Http::accept('application/octet-stream')
+                ->withHeaders(['User-Agent' => 'Starterkit-Larawire-Agentic'])
+                ->connectTimeout(15)
+                ->timeout(120)
+                ->retry(2, 250)
+                ->get($url);
+
+            if (! $response->successful()) {
+                throw new RuntimeException("GitHub merespons HTTP {$response->status()}.");
+            }
+
+            $archive = $response->body();
+            $archiveBytes = strlen($archive);
+
+            if ($archiveBytes === 0 || $archiveBytes > $maximumBytes) {
+                throw new RuntimeException("Ukuran arsip theme tidak valid ({$archiveBytes} byte).");
+            }
+
+            if (! hash_equals($expectedHash, hash('sha256', $archive))) {
+                throw new RuntimeException('Checksum arsip theme tidak cocok dengan manifest package.');
+            }
+
+            File::put($archivePath, $archive);
+            File::ensureDirectoryExists($staging);
+            $this->extractVerifiedArchive($archivePath, $staging);
+
+            if (! $this->sourceMatchesManifest($staging, $this->themeAssetFiles($theme), exact: true)) {
+                throw new RuntimeException('Isi arsip theme tidak cocok dengan asset manifest package.');
+            }
+
+            File::deleteDirectory($cacheRoot);
+            File::ensureDirectoryExists(dirname($cacheRoot));
+
+            if (! File::moveDirectory($staging, $cacheRoot)) {
+                throw new RuntimeException('Aset theme terverifikasi tidak dapat disimpan ke cache local.');
+            }
+
+            File::delete($archivePath);
+            $command->info("Aset theme {$theme} berhasil diverifikasi dan disiapkan.");
+
+            return true;
+        } catch (Throwable $exception) {
+            if (isset($archivePath)) {
+                File::delete($archivePath);
+            }
+
+            if (isset($staging)) {
+                File::deleteDirectory($staging);
+            }
+
+            $command->error('Download theme gagal: '.$exception->getMessage());
+            $this->explainMissingThemeSource($command, $theme);
+
+            return false;
+        }
+    }
+
+    private function extractVerifiedArchive(string $archivePath, string $destination): void
+    {
+        $zip = new ZipArchive;
+
+        if ($zip->open($archivePath) !== true) {
+            throw new RuntimeException('Arsip theme bukan file ZIP yang valid.');
+        }
+
+        try {
+            if ($zip->numFiles < 1 || $zip->numFiles > self::MAX_ARCHIVE_ENTRIES) {
+                throw new RuntimeException('Jumlah file di dalam arsip theme tidak valid.');
+            }
+
+            $totalBytes = 0;
+
+            for ($index = 0; $index < $zip->numFiles; $index++) {
+                $entry = $zip->statIndex($index);
+
+                if (! is_array($entry)) {
+                    throw new RuntimeException('Arsip theme memiliki metadata file yang tidak valid.');
+                }
+
+                $name = $entry['name'];
+                $size = $entry['size'];
+
+                if (! $this->safeArchivePath($name)) {
+                    throw new RuntimeException('Arsip theme memiliki path atau metadata file yang tidak aman.');
+                }
+
+                $operatingSystem = 0;
+                $attributes = 0;
+
+                if ($zip->getExternalAttributesIndex($index, $operatingSystem, $attributes)
+                    && (($attributes >> 16) & 0xF000) === 0xA000) {
+                    throw new RuntimeException('Arsip theme tidak boleh berisi symbolic link.');
+                }
+
+                $totalBytes += $size;
+
+                if ($totalBytes > self::MAX_EXTRACTED_BYTES) {
+                    throw new RuntimeException('Ukuran hasil ekstraksi theme melewati batas aman.');
+                }
+            }
+
+            if (! $zip->extractTo($destination)) {
+                throw new RuntimeException('Arsip theme tidak dapat diekstrak.');
+            }
+        } finally {
+            $zip->close();
+        }
+    }
+
+    private function safeArchivePath(string $path): bool
+    {
+        $normalized = str_replace('\\', '/', $path);
+        $trimmed = rtrim($normalized, '/');
+
+        return $trimmed !== ''
+            && ! str_contains($normalized, "\0")
+            && ! str_starts_with($normalized, '/')
+            && preg_match('/^[A-Za-z]:\//', $normalized) !== 1
+            && preg_match('~(^|/)\.\.?(?:/|$)~', $trimmed) !== 1;
+    }
+
+    /** @return array<string, mixed> */
+    private function themeSourceMetadata(string $theme): array
+    {
+        $path = StarterThemeRegistry::path($theme, 'docs', 'source.json');
+        $source = json_decode((string) File::get($path), true);
+
+        if (! is_array($source)) {
+            throw new RuntimeException("Theme [{$theme}] tidak memiliki metadata source yang valid.");
+        }
+
+        return $source;
+    }
+
+    /** @param list<array{source: string, target: string, sha256: string}> $files */
+    private function themeSourceRoot(string $theme, array $files): ?string
+    {
+        foreach ([base_path('theme-intake/'.$theme), $this->downloadedThemeSourcePath($theme)] as $root) {
+            if ($this->sourceMatchesManifest($root, $files)) {
+                return $root;
+            }
+        }
+
+        return null;
+    }
+
+    private function downloadedThemeSourcePath(string $theme): string
+    {
+        return storage_path('framework/cache/starterkit/theme-sources/'.$theme);
     }
 
     /** @return list<array{source: string, target: string, sha256: string}> */
@@ -175,17 +359,32 @@ class StarterAssetPublisher
     }
 
     /** @param list<array{source: string, target: string, sha256: string}> $files */
-    private function sourceMatchesManifest(string $root, array $files): bool
+    private function sourceMatchesManifest(string $root, array $files, bool $exact = false): bool
     {
         if (! File::isDirectory($root)) {
             return false;
         }
+
+        $expected = [];
 
         foreach ($files as $entry) {
             $path = $root.'/'.str_replace('/', DIRECTORY_SEPARATOR, $entry['source']);
 
             if (! File::isFile($path) || is_link($path)
                 || ! hash_equals($entry['sha256'], (string) hash_file('sha256', $path))) {
+                return false;
+            }
+
+            $expected[] = $entry['source'];
+        }
+
+        if ($exact) {
+            $actual = collect(File::allFiles($root))
+                ->map(fn ($file): string => str_replace('\\', '/', $file->getRelativePathname()))
+                ->sort()->values()->all();
+            sort($expected);
+
+            if ($expected !== $actual) {
                 return false;
             }
         }

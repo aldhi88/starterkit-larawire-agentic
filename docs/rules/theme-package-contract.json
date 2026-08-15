@@ -5,7 +5,7 @@
         "intake_pattern": "theme-intake/<theme-key>/",
         "canonical_prompt": "Integrasikan theme <theme-key> dari theme-intake/<theme-key> sampai siap dipilih installer.",
         "default_output": "core package integration",
-        "source_provider": "Google Drive owner archive"
+        "source_provider": "dedicated public GitHub template repository"
     },
     "required_layouts": [
         "vertical",

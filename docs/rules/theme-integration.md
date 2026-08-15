@@ -38,14 +38,18 @@ Core package menyimpan untuk setiap theme yang didukung:
   `asset-manifest.json`;
 - atlas `template.md` dan peta `runtime-map.md`.
 
-Core package tidak menyimpan HTML demo, CSS, JavaScript, font, gambar, plugin,
-atau asset vendor. Source/aset berada di arsip owner dan intake lokal. Recipe
-hash hanya mempublikasikan dependency runtime minimum ke
+Core package tidak menyimpan HTML demo atau distribusi source vendor. Source
+lengkap berada di intake lokal owner. Untuk theme open-source yang siap dipakai,
+runtime minimum dikemas sebagai ZIP di repository template GitHub terpisah dan
+tidak disimpan dalam repository atau archive Composer. Installer mengunduhnya
+melalui URL HTTPS dengan ukuran serta SHA-256 yang dipin. Recipe hanya
+mempublikasikan dependency runtime minimum ke
 `public/assets/<theme-key>/` milik host Laravel.
 
-`theme-intake/` tidak boleh di-commit. Sebaliknya, hasil runtime
+`theme-intake/` tidak boleh di-commit. Archive runtime tidak boleh memuat demo
+atau source yang tidak dipakai. Sebaliknya, hasil runtime
 `public/assets/<theme-key>/` wajib di-commit pada repository aplikasi supaya
-production dapat deploy tanpa Google Drive atau source vendor. Theme komersial
+production dapat deploy tanpa download GitHub atau source vendor. Theme komersial
 hanya dapat dipakai oleh pihak yang memiliki lisensi sah; jangan menyamarkan
 status lisensinya atau mendistribusikan ulang source premium.
 
@@ -56,8 +60,8 @@ status lisensinya atau mendistribusikan ulang source premium.
 - Inventaris seluruh struktur, versi, license/notice, HTML, layout, stylesheet,
   script, font, icon, image, plugin, dan build source secara mekanis.
 - Tentukan apakah penggunaannya publik, privat/komersial, atau dilarang.
-- Buat `source.json` dengan provider, URL arsip owner, lokasi intake, jumlah
-  HTML, lisensi, dan keputusan distribusi.
+- Buat `source.json` dengan provider, URL GitHub archive, SHA-256 dan batas
+  ukuran archive, lokasi intake, jumlah HTML, lisensi, dan keputusan distribusi.
 - Indeks setiap file HTML ke `source-index.json` menggunakan path relatif,
   SHA-256, sinyal komponen, dan keputusan. Jumlah indeks wajib persis sama
   dengan jumlah HTML intake; gunakan `tools/build-theme-source-index.php` lalu
@@ -114,8 +118,10 @@ status lisensinya atau mendistribusikan ulang source premium.
   action, horizontal scroll, per-page, record count, dan pagination atas/bawah
   harus berfungsi dan menggunakan komponen native theme.
 - Daftarkan theme di `config/starter.php` hanya setelah registry contract lulus.
-  Installer harus menampilkan pilihan tersebut dan melakukan preflight source
-  sebelum mutasi file/database.
+  Installer harus menampilkan pilihan tersebut, mengunduh runtime archive secara
+  otomatis di local, dan menyelesaikan seluruh preflight sebelum mutasi
+  file/database. Theme dengan lisensi yang tidak mengizinkan redistribusi tidak
+  boleh didaftarkan pada downloader publik.
 
 ### 6. Pemeriksaan residu lintas-theme
 
