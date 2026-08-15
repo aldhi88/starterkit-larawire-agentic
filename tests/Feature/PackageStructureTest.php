@@ -9,11 +9,13 @@ use Illuminate\Support\Facades\File;
 
 it('registers only the prepared Tabler theme without storing its archive in the package repository', function (): void {
     $config = require StarterPaths::path('config/starter.php');
+    $publicThemes = StarterPaths::path('public/themes');
+    $publicThemeFiles = is_dir($publicThemes) ? File::allFiles($publicThemes) : [];
 
     expect(array_keys($config['themes']))->toBe(['tabler'])
         ->and($config['themes']['tabler']['layouts'])->toHaveKeys(['vertical', 'horizontal'])
         ->and(is_dir(StarterPaths::path('theme-packages')))->toBeFalse()
-        ->and(File::allFiles(StarterPaths::path('public/themes')))->toBe([]);
+        ->and($publicThemeFiles)->toBe([]);
 });
 
 it('maps generated host assets without carrying the payload in Composer', function (): void {

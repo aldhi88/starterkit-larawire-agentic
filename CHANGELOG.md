@@ -5,6 +5,8 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-15
+
 ### Added
 
 - Composer-native fresh Laravel installer with guarded install, reset, sync,
