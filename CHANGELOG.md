@@ -5,6 +5,8 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-23
+
 ### Changed
 
 - Prefix derived-host issue specification filenames with their creation timestamp
