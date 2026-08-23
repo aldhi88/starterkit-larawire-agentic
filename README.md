@@ -2,6 +2,10 @@
 
 **Bahasa Indonesia** · [English](README.en.md)
 
+[Website resmi](https://starterkit-larawire.altekno.id/) ·
+[Dokumentasi](https://starterkit-larawire.altekno.id/docs) ·
+[Packagist](https://packagist.org/packages/aldhi88/starterkit-larawire-agentic)
+
 Starterkit Larawire dibangun menggunakan dan mengapresiasi karya
 [Laravel](https://laravel.com/), [Livewire](https://livewire.laravel.com/),
 [Livewire PowerGrid](https://livewire-powergrid.com/),
@@ -330,9 +334,11 @@ jelas. Dokumentasi API production hanya dapat diakses Superuser.
 
 ## Dokumentasi
 
-README ini adalah panduan ringkas GitHub. Aturan dan arsitektur yang lebih rinci
-tersedia di `docs/`. Website dokumentasi resmi direncanakan dan URL publiknya
-akan ditambahkan setelah siap.
+README ini adalah panduan ringkas GitHub. Panduan instalasi, arsitektur App,
+authorization, workflow local, Agentic AI, deployment production, Gateway API,
+dan troubleshooting tersedia di
+[website dokumentasi resmi](https://starterkit-larawire.altekno.id/docs).
+Aturan teknis untuk agent dan contributor tetap tersedia di `docs/` package.
 
 ## Lisensi
 

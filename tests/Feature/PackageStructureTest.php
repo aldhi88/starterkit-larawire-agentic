@@ -93,6 +93,27 @@ it('keeps issue specifications chronologically sortable throughout their lifecyc
         ->not->toContain('issues/archives/done_<original-name>.md');
 });
 
+it('publishes the official website and documentation entry points', function (): void {
+    $composer = json_decode(
+        (string) file_get_contents(StarterPaths::path('composer.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+    $readme = file_get_contents(StarterPaths::path('README.md'));
+    $englishReadme = file_get_contents(StarterPaths::path('README.en.md'));
+
+    expect($composer['homepage'])->toBe('https://starterkit-larawire.altekno.id/')
+        ->and($composer['support']['docs'])->toBe('https://starterkit-larawire.altekno.id/docs')
+        ->and($readme)
+        ->toContain('[Website resmi](https://starterkit-larawire.altekno.id/)')
+        ->toContain('[Dokumentasi](https://starterkit-larawire.altekno.id/docs)')
+        ->and($englishReadme)
+        ->toContain('[Official website](https://starterkit-larawire.altekno.id/en)')
+        ->toContain('[Documentation](https://starterkit-larawire.altekno.id/en/docs)')
+        ->and($readme)->not->toContain('Website dokumentasi resmi direncanakan')
+        ->and($englishReadme)->not->toContain('official documentation website is planned');
+});
+
 it('defines a complete theme from one intake instruction without vendor visual locks', function (): void {
     $agents = file_get_contents(StarterPaths::path('AGENTS.md'));
     $integration = file_get_contents(StarterPaths::path('docs/rules/theme-integration.md'));

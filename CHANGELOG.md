@@ -5,6 +5,11 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed
+
+- Link Composer, Packagist, and both README languages directly to the official
+  landing page and documentation website.
+
 ## [1.0.1] - 2026-08-23
 
 ### Changed

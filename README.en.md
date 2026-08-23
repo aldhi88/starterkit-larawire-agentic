@@ -2,6 +2,10 @@
 
 [Bahasa Indonesia](README.md) · **English**
 
+[Official website](https://starterkit-larawire.altekno.id/en) ·
+[Documentation](https://starterkit-larawire.altekno.id/en/docs) ·
+[Packagist](https://packagist.org/packages/aldhi88/starterkit-larawire-agentic)
+
 Starterkit Larawire is built with and appreciates the work of
 [Laravel](https://laravel.com/), [Livewire](https://livewire.laravel.com/),
 [Livewire PowerGrid](https://livewire-powergrid.com/),
@@ -327,9 +331,12 @@ limits. Production API documentation is restricted to Superuser.
 
 ## Documentation
 
-This README is the concise GitHub guide. Detailed rules and architecture are
-available in `docs/`. A separate official documentation website is planned;
-the public URL will be added when it is ready.
+This README is the concise GitHub guide. Installation, App architecture,
+authorization, local workflow, Agentic AI, production deployment, API Gateway,
+and troubleshooting guides are available on the
+[official documentation website](https://starterkit-larawire.altekno.id/en/docs).
+Technical rules for agents and contributors remain available in the package's
+`docs/` directory.
 
 ## License
 
