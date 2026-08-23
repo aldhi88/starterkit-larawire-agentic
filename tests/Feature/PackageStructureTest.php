@@ -76,6 +76,23 @@ it('keeps the complete AI contract and indexed Tabler atlas', function (): void 
     }
 });
 
+it('keeps issue specifications chronologically sortable throughout their lifecycle', function (): void {
+    $agents = file_get_contents(StarterPaths::path('AGENTS.md'));
+    $workflow = file_get_contents(StarterPaths::path('docs/rules/feature-development.md'));
+
+    expect($agents)
+        ->toContain('issues/<YYYY_MM_DD_HHMMSS>_feature_<name>.md')
+        ->toContain('issues/archives/<YYYY_MM_DD_HHMMSS>_done_feature_<name>.md')
+        ->and($workflow)
+        ->toContain('issues/<YYYY_MM_DD_HHMMSS>_feature_<slug>.md')
+        ->toContain('issues/<YYYY_MM_DD_HHMMSS>_bug_<slug>.md')
+        ->toContain('issues/archives/<YYYY_MM_DD_HHMMSS>_done_feature_<slug>.md')
+        ->toContain('issues/archives/<YYYY_MM_DD_HHMMSS>_done_bug_<slug>.md')
+        ->toContain('insert only `done_` between the timestamp and type')
+        ->not->toContain('issues/feature_<slug>_<YYYY_MM_DD_HHMMSS>.md')
+        ->not->toContain('issues/archives/done_<original-name>.md');
+});
+
 it('defines a complete theme from one intake instruction without vendor visual locks', function (): void {
     $agents = file_get_contents(StarterPaths::path('AGENTS.md'));
     $integration = file_get_contents(StarterPaths::path('docs/rules/theme-integration.md'));

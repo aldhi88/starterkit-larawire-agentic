@@ -5,10 +5,10 @@
 For every feature, behavioral change, bug fix, maintenance behavior change, or security patch that changes code:
 
 1. Perform evidence-based read-only discovery and give a concise chat confirmation of understood business flow, data, roles, scope, existing evidence, and material open decisions.
-2. After the developer confirms that understanding, create exactly one detailed technical specification: `issues/feature_<slug>_<YYYY_MM_DD_HHMMSS>.md` or `issues/bug_<slug>_<YYYY_MM_DD_HHMMSS>.md`. Do not overwrite an issue; timestamp uses developer/project local time.
+2. After the developer confirms that understanding, create exactly one detailed technical specification: `issues/<YYYY_MM_DD_HHMMSS>_feature_<slug>.md` or `issues/<YYYY_MM_DD_HHMMSS>_bug_<slug>.md`. The timestamp must be the filename prefix so lexicographic filename order is chronological, uses developer/project local time, and is never changed during the issue lifecycle. Do not overwrite an issue.
 3. Tell the developer it is ready for review and wait for explicit file approval before changing implementation code.
 4. Implement only the approved scope. If a material conflict/decision appears, stop that part, update confirmation/specification after approval, then continue.
-5. After every criterion and verification passes, move—not copy—the same file to `issues/archives/done_<original-name>.md` in the implementation commit. Never archive partial, failed, canceled, or undecided work.
+5. After every criterion and verification passes, move—not copy—the same file to `issues/archives/<YYYY_MM_DD_HHMMSS>_done_feature_<slug>.md` or `issues/archives/<YYYY_MM_DD_HHMMSS>_done_bug_<slug>.md` in the implementation commit. Preserve the issue's original timestamp prefix; insert only `done_` between the timestamp and type. Never archive partial, failed, canceled, or undecided work.
 
 Read-only diagnosis/status/consultation and documentation-only work do not create an issue automatically. Do not make duplicate planning files.
 

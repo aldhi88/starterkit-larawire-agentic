@@ -5,6 +5,12 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed
+
+- Prefix derived-host issue specification filenames with their creation timestamp
+  and preserve that prefix when archiving completed work, so directory listings
+  remain chronological.
+
 ## [1.0.0] - 2026-08-15
 
 ### Added
