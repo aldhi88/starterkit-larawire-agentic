@@ -5,6 +5,15 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-08-25
+
+### Changed
+
+- Require a complete, numbered chat confirmation of every requested outcome
+  before converting the approved request into a traceable technical issue file.
+- Add breathing room between the Tabler vertical-navigation heading and its
+  first menu item.
+
 ## [1.0.2] - 2026-08-25
 
 ### Changed

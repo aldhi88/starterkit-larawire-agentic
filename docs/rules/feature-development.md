@@ -4,15 +4,15 @@
 
 For every feature, behavioral change, bug fix, maintenance behavior change, or security patch that changes code:
 
-1. Perform evidence-based read-only discovery and give a concise chat confirmation of understood business flow, data, roles, scope, existing evidence, and material open decisions.
-2. After the developer confirms that understanding, create exactly one detailed technical specification: `issues/<YYYY_MM_DD_HHMMSS>_feature_<slug>.md` or `issues/<YYYY_MM_DD_HHMMSS>_bug_<slug>.md`. The timestamp must be the filename prefix so lexicographic filename order is chronological, uses developer/project local time, and is never changed during the issue lifecycle. Do not overwrite an issue.
+1. Perform evidence-based read-only discovery, then give a concise chat confirmation that acts as a complete request-receipt checklist. Restate every requested outcome, user-visible behavior, constraint, explicit exclusion, affected business flow/data/role, and expected result—including small, clear, or low-risk items. Keep this at requirement level, not technical implementation-plan level. Give each independently verifiable request its own numbered checklist item; group items only when traceability is preserved. Separate source-proven current behavior from requested changes and list ambiguities/material decisions separately. End by asking the developer to confirm that the checklist covers the complete request.
+2. Do not create a planning/issue file from the initial request alone. Only after the developer explicitly confirms the chat checklist, convert every numbered item into one detailed technical specification: `issues/<YYYY_MM_DD_HHMMSS>_feature_<slug>.md` or `issues/<YYYY_MM_DD_HHMMSS>_bug_<slug>.md`. Preserve one-to-one traceability from each confirmed request item to technical requirements and acceptance criteria; do not silently omit, merge, weaken, expand, or reinterpret any item. The timestamp must be the filename prefix so lexicographic filename order is chronological, uses developer/project local time, and is never changed during the issue lifecycle. Do not overwrite an issue.
 3. Tell the developer it is ready for review and wait for explicit file approval before changing implementation code.
 4. Implement only the approved scope. If a material conflict/decision appears, stop that part, update confirmation/specification after approval, then continue.
 5. After every criterion and verification passes, move—not copy—the same file to `issues/archives/<YYYY_MM_DD_HHMMSS>_done_feature_<slug>.md` or `issues/archives/<YYYY_MM_DD_HHMMSS>_done_bug_<slug>.md` in the implementation commit. Preserve the issue's original timestamp prefix; insert only `done_` between the timestamp and type. Never archive partial, failed, canceled, or undecided work.
 
 Read-only diagnosis/status/consultation and documentation-only work do not create an issue automatically. Do not make duplicate planning files.
 
-All planning artifacts—including plan steps, confirmation drafts that will become specifications, and the final `issues/*.md` file—use concise technical English regardless of the project's UI language. Normal developer chat may follow the developer's language. English planning output must optimize tokens through compact structure and non-repetition, never through missing technical constraints.
+Internal plan steps and the final `issues/*.md` file use concise technical English regardless of the project's UI language. The user-facing request-receipt confirmation is normal developer chat and follows the developer's language so its coverage can be reviewed accurately. English planning output must optimize tokens through compact structure and non-repetition, never through missing technical constraints.
 
 Use this confirmation shape before creating an issue; populate it with evidence, label unknowns, and do not write an issue while material answers are missing:
 
@@ -23,10 +23,15 @@ App/subdomain:
 Module/page/flow:
 Related consumer: Web | API | Android | iOS | other
 
-Confirmed need / proven current behavior / expected outcome:
-Scope in / scope out:
+Source-proven current behavior:
+Complete requested-outcome checklist:
+1. [one independently verifiable request]
+2. [one independently verifiable request]
+Explicit scope exclusions:
 Authorization and data impact:
-Open material decisions:
+Expected result:
+Ambiguities / open material decisions:
+Confirmation request: Confirm that every requested item is represented above before the issue file is created.
 ```
 
 The specification is a deterministic execution contract for a lower-cost coding LLM, not a human-oriented tutorial. It must be self-contained enough that the implementing model does not infer architecture, invent source facts, or choose among material alternatives. Distinguish confirmed requirements, source-proven findings, approved decisions, and explicitly rejected scope. Use direct normative statements and compact tables/lists; remove greetings, narrative repetition, teaching prose, duplicated general rules, and speculative commentary.
