@@ -30,7 +30,7 @@
                     <div class="fw-semibold text-truncate" data-starter-current-app-name>{{ $currentAppName ?? 'App' }}</div>
                 </li>
 
-                <li class="nav-item px-0 px-lg-3 pt-3 pb-1">
+                <li class="nav-item px-0 px-lg-3 pt-3 pb-1 mb-1">
                     <span class="subheader">Menu Utama</span>
                 </li>
 

@@ -46,6 +46,16 @@ it('keeps active vertical branches open without forcing horizontal dropdowns ope
     }
 });
 
+it('keeps spacing between the vertical navigation heading and menu items', function (): void {
+    $navigation = file_get_contents(StarterPaths::path(
+        'resources/themes/tabler/views/starter/templates/layouts/navigation/vertical.blade.php',
+    ));
+
+    expect($navigation)
+        ->toContain('class="nav-item px-0 px-lg-3 pt-3 pb-1 mb-1"')
+        ->toContain('<span class="subheader">Menu Utama</span>');
+});
+
 it('keeps the complete AI contract and indexed Tabler atlas', function (): void {
     $contract = json_decode(
         (string) file_get_contents(StarterPaths::path('docs/rules/theme-package-contract.json')),
