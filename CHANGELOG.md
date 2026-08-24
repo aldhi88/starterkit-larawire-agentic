@@ -5,10 +5,15 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-08-25
+
 ### Changed
 
 - Link Composer, Packagist, and both README languages directly to the official
   landing page and documentation website.
+- Require token-efficient English issue specifications that fully constrain
+  lower-cost LLM implementation, semantic menu icons, and full-width PowerGrid
+  column filters with content-aware column sizing.
 
 ## [1.0.1] - 2026-08-23
 

@@ -12,6 +12,8 @@ For every feature, behavioral change, bug fix, maintenance behavior change, or s
 
 Read-only diagnosis/status/consultation and documentation-only work do not create an issue automatically. Do not make duplicate planning files.
 
+All planning artifacts—including plan steps, confirmation drafts that will become specifications, and the final `issues/*.md` file—use concise technical English regardless of the project's UI language. Normal developer chat may follow the developer's language. English planning output must optimize tokens through compact structure and non-repetition, never through missing technical constraints.
+
 Use this confirmation shape before creating an issue; populate it with evidence, label unknowns, and do not write an issue while material answers are missing:
 
 ```text
@@ -27,7 +29,9 @@ Authorization and data impact:
 Open material decisions:
 ```
 
-The specification must be junior-implementable and distinguish confirmed requirements from proven existing findings, proposals, and decisions. Include, when relevant: metadata/status; business goal; in/out scope; actors/authorization; main/alternative/failure flows; source ownership/architecture; changed files; schema/relations/constraints/indexes/backfill/compatibility; API contract/idempotency; validation/security/transactions/concurrency/audit; UI/state/loading/empty/error/responsive/accessibility; PowerGrid filter/state behavior; performance/query budget/cache; integration/deploy impacts; ordered implementation steps; tests; objective acceptance criteria; verification/manual checks/rollout/rollback/risks/open decisions. Do not invent existing names/routes/tables/classes/endpoints/files; label proposals. Reference applicable rules without copying them. No migration/model/service/repository/Livewire/route/view implementation appears during specification stage.
+The specification is a deterministic execution contract for a lower-cost coding LLM, not a human-oriented tutorial. It must be self-contained enough that the implementing model does not infer architecture, invent source facts, or choose among material alternatives. Distinguish confirmed requirements, source-proven findings, approved decisions, and explicitly rejected scope. Use direct normative statements and compact tables/lists; remove greetings, narrative repetition, teaching prose, duplicated general rules, and speculative commentary.
+
+Before approval, resolve every material open decision; no `TBD`, ambiguous option, "as appropriate", "follow best practices", or instruction to decide during implementation may remain. Bind every existing route/table/class/method/config key/view/component/icon to inspected source evidence. For each touched behavior, specify when relevant: exact owning path and symbol; files to create/modify; method signatures and layer ownership; schema types/nullability/defaults/relations/constraints/indexes/backfill/compatibility; route names/middleware/domain; authorization matrix; input normalization and validation; transactions/concurrency/idempotency/audit; exact UI labels, active-theme reference, exact approved icon key, states and responsive behavior; PowerGrid columns/filter types/full-width controls/column sizing/state persistence/actions; API request/response/error contract; query/performance limits; ordered implementation steps; focused and regression tests with exact assertions; verification commands; objective acceptance criteria; rollout/rollback; and forbidden out-of-scope changes. Include literal code only when a signature, payload, schema, or algorithm cannot otherwise be made deterministic. No production implementation appears during specification stage.
 
 ## New-module boundary
 
@@ -59,5 +63,5 @@ Landing: Transaction List.
 - Follow `architecture.md`: action boundary validates/authorizes, repositories own persistence/query, services own logic/transactions/orchestration, and audit is designed before UI.
 - App Livewire classes/views/assets follow the ownership paths in `architecture.md`; full pages use `#[Layout('layouts::app')]`. Use deferred normal forms and the closest active-theme HTML example. Preserve feature parity across themes without copying visual markup or component styling between themes. Tables use PowerGrid with the active-theme adapter and vendor table pattern, live nonredundant per-column filters, date from/to filters, persisted state, and server-side query/pagination.
 - Add protected App web routes with standard auth/active/password-change/lock plus `starter.authorize`, named `<app>.<module>.<action>`. Put APIs only in the App API route file with explicit API auth/authorization/validation/pagination/rate limit.
-- Add module/menu source config, validate menu route ownership and landing, then inspect `starter:sync <app> --dry-run` before `--force`.
+- Add module/menu source config, select and verify active-theme icons whose meanings match every rendered menu label/destination, validate menu route ownership and landing, then inspect `starter:sync <app> --dry-run` before `--force`.
 - Verify business flow, roles/403, Livewire action/validation, audit, scalable server-side lists/query budget, Pint/tests, and browser behavior for UI including empty/low/high data.

@@ -93,6 +93,32 @@ it('keeps issue specifications chronologically sortable throughout their lifecyc
         ->not->toContain('issues/archives/done_<original-name>.md');
 });
 
+it('keeps planning deterministic for LLM execution and table navigation semantics explicit', function (): void {
+    $agents = file_get_contents(StarterPaths::path('AGENTS.md'));
+    $workflow = file_get_contents(StarterPaths::path('docs/rules/feature-development.md'));
+    $access = file_get_contents(StarterPaths::path('docs/rules/access-control.md'));
+    $ui = file_get_contents(StarterPaths::path('docs/rules/ui-ux.md'));
+
+    expect($agents)
+        ->toContain('planning artifact')
+        ->toContain('lower-cost coding LLM')
+        ->toContain('filter control fills 100%')
+        ->toContain('icon whose meaning matches its label and destination')
+        ->and($workflow)
+        ->toContain('use concise technical English')
+        ->toContain('deterministic execution contract for a lower-cost coding LLM')
+        ->toContain('no `TBD`')
+        ->toContain('exact approved icon key')
+        ->and($access)
+        ->toContain('active-theme meaning matches the label and destination')
+        ->toContain('Do not ship scaffold placeholders')
+        ->and($ui)
+        ->toContain('must use `width: 100%` and `box-sizing: border-box`')
+        ->toContain('maximum practical requirement of its header, its filter control, and representative displayed content')
+        ->toContain('long fields such as descriptions may wrap across multiple readable lines')
+        ->toContain('horizontal scrolling over compressing filters');
+});
+
 it('publishes the official website and documentation entry points', function (): void {
     $composer = json_decode(
         (string) file_get_contents(StarterPaths::path('composer.json')),

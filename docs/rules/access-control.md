@@ -5,6 +5,7 @@
 - A role may own many modules. A module authorizes every route whose name belongs to that module; menus are navigation only; each App landing selects the role's initial page. Superuser bypasses module access.
 - If a read-only operator needs a materially different page from an administrator, create a dedicated module, route, and view (for example `employee_view`); do not stack role conditionals onto a full CRUD page.
 - Global static capabilities are `can_manage_settings` (Settings, Roles, Users, Company Profile, Security) and `can_view_logs` (Activity Log). They are configured in the role form and stored in `starter_client_roles`; Superuser has both.
+- Every App, parent menu, or child menu that visually renders an icon must use an icon whose established active-theme meaning matches the label and destination. Verify the icon key in the active theme's icon registry/adapter and compare the closest existing semantic siblings. Do not ship scaffold placeholders, reuse an unrelated sibling's icon, or choose a vague generic icon when a more precise supported icon exists. Record the exact approved icon key in the technical issue specification so the implementing LLM does not choose one later.
 
 ## Mandatory protection
 
