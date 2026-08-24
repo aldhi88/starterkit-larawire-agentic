@@ -5,6 +5,16 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-08-25
+
+### Changed
+
+- Make technical English a hard pre-review gate for every persisted internal
+  plan and issue specification, regardless of the developer's chat language.
+- Require a whole-file language compliance review with narrow exceptions only
+  for implementation-relevant literal UI copy, business names, identifiers,
+  and marked verbatim requirements.
+
 ## [1.1.0] - 2026-08-25
 
 ### Changed

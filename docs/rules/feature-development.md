@@ -12,7 +12,15 @@ For every feature, behavioral change, bug fix, maintenance behavior change, or s
 
 Read-only diagnosis/status/consultation and documentation-only work do not create an issue automatically. Do not make duplicate planning files.
 
-Internal plan steps and the final `issues/*.md` file use concise technical English regardless of the project's UI language. The user-facing request-receipt confirmation is normal developer chat and follows the developer's language so its coverage can be reviewed accurately. English planning output must optimize tokens through compact structure and non-repetition, never through missing technical constraints.
+## Artifact language gate
+
+This is a hard pre-review gate for every persisted internal plan, implementation plan, technical specification, and `issues/*.md` file:
+
+- The complete artifact uses concise technical English regardless of the developer's chat language, the project's UI language, or the language used to discuss and confirm the request. This includes its title, headings, prose, table labels, requirements, acceptance criteria, implementation steps, test plan, verification, rollout, rollback, and review notes.
+- The user-facing request-receipt confirmation follows the developer's language so its coverage can be reviewed accurately. Translate its confirmed meaning into technical English for the artifact; do not copy Indonesian chat prose into the plan/specification. The developer's chat language never changes the artifact language.
+- Preserve non-English text only when fidelity is implementation-relevant: exact Indonesian UI copy, an approved business/domain name, a source identifier, or a short verbatim requirement that is clearly marked as a literal. Surrounding explanation and all normative instructions remain English.
+- Immediately before saving or presenting the artifact for approval, inspect the entire file for language compliance. Any Indonesian or mixed-language narrative outside the allowed literals makes the artifact invalid; rewrite it before reporting that the file is ready. Never ask the developer to translate it or approve it as an exception merely because the discussion used Indonesian.
+- When materially revising an existing artifact, the complete resulting file—not only the new section—must pass this gate. English planning output optimizes tokens through compact structure and non-repetition, never through missing technical constraints.
 
 Use this confirmation shape before creating an issue; populate it with evidence, label unknowns, and do not write an issue while material answers are missing:
 
