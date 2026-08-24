@@ -1,13 +1,73 @@
 # Livewire UI/UX and Theme
 
+## Contextual representation and composition
+
+- A table is a tool, not the default representation of a database model. There is no default component for displaying a collection; select the representation from the user's task, the meaning and scale of the data, and the required interaction.
+- Be creative in composition, not random in decoration. Creativity means finding a better information and interaction composition, not adding visual complexity.
+- Use the simplest representation that communicates the information well, but do not choose the most generic representation merely because it is easiest to implement.
+- Professional UI comes from deliberate hierarchy, composition, and interaction decisions—not from the number of cards, charts, badges, colors, shadows, or animations.
+
+Before choosing a page's primary component, perform this internal decision process:
+
+1. Identify the page purpose and primary user task: viewing, scanning, finding, comparing, selecting, editing, processing, bulk processing, monitoring, analysing, understanding hierarchy/status/progress, or reviewing history.
+2. Read the data semantically. Determine whether it is primarily entity-oriented, tabular, hierarchical, relational, categorical, chronological, geospatial, numeric, status/workflow-oriented, media-oriented, or activity-oriented. A field's user meaning matters more than its database type: for example, `parent_id` may express hierarchy, timestamps may be primary in an activity context, and coordinates may justify a location-aware view.
+3. Classify expected volume as very small, small, medium, or large. Do not give eight relatively static records and eight thousand operational records the same representation.
+4. Assess information density per item, comparison needs, search/filter/sort needs, selection and bulk-action needs, interaction frequency, status/workflow importance, available space, progressive-disclosure opportunities, and responsive/touch behavior.
+5. Consider at least two or three plausible primary representations and compare their scanning speed, density, comparison support, action discoverability, space cost, cognitive load, and mobile behavior. Choose from that trade-off rather than familiarity. Keep this reasoning internal unless the developer asks for it.
+
+Do not render the database schema directly. Classify available information as primary, secondary, contextual, detail-only, technical, or unnecessary for the current task. Show only what supports the page purpose; move appropriate secondary detail to an expandable region, drawer, modal, or detail page. Establish what users should notice first, what should remain visually quiet, and which action is primary before composing the page.
+
+Use these representation heuristics as candidates, never as automatic mappings:
+
+| Pattern | Strong fit | Poor fit or warning |
+|---|---|---|
+| Table / data grid | Many records or important attributes; cross-record/column comparison; frequent sorting, complex filtering, dense scanning, selection, bulk actions, or operational processing | Very few simple entities; entity recognition, hierarchy, chronology, or status flow matters more than column comparison |
+| Card grid | Few to medium meaningful entities with limited primary information, useful status/metadata/icon/count, and low comparison needs | Cards become mini-tables, create excessive scrolling, or make comparison difficult |
+| Compact/rich list or directory | Fast scanning with low-to-medium density where cards are wasteful and a table is too formal or heavy | Dense multi-attribute comparison or complex bulk processing is central |
+| Tree, nested list, or accordion | Hierarchy, parent/child relationships, grouping, or progressive disclosure is central | Flat comparable records with no meaningful hierarchy |
+| Timeline or activity feed | Events, history, sequence, or change over time is the user's mental model | Ordering in time is incidental metadata |
+| Tabs or segmented views | A small set of clear, mutually understandable categories changes the relevant view | Categories overlap, are numerous, or hide information users must compare |
+| Kanban, pipeline, stepper, or grouped status | Records genuinely move through meaningful workflow stages or progress | Status is only a label and drag/stage interaction adds no task value |
+| Chart or stat/metric | Aggregate comparison, distribution, trend, exception, or a decision-relevant summary is the purpose | Added only to fill space or decorate an index page |
+| Map or location-oriented list/card | Spatial relationships or location is essential to the task | Coordinates exist but geography does not affect the user's decision |
+
+Low-density items usually favour cards, lists, or directories; medium density may favour rich lists, structured cards, compact tables, or a justified hybrid; high-density comparable records usually favour tables. These are tendencies, not rules. Never replace table-by-default with card-by-default, dashboard-by-default, or any other universal component. The PowerGrid standard below applies whenever the deliberate choice is a Livewire table.
+
+Page composition follows purpose:
+
+- A directory/master page emphasizes finding, scanning, light management, and entity recognition.
+- An operational/transaction page emphasizes processing, filters, status, workflow, selection, and actionability.
+- A monitoring page emphasizes current condition, exceptions, urgency, and changes.
+- An analysis page emphasizes comparisons, patterns, trends, and insight.
+- A detail page emphasizes entity hierarchy, context, related information, relevant actions, and chronology where meaningful.
+- A configuration page emphasizes comprehension, clear grouping, safe modification, and consequences.
+
+Do not force every purpose into `title + add button + table + pagination`. Add a contextual header, concise description, summary, primary action, search, filters, grouping, secondary context, detail affordance, or empty state only when it supports the actual task. Build visual hierarchy with typography, spacing, grouping, placement, size, weight, alignment, subtle contrast, iconography, and whitespace; do not give every datum or action equal emphasis.
+
+Distinguish primary, secondary, tertiary, contextual, and destructive actions. Avoid large repeated `Detail / Edit / Delete` button groups when a theme-native item click, text/icon action, contextual dropdown, or accessible overflow menu better preserves hierarchy. Keep destructive actions visually quiet until relevant. Use progressive disclosure to reduce cognitive load, but never hide information or actions needed frequently.
+
+Choose responsive behavior from the start. Decide how information priority changes on narrow screens, whether cards collapse naturally, whether a list is more efficient, whether actions/filters belong in overflow or a collapsible region, and whether touch targets remain usable. Horizontal table scrolling is acceptable for genuinely dense tabular data when preserving columns is clearer than converting each row into a card, but it is not the default answer for every collection.
+
+Before finalizing, review the composition internally:
+
+1. Did the database shape or a familiar CRUD scaffold choose the UI for me?
+2. Does the representation match the primary task, semantic data character, expected volume, and comparison need?
+3. Did I seriously consider another plausible representation, including a compact list between table and card?
+4. Are the first-visible information and primary action correct, with secondary detail and actions quiet or disclosed appropriately?
+5. Am I showing unnecessary fields, actions, badges, summaries, charts, or decoration?
+6. Does the page remain clear with empty, low, and high data volumes and at mobile width?
+7. Can the UI be simpler without losing usability, or more specific without becoming novel for novelty's sake?
+
+Explicitly avoid database-driven field dumping, table-by-default, card-by-default, button or badge explosion, dashboardification, modal-for-everything, decorative complexity, and uniform-page syndrome. Variation is valid when page purpose, data character, user task, or information density differs; consistency remains required where function and interaction are shared.
+
 ## UI source and selection
 
 Use the installed active theme. `docs/template/<theme>/` contains the indexed component contract and `template.md` search atlas; raw HTML is resolved by its paths in ignored `theme-intake/<theme>/`, not shipped in Composer. Runtime starter Blade remains in `resources/themes/<theme>/views/starter/`; the exact asset recipe publishes only loaded dependencies from the verified GitHub archive to the host's committed `public/assets/<theme>/`.
 
-1. Identify the page goal, data type/volume, statuses, primary action, and required interaction.
-2. Search the atlas with context plus component terms using `rg`; choose 3–5 candidates and open only 1–3 closest HTML sources.
-3. Compare hierarchy and information density, then compose the closest active-theme pattern. Search targeted preview/shared/template documentation only when the atlas is insufficient.
-4. Never read the whole atlas/template tree or design from personal taste.
+1. Complete the contextual representation decision above before searching for a theme component.
+2. Search the atlas with the page purpose, chosen representation, data context, and component terms using `rg`; choose 3–5 candidates and open only 1–3 closest HTML sources.
+3. Compare hierarchy, information density, action treatment, and responsive behavior, then compose the closest active-theme pattern. Search targeted preview/shared/template documentation only when the atlas is insufficient.
+4. Never read the whole atlas/template tree or let the available vendor example override a better-supported representation decision.
 
 When introducing a new theme, verify its license before copying anything. Keep raw vendor HTML/assets outside Composer in the owner archive and ignored intake, then add only the independently implemented views/adapters, indexes, maps, and exact hashed asset recipe to core. Verify source preflight, runtime generation, both layouts, modal, auth/error pages, and PowerGrid. A premium source is never redistributed and may be used only by a valid license holder.
 

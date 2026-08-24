@@ -5,6 +5,17 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-25
+
+### Changed
+
+- Add a contextual UI decision framework that selects collection representations
+  from page purpose, user task, data semantics, volume, density, interaction,
+  hierarchy, and responsive trade-offs instead of defaulting to tables or cards.
+- Require candidate comparison, deliberate page and action hierarchy, progressive
+  disclosure, and an internal review against CRUD-style and decorative UI
+  anti-patterns before selecting active-theme components.
+
 ## [1.0.3] - 2026-08-25
 
 ### Changed
