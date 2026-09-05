@@ -35,7 +35,7 @@
 @endphp
 
 <div x-data="{ advancedFiltersOpen: false }">
-    <div class="page-header d-print-none mt-0 mb-3">
+    <div class="page-header d-print-none mt-0 mb-3" data-starter-region="page-header">
         <div class="row g-3 align-items-end">
             <div class="col">
                 <div class="page-pretitle">Sistem / Riwayat Data</div>
@@ -51,7 +51,7 @@
         </div>
     </div>
 
-    <div class="row row-cards mb-3">
+    <div class="row row-cards mb-3" data-starter-region="summary">
         <div class="col-sm-6 col-xl-4">
             <div class="card card-sm">
                 <div class="card-body">
@@ -99,7 +99,7 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card" data-starter-region="data-table">
         <livewire:starter.logs.activity-logs-table />
     </div>
 
@@ -350,7 +350,7 @@
     @endif
 
     @if ($detailModalOpen)
-        <div class="modal modal-blur fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="activity-log-detail-title" wire:click.self="closeActionDetail">
+        <div class="modal modal-blur fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="activity-log-detail-title" wire:click.self="closeActionDetail" data-starter-region="detail-dialog">
             <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
                 <div class="modal-content">
                     <div class="modal-header">

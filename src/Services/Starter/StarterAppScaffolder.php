@@ -108,13 +108,10 @@ class {$className}DashboardIndex extends Component
 }
 PHP.PHP_EOL,
             resource_path("views/apps/{$subdomain}/dashboard/{$subdomain}-dashboard-index.blade.php") => <<<BLADE
-<div>
-    <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman">
-        <div class="page-pretitle">{{ config('{$appConfigKey}.name') }}</div>
-        <h2 class="page-title">{{ \$section }}</h2>
-    </div>
-    <div class="card"><div class="card-body">{{ config('{$appConfigKey}.desc') }}</div></div>
-</div>
+@include('starter.templates.app-dashboard', [
+    'appConfigKey' => '{$appConfigKey}',
+    'section' => \$section,
+])
 BLADE.PHP_EOL,
             base_path("tests/Feature/Apps/{$className}/{$className}DashboardTest.php") => $this->testContents($subdomain, $className),
         ];
@@ -141,9 +138,9 @@ it('ships an isolated API route for the {$subdomain} app', function () {
     }
 });
 
-it('uses the standard page header spacing', function () {
+it('renders the active theme dashboard composition', function () {
     expect(file_get_contents(resource_path('views/apps/{$subdomain}/dashboard/{$subdomain}-dashboard-index.blade.php')))
-        ->toContain('page-header d-print-none mt-0 mb-3');
+        ->toContain("@include('starter.templates.app-dashboard'");
 });
 
 it('ships an explicit example menu structure', function () {
@@ -183,10 +180,10 @@ class {$className}DashboardTest extends TestCase
         }
     }
 
-    public function test_it_uses_the_standard_page_header_spacing(): void
+    public function test_it_renders_the_active_theme_dashboard_composition(): void
     {
         \$this->assertStringContainsString(
-            'page-header d-print-none mt-0 mb-3',
+            "@include('starter.templates.app-dashboard'",
             (string) file_get_contents(resource_path('views/apps/{$subdomain}/dashboard/{$subdomain}-dashboard-index.blade.php')),
         );
     }

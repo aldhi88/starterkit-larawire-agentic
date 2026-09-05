@@ -8,6 +8,8 @@
     <title>{{ $title ?? config('app.name') }} | {{ config('app.name') }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/tabler/static/logo-small.svg') }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/tabler/css/starter-theme.css') }}?v={{ filemtime(public_path('assets/tabler/css/starter-theme.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/tabler/css/custom.css') }}?v={{ filemtime(public_path('assets/tabler/css/custom.css')) }}">
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')
     @livewireStyles

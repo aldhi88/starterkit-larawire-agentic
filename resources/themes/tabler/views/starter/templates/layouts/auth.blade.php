@@ -10,78 +10,8 @@
     <title>{{ $title ?? 'Login' }} | {{ config('app.name') }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/tabler/static/logo-small.svg') }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) }}">
-    <style>
-        .starter-auth-mark {
-            align-items: center;
-            background: var(--tblr-primary);
-            border-radius: 1rem;
-            color: var(--tblr-primary-fg);
-            display: inline-flex;
-            font-size: 1.5rem;
-            font-weight: 700;
-            height: 3.25rem;
-            justify-content: center;
-            width: 3.25rem;
-        }
-
-        .starter-livewire-loader {
-            align-items: center;
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
-            background: color-mix(in srgb, var(--tblr-bg-surface) 68%, transparent);
-            bottom: 0;
-            display: flex;
-            justify-content: center;
-            left: 0;
-            opacity: 0;
-            pointer-events: none;
-            position: fixed;
-            right: 0;
-            top: 0;
-            transition: opacity .14s ease;
-            z-index: 1045;
-        }
-
-        .starter-livewire-loader-card {
-            min-width: 10rem;
-        }
-
-        .input-group:has(> .input-group-text, > .btn) > .form-control.is-invalid {
-            background-image: none;
-            padding-right: .75rem;
-        }
-
-        .input-group:has(> .form-control.is-invalid, > .form-select.is-invalid) > .form-control.is-invalid,
-        .input-group:has(> .form-control.is-invalid, > .form-select.is-invalid) > .form-select.is-invalid,
-        .input-group:has(> .form-control.is-invalid, > .form-select.is-invalid) > .input-group-text,
-        .input-group:has(> .form-control.is-invalid, > .form-select.is-invalid) > .btn {
-            border-color: var(--tblr-form-invalid-border-color) !important;
-        }
-
-        .input-group-flat:has(> .form-control.is-invalid, > .form-select.is-invalid):focus-within {
-            box-shadow: 0 0 0 .25rem rgba(var(--tblr-danger-rgb), .25);
-        }
-
-        [data-starter-livewire-loading] {
-            filter: blur(2px);
-            opacity: .55;
-            pointer-events: none;
-            transition: filter .14s ease, opacity .14s ease;
-            user-select: none;
-        }
-
-        body.starter-livewire-is-loading .starter-livewire-loader {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .starter-livewire-loader,
-            [data-starter-livewire-loading] {
-                transition: none;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/tabler/css/starter-theme.css') }}?v={{ filemtime(public_path('assets/tabler/css/starter-theme.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/tabler/css/custom.css') }}?v={{ filemtime(public_path('assets/tabler/css/custom.css')) }}">
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')
     @livewireStyles
@@ -103,7 +33,7 @@
     <div class="page page-center">
         <div class="container py-4">
             <div class="row align-items-center gx-0 gx-lg-4 gy-4">
-                <div class="col-lg d-none d-lg-block">
+                <div class="col-lg d-none d-lg-block" data-starter-region="identity-panel">
                     <svg class="img-fluid d-block mx-auto" width="520" height="390" viewBox="0 0 520 390" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="auth-illustration-title">
                         <title id="auth-illustration-title">Ilustrasi login aman</title>
                         <path d="M78 313c-23.2-25.6-35.1-59.8-30.4-94.2 5.2-38.7 32.2-71.6 67.7-88.1 28.5-13.2 60.6-15.2 90.5-24.8 32.1-10.3 60.8-30.2 94.2-35.1 50.4-7.4 103.4 18.8 128.8 63 25.3 44.2 21.3 104.9-10.2 145-34.5 44-91.7 56.7-146.3 61.4-67.3 5.8-146.2 25.9-194.3-27.2Z" fill="var(--tblr-primary)" opacity=".08"/>
@@ -123,7 +53,7 @@
                     </svg>
                 </div>
 
-                <div class="col-lg">
+                <div class="col-lg" data-starter-region="primary-content">
                     <div class="container-tight">
                         <div class="text-center mb-4">
                             <a href="{{ url('/') }}" class="text-decoration-none" wire:navigate>
@@ -156,7 +86,7 @@
                             </div>
                         </div>
 
-                        <div class="text-center text-secondary mt-3">
+                        <div class="text-center text-secondary mt-3" data-starter-region="page-footer">
                             {{ now()->year }} © {{ config('app.name') }}
                         </div>
                     </div>

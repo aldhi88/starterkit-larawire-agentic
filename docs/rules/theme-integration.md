@@ -4,6 +4,16 @@ Rule ini berlaku ketika owner menambah, mengganti, atau mengaudit theme. Baca
 juga `theme-package-contract.json`, `ui-ux.md`, `testing.md`, dan atlas theme
 aktif. Implementasi theme tidak boleh bergantung pada presentasi theme lain.
 
+## Scope repository
+
+Pipeline ini hanya boleh dijalankan pada repository package canonical
+`starterkit-larawire-agentic` yang memiliki `theme-intake/` milik owner. Project
+Laravel yang meng-install package membaca kontrak package melalui connector
+`AGENTS.md`, tetapi tidak boleh menjalankan integrasi theme baru, membuat archive
+template, atau mengubah salinan read-only di `vendor/`. Dari host turunan,
+arahkan maintenance theme universal ke repository canonical; fitur/UI khusus
+project tetap dibuat di host memakai theme yang sudah terpasang.
+
 ## Pemicu satu instruksi
 
 Owner menaruh distribusi HTML/aset vendor di:
@@ -22,6 +32,29 @@ Instruksi tersebut mengotorisasi seluruh pipeline di file ini. Agent tidak
 boleh berhenti pada scaffold, layout, daftar TODO, atau meminta owner memilih
 file vendor satu per satu. Pertanyaan hanya boleh diajukan bila hak lisensi,
 source layout wajib, atau keputusan brand yang material tidak dapat dibuktikan.
+
+Instruksi yang sama mencakup folder referensi owner seperti
+`theme-intake/<theme-key>-lama`. Reference lama dipakai untuk menemukan
+komponen/flow yang pernah berhasil, tetapi hasil akhir tetap dibangun dari atlas
+dan class native distribusi theme aktif. Screenshot owner hanya menunjukkan arah
+atau defect tertentu; screenshot tidak pernah membatasi audit ke halaman yang
+terlihat saja.
+
+### Ownership output one-shot
+
+Satu instruksi harus menuntaskan seluruh output terkait pada lokasi pemiliknya:
+
+- package canonical: Blade, adapter PowerGrid/JavaScript, registry, atlas,
+  manifest, contract test, dan dokumentasi integrasi;
+- repository template terpisah: `<theme-key>.zip`, `SHA256SUMS`, notice, dan
+  metadata distribusi pada branch distribusi yang dikonfigurasi;
+- website dokumentasi: katalog/panduan theme bila daftar theme publik berubah;
+- host Laravel lokal bernama theme: hasil install/sync untuk audit dan testing,
+  bukan source canonical dan bukan repository yang di-commit/push.
+
+Jangan membuat salinan `docs/template/<theme-key>`, `resources/themes`, atau
+source package lain di root workspace, website, maupun host demo. Commit, push,
+tag, release, dan deploy tetap membutuhkan otorisasi terpisah.
 
 `theme-intake/` adalah area lokal owner, diabaikan Git, dikeluarkan dari archive
 Composer, dan tidak boleh dihapus tanpa instruksi eksplisit. Isi vendor adalah
@@ -78,6 +111,13 @@ status lisensinya atau mendistribusikan ulang source premium.
   dan state normal/empty/loading/error/disabled/responsive yang relevan.
 - `runtime-map.md` menjelaskan pilihan visual vendor dan runtime pemiliknya.
   Reference tetap dapat ditemukan walaupun HTML mentah tidak ikut package.
+- Untuk setiap komponen visible, catat reference HTML terdekat, struktur DOM
+  native, class utama, state, asset dependency, dan alasan pemilihannya. Jangan
+  memilih komponen hanya dari nama file atau satu screenshot.
+- Catat design grammar theme: content width, density, spacing rhythm, radius,
+  surface/card, border, typography, semantic color, icon, form, table, modal,
+  dropdown, navigation, dan responsive breakpoint. Grammar ini menjadi sumber
+  kosmetik theme; theme lain bukan sumber visual.
 
 ### 3. Pilih komponen native theme
 
@@ -92,6 +132,30 @@ status lisensinya atau mendistribusikan ulang source premium.
 - Shared runtime hanya boleh memegang behavior netral seperti event
   `data-starter-*`, loader navigasi, dan data Livewire; presentasi tetap di
   masing-masing theme.
+- Kerjakan parity dalam dua tahap yang tidak boleh dibalik:
+  1. samakan jenis komponen, tujuan halaman, urutan `data-starter-region`, data,
+     action, state, dan responsive behavior;
+  2. setelah struktur lulus, terapkan kosmetik mandiri dari design grammar dan
+     reference HTML theme aktif.
+- Theme pembanding hanya menjawab "komponen apa dan berada di region mana".
+  Theme pembanding tidak menjawab "bagaimana tampilannya". Jangan mengejar pixel,
+  proporsi, ukuran input, border, warna, atau whitespace theme pembanding.
+- Gunakan markup dan class base vendor terlebih dahulu. Pastikan setiap utility
+  benar-benar tersedia pada CSS runtime/compiled theme; class yang tampak valid
+  tetapi tidak terdapat dalam bundle dianggap defect. Dilarang memakai inline
+  style untuk layout, ukuran, spacing, warna, alignment, atau perbaikan komponen.
+  Nilai runtime dinamis seperti URL avatar hanya boleh inline bila pola vendor
+  membutuhkannya dan tidak dapat direpresentasikan aman sebagai atribut lain.
+- Setiap theme menyediakan `runtime/css/custom.css` dan memuatnya terakhir pada
+  layout app/auth/landing/error sebagai extension point project. File ini bukan
+  tempat meniru theme lain. Tambahkan custom rule hanya bila struktur HTML dan
+  class native yang benar telah terbukti tidak mencukupi; rule harus scoped,
+  theme-owned, minimal, dan memiliki regression test.
+- Pertahankan semantic region tanpa wrapper universal. Placeholder konten App
+  harus polos. Jangan menambahkan outer card putih, dashboard decoration, icon
+  redundan, atau wrapper padding bila reference theme dan tujuan region tidak
+  memerlukannya. Summary/card boleh berbeda kosmetik antar-theme selama data dan
+  urutan region tetap sama dan batas visualnya jelas terhadap page background.
 
 ### 4. Dependency closure aset
 
@@ -117,6 +181,20 @@ status lisensinya atau mendistribusikan ulang source premium.
 - PowerGrid memakai adapter theme sendiri. Semua filter, sort, selection, bulk
   action, horizontal scroll, per-page, record count, dan pagination atas/bawah
   harus berfungsi dan menggunakan komponen native theme.
+- Untuk PowerGrid, jangan memakai `table-layout: fixed` atau pembagian kolom sama
+  rata untuk menyembunyikan masalah ukuran. Jika kolom mempunyai filter, wrapper
+  filter memberi kebutuhan lebar intrinsik/practical minimum lalu control mengisi
+  wrapper tersebut; header dan representative content boleh memperlebar kolom.
+  Jika tidak mempunyai filter, lebar mengikuti header/content. Checkbox dan
+  `Aksi` tetap compact, description mendapat lebar baca dan wrapping yang wajar,
+  sedangkan total tabel menggunakan horizontal scroll di dalam frame saat perlu.
+- Audit seluruh table, bukan hanya Roles: Roles, Users, Activity Log, header,
+  filter row, data row, checkbox, action dropdown, sort chevron, text/select/
+  number/date filter, striped/divider, empty state, dan pagination atas/bawah.
+- Control sejenis pada halaman yang sama harus memakai variant/height/alignment
+  native yang sama. Periksa checkbox, chevron, suffix input, upload, switch,
+  dropdown trigger, tab, dan icon secara visual serta lewat DOM/computed layout;
+  jangan menebak dari class source saja.
 - Daftarkan theme di `config/starter.php` hanya setelah registry contract lulus.
   Installer harus menampilkan pilihan tersebut, mengunduh runtime archive secara
   otomatis di local, dan menyelesaikan seluruh preflight sebelum mutasi
@@ -129,6 +207,37 @@ Cari nama, class, data attribute, path asset, JavaScript global, icon, copy,
 dan asumsi layout milik setiap theme lain pada Blade/CSS/JS/docs theme baru.
 Setiap temuan harus dihapus atau diberi alasan behavior-netral yang terbukti.
 Tidak boleh ada fallback presentasi ke theme lain.
+
+### 7. Host pembanding dan audit side-by-side
+
+- Buat satu host Laravel lokal khusus theme baru dengan nama
+  `starterkit-larawire-laravel-<theme-key>`. Pertahankan satu host theme existing
+  sebagai baseline dengan App, menu, role, user, dan representative data yang
+  sama. Host demo lokal bukan Git repository dan tidak menyimpan source canonical.
+- Gunakan `vertical` pada kedua host untuk audit awal, lalu ulangi matriks pada
+  `horizontal`. Samakan component inventory dan region order terlebih dahulu;
+  baru audit kosmetik masing-masing terhadap reference native-nya.
+- Pada `1280x768`, ukur content cap, table/frame width, row/cell dimensions,
+  filter intrinsic width, wrapping, checkbox center, dropdown clipping, root
+  overflow, dan spacing form bila screenshot tidak cukup. Ulangi pada viewport
+  kecil yang representatif dan reset viewport setelah audit.
+- Jangan menyatakan "sama" hanya dari satu screenshot. Inspect halaman pendek
+  dan panjang, scroll, focus, invalid/focus-invalid, checked/unchecked, open/
+  closed dropdown, loading, empty, error, dan content panjang.
+
+### 8. Packaging atomik
+
+- Bangun ZIP dari `theme-intake/<theme-key>/runtime/` ke temporary directory;
+  jangan menulis ke file archive kosong/existing sebelum build berhasil.
+- Setelah ZIP valid, ganti archive repository template, hitung SHA-256, lalu
+  update `source.json`, `asset-manifest.json`, `SHA256SUMS`, tests, notices, dan
+  website catalog yang terdampak dalam satu rangkaian. Hash runtime di manifest,
+  file di archive, source archive hash, dan checksum repository harus identik.
+- Sync host demo dari runtime/cache/archive yang persis sama dengan hasil akhir,
+  bukan dari salinan asset manual yang berbeda. Jalankan dry-run setelah sync;
+  create/delete count nol berarti host sudah sinkron.
+- Bersihkan database/session/server/browser fixture sementara tanpa menyentuh
+  data owner. Jangan commit atau push sampai developer mengizinkannya.
 
 ## Matriks verifikasi wajib
 
@@ -143,6 +252,13 @@ Laravel fresh. Uji kedua layout dan setidaknya:
   pagination atas/bawah, dan empty result;
 - Chromium pada safe area `1280x768` dan viewport kecil yang relevan.
 
+Matriks halaman wajib mencakup landing, login, confirm password, lock screen,
+error, App placeholder pendek, halaman App panjang, profile (setiap tab), seluruh
+section settings, role form, user form, activity log, menu vertical/horizontal,
+account menu, App switcher, toast/alert, setiap modal, dan seluruh tabel. Cek
+semua viewport terhadap root overflow; overflow tabel harus berhenti di frame
+tabel dan dropdown/action tidak boleh terpotong di dalamnya.
+
 Periksa console/network error, asset 404, duplicate listener, Livewire
 navigation/morph, focus/keyboard, scroll, dan responsive. Firefox hanya diuji
 bila diminta atau ada laporan bug. Jalankan package tests, static analysis,
@@ -155,3 +271,6 @@ Handoff wajib mencatat keputusan lisensi, key/layout, jumlah HTML terindeks,
 ukuran intake dibanding runtime terpilih, hasil contract/manifest/residue,
 package/host/browser verification, dan limitation eksternal. Jika satu
 completion gate belum mempunyai bukti current-run, jangan menyatakan theme siap.
+Temuan UI yang masih memerlukan owner menunjuk screenshot berikutnya berarti
+audit one-shot belum lengkap; agent wajib melanjutkan audit menyeluruh sampai
+tidak ada defect core yang diketahui.

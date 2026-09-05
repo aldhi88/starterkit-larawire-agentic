@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/livewire-powergrid/bootstrap5.css') }}?v={{ filemtime(public_path('vendor/livewire-powergrid/bootstrap5.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/starter/css/starter.css') }}?v={{ file_exists(public_path('assets/starter/css/starter.css')) ? filemtime(public_path('assets/starter/css/starter.css')) : time() }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/css/starter-theme.css') }}?v={{ file_exists(public_path('assets/tabler/css/starter-theme.css')) ? filemtime(public_path('assets/tabler/css/starter-theme.css')) : time() }}">
+    <link rel="stylesheet" href="{{ asset('assets/tabler/css/custom.css') }}?v={{ filemtime(public_path('assets/tabler/css/custom.css')) }}">
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')
     @livewireStyles

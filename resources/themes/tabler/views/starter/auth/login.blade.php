@@ -1,5 +1,5 @@
 <div>
-    <form wire:submit="authenticate" autocomplete="on">
+    <form wire:submit="authenticate" autocomplete="on" data-starter-region="credentials-form">
         <div class="mb-3">
             <label class="form-label" for="username">Username atau Email</label>
             <input type="text" class="form-control @error('form.identifier') is-invalid @enderror" id="username" name="username" wire:model.defer="form.identifier" placeholder="Contoh: superuser atau nama@perusahaan.com" autofocus autocomplete="username" autocapitalize="none" spellcheck="false">
@@ -33,5 +33,5 @@
         </div>
     </form>
 
-    <div class="text-center text-secondary mt-3">Hubungi administrator jika lupa password.</div>
+    <div class="text-center text-secondary mt-3" data-starter-region="secondary-help">Hubungi administrator jika lupa password.</div>
 </div>

@@ -85,11 +85,12 @@ afterEach(function (): void {
     StarterThemeRegistry::flushRegistered();
 });
 
-it('validates and resolves the bundled Tabler theme integration', function (): void {
+it('validates and resolves the bundled theme integrations', function (): void {
     $themes = StarterThemeRegistry::all();
 
-    expect($themes)->toHaveKeys(['tabler'])
-        ->and(StarterThemeRegistry::path('tabler', 'views'))->toBeDirectory();
+    expect($themes)->toHaveKeys(['tabler', 'dashcode'])
+        ->and(StarterThemeRegistry::path('tabler', 'views'))->toBeDirectory()
+        ->and(StarterThemeRegistry::path('dashcode', 'views'))->toBeDirectory();
 });
 
 it('registers a complete owner-prepared theme integration', function (): void {
@@ -110,7 +111,7 @@ it('registers a complete owner-prepared theme integration', function (): void {
             ],
         ]);
 
-        expect(StarterThemeRegistry::all())->toHaveKeys(['tabler', 'fixture'])
+        expect(StarterThemeRegistry::all())->toHaveKeys(['tabler', 'dashcode', 'fixture'])
             ->and(StarterThemeRegistry::path('fixture', 'assets'))->toBe($root.'/assets');
     } finally {
         File::deleteDirectory($root);

@@ -25,7 +25,7 @@
 @endphp
 
 <div>
-    <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman">
+    <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman" data-starter-region="page-header">
         <div class="row g-3 align-items-center">
             <div class="col">
                 <div class="page-pretitle">Administrasi Sistem</div>
@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <div class="row row-cards mb-3">
+    <div class="row row-cards mb-3" data-starter-region="summary">
         <div class="col-sm-6 col-xl-3">
             <div class="card card-sm">
                 <div class="card-body">
@@ -103,7 +103,7 @@
     <div class="row row-cards align-items-start">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header" data-starter-region="section-navigation">
                     <ul class="nav nav-tabs card-header-tabs">
                         @foreach ($sections as $sectionKey => $sectionItem)
                             <li class="nav-item">
@@ -118,7 +118,7 @@
                         @endforeach
                     </ul>
                 </div>
-                <div class="card-body border-bottom">
+                <div class="card-body border-bottom" data-starter-region="section-header">
                     <div class="d-flex align-items-start justify-content-between pb-1">
                         <div>
                             <h3 class="card-title mb-1">{{ $activeSection['label'] }}</h3>
@@ -140,15 +140,17 @@
                     </div>
                 </div>
 
-                @if ($section === 'roles')
-                    <livewire:starter.user-management.roles :embedded="true" key="settings-roles" />
-                @elseif ($section === 'users')
-                    <livewire:starter.user-management.users :embedded="true" key="settings-users" />
-                @elseif ($section === 'company')
-                    <livewire:starter.settings.client-profile :embedded="true" key="settings-company" />
-                @else
-                    <livewire:starter.settings.security-settings :embedded="true" key="settings-security" />
-                @endif
+                <div data-starter-region="section-content">
+                    @if ($section === 'roles')
+                        <livewire:starter.user-management.roles :embedded="true" key="settings-roles" />
+                    @elseif ($section === 'users')
+                        <livewire:starter.user-management.users :embedded="true" key="settings-users" />
+                    @elseif ($section === 'company')
+                        <livewire:starter.settings.client-profile :embedded="true" key="settings-company" />
+                    @else
+                        <livewire:starter.settings.security-settings :embedded="true" key="settings-security" />
+                    @endif
+                </div>
             </div>
         </div>
     </div>

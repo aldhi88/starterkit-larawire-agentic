@@ -43,7 +43,7 @@
         },
     }"
 >
-    <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman">
+    <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman" data-starter-region="page-header">
         <div class="row g-3 align-items-start">
             <div class="col min-w-0">
                 <div class="page-pretitle">Pengaturan / Roles</div>
@@ -71,7 +71,7 @@
 
     <form id="role-form" wire:submit="save">
         <div class="row g-3 align-items-start" data-role-form-layout="split">
-            <div class="col-12 col-xl-5" data-role-identity-panel>
+            <div class="col-12 col-xl-5" data-role-identity-panel data-starter-region="identity-form">
                 <div class="card position-xl-sticky" style="top: 1rem;">
                     <div class="card-header">
                         <div>
@@ -232,7 +232,7 @@
                 </div>
             </div>
 
-            <div class="col-12 col-xl-7" data-role-access-panel>
+            <div class="col-12 col-xl-7" data-role-access-panel data-starter-region="module-access">
                 <div class="card position-xl-sticky" style="top: 1rem;">
                     <div class="card-header d-flex align-items-center">
                         <div class="flex-grow-1" style="min-width: 0;">
@@ -365,7 +365,7 @@
 
                     @error('roleForm.module_ids.*') <div class="text-danger small px-3 py-2">{{ $message }}</div> @enderror
 
-                    <div class="card-footer position-sticky bottom-0 z-2 bg-body shadow-sm">
+                    <div class="card-footer position-sticky bottom-0 z-2 bg-body shadow-sm" data-starter-region="page-actions">
                         <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
                             <div class="text-secondary small">
                                 {{ $isSuperuserRole ? 'Role sistem hanya dapat dilihat.' : 'Pastikan setiap app memiliki halaman awal sebelum disimpan.' }}

@@ -4,7 +4,7 @@
 <div class="card-body border-bottom-0 pt-3 pb-3">
     <div class="row g-3 align-items-center">
 
-        <div class="col-auto">
+        <div class="col-auto" data-starter-region="bulk-actions">
             <div class="dropdown" x-data="{ open: false }" @click.outside="open = false">
                 <button type="button" class="btn dropdown-toggle" @click="open = !open" :class="{ 'show': open }" :aria-expanded="open">
                     @include('starter.templates.layouts.icon', ['name' => 'table', 'class' => 'icon-sm me-1'])
@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <div class="col-auto ms-auto d-flex flex-column flex-md-row gap-3">
+        <div class="col-auto ms-auto d-flex flex-column flex-md-row gap-3" data-starter-region="filters">
             <select class="form-select w-auto" wire:model.live="archiveStatus" aria-label="Status arsip user">
                 <option value="active">Data aktif</option>
                 <option value="archived">Arsip</option>

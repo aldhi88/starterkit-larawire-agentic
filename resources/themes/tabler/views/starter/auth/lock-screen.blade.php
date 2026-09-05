@@ -1,11 +1,11 @@
 <div>
-    <div class="text-center mb-4">
+    <div class="text-center mb-4" data-starter-region="identity-summary">
         <span class="avatar avatar-xl rounded-circle" style="background-image: url({{ app(\Aldhi88\StarterKit\Services\Starter\StarterContextService::class)->avatarUrl($login) }})"></span>
         <div class="mt-3 h3 mb-1">{{ $login->name }}</div>
         <div class="text-secondary">{{ $login->role?->name ?? 'User' }}</div>
     </div>
 
-    <div class="alert alert-info" role="status">
+    <div class="alert alert-info" role="status" data-starter-region="context-notice">
         <div class="d-flex gap-2">
             @include('starter.templates.layouts.icon', ['name' => 'lock', 'class' => 'icon-sm flex-shrink-0 mt-1'])
             <div>
@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <form wire:submit="unlock" autocomplete="on">
+    <form wire:submit="unlock" autocomplete="on" data-starter-region="credentials-form">
         <div class="mb-3">
             <label class="form-label" for="lock-screen-password">Password</label>
             <div class="input-group input-group-flat" x-data="{ visible: false }">
@@ -52,7 +52,7 @@
         </button>
     </form>
 
-    <form method="POST" action="{{ route('auth.logout') }}" class="text-center mt-3">
+    <form method="POST" action="{{ route('auth.logout') }}" class="text-center mt-3" data-starter-region="secondary-action">
         @csrf
         <button type="submit" class="btn btn-link link-secondary p-0">Logout dan ganti user</button>
     </form>

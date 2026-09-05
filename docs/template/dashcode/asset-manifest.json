@@ -1,0 +1,116 @@
+{
+    "schema_version": 1,
+    "theme": "dashcode",
+    "files": [
+        {
+            "source": "runtime/css/app.css",
+            "target": "css/app.css",
+            "sha256": "28ec85d310b464eb3cdf228c23c24a7ab419f1af94e2888b74c3a381075b0649",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/landing.blade.php",
+                "resources/themes/dashcode/views/starter/errors/layout.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/css/starter-theme.css",
+            "target": "css/starter-theme.css",
+            "sha256": "2c77adf2199b23331f121dc3490a9b252aa10dabcee2395d32a6a2f00f71fe58",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/landing.blade.php",
+                "resources/themes/dashcode/views/starter/errors/layout.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/css/custom.css",
+            "target": "css/custom.css",
+            "sha256": "ad47a6062eb41ecc6f50961e6eed1fa5568e2eb1f333248f584744ce5e4d630c",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/landing.blade.php",
+                "resources/themes/dashcode/views/starter/errors/layout.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/images/all-img/404.svg",
+            "target": "images/all-img/404.svg",
+            "sha256": "b2c1992d065ac4c3b91c1b7a7f990130d38bb5964850a7a6704bf3e38eee41c9",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/errors/layout.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/images/all-img/ck.svg",
+            "target": "images/all-img/ck.svg",
+            "sha256": "7acd37da9bb80d96091229d7dec46da9c9cda299a6e6ba8632d952076401a759",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/images/auth/ils1.svg",
+            "target": "images/auth/ils1.svg",
+            "sha256": "82f51ecef534e90c4081664e92d68dff49fe6cbcbd3663ad98260bde2b7d868e",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/images/logo/favicon.svg",
+            "target": "images/logo/favicon.svg",
+            "sha256": "93d40d0bdd55e7959a7fa200d7377b9a63cec199433b28c467c9f6bfa84778d3",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/images/logo/logo-c-white.svg",
+            "target": "images/logo/logo-c-white.svg",
+            "sha256": "f7fda7f0bb0854ab75784ddb26e24a96bb1b55892beaa912d0c3af351435ad0f",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/navigation/vertical.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/images/logo/logo-c.svg",
+            "target": "images/logo/logo-c.svg",
+            "sha256": "93d40d0bdd55e7959a7fa200d7377b9a63cec199433b28c467c9f6bfa84778d3",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/navigation/vertical.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/images/logo/logo-white.svg",
+            "target": "images/logo/logo-white.svg",
+            "sha256": "dea5a130051ea4c3c2d0e40c6caa35f808fbd492cdabab612358f5afa9d718e6",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/landing.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/images/logo/logo.svg",
+            "target": "images/logo/logo.svg",
+            "sha256": "153d97f6971108c2902426b53f56cf2f987450c501d6d8dadf53b7d845468fca",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/landing.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/js/starter-theme.js",
+            "target": "js/starter-theme.js",
+            "sha256": "212a081ce3ad9a13273df83c361514eb11ddd603f6984db5f05c41de18393574",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php"
+            ]
+        }
+    ]
+}

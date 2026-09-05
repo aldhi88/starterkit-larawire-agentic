@@ -1,11 +1,117 @@
 {
     "schema_version": 1,
     "purpose": "Machine-readable completion contract for every Starterkit Larawire theme integration.",
+    "execution_scope": {
+        "repository": "canonical-starterkit-larawire-agentic-package",
+        "owner_managed_intake_required": true,
+        "derived_laravel_host_execution_forbidden": true,
+        "vendor_mutation_forbidden": true
+    },
     "one_instruction": {
         "intake_pattern": "theme-intake/<theme-key>/",
         "canonical_prompt": "Integrasikan theme <theme-key> dari theme-intake/<theme-key> sampai siap dipilih installer.",
-        "default_output": "core package integration",
-        "source_provider": "dedicated public GitHub template repository"
+        "default_output": "complete multi-repository integration and verified local comparison host",
+        "source_provider": "dedicated public GitHub template repository",
+        "authorized_outputs": [
+            "canonical-package-integration",
+            "template-runtime-archive",
+            "documentation-site-catalog",
+            "local-theme-comparison-host"
+        ],
+        "ordered_phases": [
+            "source-evidence-license-and-runtime-closure",
+            "component-region-and-behavior-parity",
+            "vendor-native-cosmetic-composition",
+            "atomic-packaging-and-browser-verification"
+        ]
+    },
+    "comparison_policy": {
+        "must_match": [
+            "page-purpose",
+            "component-type",
+            "region-order",
+            "data-and-actions",
+            "authorization",
+            "states",
+            "accessibility",
+            "responsive-behavior"
+        ],
+        "must_remain_theme_owned": [
+            "markup-hierarchy",
+            "component-variant",
+            "dimensions-and-density",
+            "spacing",
+            "typography",
+            "colors-and-borders",
+            "icons",
+            "decorative-composition"
+        ],
+        "existing_theme_is_visual_target": false,
+        "structural_parity_precedes_cosmetics": true
+    },
+    "native_css_policy": {
+        "closest_indexed_vendor_html_required": true,
+        "compiled_class_existence_required": true,
+        "inline_layout_spacing_color_style_forbidden": true,
+        "page_injected_compatibility_css_forbidden": true,
+        "custom_stylesheet_target": "runtime/css/custom.css",
+        "custom_stylesheet_loaded_last": true,
+        "custom_rule_requires_proven_native_gap": true
+    },
+    "powergrid_width_policy": {
+        "layout": "content-driven-auto",
+        "filtered_column_inputs": [
+            "practical-intrinsic-filter-wrapper",
+            "header",
+            "representative-content"
+        ],
+        "unfiltered_column_inputs": [
+            "header",
+            "representative-content"
+        ],
+        "control_fills_own_wrapper": true,
+        "compact_columns": [
+            "selection",
+            "action"
+        ],
+        "fixed_table_layout_forbidden": true,
+        "equal_column_distribution_forbidden": true,
+        "overflow_owner": "inner-table-frame"
+    },
+    "comparison_host_policy": {
+        "new_theme_host_pattern": "starterkit-larawire-laravel-<theme-key>",
+        "baseline_host_required": true,
+        "identical_representative_data_required": true,
+        "git_repository_forbidden": true,
+        "layout_order": [
+            "vertical",
+            "horizontal"
+        ]
+    },
+    "browser_matrix": {
+        "desktop_safe_area": "1280x768",
+        "small_viewport_required": true,
+        "computed_layout_inspection_required_when_ambiguous": true,
+        "required_page_groups": [
+            "landing-auth-lock-errors",
+            "short-and-long-app-content",
+            "profile-all-tabs",
+            "settings-all-sections",
+            "role-and-user-forms",
+            "activity-log",
+            "vertical-and-horizontal-navigation",
+            "menus-dropdowns-modals-and-feedback",
+            "powergrid-all-states"
+        ],
+        "forbidden_known_defects": [
+            "root-overflow",
+            "clipping-or-overlap",
+            "off-center-checkbox-chevron-or-icon",
+            "broken-dropdown",
+            "asset-404",
+            "console-error",
+            "duplicate-livewire-or-alpine-handler"
+        ]
     },
     "required_layouts": [
         "vertical",
@@ -65,6 +171,96 @@
         "table.record-count",
         "table.pagination"
     ],
+    "shared_layout_signatures": {
+        "starter/templates/landing.blade.php": [
+            "page-header",
+            "primary-content"
+        ],
+        "starter/templates/app-dashboard.blade.php": [
+            "page-header",
+            "primary-content"
+        ],
+        "starter/templates/layouts/auth.blade.php": [
+            "identity-panel",
+            "primary-content",
+            "page-footer"
+        ],
+        "starter/auth/login.blade.php": [
+            "credentials-form",
+            "secondary-help"
+        ],
+        "starter/auth/confirm-password.blade.php": [
+            "identity-summary",
+            "context-notice",
+            "credentials-form",
+            "secondary-action"
+        ],
+        "starter/auth/lock-screen.blade.php": [
+            "identity-summary",
+            "context-notice",
+            "credentials-form",
+            "secondary-action"
+        ],
+        "starter/errors/layout.blade.php": [
+            "status-visual",
+            "primary-content",
+            "primary-action",
+            "status-metadata"
+        ],
+        "starter/settings/settings-index.blade.php": [
+            "page-header",
+            "summary",
+            "section-navigation",
+            "section-header",
+            "section-content"
+        ],
+        "starter/settings/client-profile.blade.php": [
+            "page-header",
+            "logo-field",
+            "company-details",
+            "contact-details",
+            "page-actions"
+        ],
+        "starter/settings/security-settings.blade.php": [
+            "session-security",
+            "login-protection",
+            "page-actions"
+        ],
+        "starter/profile/edit-my-profile.blade.php": [
+            "page-header",
+            "status-alert",
+            "account-summary",
+            "section-navigation",
+            "section-content"
+        ],
+        "starter/user-management/role-form.blade.php": [
+            "page-header",
+            "identity-form",
+            "module-access",
+            "page-actions"
+        ],
+        "starter/user-management/user-form.blade.php": [
+            "page-header",
+            "temporary-credentials",
+            "identity-form",
+            "page-actions",
+            "role-access"
+        ],
+        "starter/logs/activity-log-index.blade.php": [
+            "page-header",
+            "summary",
+            "data-table",
+            "detail-dialog"
+        ],
+        "starter/user-management/powergrid/roles-toolbar.blade.php": [
+            "bulk-actions",
+            "filters"
+        ],
+        "starter/user-management/powergrid/users-toolbar.blade.php": [
+            "bulk-actions",
+            "filters"
+        ]
+    },
     "required_runtime_groups": [
         "auth",
         "errors",
@@ -120,6 +316,8 @@
         "starter/templates/layouts/menu-item.blade.php",
         "starter/templates/layouts/navigation/horizontal.blade.php",
         "starter/templates/layouts/navigation/vertical.blade.php",
+        "starter/templates/app-dashboard.blade.php",
+        "starter/templates/landing.blade.php",
         "starter/templates/session-expired.blade.php",
         "starter/user-management/powergrid/roles-row-actions.blade.php",
         "starter/user-management/powergrid/roles-toolbar.blade.php",
@@ -149,12 +347,18 @@
         "complete-source-index",
         "complete-component-manifest",
         "exact-runtime-asset-manifest",
+        "native-component-evidence",
+        "compiled-class-and-custom-css-audit",
+        "side-by-side-structural-parity",
         "no-cross-theme-presentation-residue",
         "package-tests-and-static-analysis",
         "fresh-host-composer-install",
+        "comparison-host-dry-run-clean",
         "vertical-browser-matrix",
         "horizontal-browser-matrix",
         "responsive-and-overflow-browser-matrix",
+        "computed-layout-and-overflow-audit",
+        "archive-manifest-checksum-consistency",
         "no-unexplained-todo-or-known-core-ui-bug"
     ]
 }

@@ -97,11 +97,12 @@ php artisan starter:sync
 
 ### Theme dan layout
 
-Saat ini Starterkit menyediakan Tabler dengan layout `vertical` dan `horizontal`:
+Starterkit menyediakan dua theme dengan layout `vertical` dan `horizontal`:
 
 | Theme | Lisensi source | Catatan |
 |---|---|---|
 | Tabler | MIT | Bebas digunakan sesuai lisensi Tabler |
+| DashCode | Komersial | Lisensi dikelola owner untuk project internal tim |
 
 Pilihan disimpan di environment:
 
@@ -110,11 +111,12 @@ STARTER_THEME=tabler
 STARTER_LAYOUT=vertical
 ```
 
-Wizard `starter:install` tetap meminta pilihan theme dan layout. Untuk saat ini
-pilihan theme hanya Tabler sehingga mekanismenya siap menerima theme open-source
-lain tanpa mengubah alur instalasi. Aset runtime minimum diunduh otomatis dari
-arsip GitHub yang dipin, diperiksa ukuran dan checksum-nya, lalu dipublikasikan
-ke `public/assets/tabler/`. Tidak ada download atau copy template manual.
+Wizard `starter:install` meminta pilihan Tabler atau DashCode beserta layout.
+Aset runtime minimum diunduh otomatis dari arsip GitHub yang dipin, diperiksa
+ukuran dan checksum-nya, lalu dipublikasikan ke `public/assets/<theme>/`. Tidak
+ada download atau copy template manual. Source vendor dan halaman demo DashCode
+tidak didistribusikan. Runtime DashCode ditujukan untuk project internal yang
+berada di bawah lisensi vendor milik owner repository.
 Archive dikelola terpisah di
 [`starterkit-larawire-agentic-template`](https://github.com/aldhi88/starterkit-larawire-agentic-template).
 
@@ -175,8 +177,8 @@ Jalankan installer:
 php artisan starter:install
 ```
 
-Wizard meminta theme (saat ini hanya Tabler), layout vertical/horizontal, lalu lima
-identitas berikut:
+Wizard meminta theme (Tabler atau DashCode), layout vertical/horizontal, lalu
+lima identitas berikut:
 
 | Pertanyaan | Boleh memakai spasi? | Contoh input |
 |---|---:|---|

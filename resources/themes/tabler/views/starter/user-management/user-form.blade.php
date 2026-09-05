@@ -1,5 +1,5 @@
 <div>
-    <div class="page-header d-print-none mt-0 mb-3">
+    <div class="page-header d-print-none mt-0 mb-3" data-starter-region="page-header">
         <div class="row g-3 align-items-center">
             <div class="col">
                 <div class="page-pretitle">Starter / Manajemen User / Users</div>
@@ -16,7 +16,7 @@
     </div>
 
     @if ($temporaryPassword)
-        <div class="alert alert-warning alert-dismissible" role="alert" data-temporary-credentials-alert>
+        <div class="alert alert-warning alert-dismissible" role="alert" data-temporary-credentials-alert data-starter-region="temporary-credentials">
             <div>
                 <h3 class="alert-title">Simpan kredensial sementara ini sekarang</h3>
                 <div>Username: <strong class="font-monospace">{{ $temporaryPasswordUsername }}</strong></div>
@@ -29,7 +29,7 @@
 
     <form wire:submit="save">
         <div class="row row-cards">
-            <div class="col-xl-7">
+            <div class="col-xl-7" data-starter-region="identity-form">
                 <div class="card h-100">
                     <div class="card-header">
                         <div>
@@ -79,7 +79,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer">
+                    <div class="card-footer" data-starter-region="page-actions">
                         <div class="btn-list justify-content-end">
                             <a href="{{ route('starter.settings', ['section' => 'users']) }}" class="btn" data-starter-navigate>
                                 @include('starter.templates.layouts.icon', ['name' => 'arrow-left', 'class' => 'icon-sm me-1'])
@@ -94,7 +94,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-5">
+            <div class="col-xl-5" data-starter-region="role-access">
                 <div class="card h-100">
                     <div class="card-header">
                         <div>

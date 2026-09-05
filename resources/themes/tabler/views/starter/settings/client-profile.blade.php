@@ -1,6 +1,6 @@
 <div>
     @unless ($embedded)
-        <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman">
+        <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman" data-starter-region="page-header">
             <div class="row g-2 align-items-center">
                 <div class="col">
                     <div class="page-pretitle">Starter / Pengaturan</div>
@@ -17,7 +17,7 @@
             @endif
 
             <h3 class="card-title">Logo</h3>
-            <div class="row align-items-center">
+            <div class="row align-items-center" data-starter-region="logo-field">
                 <div class="col-auto">
                     <div class="starter-client-logo-preview" data-client-logo-preview>
                         @if ($clientLogoPreviewUrl)
@@ -49,7 +49,7 @@
             </div>
 
             <h3 class="card-title mt-4">Profil Perusahaan</h3>
-            <div class="row g-3">
+            <div class="row g-3" data-starter-region="company-details">
                 <div class="col-md-4">
                     <label class="form-label">Nama Perusahaan</label>
                     <input type="text" class="form-control @error('clientForm.name') is-invalid @enderror" wire:model.defer="clientForm.name">
@@ -70,7 +70,7 @@
             </div>
 
             <h3 class="card-title mt-4">Kontak</h3>
-            <div class="row g-3">
+            <div class="row g-3" data-starter-region="contact-details">
                 <div class="col-md-6">
                     <label class="form-label">Email Perusahaan</label>
                     <input type="email" class="form-control @error('clientForm.email') is-invalid @enderror" wire:model.defer="clientForm.email">
@@ -79,7 +79,7 @@
             </div>
         </div>
 
-        <div class="{{ $embedded ? 'card-body border-top bg-transparent' : 'card-footer bg-transparent mt-auto' }}">
+        <div class="{{ $embedded ? 'card-body border-top bg-transparent' : 'card-footer bg-transparent mt-auto' }}" data-starter-region="page-actions">
             <div class="btn-list justify-content-end">
                 <button type="submit" class="btn btn-primary">
                     @include('starter.templates.layouts.icon', ['name' => 'check', 'class' => 'me-1'])

@@ -5,7 +5,7 @@
         @endif
 
         <h3 class="card-title">Sesi dan Lock Screen</h3>
-        <div class="row g-4 mb-4">
+        <div class="row g-4 mb-4" data-starter-region="session-security">
             <div class="col-md-6">
                 <label class="form-check form-switch mb-4">
                     <input class="form-check-input" type="checkbox" wire:model.defer="securityForm.remember_me_enabled">
@@ -46,7 +46,7 @@
         </div>
 
         <h3 class="card-title mt-4">Proteksi Login</h3>
-        <div class="row g-4">
+        <div class="row g-4" data-starter-region="login-protection">
             <div class="col-md-6">
                 <label class="form-label" for="login-attempts">Maksimum percobaan login</label>
                 <div class="input-group">
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <div class="{{ $embedded ? 'card-body border-top bg-transparent' : 'card-footer bg-transparent mt-auto' }}">
+    <div class="{{ $embedded ? 'card-body border-top bg-transparent' : 'card-footer bg-transparent mt-auto' }}" data-starter-region="page-actions">
         <div class="btn-list justify-content-end">
             <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="save">
                 <span wire:loading.remove wire:target="save">

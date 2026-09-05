@@ -96,11 +96,12 @@ php artisan starter:sync
 
 ### Themes and layouts
 
-Starterkit currently includes Tabler with `vertical` and `horizontal` layouts:
+Starterkit includes two themes with `vertical` and `horizontal` layouts:
 
 | Theme | Source license | Notes |
 |---|---|---|
 | Tabler | MIT | Use under the Tabler license |
+| DashCode | Commercial | License managed by the owner for internal team projects |
 
 The selection is stored in the environment:
 
@@ -109,11 +110,12 @@ STARTER_THEME=tabler
 STARTER_LAYOUT=vertical
 ```
 
-The `starter:install` wizard still asks for a theme and layout. Tabler is the
-only theme choice for now, while the same mechanism is ready for future
-open-source themes. The installer automatically downloads a pinned GitHub
-archive, verifies its size and checksum, and publishes the minimal runtime to
-`public/assets/tabler/`. No manual template download or copy step is required.
+The `starter:install` wizard asks for Tabler or DashCode and a layout. The
+installer automatically downloads a pinned GitHub archive, verifies its size
+and checksum, and publishes the minimal runtime to `public/assets/<theme>/`.
+No manual template download or copy step is required. DashCode vendor sources
+and demo pages are not distributed. Its runtime is intended for internal
+projects covered by the repository owner's vendor license.
 Archives are maintained separately in
 [`starterkit-larawire-agentic-template`](https://github.com/aldhi88/starterkit-larawire-agentic-template).
 
@@ -174,8 +176,8 @@ Run the installer:
 php artisan starter:install
 ```
 
-The wizard asks for the theme (currently Tabler only), the vertical/horizontal layout,
-then these five identities:
+The wizard asks for the theme (Tabler or DashCode), the vertical/horizontal
+layout, then these five identities:
 
 | Question | Spaces allowed? | Example input |
 |---|---:|---|

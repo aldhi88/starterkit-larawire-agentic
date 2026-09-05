@@ -1,5 +1,5 @@
 <div x-data="{ activeTab: @js($activeTab) }">
-    <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman">
+    <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman" data-starter-region="page-header">
         <div class="row g-2 align-items-center">
             <div class="col">
                 <div class="page-pretitle">Starter / Profil Saya</div>
@@ -9,7 +9,7 @@
     </div>
 
     @if ($login->must_change_password)
-        <div class="alert alert-warning mb-3" role="alert">
+        <div class="alert alert-warning mb-3" role="alert" data-starter-region="status-alert">
             <div class="d-flex gap-3">
                 <span class="alert-icon flex-shrink-0">
                     @include('starter.templates.layouts.icon', ['name' => 'alert-triangle', 'class' => 'm-0'])
@@ -25,7 +25,7 @@
         </div>
     @endif
 
-    <section class="card mb-3" aria-label="Ringkasan akun">
+    <section class="card mb-3" aria-label="Ringkasan akun" data-starter-region="account-summary">
         <div class="card-body">
             <div class="row align-items-start g-3">
                 <div class="col-auto">
@@ -79,7 +79,7 @@
 
     <div class="row g-3 align-items-start">
         <div class="col-12 col-lg-3">
-            <aside class="card" aria-label="Pengaturan akun">
+            <aside class="card" aria-label="Pengaturan akun" data-starter-region="section-navigation">
                 <div class="card-body p-3">
                     <h3 class="card-title mb-1">Pengaturan Akun</h3>
                     <div class="text-secondary small mb-3">Kelola identitas dan keamanan akun Anda.</div>
@@ -118,7 +118,7 @@
             </aside>
         </div>
 
-        <div class="col-12 col-lg-9">
+        <div class="col-12 col-lg-9" data-starter-region="section-content">
             <div class="tab-content">
                 <form
                     id="account-details"
