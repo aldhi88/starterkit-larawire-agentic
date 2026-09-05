@@ -156,6 +156,12 @@ status lisensinya atau mendistribusikan ulang source premium.
   redundan, atau wrapper padding bila reference theme dan tujuan region tidak
   memerlukannya. Summary/card boleh berbeda kosmetik antar-theme selama data dan
   urutan region tetap sama dan batas visualnya jelas terhadap page background.
+- Widget berwarna wajib memiliki hierarchy kontras yang jelas antara background,
+  border, icon medallion, icon, label, dan value. Medallion harus terbaca sebagai
+  layer terpisah dari card; jangan memakai tint atau opacity yang membuatnya
+  blending dengan parent surface. Pertahankan minimal kontras grafis 3:1 untuk
+  icon terhadap immediate background dan gunakan kombinasi warna native theme
+  yang memenuhi tujuan tersebut.
 
 ### 4. Dependency closure aset
 
@@ -195,6 +201,16 @@ status lisensinya atau mendistribusikan ulang source premium.
   native yang sama. Periksa checkbox, chevron, suffix input, upload, switch,
   dropdown trigger, tab, dan icon secara visual serta lewat DOM/computed layout;
   jangan menebak dari class source saja.
+- Compound control dari dependency wajib diaudit dari DOM hasil render. Setiap
+  utility positioning, spacing, sizing, dan appearance harus tersedia pada
+  compiled CSS theme. Jika dependency menghasilkan utility yang tidak tersedia,
+  gunakan view adapter milik theme untuk memperbaiki markup; jangan menutupinya
+  dengan global CSS. Native select arrow tidak boleh dirender bersamaan dengan
+  chevron buatan, dan setiap control dalam satu compound field harus memiliki
+  separation serta alignment yang terukur setelah Livewire morph. Keberadaan
+  utility pada compiled CSS bukan bukti hasil akhirnya seragam: ukur computed
+  height setiap input dan select, lalu gunakan utility sizing native theme yang
+  sama pada seluruh control filter bila browser merender intrinsic size berbeda.
 - Daftarkan theme di `config/starter.php` hanya setelah registry contract lulus.
   Installer harus menampilkan pilihan tersebut, mengunduh runtime archive secara
   otomatis di local, dan menyelesaikan seluruh preflight sebelum mutasi

@@ -10,7 +10,7 @@ may share data and actions, but they must not share presentation structure.
 | App dashboard | `index.html`, `project-dashboard.html` | welcome panel, statistic cards, module list, next steps | `templates/app-dashboard.blade.php` | modules, empty module set, wrapped content |
 | Authentication | `signin-one.html`, `signin-two.html` | split layout, focused form, responsive mobile brand | `auth/*`, `templates/layouts/auth.blade.php` | default, invalid, loading, mobile |
 | Navigation account menu | `blank-page.html`, `profile.html` | identity trigger and account dropdown | `templates/layouts/account-menu.blade.php` | closed, open, keyboard, navigation |
-| Card and statistic | `card.html`, `basic-widgets.html` | white surface and compact statistic widget | dashboard, settings, activity log | 1280x768, mobile, long text |
+| Card and statistic | `card.html`, `basic-widgets.html`, `statistics-widgets.html`, `settings.html` | white surface, pastel summary card, semantic border, and solid icon medallion | dashboard, profile, settings, activity log | 1280x768, mobile, long text, nested color contrast |
 | Form and validation | `input-layout.html`, `select.html`, `file-input.html`, `form-validation.html` | label, control, help text, invalid feedback, responsive grid | user, role, profile, settings | valid, invalid, disabled, upload |
 | Profile | `profile.html`, `settings.html`, `input-layout.html` | identity overview, side navigation, two-column form, action footer | `profile/edit-my-profile.blade.php` | account, security, required password, photo |
 | Selection controls | `checkbox.html`, `radio.html`, `switch.html` | native DashCode control with associated label | role and security forms | checked, unchecked, disabled |

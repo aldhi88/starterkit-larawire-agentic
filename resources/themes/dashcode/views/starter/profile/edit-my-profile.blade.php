@@ -37,7 +37,7 @@
             </div>
 
             <div class="flex items-center gap-4 rounded-[6px] border border-info-500 bg-[#E5F9FF] p-4">
-                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white bg-opacity-50 text-info-500">
+                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-info-700 text-white">
                     @include('starter.templates.layouts.icon', ['name' => 'shield-check', 'class' => 'm-0'])
                 </span>
                 <div class="min-w-0">
@@ -46,7 +46,7 @@
                 </div>
             </div>
             <div class="flex items-center gap-4 rounded-[6px] border border-primary-500 bg-[#EAE5FF] p-4">
-                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white bg-opacity-50 text-primary-500">
+                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-primary-700 text-white">
                     @include('starter.templates.layouts.icon', ['name' => 'user-circle', 'class' => 'm-0'])
                 </span>
                 <div class="min-w-0">
@@ -55,7 +55,7 @@
                 </div>
             </div>
             <div class="flex items-center gap-4 rounded-[6px] border border-success-500 bg-[#EDFFE5] p-4">
-                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white bg-opacity-50 text-success-500">
+                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-success-700 text-white">
                     @include('starter.templates.layouts.icon', ['name' => 'history', 'class' => 'm-0'])
                 </span>
                 <div class="min-w-0">

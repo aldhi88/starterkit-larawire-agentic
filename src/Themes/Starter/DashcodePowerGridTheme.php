@@ -63,7 +63,7 @@ class DashcodePowerGridTheme extends Tailwind
         return array_replace(parent::filterBoolean(), [
             'view' => 'starter.powergrid.filters.boolean',
             'base' => 'starter-pg-filter starter-pg-filter-boolean',
-            'select' => 'form-control w-full !py-1',
+            'select' => 'form-control h-8 w-full !py-1',
         ]);
     }
 
@@ -71,16 +71,17 @@ class DashcodePowerGridTheme extends Tailwind
     {
         return array_replace(parent::filterDatePicker(), [
             'base' => 'starter-pg-filter starter-pg-filter-date',
-            'input' => 'flatpickr flatpickr-input form-control w-full !py-1',
+            'input' => 'flatpickr flatpickr-input form-control h-8 w-full !py-1',
         ]);
     }
 
     public function filterInputText(): array
     {
         return array_replace(parent::filterInputText(), [
+            'view' => 'starter.powergrid.filters.input-text',
             'base' => 'starter-pg-filter starter-pg-filter-text',
-            'select' => 'form-control w-full !py-1',
-            'input' => 'form-control w-full !py-1',
+            'select' => 'form-control h-8 w-full !py-1',
+            'input' => 'form-control h-8 w-full !py-1',
         ]);
     }
 
@@ -88,14 +89,14 @@ class DashcodePowerGridTheme extends Tailwind
     {
         return array_replace(parent::filterMultiSelect(), [
             'base' => 'starter-pg-filter starter-pg-filter-multiselect',
-            'select' => 'form-control w-full !py-1',
+            'select' => 'form-control h-8 w-full !py-1',
         ]);
     }
 
     public function filterNumber(): array
     {
         return array_replace(parent::filterNumber(), [
-            'input' => 'form-control w-full !py-1 starter-pg-filter-number',
+            'input' => 'form-control h-8 w-full !py-1 starter-pg-filter-number',
         ]);
     }
 
@@ -104,7 +105,7 @@ class DashcodePowerGridTheme extends Tailwind
         return array_replace(parent::filterSelect(), [
             'view' => 'starter.powergrid.filters.select',
             'base' => 'starter-pg-filter starter-pg-filter-select',
-            'select' => 'form-control w-full !py-1',
+            'select' => 'form-control h-8 w-full !py-1',
         ]);
     }
 

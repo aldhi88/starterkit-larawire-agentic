@@ -37,9 +37,9 @@
     </div>
 
     <div class="dashcode-activity-stats" data-starter-region="summary">
-        <div class="rounded-[6px] bg-[#EAE5FF] px-4 py-[18px]">
+        <div class="rounded-[6px] border border-primary-500 bg-[#EAE5FF] px-4 py-[18px]">
             <div class="flex items-center gap-4">
-                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white bg-opacity-50 text-primary-500" aria-hidden="true">
+                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-primary-700 text-white" aria-hidden="true">
                     @include('starter.templates.layouts.icon', ['name' => 'history'])
                 </span>
                 <div class="overflow-hidden">
@@ -48,9 +48,9 @@
                 </div>
             </div>
         </div>
-        <div class="rounded-[6px] bg-[#E5F9FF] px-4 py-[18px]">
+        <div class="rounded-[6px] border border-info-500 bg-[#E5F9FF] px-4 py-[18px]">
             <div class="flex items-center gap-4">
-                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white bg-opacity-50 text-info-500" aria-hidden="true">
+                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-info-700 text-white" aria-hidden="true">
                     @include('starter.templates.layouts.icon', ['name' => 'table'])
                 </span>
                 <div class="overflow-hidden">
@@ -59,9 +59,9 @@
                 </div>
             </div>
         </div>
-        <div class="rounded-[6px] bg-[#EDFFE5] px-4 py-[18px]">
+        <div class="rounded-[6px] border border-success-500 bg-[#EDFFE5] px-4 py-[18px]">
             <div class="flex items-center gap-4">
-                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white bg-opacity-50 text-success-500" aria-hidden="true">
+                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-success-700 text-white" aria-hidden="true">
                     @include('starter.templates.layouts.icon', ['name' => 'users'])
                 </span>
                 <div class="overflow-hidden">

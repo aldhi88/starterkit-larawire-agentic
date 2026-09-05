@@ -118,7 +118,8 @@ it('uses native Dashcode form groups and toolbar composition', function (): void
         ->not->toContain('dashcode-pg-toolbar')
         ->not->toContain('dashcode-pg-search-field')
         ->toContain('class="relative flex-1 max-w-md"')
-        ->toContain('form-control !pl-12');
+        ->toContain('form-control margin-0 !pl-12')
+        ->and(substr_count($toolbarViews, 'form-control margin-0 !pl-12'))->toBe(3);
 });
 
 it('contains wide PowerGrid content inside the Dashcode table frame', function (): void {
@@ -136,10 +137,15 @@ it('contains wide PowerGrid content inside the Dashcode table frame', function (
         'resources/themes/dashcode/views/starter/powergrid/footer.blade.php',
     ));
     $filterViews = collect([
+        StarterPaths::path('resources/themes/dashcode/views/starter/powergrid/filters/input-text.blade.php'),
         StarterPaths::path('resources/themes/dashcode/views/starter/powergrid/filters/select.blade.php'),
         StarterPaths::path('resources/themes/dashcode/views/starter/powergrid/filters/boolean.blade.php'),
     ])->map(fn (string $path): string => file_get_contents($path))->implode("\n");
     $themeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/starter-theme.css'));
+
+    expect(substr_count($theme, "'select' => 'form-control h-8 w-full !py-1'"))->toBe(4)
+        ->and(substr_count($theme, "'input' => 'form-control h-8 w-full !py-1"))->toBe(2)
+        ->and($theme)->toContain("'input' => 'flatpickr flatpickr-input form-control h-8 w-full !py-1'");
 
     expect($theme)
         ->toContain("'container' => 'starter-pg-container dashcode-data-table'")
@@ -151,6 +157,7 @@ it('contains wide PowerGrid content inside the Dashcode table frame', function (
         ->toContain("'th' => 'text-center align-middle w-[50px] min-w-[48px] max-w-[50px]'")
         ->toContain("'view' => 'starter.powergrid.filters.select'")
         ->toContain("'view' => 'starter.powergrid.filters.boolean'")
+        ->toContain("'view' => 'starter.powergrid.filters.input-text'")
         ->toContain("'select' => 'form-control !py-1'")
         ->toContain("'input' => 'table-checkbox block mx-auto'")
         ->and($footer)
@@ -160,6 +167,7 @@ it('contains wide PowerGrid content inside the Dashcode table frame', function (
         ->and($filterViews)
         ->toContain('<select class="{{ $filterClasses }}"')
         ->toContain('<select class="{{ $selectClasses }}"')
+        ->toContain("'flex flex-col space-y-2' => \$inline && \$showSelectOptions")
         ->not->toContain('icons.down')
         ->not->toContain('inset-y-0')
         ->not->toContain('style=')
@@ -232,6 +240,10 @@ it('keeps Dashcode account controls responsive and its app switcher compact', fu
         ->toContain('border border-info-500 bg-[#E5F9FF] p-4')
         ->toContain('border border-primary-500 bg-[#EAE5FF] p-4')
         ->toContain('border border-success-500 bg-[#EDFFE5] p-4')
+        ->toContain('rounded-full bg-info-700 text-white')
+        ->toContain('rounded-full bg-primary-700 text-white')
+        ->toContain('rounded-full bg-success-700 text-white')
+        ->not->toContain('rounded-full bg-white bg-opacity-50')
         ->not->toContain('max-w-[516px]')
         ->and(substr_count($header, '<div class="xl:hidden">'))->toBe(2)
         ->and(substr_count($header, 'h-[28px] w-[28px]'))->toBe(2)
@@ -297,11 +309,23 @@ it('keeps theme cosmetics native while preserving separate custom extension poin
         ->toContain('border border-success-500 bg-[#EDFFE5]')
         ->toContain('border border-warning-500 bg-[#FFEDE5]')
         ->toContain('border border-primary-500 bg-[#EAE5FF]')
+        ->toContain('rounded-full bg-info-700 text-white')
+        ->toContain('rounded-full bg-success-700 text-white')
+        ->toContain('rounded-full bg-warning-700 text-white')
+        ->toContain('rounded-full bg-primary-700 text-white')
+        ->not->toContain('rounded-full bg-white bg-opacity-50')
         ->not->toContain('starter-settings-stat')
         ->and($dashcodeActivity)
         ->toContain('bg-[#EAE5FF]')
         ->toContain('bg-[#E5F9FF]')
         ->toContain('bg-[#EDFFE5]')
+        ->toContain('border border-primary-500 bg-[#EAE5FF]')
+        ->toContain('border border-info-500 bg-[#E5F9FF]')
+        ->toContain('border border-success-500 bg-[#EDFFE5]')
+        ->toContain('rounded-full bg-primary-700 text-white')
+        ->toContain('rounded-full bg-info-700 text-white')
+        ->toContain('rounded-full bg-success-700 text-white')
+        ->not->toContain('rounded-full bg-white bg-opacity-50')
         ->not->toContain('starter-activity-stat')
         ->and($dashcodeDashboard)
         ->toContain('<section class="card" data-starter-region="primary-content">')
@@ -508,6 +532,12 @@ it('defines a complete theme from one intake instruction without vendor visual l
         ->and($integration)->toContain('Pada viewport lebar, ukur bounding rectangle shell secara langsung')
         ->and($integration)->toContain('dan content cap. Responsive padding berada pada satu constrained container')
         ->and($integration)->toContain('spacing, sizing, serta visibility breakpoint dari')
+        ->and($integration)->toContain('Widget berwarna wajib memiliki hierarchy kontras yang jelas')
+        ->and($integration)->toContain('minimal kontras grafis 3:1')
+        ->and($integration)->toContain('Compound control dari dependency wajib diaudit dari DOM hasil render')
+        ->and($integration)->toContain('Native select arrow tidak boleh dirender bersamaan dengan')
+        ->and($integration)->toContain('hasil akhirnya seragam: ukur computed')
+        ->and($integration)->toContain('height setiap input dan select')
         ->and($integration)->toContain('Packaging atomik')
         ->and($integration)->toContain('1280x768')
         ->and($ignore)->toContain('/theme-intake')
