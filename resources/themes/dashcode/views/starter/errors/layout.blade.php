@@ -7,8 +7,7 @@
     <title>@yield('code') · @yield('title') | {{ config('app.name') }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/dashcode/images/logo/favicon.svg') }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/app.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/dashcode/css/starter-theme.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/dashcode/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/dashcode/css/dashcode.css') }}">
 </head>
 <body class="font-inter bg-slate-100" data-starter-theme="dashcode">
     @php($errorCode = trim($__env->yieldContent('code')))
@@ -34,5 +33,6 @@
             </div>
         </div>
     </main>
+    <script src="{{ asset('assets/dashcode/js/dashcode.js') }}?v={{ filemtime(public_path('assets/dashcode/js/dashcode.js')) }}" defer></script>
 </body>
 </html>

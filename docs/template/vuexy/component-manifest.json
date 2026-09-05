@@ -1,0 +1,1397 @@
+{
+    "schema_version": 1,
+    "theme": "vuexy",
+    "source": {
+        "name": "Vuexy 3.0.0",
+        "license": "Commercial; owner-confirmed personal/internal use",
+        "distribution": "private"
+    },
+    "components": [
+        {
+            "id": "layout.vertical",
+            "references": [
+                "html-starter/vertical-menu-template-no-customizer/index.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/templates/layouts/navigation/vertical.blade.php"
+            ],
+            "native_structure": "fixed aside plus detached navbar and constrained content",
+            "classes": [
+                "layout-wrapper",
+                "layout-container",
+                "layout-menu",
+                "layout-page",
+                "container-xxl"
+            ],
+            "states": [
+                "normal",
+                "expanded",
+                "mobile-open",
+                "mobile-closed",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Closest no-customizer starter shell with the semi-dark menu requested by the owner."
+        },
+        {
+            "id": "layout.horizontal",
+            "references": [
+                "html-starter/horizontal-menu-template-no-customizer/index.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/templates/layouts/navigation/horizontal.blade.php"
+            ],
+            "native_structure": "full-width navbar followed by horizontal menu container",
+            "classes": [
+                "layout-navbar-full",
+                "layout-horizontal",
+                "menu-horizontal",
+                "container-xxl"
+            ],
+            "states": [
+                "normal",
+                "submenu-open",
+                "mobile-open",
+                "mobile-closed",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native no-customizer horizontal counterpart preserves the same application capabilities."
+        },
+        {
+            "id": "navigation.primary",
+            "references": [
+                "html-starter/vertical-menu-template-no-customizer/index.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/templates/layouts/menu-item.blade.php"
+            ],
+            "native_structure": "recursive list item with link or submenu trigger",
+            "classes": [
+                "menu-item",
+                "menu-link",
+                "menu-sub",
+                "menu-icon"
+            ],
+            "states": [
+                "normal",
+                "active",
+                "expanded",
+                "collapsed",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy menu hierarchy is the native representation for authorization-filtered App navigation."
+        },
+        {
+            "id": "navigation.account-menu",
+            "references": [
+                "html/vertical-menu-template-no-customizer/index.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/templates/layouts/account-menu.blade.php"
+            ],
+            "native_structure": "avatar trigger and end-aligned dropdown menu",
+            "classes": [
+                "dropdown-user",
+                "dropdown-menu-end",
+                "avatar",
+                "dropdown-item"
+            ],
+            "states": [
+                "normal",
+                "open",
+                "closed",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Full Vuexy dashboard provides the complete account identity and action hierarchy."
+        },
+        {
+            "id": "navigation.app-switcher",
+            "references": [
+                "html/vertical-menu-template-no-customizer/index.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/templates/layouts/app-switcher.blade.php"
+            ],
+            "native_structure": "navbar trigger and application list dropdown",
+            "classes": [
+                "nav-link",
+                "dropdown-menu-end",
+                "avatar",
+                "badge"
+            ],
+            "states": [
+                "normal",
+                "open",
+                "closed",
+                "empty",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Uses the same native navbar dropdown grammar while preserving the Starter App switching contract."
+        },
+        {
+            "id": "auth.login",
+            "references": [
+                "html/vertical-menu-template-no-customizer/auth-login-cover.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/auth/login.blade.php"
+            ],
+            "native_structure": "split illustration and credentials panel",
+            "classes": [
+                "authentication-wrapper",
+                "authentication-cover",
+                "auth-cover-bg",
+                "input-group-merge"
+            ],
+            "states": [
+                "normal",
+                "loading",
+                "validation-error",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy cover authentication is the closest complete native reference for credential flows."
+        },
+        {
+            "id": "auth.confirm-password",
+            "references": [
+                "html/vertical-menu-template-no-customizer/auth-login-cover.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/auth/confirm-password.blade.php"
+            ],
+            "native_structure": "split illustration and credentials panel",
+            "classes": [
+                "authentication-wrapper",
+                "authentication-cover",
+                "auth-cover-bg",
+                "input-group-merge"
+            ],
+            "states": [
+                "normal",
+                "loading",
+                "validation-error",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy cover authentication is the closest complete native reference for credential flows."
+        },
+        {
+            "id": "auth.lock-screen",
+            "references": [
+                "html/vertical-menu-template-no-customizer/auth-login-cover.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/auth/lock-screen.blade.php"
+            ],
+            "native_structure": "split illustration and credentials panel",
+            "classes": [
+                "authentication-wrapper",
+                "authentication-cover",
+                "auth-cover-bg",
+                "input-group-merge"
+            ],
+            "states": [
+                "normal",
+                "loading",
+                "validation-error",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy cover authentication is the closest complete native reference for credential flows."
+        },
+        {
+            "id": "error.http",
+            "references": [
+                "html/vertical-menu-template-no-customizer/pages-misc-error.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/errors/layout.blade.php"
+            ],
+            "native_structure": "centered status copy, action, and illustration",
+            "classes": [
+                "misc-wrapper",
+                "misc-bg-wrapper",
+                "btn-primary"
+            ],
+            "states": [
+                "normal",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native miscellaneous error composition keeps status and recovery action prominent."
+        },
+        {
+            "id": "page.header",
+            "references": [
+                "html/vertical-menu-template-no-customizer/cards-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/settings/settings-index.blade.php"
+            ],
+            "native_structure": "page heading or bordered card surface with native spacing",
+            "classes": [
+                "card",
+                "card-header",
+                "card-body",
+                "text-heading"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "loading",
+                "error",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy cards provide the native content hierarchy without decorating plain App placeholders."
+        },
+        {
+            "id": "content.card",
+            "references": [
+                "html/vertical-menu-template-no-customizer/cards-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/settings/settings-index.blade.php"
+            ],
+            "native_structure": "page heading or bordered card surface with native spacing",
+            "classes": [
+                "card",
+                "card-header",
+                "card-body",
+                "text-heading"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "loading",
+                "error",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy cards provide the native content hierarchy without decorating plain App placeholders."
+        },
+        {
+            "id": "content.statistic",
+            "references": [
+                "html/vertical-menu-template/dashboards-analytics.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/settings/settings-index.blade.php"
+            ],
+            "native_structure": "semantic icon medallion, label, and value in a compact card",
+            "classes": [
+                "card",
+                "avatar",
+                "avatar-initial",
+                "bg-label-primary"
+            ],
+            "states": [
+                "normal",
+                "zero",
+                "loading",
+                "responsive"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Owner screenshot and native analytics dashboard establish the requested visual density and contrast."
+        },
+        {
+            "id": "content.empty-state",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/user-management/roles.blade.php"
+            ],
+            "native_structure": "centered icon, explanation, and recovery action within owning surface",
+            "classes": [
+                "text-center",
+                "text-body-secondary",
+                "btn-primary"
+            ],
+            "states": [
+                "empty",
+                "loading",
+                "error",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Empty state remains inside the component that owns the absent data."
+        },
+        {
+            "id": "identity.avatar",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-badges.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/profile/edit-my-profile.blade.php"
+            ],
+            "native_structure": "image or initials within sized circular avatar",
+            "classes": [
+                "avatar",
+                "avatar-xl",
+                "avatar-initial"
+            ],
+            "states": [
+                "image",
+                "initials",
+                "loading",
+                "responsive"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy avatar medallion is reused consistently for identity."
+        },
+        {
+            "id": "status.badge",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-badges.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/profile/edit-my-profile.blade.php"
+            ],
+            "native_structure": "compact semantic label badge",
+            "classes": [
+                "badge",
+                "bg-label-success",
+                "bg-label-warning"
+            ],
+            "states": [
+                "success",
+                "warning",
+                "danger",
+                "neutral",
+                "responsive"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native label badges give status contrast without dominating the page."
+        },
+        {
+            "id": "action.button",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-buttons.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/auth/login.blade.php"
+            ],
+            "native_structure": "icon-capable primary or secondary action button",
+            "classes": [
+                "btn",
+                "btn-primary",
+                "btn-label-secondary",
+                "btn-icon"
+            ],
+            "states": [
+                "normal",
+                "hover",
+                "focus",
+                "loading",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy buttons provide the action hierarchy used throughout the integration."
+        },
+        {
+            "id": "form.input",
+            "references": [
+                "html/vertical-menu-template-no-customizer/forms-basic-inputs.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/settings/client-profile.blade.php"
+            ],
+            "native_structure": "label, native control, help, and validation message",
+            "classes": [
+                "form-label",
+                "form-control",
+                "input-group",
+                "is-invalid"
+            ],
+            "states": [
+                "normal",
+                "focus",
+                "filled",
+                "loading",
+                "validation-error",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy native controls style the shared form structure without changing its fields or grouping."
+        },
+        {
+            "id": "form.textarea",
+            "references": [
+                "html/vertical-menu-template-no-customizer/forms-basic-inputs.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/user-management/role-form.blade.php"
+            ],
+            "native_structure": "label, textarea, help, and validation message",
+            "classes": [
+                "form-label",
+                "form-control",
+                "is-invalid",
+                "invalid-feedback"
+            ],
+            "states": [
+                "normal",
+                "focus",
+                "filled",
+                "validation-error",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native textarea supports role descriptions with consistent validation."
+        },
+        {
+            "id": "form.select",
+            "references": [
+                "html/vertical-menu-template-no-customizer/forms-basic-inputs.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/user-management/user-form.blade.php"
+            ],
+            "native_structure": "label, native select, help, and validation message",
+            "classes": [
+                "form-label",
+                "form-select",
+                "is-invalid",
+                "invalid-feedback"
+            ],
+            "states": [
+                "normal",
+                "focus",
+                "selected",
+                "validation-error",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native select avoids duplicate custom chevrons and retains browser accessibility."
+        },
+        {
+            "id": "form.file",
+            "references": [
+                "html/vertical-menu-template-no-customizer/forms-basic-inputs.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/settings/client-profile.blade.php"
+            ],
+            "native_structure": "hidden file input controlled by a native upload button",
+            "classes": [
+                "btn-primary",
+                "form-control",
+                "avatar"
+            ],
+            "states": [
+                "normal",
+                "selected",
+                "loading",
+                "validation-error",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy account upload composition keeps preview and actions together."
+        },
+        {
+            "id": "form.validation",
+            "references": [
+                "html/vertical-menu-template-no-customizer/forms-basic-inputs.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/settings/client-profile.blade.php"
+            ],
+            "native_structure": "label, native control, help, and validation message",
+            "classes": [
+                "form-label",
+                "form-control",
+                "input-group",
+                "is-invalid"
+            ],
+            "states": [
+                "normal",
+                "focus",
+                "filled",
+                "loading",
+                "validation-error",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy native controls style the shared form structure without changing its fields or grouping."
+        },
+        {
+            "id": "form.checkbox",
+            "references": [
+                "html/vertical-menu-template-no-customizer/forms-basic-inputs.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/user-management/role-form.blade.php"
+            ],
+            "native_structure": "labeled selectable control inside module list",
+            "classes": [
+                "form-check",
+                "form-check-input",
+                "form-check-label"
+            ],
+            "states": [
+                "checked",
+                "unchecked",
+                "disabled",
+                "focus",
+                "validation-error",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native Bootstrap controls preserve module selection semantics."
+        },
+        {
+            "id": "form.radio",
+            "references": [
+                "html/vertical-menu-template-no-customizer/forms-basic-inputs.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/user-management/role-form.blade.php"
+            ],
+            "native_structure": "labeled selectable control inside module list",
+            "classes": [
+                "form-check",
+                "form-check-input",
+                "form-check-label"
+            ],
+            "states": [
+                "checked",
+                "unchecked",
+                "disabled",
+                "focus",
+                "validation-error",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native Bootstrap controls preserve module selection semantics."
+        },
+        {
+            "id": "form.switch",
+            "references": [
+                "html/vertical-menu-template-no-customizer/forms-switches.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/settings/security-settings.blade.php"
+            ],
+            "native_structure": "labeled Bootstrap switch with supporting copy",
+            "classes": [
+                "form-check",
+                "form-switch",
+                "form-check-input"
+            ],
+            "states": [
+                "checked",
+                "unchecked",
+                "disabled",
+                "focus",
+                "validation-error",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native switches represent binary security settings."
+        },
+        {
+            "id": "interaction.tabs",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-tabs-pills.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/profile/edit-my-profile.blade.php"
+            ],
+            "native_structure": "full-width tab bar followed by one active content region",
+            "classes": [
+                "nav-align-top",
+                "nav-tabs-shadow",
+                "nav-tabs",
+                "nav-fill",
+                "nav-link"
+            ],
+            "states": [
+                "normal",
+                "active",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy line tabs make profile and settings sections read as navigation without competing with primary actions."
+        },
+        {
+            "id": "interaction.accordion",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-accordion.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/user-management/role-form.blade.php"
+            ],
+            "native_structure": "accordion item with heading trigger and collapsible module controls",
+            "classes": [
+                "accordion",
+                "accordion-item",
+                "accordion-button",
+                "accordion-collapse"
+            ],
+            "states": [
+                "normal",
+                "expanded",
+                "collapsed",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native accordion groups module permissions without hiding the role identity form."
+        },
+        {
+            "id": "interaction.dropdown",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-dropdowns.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/templates/layouts/account-menu.blade.php"
+            ],
+            "native_structure": "button trigger and positioned menu",
+            "classes": [
+                "dropdown",
+                "dropdown-toggle",
+                "dropdown-menu"
+            ],
+            "states": [
+                "normal",
+                "open",
+                "closed",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native dropdown structure supports account, App, bulk, and row actions."
+        },
+        {
+            "id": "feedback.alert",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-alerts.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/templates/components/alert.blade.php"
+            ],
+            "native_structure": "semantic alert with icon and message",
+            "classes": [
+                "alert",
+                "alert-dismissible",
+                "alert-primary",
+                "alert-danger"
+            ],
+            "states": [
+                "success",
+                "error",
+                "warning",
+                "info",
+                "dismissed",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native alert hierarchy makes persistent status feedback scannable."
+        },
+        {
+            "id": "feedback.toast",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-toasts.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/templates/components/toast.blade.php"
+            ],
+            "native_structure": "fixed live region containing dismissible toast surfaces",
+            "classes": [
+                "toast-container",
+                "toast",
+                "bg-label-success",
+                "bg-label-danger"
+            ],
+            "states": [
+                "success",
+                "error",
+                "warning",
+                "info",
+                "dismissed",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy toast colors preserve semantic Livewire feedback without browser dialogs."
+        },
+        {
+            "id": "feedback.modal",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-modals.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/templates/components/alert-modal.blade.php"
+            ],
+            "native_structure": "backdrop dialog with title, consequence copy, and ordered actions",
+            "classes": [
+                "modal",
+                "modal-dialog",
+                "modal-content",
+                "modal-footer"
+            ],
+            "states": [
+                "normal",
+                "open",
+                "closed",
+                "loading",
+                "disabled",
+                "validation-error",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy modal structure satisfies explicit confirmation and destructive-action context."
+        },
+        {
+            "id": "feedback.destructive-confirmation",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-modals.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/templates/components/danger-password-modal.blade.php"
+            ],
+            "native_structure": "backdrop dialog with title, consequence copy, and ordered actions",
+            "classes": [
+                "modal",
+                "modal-dialog",
+                "modal-content",
+                "modal-footer"
+            ],
+            "states": [
+                "normal",
+                "open",
+                "closed",
+                "loading",
+                "disabled",
+                "validation-error",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy modal structure satisfies explicit confirmation and destructive-action context."
+        },
+        {
+            "id": "table.powergrid",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/powergrid/table-base.blade.php"
+            ],
+            "native_structure": "responsive inner frame containing intrinsic-width table",
+            "classes": [
+                "card-datatable",
+                "table-responsive",
+                "table",
+                "table-hover"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "loading",
+                "error",
+                "sorted",
+                "filtered",
+                "selected",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy table structure owns presentation; practical filter widths own column sizing."
+        },
+        {
+            "id": "table.toolbar",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-datatables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/user-management/powergrid/roles-toolbar.blade.php"
+            ],
+            "native_structure": "responsive toolbar with search, filter, and contextual bulk actions",
+            "classes": [
+                "input-group",
+                "form-control",
+                "btn",
+                "dropdown-menu"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "selected",
+                "loading",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native DataTables controls style the shared Starter toolbar composition without changing its placement or actions."
+        },
+        {
+            "id": "table.search",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-datatables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/user-management/powergrid/roles-toolbar.blade.php"
+            ],
+            "native_structure": "responsive toolbar with search, filter, and contextual bulk actions",
+            "classes": [
+                "input-group",
+                "form-control",
+                "btn",
+                "dropdown-menu"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "selected",
+                "loading",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native DataTables controls style the shared Starter toolbar composition without changing its placement or actions."
+        },
+        {
+            "id": "table.filter.text",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/powergrid/table-base.blade.php"
+            ],
+            "native_structure": "responsive inner frame containing intrinsic-width table",
+            "classes": [
+                "card-datatable",
+                "table-responsive",
+                "table",
+                "table-hover"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "loading",
+                "error",
+                "sorted",
+                "filtered",
+                "selected",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy table structure owns presentation; practical filter widths own column sizing."
+        },
+        {
+            "id": "table.filter.select",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/powergrid/table-base.blade.php"
+            ],
+            "native_structure": "responsive inner frame containing intrinsic-width table",
+            "classes": [
+                "card-datatable",
+                "table-responsive",
+                "table",
+                "table-hover"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "loading",
+                "error",
+                "sorted",
+                "filtered",
+                "selected",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy table structure owns presentation; practical filter widths own column sizing."
+        },
+        {
+            "id": "table.filter.date-range",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/powergrid/table-base.blade.php"
+            ],
+            "native_structure": "responsive inner frame containing intrinsic-width table",
+            "classes": [
+                "card-datatable",
+                "table-responsive",
+                "table",
+                "table-hover"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "loading",
+                "error",
+                "sorted",
+                "filtered",
+                "selected",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy table structure owns presentation; practical filter widths own column sizing."
+        },
+        {
+            "id": "table.sort",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/powergrid/table-base.blade.php"
+            ],
+            "native_structure": "responsive inner frame containing intrinsic-width table",
+            "classes": [
+                "card-datatable",
+                "table-responsive",
+                "table",
+                "table-hover"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "loading",
+                "error",
+                "sorted",
+                "filtered",
+                "selected",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy table structure owns presentation; practical filter widths own column sizing."
+        },
+        {
+            "id": "table.selection",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/powergrid/table-base.blade.php"
+            ],
+            "native_structure": "responsive inner frame containing intrinsic-width table",
+            "classes": [
+                "card-datatable",
+                "table-responsive",
+                "table",
+                "table-hover"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "loading",
+                "error",
+                "sorted",
+                "filtered",
+                "selected",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy table structure owns presentation; practical filter widths own column sizing."
+        },
+        {
+            "id": "table.bulk-action",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-datatables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/user-management/powergrid/roles-toolbar.blade.php"
+            ],
+            "native_structure": "responsive toolbar with search, filter, and contextual bulk actions",
+            "classes": [
+                "input-group",
+                "form-control",
+                "btn",
+                "dropdown-menu"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "selected",
+                "loading",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native DataTables controls style the shared Starter toolbar composition without changing its placement or actions."
+        },
+        {
+            "id": "table.horizontal-scroll",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/powergrid/table-base.blade.php"
+            ],
+            "native_structure": "responsive inner frame containing intrinsic-width table",
+            "classes": [
+                "card-datatable",
+                "table-responsive",
+                "table",
+                "table-hover"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "loading",
+                "error",
+                "sorted",
+                "filtered",
+                "selected",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Vuexy table structure owns presentation; practical filter widths own column sizing."
+        },
+        {
+            "id": "table.per-page",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-datatables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/powergrid/footer.blade.php"
+            ],
+            "native_structure": "three-part footer with per-page control, pagination, and record count",
+            "classes": [
+                "form-select-sm",
+                "pagination-sm",
+                "text-body-secondary"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "single-page",
+                "many-pages",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "DataTables footer is the closest native density and information hierarchy."
+        },
+        {
+            "id": "table.record-count",
+            "references": [
+                "html/vertical-menu-template-no-customizer/tables-datatables-basic.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/powergrid/footer.blade.php"
+            ],
+            "native_structure": "three-part footer with per-page control, pagination, and record count",
+            "classes": [
+                "form-select-sm",
+                "pagination-sm",
+                "text-body-secondary"
+            ],
+            "states": [
+                "normal",
+                "empty",
+                "single-page",
+                "many-pages",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "DataTables footer is the closest native density and information hierarchy."
+        },
+        {
+            "id": "table.pagination",
+            "references": [
+                "html/vertical-menu-template-no-customizer/ui-pagination-breadcrumbs.html"
+            ],
+            "runtime": [
+                "resources/themes/vuexy/views/starter/powergrid/pagination.blade.php"
+            ],
+            "native_structure": "compact previous, numbered, and next pagination list",
+            "classes": [
+                "pagination",
+                "page-item",
+                "page-link"
+            ],
+            "states": [
+                "normal",
+                "active",
+                "first-page",
+                "last-page",
+                "disabled",
+                "responsive",
+                "keyboard"
+            ],
+            "assets": [
+                "vendor/css/core.css",
+                "vendor/fonts/iconify-icons.css",
+                "css/vuexy.css",
+                "js/vuexy.js"
+            ],
+            "selection_reason": "Native pagination is adapted to Livewire page actions at both table edges."
+        }
+    ]
+}

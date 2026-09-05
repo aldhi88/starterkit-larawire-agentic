@@ -7,6 +7,8 @@ use RuntimeException;
 
 class StarterThemeRegistry
 {
+    private const PACKAGE_CONTRACT_SCHEMA_VERSION = 2;
+
     /** @var list<string> */
     private const REQUIRED_LAYOUTS = ['vertical', 'horizontal'];
 
@@ -170,7 +172,7 @@ class StarterThemeRegistry
             'starter theme package contract',
         );
 
-        if (($contract['schema_version'] ?? null) !== 1
+        if (($contract['schema_version'] ?? null) !== self::PACKAGE_CONTRACT_SCHEMA_VERSION
             || self::stringList($contract['required_layouts'] ?? null, 'required theme layouts') !== self::REQUIRED_LAYOUTS) {
             throw new RuntimeException('Starter theme package contract has an unsupported schema or layout contract.');
         }
@@ -262,21 +264,25 @@ class StarterThemeRegistry
         $source = self::readJson($docsRoot.DIRECTORY_SEPARATOR.'source.json', "theme [{$key}] source metadata");
         $url = $source['url'] ?? null;
         $host = is_string($url) ? strtolower((string) parse_url($url, PHP_URL_HOST)) : '';
+        $publicSource = ($source['provider'] ?? null) === 'github'
+            && is_string($url)
+            && parse_url($url, PHP_URL_SCHEME) === 'https'
+            && in_array($host, ['github.com', 'raw.githubusercontent.com'], true)
+            && ($source['distribution'] ?? null) === 'public';
+        $privateSource = ($source['provider'] ?? null) === 'local'
+            && $url === null
+            && ($source['distribution'] ?? null) === 'private';
 
         if (($source['schema_version'] ?? null) !== 1
             || ($source['theme'] ?? null) !== $key
-            || ($source['provider'] ?? null) !== 'github'
-            || ! is_string($url)
-            || parse_url($url, PHP_URL_SCHEME) !== 'https'
-            || ! in_array($host, ['github.com', 'raw.githubusercontent.com'], true)
+            || (! $publicSource && ! $privateSource)
             || preg_match('/^[a-f0-9]{64}$/', (string) ($source['archive_sha256'] ?? '')) !== 1
             || ! is_int($source['archive_max_bytes'] ?? null)
             || $source['archive_max_bytes'] < 1
             || $source['archive_max_bytes'] > 104857600
             || ($source['required_local_path'] ?? null) !== 'theme-intake/'.$key
             || ! is_string($source['license'] ?? null)
-            || trim((string) $source['license']) === ''
-            || ($source['distribution'] ?? null) !== 'public') {
+            || trim((string) $source['license']) === '') {
             throw new RuntimeException("Starter theme [{$key}] source metadata is incomplete or invalid.");
         }
     }

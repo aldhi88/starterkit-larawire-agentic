@@ -97,12 +97,13 @@ php artisan starter:sync
 
 ### Theme dan layout
 
-Starterkit menyediakan dua theme dengan layout `vertical` dan `horizontal`:
+Starterkit menyediakan theme dengan layout `vertical` dan `horizontal`:
 
 | Theme | Lisensi source | Catatan |
 |---|---|---|
 | Tabler | MIT | Bebas digunakan sesuai lisensi Tabler |
 | DashCode | Komersial | Lisensi dikelola owner untuk project internal tim |
+| Vuexy 3.0.0 | Komersial, lokal/privat | Penggunaan pribadi/internal berlisensi; package dan browser matrix terverifikasi |
 
 Pilihan disimpan di environment:
 
@@ -111,12 +112,23 @@ STARTER_THEME=tabler
 STARTER_LAYOUT=vertical
 ```
 
-Wizard `starter:install` meminta pilihan Tabler atau DashCode beserta layout.
-Aset runtime minimum diunduh otomatis dari arsip GitHub yang dipin, diperiksa
-ukuran dan checksum-nya, lalu dipublikasikan ke `public/assets/<theme>/`. Tidak
-ada download atau copy template manual. Source vendor dan halaman demo DashCode
-tidak didistribusikan. Runtime DashCode ditujukan untuk project internal yang
-berada di bawah lisensi vendor milik owner repository.
+Wizard `starter:install` meminta pilihan Tabler, DashCode, atau Vuexy beserta layout.
+Vuexy memerlukan archive runtime berlisensi dari owner: verifikasi checksum
+`VUEXY_SHA256SUMS`, lalu ekstrak `vuexy.zip` ke `theme-intake/vuexy/` pada host
+lokal sebelum instalasi. Archive ini berisi `runtime/`, diabaikan Git pada
+repository template, dan tidak tersedia melalui downloader publik. Installer
+memvalidasi seluruh file terhadap manifest sebelum mempublikasikannya.
+Aset runtime minimum theme open-source diunduh otomatis dari arsip GitHub yang
+dipin, diperiksa ukuran dan checksum-nya, lalu dipublikasikan ke
+`public/assets/<theme>/`. Vuexy memakai runtime lokal berlisensi yang diverifikasi
+terhadap manifest dan tidak memiliki downloader publik. Tidak ada copy template
+demo manual; source vendor dan halaman demo DashCode/Vuexy tidak didistribusikan.
+Runtime komersial ditujukan untuk project internal yang berada di bawah lisensi
+vendor milik owner repository.
+Semua theme mempertahankan layout halaman, hierarki konten, jenis dan jumlah
+komponen, urutan, grouping, penempatan, serta density yang sama. Perbedaannya
+hanya kosmetik dan wrapper yang diwajibkan vendor. Custom integration asset
+setiap theme wajib bernama `css/<theme-key>.css` dan `js/<theme-key>.js`.
 Archive dikelola terpisah di
 [`starterkit-larawire-agentic-template`](https://github.com/aldhi88/starterkit-larawire-agentic-template).
 
@@ -177,7 +189,7 @@ Jalankan installer:
 php artisan starter:install
 ```
 
-Wizard meminta theme (Tabler atau DashCode), layout vertical/horizontal, lalu
+Wizard meminta theme (Tabler, DashCode, atau Vuexy lokal berlisensi), layout vertical/horizontal, lalu
 lima identitas berikut:
 
 | Pertanyaan | Boleh memakai spasi? | Contoh input |

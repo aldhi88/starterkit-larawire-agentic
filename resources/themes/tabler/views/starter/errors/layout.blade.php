@@ -8,8 +8,7 @@
     <title>@yield('code') · @yield('title') | {{ config('app.name') }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/tabler/static/logo-small.svg') }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) }}">
-    <link rel="stylesheet" href="{{ asset('assets/tabler/css/starter-theme.css') }}?v={{ filemtime(public_path('assets/tabler/css/starter-theme.css')) }}">
-    <link rel="stylesheet" href="{{ asset('assets/tabler/css/custom.css') }}?v={{ filemtime(public_path('assets/tabler/css/custom.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/tabler/css/tabler.css') }}?v={{ filemtime(public_path('assets/tabler/css/tabler.css')) }}">
 </head>
 
 <body class="border-top-wide border-primary bg-body-tertiary">
@@ -43,6 +42,7 @@
     </main>
 
     <script src="{{ asset('assets/tabler/dist/js/tabler.min.js') }}?v={{ filemtime(public_path('assets/tabler/dist/js/tabler.min.js')) }}" defer></script>
+    <script src="{{ asset('assets/tabler/js/tabler.js') }}?v={{ filemtime(public_path('assets/tabler/js/tabler.js')) }}" defer></script>
 </body>
 
 </html>

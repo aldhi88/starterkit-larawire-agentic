@@ -18,8 +18,7 @@
     <link rel="stylesheet" href="{{ asset('assets/starter/vendor/flatpickr/flatpickr.min.css') }}?v={{ filemtime(public_path('assets/starter/vendor/flatpickr/flatpickr.min.css')) }}">
     <link rel="stylesheet" href="{{ asset('vendor/livewire-powergrid/bootstrap5.css') }}?v={{ filemtime(public_path('vendor/livewire-powergrid/bootstrap5.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/starter/css/starter.css') }}?v={{ file_exists(public_path('assets/starter/css/starter.css')) ? filemtime(public_path('assets/starter/css/starter.css')) : time() }}">
-    <link rel="stylesheet" href="{{ asset('assets/tabler/css/starter-theme.css') }}?v={{ file_exists(public_path('assets/tabler/css/starter-theme.css')) ? filemtime(public_path('assets/tabler/css/starter-theme.css')) : time() }}">
-    <link rel="stylesheet" href="{{ asset('assets/tabler/css/custom.css') }}?v={{ filemtime(public_path('assets/tabler/css/custom.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/tabler/css/tabler.css') }}?v={{ file_exists(public_path('assets/tabler/css/tabler.css')) ? filemtime(public_path('assets/tabler/css/tabler.css')) : time() }}">
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')
     @livewireStyles
@@ -82,7 +81,7 @@
     </div>
 
     <script src="{{ asset('assets/tabler/dist/js/tabler.min.js') }}?v={{ filemtime(public_path('assets/tabler/dist/js/tabler.min.js')) }}" defer></script>
-    <script src="{{ asset('assets/tabler/js/starter-theme.js') }}?v={{ filemtime(public_path('assets/tabler/js/starter-theme.js')) }}" data-navigate-once defer></script>
+    <script src="{{ asset('assets/tabler/js/tabler.js') }}?v={{ filemtime(public_path('assets/tabler/js/tabler.js')) }}" data-navigate-once defer></script>
     <script src="{{ asset('assets/starter/js/starter-runtime.js') }}?v={{ filemtime(public_path('assets/starter/js/starter-runtime.js')) }}" data-navigate-once defer></script>
     <script src="{{ asset('assets/starter/vendor/flatpickr/flatpickr.min.js') }}?v={{ filemtime(public_path('assets/starter/vendor/flatpickr/flatpickr.min.js')) }}" data-navigate-once defer></script>
     <script src="{{ asset('vendor/livewire-powergrid/powergrid.js') }}?v={{ filemtime(public_path('vendor/livewire-powergrid/powergrid.js')) }}" data-navigate-once defer></script>

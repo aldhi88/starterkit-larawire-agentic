@@ -1,5 +1,5 @@
 {
-    "schema_version": 1,
+    "schema_version": 2,
     "purpose": "Machine-readable completion contract for every Starterkit Larawire theme integration.",
     "execution_scope": {
         "repository": "canonical-starterkit-larawire-agentic-package",
@@ -11,7 +11,7 @@
         "intake_pattern": "theme-intake/<theme-key>/",
         "canonical_prompt": "Integrasikan theme <theme-key> dari theme-intake/<theme-key> sampai siap dipilih installer.",
         "default_output": "complete multi-repository integration and verified local comparison host",
-        "source_provider": "dedicated public GitHub template repository",
+        "source_provider": "dedicated public GitHub template repository or owner-managed local runtime",
         "authorized_outputs": [
             "canonical-package-integration",
             "template-runtime-archive",
@@ -25,8 +25,47 @@
             "atomic-packaging-and-browser-verification"
         ]
     },
+    "deterministic_execution": {
+        "mode": "fail-closed",
+        "rules_must_be_read_in_full_before_editing": true,
+        "run_ledger_path": "theme-intake/<theme-key>/.starter-theme-run/verification-evidence.json",
+        "run_ledger_schema": "docs/rules/theme-verification-evidence.schema.json",
+        "completion_validator": "php tools/validate-theme-evidence.php <theme-key>",
+        "pass_requires_current_run_evidence": true,
+        "assumed_or_remembered_evidence_forbidden": true,
+        "screenshot_only_evidence_forbidden": true,
+        "sampling_forbidden": true,
+        "phase_order_enforced": true,
+        "stage_order": [
+            "0-preflight",
+            "1-source",
+            "2-structure",
+            "3-cosmetics",
+            "4-browser",
+            "5-package-docs",
+            "6-final"
+        ],
+        "required_fingerprints": [
+            "source-intake-inventory",
+            "machine-contract",
+            "baseline-structural-views",
+            "target-runtime-blade-css-js",
+            "asset-manifest",
+            "runtime-archive"
+        ],
+        "invalidate_changed_stage_and_all_downstream": true,
+        "resume_from_first_non_passing_gate": true,
+        "known_defects_must_be_empty_for_completion": true,
+        "skipped_checks_must_be_empty_for_completion": true
+    },
     "comparison_policy": {
         "must_match": [
+            "page-layout",
+            "content-hierarchy",
+            "component-inventory-and-type",
+            "component-count-and-order",
+            "grouping-and-placement",
+            "practical-dimensions-and-density",
             "page-purpose",
             "component-type",
             "region-order",
@@ -37,26 +76,51 @@
             "responsive-behavior"
         ],
         "must_remain_theme_owned": [
-            "markup-hierarchy",
-            "component-variant",
-            "dimensions-and-density",
-            "spacing",
+            "vendor-required-class-names-and-wrappers",
             "typography",
             "colors-and-borders",
             "icons",
             "decorative-composition"
         ],
-        "existing_theme_is_visual_target": false,
-        "structural_parity_precedes_cosmetics": true
+        "existing_theme_is_structural_target": true,
+        "existing_theme_is_cosmetic_target": false,
+        "structural_parity_precedes_cosmetics": true,
+        "desktop_two_column_navigation_matches_content_height": true,
+        "stacked_navigation_uses_natural_height": true,
+        "account_summary_single_surface_desktop_row": true,
+        "password_guidance_full_row_before_new_credentials": true
     },
     "native_css_policy": {
         "closest_indexed_vendor_html_required": true,
         "compiled_class_existence_required": true,
         "inline_layout_spacing_color_style_forbidden": true,
         "page_injected_compatibility_css_forbidden": true,
-        "custom_stylesheet_target": "runtime/css/custom.css",
-        "custom_stylesheet_loaded_last": true,
+        "custom_stylesheet_target_pattern": "runtime/css/<theme-key>.css",
+        "custom_script_target_pattern": "runtime/js/<theme-key>.js",
+        "named_custom_assets_required_per_theme": true,
+        "custom_assets_loaded_after_vendor": true,
         "custom_rule_requires_proven_native_gap": true
+    },
+    "cosmetic_selection_policy": {
+        "indexed_variant_shortlist_minimum": 3,
+        "indexed_variant_shortlist_maximum": 5,
+        "closest_reference_inspection_minimum": 1,
+        "closest_reference_inspection_maximum": 3,
+        "selection_inputs": [
+            "semantic-role",
+            "hierarchy",
+            "density",
+            "adjacent-surface",
+            "interaction-frequency",
+            "responsive-cost"
+        ],
+        "semantic_color_map_required": true,
+        "decorative_color_assignment_forbidden": true,
+        "tinted_surface_requires_explicit_matching_foreground": true,
+        "minimum_normal_text_contrast": "4.5:1",
+        "minimum_large_text_contrast": "3:1",
+        "minimum_meaningful_graphic_contrast": "3:1",
+        "measured_spacing_and_proportion_required": true
     },
     "powergrid_width_policy": {
         "layout": "content-driven-auto",
@@ -90,8 +154,17 @@
     },
     "browser_matrix": {
         "desktop_safe_area": "1280x768",
+        "mobile_safe_area": "390x844",
+        "required_viewports": [
+            "1280x768",
+            "390x844"
+        ],
         "small_viewport_required": true,
+        "screenshot_and_computed_metrics_required_per_row": true,
         "computed_layout_inspection_required_when_ambiguous": true,
+        "computed_layout_inspection_always_required": true,
+        "css_source_inspection_cannot_replace_rendered_mobile_evidence": true,
+        "same_route_data_state_layout_viewport_as_baseline_required": true,
         "required_page_groups": [
             "landing-auth-lock-errors",
             "short-and-long-app-content",
@@ -112,6 +185,47 @@
             "console-error",
             "duplicate-livewire-or-alpine-handler"
         ]
+    },
+    "required_interaction_states": [
+        "normal",
+        "empty",
+        "one-record",
+        "page-full",
+        "overflow",
+        "loading",
+        "validation-error",
+        "disabled",
+        "checked-and-unchecked",
+        "focus",
+        "open-and-closed",
+        "destructive-confirmation",
+        "long-content"
+    ],
+    "geometry_acceptance": {
+        "root_horizontal_overflow_px": 0,
+        "structural_region_order_exact": true,
+        "component_count_type_order_exact": true,
+        "responsive_stacking_order_exact": true,
+        "structural_measurement_max_delta_px": 4,
+        "structural_measurement_max_delta_percent": 2,
+        "repeated_family_height_max_delta_px": 2,
+        "aligned_edge_max_delta_px": 2,
+        "optical_center_max_delta_px": 1,
+        "desktop_navigation_content_height_max_delta_px": 2,
+        "tab_to_section_heading_min_gap_px": 16,
+        "action_to_divider_or_edge_min_gap_px": 16,
+        "media_preview_visible_boundary_required": true,
+        "media_preview_matches_baseline_rectangle": true,
+        "normal_text_minimum_contrast": "4.5:1",
+        "large_text_graphic_and_control_minimum_contrast": "3:1",
+        "clipping_overlap_and_transparent_content_forbidden": true
+    },
+    "change_invalidation": {
+        "global_selector_or_token_change_retests_all_consumers": true,
+        "component_change_retests_all_owner_pages_and_states": true,
+        "javascript_change_retests_initial_load_livewire_navigation_and_morph": true,
+        "archive_change_requires_reinstall_and_browser_smoke": true,
+        "stale_runtime_requires_view_runtime_and_opcode_cache_refresh": true
     },
     "required_layouts": [
         "vertical",
@@ -342,7 +456,10 @@
             "duplicate minified and unminified assets"
         ]
     },
-    "completion_gates": [
+        "completion_gates": [
+        "valid-current-run-verification-ledger",
+        "verification-ledger-validator-passes",
+        "current-input-fingerprints",
         "license-and-distribution-decision",
         "complete-source-index",
         "complete-component-manifest",
@@ -357,8 +474,14 @@
         "vertical-browser-matrix",
         "horizontal-browser-matrix",
         "responsive-and-overflow-browser-matrix",
+        "full-page-state-matrix-without-sampling-or-skips",
+        "screenshot-and-computed-metrics-per-browser-row",
+        "objective-geometry-tolerances",
         "computed-layout-and-overflow-audit",
         "archive-manifest-checksum-consistency",
+        "all-affected-project-documentation-consistency",
+        "template-repository-archive-and-notices-current",
+        "fresh-runtime-post-package-browser-smoke",
         "no-unexplained-todo-or-known-core-ui-bug"
     ]
 }

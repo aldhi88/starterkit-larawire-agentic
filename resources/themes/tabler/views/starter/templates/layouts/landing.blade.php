@@ -8,8 +8,7 @@
     <title>{{ $title ?? config('app.name') }} | {{ config('app.name') }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/tabler/static/logo-small.svg') }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) }}">
-    <link rel="stylesheet" href="{{ asset('assets/tabler/css/starter-theme.css') }}?v={{ filemtime(public_path('assets/tabler/css/starter-theme.css')) }}">
-    <link rel="stylesheet" href="{{ asset('assets/tabler/css/custom.css') }}?v={{ filemtime(public_path('assets/tabler/css/custom.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/tabler/css/tabler.css') }}?v={{ filemtime(public_path('assets/tabler/css/tabler.css')) }}">
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')
     @livewireStyles
@@ -21,6 +20,7 @@
     {{ $slot }}
 
     <script src="{{ asset('assets/tabler/dist/js/tabler.min.js') }}?v={{ filemtime(public_path('assets/tabler/dist/js/tabler.min.js')) }}" defer></script>
+    <script src="{{ asset('assets/tabler/js/tabler.js') }}?v={{ filemtime(public_path('assets/tabler/js/tabler.js')) }}" data-navigate-once defer></script>
     @livewireScripts
     @stack('page-scripts')
     @includeIf('extensions.starter.layout.body-end')

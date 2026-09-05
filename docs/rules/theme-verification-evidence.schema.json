@@ -1,0 +1,314 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://starterkit-larawire.altekno.id/schemas/theme-verification-evidence.schema.json",
+    "title": "Starterkit Larawire theme integration verification evidence",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "schema_version",
+        "theme",
+        "baseline_theme",
+        "run_id",
+        "paths",
+        "fingerprints",
+        "stages",
+        "page_matrix",
+        "automated_checks",
+        "completion"
+    ],
+    "properties": {
+        "schema_version": {
+            "const": 1
+        },
+        "theme": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "baseline_theme": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "run_id": {
+            "type": "string",
+            "minLength": 8
+        },
+        "paths": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "canonical_package",
+                "documentation_project",
+                "template_repository",
+                "new_theme_host",
+                "baseline_host"
+            ],
+            "properties": {
+                "canonical_package": { "type": "string", "minLength": 1 },
+                "documentation_project": { "type": "string", "minLength": 1 },
+                "template_repository": { "type": "string", "minLength": 1 },
+                "new_theme_host": { "type": "string", "minLength": 1 },
+                "baseline_host": { "type": "string", "minLength": 1 }
+            }
+        },
+        "fingerprints": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "source_intake_inventory",
+                "machine_contract",
+                "baseline_structural_views",
+                "target_runtime_blade_css_js",
+                "asset_manifest",
+                "runtime_archive"
+            ],
+            "properties": {
+                "source_intake_inventory": { "$ref": "#/$defs/fingerprint" },
+                "machine_contract": { "$ref": "#/$defs/fingerprint" },
+                "baseline_structural_views": { "$ref": "#/$defs/fingerprint" },
+                "target_runtime_blade_css_js": { "$ref": "#/$defs/fingerprint" },
+                "asset_manifest": { "$ref": "#/$defs/fingerprint" },
+                "runtime_archive": { "$ref": "#/$defs/fingerprint" }
+            }
+        },
+        "stages": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "0-preflight",
+                "1-source",
+                "2-structure",
+                "3-cosmetics",
+                "4-browser",
+                "5-package-docs",
+                "6-final"
+            ],
+            "properties": {
+                "0-preflight": { "$ref": "#/$defs/gate" },
+                "1-source": { "$ref": "#/$defs/gate" },
+                "2-structure": { "$ref": "#/$defs/gate" },
+                "3-cosmetics": { "$ref": "#/$defs/gate" },
+                "4-browser": { "$ref": "#/$defs/gate" },
+                "5-package-docs": { "$ref": "#/$defs/gate" },
+                "6-final": { "$ref": "#/$defs/gate" }
+            }
+        },
+        "page_matrix": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "page_id",
+                    "page_group",
+                    "route",
+                    "layout",
+                    "viewport",
+                    "state",
+                    "baseline_screenshot",
+                    "target_screenshot",
+                    "vendor_references",
+                    "computed_metrics",
+                    "console_errors",
+                    "network_errors",
+                    "status"
+                ],
+                "properties": {
+                    "page_id": { "type": "string", "minLength": 1 },
+                    "page_group": {
+                        "enum": [
+                            "landing-auth-lock-errors",
+                            "short-and-long-app-content",
+                            "profile-all-tabs",
+                            "settings-all-sections",
+                            "role-and-user-forms",
+                            "activity-log",
+                            "vertical-and-horizontal-navigation",
+                            "menus-dropdowns-modals-and-feedback",
+                            "powergrid-all-states"
+                        ]
+                    },
+                    "route": { "type": "string", "minLength": 1 },
+                    "layout": { "enum": ["vertical", "horizontal", "standalone"] },
+                    "viewport": { "enum": ["1280x768", "390x844"] },
+                    "state": { "type": "string", "minLength": 1 },
+                    "baseline_screenshot": { "type": "string", "minLength": 1 },
+                    "target_screenshot": { "type": "string", "minLength": 1 },
+                    "vendor_references": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": { "type": "string", "minLength": 1 }
+                    },
+                    "computed_metrics": {
+                        "type": "object",
+                        "minProperties": 1
+                    },
+                    "console_errors": {
+                        "type": "array"
+                    },
+                    "network_errors": {
+                        "type": "array"
+                    },
+                    "status": { "$ref": "#/$defs/status" },
+                    "not_applicable_reason": { "type": "string", "minLength": 1 }
+                },
+                "allOf": [
+                    {
+                        "if": {
+                            "properties": {
+                                "status": { "const": "not_applicable" }
+                            }
+                        },
+                        "then": {
+                            "required": ["not_applicable_reason"]
+                        }
+                    }
+                ]
+            }
+        },
+        "automated_checks": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["command", "exit_code", "status"],
+                "properties": {
+                    "command": { "type": "string", "minLength": 1 },
+                    "exit_code": { "type": "integer" },
+                    "status": { "$ref": "#/$defs/status" }
+                }
+            }
+        },
+        "completion": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "known_defects", "skipped_checks"],
+            "properties": {
+                "status": { "$ref": "#/$defs/status" },
+                "known_defects": {
+                    "type": "array",
+                    "items": { "type": "string", "minLength": 1 }
+                },
+                "skipped_checks": {
+                    "type": "array",
+                    "items": { "type": "string", "minLength": 1 }
+                }
+            }
+        }
+    },
+    "allOf": [
+        {
+            "if": {
+                "properties": {
+                    "completion": {
+                        "properties": {
+                            "status": { "const": "pass" }
+                        }
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "fingerprints": {
+                        "properties": {
+                            "source_intake_inventory": { "$ref": "#/$defs/currentFingerprint" },
+                            "machine_contract": { "$ref": "#/$defs/currentFingerprint" },
+                            "baseline_structural_views": { "$ref": "#/$defs/currentFingerprint" },
+                            "target_runtime_blade_css_js": { "$ref": "#/$defs/currentFingerprint" },
+                            "asset_manifest": { "$ref": "#/$defs/currentFingerprint" },
+                            "runtime_archive": { "$ref": "#/$defs/currentFingerprint" }
+                        }
+                    },
+                    "stages": {
+                        "properties": {
+                            "0-preflight": { "$ref": "#/$defs/passedGate" },
+                            "1-source": { "$ref": "#/$defs/passedGate" },
+                            "2-structure": { "$ref": "#/$defs/passedGate" },
+                            "3-cosmetics": { "$ref": "#/$defs/passedGate" },
+                            "4-browser": { "$ref": "#/$defs/passedGate" },
+                            "5-package-docs": { "$ref": "#/$defs/passedGate" },
+                            "6-final": { "$ref": "#/$defs/passedGate" }
+                        }
+                    },
+                    "page_matrix": {
+                        "items": {
+                            "properties": {
+                                "status": { "enum": ["pass", "not_applicable"] },
+                                "console_errors": { "maxItems": 0 },
+                                "network_errors": { "maxItems": 0 }
+                            }
+                        }
+                    },
+                    "automated_checks": {
+                        "items": {
+                            "properties": {
+                                "exit_code": { "const": 0 },
+                                "status": { "const": "pass" }
+                            }
+                        }
+                    },
+                    "completion": {
+                        "properties": {
+                            "known_defects": { "maxItems": 0 },
+                            "skipped_checks": { "maxItems": 0 }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "$defs": {
+        "status": {
+            "enum": ["not_run", "pass", "fail", "blocked", "not_applicable"]
+        },
+        "fingerprint": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sha256", "current"],
+            "properties": {
+                "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                },
+                "current": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "currentFingerprint": {
+            "allOf": [
+                { "$ref": "#/$defs/fingerprint" },
+                {
+                    "properties": {
+                        "current": { "const": true }
+                    }
+                }
+            ]
+        },
+        "gate": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "evidence"],
+            "properties": {
+                "status": { "$ref": "#/$defs/status" },
+                "evidence": {
+                    "type": "array",
+                    "items": { "type": "string", "minLength": 1 }
+                },
+                "blocking_reason": { "type": "string", "minLength": 1 }
+            }
+        },
+        "passedGate": {
+            "allOf": [
+                { "$ref": "#/$defs/gate" },
+                {
+                    "properties": {
+                        "status": { "const": "pass" },
+                        "evidence": { "minItems": 1 }
+                    }
+                }
+            ]
+        }
+    }
+}

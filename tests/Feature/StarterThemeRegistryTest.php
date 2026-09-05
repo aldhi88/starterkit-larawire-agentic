@@ -85,12 +85,56 @@ afterEach(function (): void {
     StarterThemeRegistry::flushRegistered();
 });
 
+it('accepts licensed local sources without attempting a public download', function (): void {
+    $root = sys_get_temp_dir().'/starter-theme-private-'.bin2hex(random_bytes(5));
+    $host = sys_get_temp_dir().'/starter-theme-private-host-'.bin2hex(random_bytes(5));
+    $originalBasePath = base_path();
+    createCompleteFixtureTheme($root);
+    File::ensureDirectoryExists($host);
+    $metadata = json_decode(File::get($root.'/docs/source.json'), true, flags: JSON_THROW_ON_ERROR);
+    $metadata['provider'] = 'local';
+    $metadata['url'] = null;
+    $metadata['distribution'] = 'private';
+    File::put($root.'/docs/source.json', json_encode($metadata, JSON_THROW_ON_ERROR));
+    Http::fake();
+    app()->setBasePath($host);
+
+    try {
+        StarterThemeRegistry::register('fixture', [
+            'label' => 'Fixture', 'root' => $root, 'views' => 'views',
+            'assets' => 'assets/fixture', 'docs' => 'docs',
+            'powergrid' => FixturePowerGridTheme::class,
+            'layouts' => [
+                'vertical' => 'starter.templates.layouts.navigation.vertical',
+                'horizontal' => 'starter.templates.layouts.navigation.horizontal',
+            ],
+        ]);
+        $command = Mockery::mock(Command::class);
+        $command->shouldReceive('error')->once()->with(Mockery::on(
+            fn (string $message): bool => str_contains($message, 'public downloading is disabled'),
+        ));
+        $publisher = app(StarterAssetPublisher::class);
+        expect($publisher->prepareTheme($command, 'fixture'))->toBeFalse();
+        Http::assertNothingSent();
+
+        File::ensureDirectoryExists($host.'/theme-intake/fixture/runtime');
+        File::put($host.'/theme-intake/fixture/runtime/theme.css', 'body{}');
+        expect($publisher->prepareTheme($command, 'fixture'))->toBeTrue();
+        Http::assertNothingSent();
+    } finally {
+        app()->setBasePath($originalBasePath);
+        File::deleteDirectory($root);
+        File::deleteDirectory($host);
+    }
+});
+
 it('validates and resolves the bundled theme integrations', function (): void {
     $themes = StarterThemeRegistry::all();
 
-    expect($themes)->toHaveKeys(['tabler', 'dashcode'])
+    expect($themes)->toHaveKeys(['tabler', 'dashcode', 'vuexy'])
         ->and(StarterThemeRegistry::path('tabler', 'views'))->toBeDirectory()
-        ->and(StarterThemeRegistry::path('dashcode', 'views'))->toBeDirectory();
+        ->and(StarterThemeRegistry::path('dashcode', 'views'))->toBeDirectory()
+        ->and(StarterThemeRegistry::path('vuexy', 'views'))->toBeDirectory();
 });
 
 it('registers a complete owner-prepared theme integration', function (): void {

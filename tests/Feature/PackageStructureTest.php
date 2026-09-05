@@ -12,7 +12,7 @@ it('registers the prepared themes without storing their archives in the package 
     $publicThemes = StarterPaths::path('public/themes');
     $publicThemeFiles = is_dir($publicThemes) ? File::allFiles($publicThemes) : [];
 
-    expect(array_keys($config['themes']))->toBe(['tabler', 'dashcode'])
+    expect(array_keys($config['themes']))->toBe(['tabler', 'dashcode', 'vuexy'])
         ->and($config['themes']['tabler']['layouts'])->toHaveKeys(['vertical', 'horizontal'])
         ->and($config['themes']['dashcode']['layouts'])->toHaveKeys(['vertical', 'horizontal'])
         ->and(is_dir(StarterPaths::path('theme-packages')))->toBeFalse()
@@ -27,8 +27,8 @@ it('maps generated host assets without carrying their payloads in Composer', fun
         ->and(glob(StarterPaths::path('docs/template/*/*.html')) ?: [])->toBe([]);
 
     foreach ([
-        'tabler' => '285b006c61c5b945cb57692ca767eda9851b377f002094d951c4872e93a83846',
-        'dashcode' => 'b761264a44658e6d290c3911ac0de7d78ddc484ccebfd1fb5f6eed850df41764',
+        'tabler' => '834540b17f1f20fa888198de1dfc13ade5187305f02ece63312720dc6cad1898',
+        'dashcode' => 'e4b4ee2a270a04c264ad3aa4f0aaa38fe5ae74e8f8c9fb3dd7466e74b2db422a',
     ] as $theme => $checksum) {
         $source = json_decode(
             (string) file_get_contents(StarterPaths::path('docs/template/'.$theme.'/source.json')),
@@ -42,18 +42,226 @@ it('maps generated host assets without carrying their payloads in Composer', fun
     }
 });
 
+it('keeps one theme-named custom stylesheet and script for every theme', function (): void {
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $runtime = StarterPaths::path('theme-intake/'.$theme.'/runtime');
+        $views = collect(File::allFiles(StarterPaths::path('resources/themes/'.$theme.'/views')))
+            ->map(fn (SplFileInfo $file): string => $file->getContents())
+            ->implode("\n");
+        $manifest = json_decode(
+            (string) file_get_contents(StarterPaths::path('docs/template/'.$theme.'/asset-manifest.json')),
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        );
+        $targets = collect($manifest['files'])->pluck('target')->all();
+
+        expect($runtime.'/css/'.$theme.'.css')->toBeFile()
+            ->and($runtime.'/js/'.$theme.'.js')->toBeFile()
+            ->and($runtime.'/css/starter-theme.css')->not->toBeFile()
+            ->and($runtime.'/css/custom.css')->not->toBeFile()
+            ->and($runtime.'/js/starter-theme.js')->not->toBeFile()
+            ->and($views)->toContain("assets/{$theme}/css/{$theme}.css")
+            ->toContain("assets/{$theme}/js/{$theme}.js")
+            ->not->toContain("assets/{$theme}/css/starter-theme.css")
+            ->not->toContain("assets/{$theme}/css/custom.css")
+            ->not->toContain("assets/{$theme}/js/starter-theme.js")
+            ->and($targets)->toContain('css/'.$theme.'.css', 'js/'.$theme.'.js')
+            ->not->toContain('css/starter-theme.css', 'css/custom.css', 'js/starter-theme.js');
+    }
+});
+
 it('keeps active vertical branches open without forcing horizontal dropdowns open', function (): void {
     $runtime = file_get_contents(StarterPaths::path('public/assets/starter/js/starter-runtime.js'));
 
     expect($runtime)->toContain("! detail.classList.contains('starter-horizontal-details')");
 
-    foreach (['tabler', 'dashcode'] as $theme) {
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
         $horizontalMenu = file_get_contents(StarterPaths::path(
             'resources/themes/'.$theme.'/views/starter/templates/layouts/menu-item-horizontal.blade.php',
         ));
 
         expect($horizontalMenu)->not->toContain('@if ($isExpanded) open @endif');
     }
+});
+
+it('keeps Vuexy shells on their native layout hierarchy', function (): void {
+    $root = StarterPaths::path('resources/themes/vuexy/views/starter/templates/layouts');
+    $app = file_get_contents($root.'/app.blade.php');
+    $navbar = file_get_contents($root.'/navbar.blade.php');
+    $horizontal = file_get_contents($root.'/navigation/horizontal.blade.php');
+    $customCss = file_get_contents(StarterPaths::path('theme-intake/vuexy/runtime/css/vuexy.css'));
+
+    expect($app)
+        ->toContain("'layout-content-navbar' : 'layout-navbar-full layout-horizontal layout-without-menu'")
+        ->toContain("@else\n                @include('starter.templates.layouts.navbar')")
+        ->toContain("@if (\$starterLayout === 'vertical')\n                    @include('starter.templates.layouts.navbar')")
+        ->and($navbar)
+        ->toContain("'container-xxl navbar-detached bg-navbar-theme' : ''")
+        ->and($horizontal)
+        ->toContain('class="layout-menu-horizontal menu-horizontal menu flex-grow-0 bg-menu-theme"')
+        ->toContain('class="menu-inner py-1"')
+        ->and($customCss)
+        ->toContain('.layout-horizontal .content-wrapper > .menu-horizontal + main.container-xxl');
+});
+
+it('keeps Vuexy page composition identical to the verified Tabler baseline', function (): void {
+    $files = [
+        'templates/landing.blade.php',
+        'templates/app-dashboard.blade.php',
+        'auth/login.blade.php',
+        'auth/confirm-password.blade.php',
+        'auth/lock-screen.blade.php',
+        'profile/edit-my-profile.blade.php',
+        'settings/settings-index.blade.php',
+        'settings/client-profile.blade.php',
+        'settings/security-settings.blade.php',
+        'user-management/roles.blade.php',
+        'user-management/users.blade.php',
+        'user-management/role-form.blade.php',
+        'user-management/user-form.blade.php',
+        'user-management/powergrid/roles-toolbar.blade.php',
+        'user-management/powergrid/users-toolbar.blade.php',
+        'logs/activity-log-index.blade.php',
+        'logs/powergrid/activity-logs-toolbar.blade.php',
+    ];
+    $normalize = static function (string $contents): string {
+        $contents = preg_replace('/<style>.*?<\/style>/s', '', $contents) ?? $contents;
+        $contents = preg_replace('/\s+(?:class|style)="[^"]*"/', '', $contents) ?? $contents;
+        $contents = preg_replace("/'class'\s*=>\s*'[^']*'/", "'class' => 'theme-cosmetic'", $contents) ?? $contents;
+        $contents = preg_replace('/\s+x-cloak\b/', '', $contents) ?? $contents;
+        $contents = str_replace(
+            ['text-azure', 'text-purple', 'text-green'],
+            ['text-info', 'text-primary', 'text-success'],
+            $contents,
+        );
+
+        return preg_replace('/\s+/', ' ', trim($contents)) ?? trim($contents);
+    };
+
+    foreach ($files as $file) {
+        $tabler = file_get_contents(StarterPaths::path('resources/themes/tabler/views/starter/'.$file));
+        $vuexy = file_get_contents(StarterPaths::path('resources/themes/vuexy/views/starter/'.$file));
+
+        expect($normalize($vuexy))->toBe($normalize($tabler), $file.' changed the shared page composition.');
+    }
+});
+
+it('keeps Vuexy cosmetics native, legible, centered, and proportionate', function (): void {
+    $root = StarterPaths::path('resources/themes/vuexy/views/starter');
+    $views = collect(File::allFiles($root))
+        ->map(fn (SplFileInfo $file): string => $file->getContents())
+        ->implode("\n");
+    $css = file_get_contents(StarterPaths::path('theme-intake/vuexy/runtime/css/vuexy.css'));
+    $menu = file_get_contents($root.'/templates/layouts/menu-item.blade.php');
+    $profile = file_get_contents($root.'/profile/edit-my-profile.blade.php');
+    $activityLog = file_get_contents($root.'/logs/activity-log-index.blade.php');
+    $theme = file_get_contents(StarterPaths::path('src/Themes/Starter/VuexyPowerGridTheme.php'));
+    $contract = json_decode(
+        (string) file_get_contents(StarterPaths::path('docs/rules/theme-package-contract.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+
+    expect($views)
+        ->toContain('bg-label-primary', 'bg-label-success', 'bg-label-info', 'bg-label-warning', 'bg-label-danger', 'bg-label-secondary')
+        ->not->toMatch('/bg-(?:primary|blue|purple|green|success|azure|warning|danger|secondary)-lt/')
+        ->not->toContain('btn-ghost-primary', 'btn-ghost-danger', 'status-lite')
+        ->and($menu)
+        ->toContain('menu-link menu-toggle starter-menu-toggle')
+        ->not->toContain('bg-transparent w-100')
+        ->and($profile)
+        ->toContain('tab-content starter-profile-tab-content')
+        ->toContain('alert alert-info mb-0 starter-password-guidance')
+        ->toContain('btn btn-label-secondary')
+        ->not->toContain('border rounded p-3 mb-4')
+        ->and($activityLog)
+        ->toContain('vuexy-activity-summary')
+        ->toContain('vuexy-activity-stat-value')
+        ->not->toContain('<div class="h2 mb-0">')
+        ->and($theme)
+        ->toContain("'footer' => 'starter-pg-footer vuexy-grid-footer'")
+        ->and($css)
+        ->toContain('.avatar { align-items: center;')
+        ->toContain('.starter-profile-tab-content { padding: 0 !important; }')
+        ->toContain('.starter-password-guidance .alert-icon { align-items: center;')
+        ->toContain('[data-starter-region="section-navigation"] + [data-starter-region="section-header"] { padding-block: 1.5rem !important; }')
+        ->toContain('.starter-client-logo-preview { align-items: center; background: var(--bs-secondary-bg); border: 1px dashed var(--bs-border-color);')
+        ->toContain('block-size: 5rem; inline-size: 10rem;')
+        ->toContain('.starter-client-logo-preview-image { block-size: 100%; inline-size: 100%; object-fit: contain; }')
+        ->toContain('.vuexy-activity-stat-icon { --bs-avatar-size: 3rem; border-radius: .5rem; }')
+        ->toContain('.vuexy-activity-stat-value { color: var(--bs-heading-color); font-size: 1.625rem; font-weight: 600; line-height: 1.1; }')
+        ->toContain('.menu-vertical .menu-inner > .menu-item > .starter-menu-toggle { inline-size: calc(100% - 1.5rem); }')
+        ->toContain('.starter-pg-footer { border-block-start: 1px solid var(--bs-border-color); min-block-size: 3.5rem; padding: .75rem 1rem; }')
+        ->toContain('grid-template-columns: minmax(12rem, 1fr) auto minmax(16rem, 1fr);')
+        ->toContain('.card-header:has(.card-header-tabs) { overflow-x: auto;')
+        ->and($contract['cosmetic_selection_policy'])
+        ->toMatchArray([
+            'indexed_variant_shortlist_minimum' => 3,
+            'indexed_variant_shortlist_maximum' => 5,
+            'semantic_color_map_required' => true,
+            'decorative_color_assignment_forbidden' => true,
+            'tinted_surface_requires_explicit_matching_foreground' => true,
+            'minimum_normal_text_contrast' => '4.5:1',
+            'minimum_meaningful_graphic_contrast' => '3:1',
+            'measured_spacing_and_proportion_required' => true,
+        ]);
+});
+
+it('stretches two-column profile navigation consistently across every theme', function (): void {
+    $contract = json_decode(
+        (string) file_get_contents(StarterPaths::path('docs/rules/theme-package-contract.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $profile = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/profile/edit-my-profile.blade.php"));
+        $css = file_get_contents(StarterPaths::path("theme-intake/{$theme}/runtime/css/{$theme}.css"));
+
+        expect($profile)
+            ->toContain('starter-profile-layout')
+            ->toContain('starter-profile-nav-column')
+            ->not->toContain('border rounded p-3 mb-4')
+            ->and($css)
+            ->toContain('starter-profile-nav-column')
+            ->toMatch('/starter-profile-nav-column\s*>?\s*\[data-starter-region="section-navigation"\]\s*\{[^}]*(?:block-size|height)\s*:\s*100%/s');
+    }
+
+    expect($contract['comparison_policy'])
+        ->toMatchArray([
+            'desktop_two_column_navigation_matches_content_height' => true,
+            'stacked_navigation_uses_natural_height' => true,
+            'account_summary_single_surface_desktop_row' => true,
+            'password_guidance_full_row_before_new_credentials' => true,
+        ]);
+});
+
+it('places password guidance before the paired new credentials across every theme', function (): void {
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $profile = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/profile/edit-my-profile.blade.php"));
+        $currentPassword = strpos($profile, 'id="profile-current-password"');
+        $guidance = strpos($profile, 'data-starter-password-guidance');
+        $newPassword = strpos($profile, 'id="profile-new-password"');
+        $confirmation = strpos($profile, 'id="profile-password-confirmation"');
+
+        expect($currentPassword)->toBeInt()
+            ->and($guidance)->toBeInt()
+            ->and($newPassword)->toBeInt()
+            ->and($confirmation)->toBeInt()
+            ->and($currentPassword)->toBeLessThan($guidance)
+            ->and($guidance)->toBeLessThan($newPassword)
+            ->and($newPassword)->toBeLessThan($confirmation);
+    }
+
+    $tabler = file_get_contents(StarterPaths::path('resources/themes/tabler/views/starter/profile/edit-my-profile.blade.php'));
+    $vuexy = file_get_contents(StarterPaths::path('resources/themes/vuexy/views/starter/profile/edit-my-profile.blade.php'));
+    $dashcode = file_get_contents(StarterPaths::path('resources/themes/dashcode/views/starter/profile/edit-my-profile.blade.php'));
+    $dashcodeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/dashcode.css'));
+
+    expect($tabler)->toContain('class="col-12" data-starter-password-guidance')
+        ->and($vuexy)->toContain('class="col-12" data-starter-password-guidance')
+        ->and($dashcode)->toContain('class="dashcode-profile-security-guide-row" data-starter-password-guidance')
+        ->and($dashcodeCss)->toContain('.dashcode-profile-security-guide-row { grid-column:1/-1; }');
 });
 
 it('keeps spacing between the vertical navigation heading and menu items', function (): void {
@@ -141,7 +349,7 @@ it('contains wide PowerGrid content inside the Dashcode table frame', function (
         StarterPaths::path('resources/themes/dashcode/views/starter/powergrid/filters/select.blade.php'),
         StarterPaths::path('resources/themes/dashcode/views/starter/powergrid/filters/boolean.blade.php'),
     ])->map(fn (string $path): string => file_get_contents($path))->implode("\n");
-    $themeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/starter-theme.css'));
+    $themeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/dashcode.css'));
 
     expect(substr_count($theme, "'select' => 'form-control h-8 w-full !py-1'"))->toBe(4)
         ->and(substr_count($theme, "'input' => 'form-control h-8 w-full !py-1"))->toBe(2)
@@ -202,7 +410,7 @@ it('keeps Dashcode company sections and numeric suffix controls in native compon
     $security = file_get_contents(StarterPaths::path(
         'resources/themes/dashcode/views/starter/settings/security-settings.blade.php',
     ));
-    $themeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/starter-theme.css'));
+    $themeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/dashcode.css'));
 
     expect($company)
         ->toContain('class="card-body space-y-6"')
@@ -229,21 +437,22 @@ it('keeps Dashcode account controls responsive and its app switcher compact', fu
     $sidebar = file_get_contents($dashcodeRoot.'/templates/layouts/navigation/sidebar.blade.php');
     $appSwitcher = file_get_contents($dashcodeRoot.'/templates/layouts/app-switcher.blade.php');
     $accountMenu = file_get_contents($dashcodeRoot.'/templates/layouts/account-menu.blade.php');
-    $themeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/starter-theme.css'));
-    $customCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/custom.css'));
+    $themeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/dashcode.css'));
+    $customCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/dashcode.css'));
 
     expect($profile)
-        ->toContain('<section class="mb-4" aria-label="Ringkasan akun"')
-        ->not->toContain('<section class="card mb-4 p-4"')
-        ->toContain('grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4')
-        ->toContain('border border-slate-600 bg-slate-900 p-4 text-white')
-        ->toContain('border border-info-500 bg-[#E5F9FF] p-4')
-        ->toContain('border border-primary-500 bg-[#EAE5FF] p-4')
-        ->toContain('border border-success-500 bg-[#EDFFE5] p-4')
-        ->toContain('rounded-full bg-info-700 text-white')
-        ->toContain('rounded-full bg-primary-700 text-white')
-        ->toContain('rounded-full bg-success-700 text-white')
-        ->not->toContain('rounded-full bg-white bg-opacity-50')
+        ->toContain('<section class="card dashcode-account-summary mb-4" aria-label="Ringkasan akun"')
+        ->toContain('dashcode-account-summary-row')
+        ->toContain('dashcode-account-identity')
+        ->toContain('dashcode-account-metadata')
+        ->toContain('dashcode-account-meta-icon-info')
+        ->toContain('dashcode-account-meta-icon-primary')
+        ->toContain('dashcode-account-meta-icon-success')
+        ->not->toContain('grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4')
+        ->not->toContain('border border-slate-600 bg-slate-900 p-4 text-white')
+        ->not->toContain('border border-info-500 bg-[#E5F9FF] p-4')
+        ->not->toContain('border border-primary-500 bg-[#EAE5FF] p-4')
+        ->not->toContain('border border-success-500 bg-[#EDFFE5] p-4')
         ->not->toContain('max-w-[516px]')
         ->and(substr_count($header, '<div class="xl:hidden">'))->toBe(2)
         ->and(substr_count($header, 'h-[28px] w-[28px]'))->toBe(2)
@@ -268,6 +477,7 @@ it('keeps Dashcode account controls responsive and its app switcher compact', fu
         ->not->toContain('class="starter-account-summary"')
         ->not->toContain('class="starter-avatar')
         ->not->toContain('class="starter-account-name"')
+        ->and(substr_count($profile, 'data-starter-region="account-summary"'))->toBe(1)
         ->and($customCss)
         ->toContain('.starter-shell-header,')
         ->toContain('.starter-shell-footer {')
@@ -282,6 +492,10 @@ it('keeps Dashcode account controls responsive and its app switcher compact', fu
         ->not->toContain('color: var(--starter-primary);')
         ->not->toContain('cursor: pointer;')
         ->and($themeCss)
+        ->toContain('.dashcode-account-summary { background:#fff;overflow:hidden; }')
+        ->toContain('.dashcode-account-summary-row { align-items:center;display:grid;')
+        ->toContain('.dashcode-account-metadata { display:grid;gap:1.25rem;grid-template-columns:repeat(3,minmax(0,1fr)); }')
+        ->toContain('.dashcode-account-meta-icon-primary { background:var(--starter-primary-soft);color:var(--starter-primary); }')
         ->toContain(':where(.dashcode-app,.dashcode-auth) svg')
         ->not->toContain('.dashcode-app svg,.dashcode-auth svg')
         ->not->toContain('.starter-account-summary {')
@@ -336,16 +550,16 @@ it('keeps theme cosmetics native while preserving separate custom extension poin
         ->toContain('class="card card-sm"')
         ->not->toContain('bg-[#E5F9FF]')
         ->and($tablerAuthLayout)
-        ->toContain("asset('assets/tabler/css/custom.css')")
+        ->toContain("asset('assets/tabler/css/tabler.css')")
         ->not->toContain('<style>')
-        ->and(is_file(StarterPaths::path('theme-intake/dashcode/runtime/css/custom.css')))->toBeTrue()
-        ->and(is_file(StarterPaths::path('theme-intake/tabler/runtime/css/custom.css')))->toBeTrue();
+        ->and(is_file(StarterPaths::path('theme-intake/dashcode/runtime/css/dashcode.css')))->toBeTrue()
+        ->and(is_file(StarterPaths::path('theme-intake/tabler/runtime/css/tabler.css')))->toBeTrue();
 
     foreach (['app', 'auth', 'landing'] as $layout) {
         expect(file_get_contents($dashcodeRoot.'/templates/layouts/'.$layout.'.blade.php'))
-            ->toContain("asset('assets/dashcode/css/custom.css')");
+            ->toContain("asset('assets/dashcode/css/dashcode.css')");
         expect(file_get_contents($tablerRoot.'/templates/layouts/'.$layout.'.blade.php'))
-            ->toContain("asset('assets/tabler/css/custom.css')");
+            ->toContain("asset('assets/tabler/css/tabler.css')");
     }
 });
 
@@ -356,7 +570,7 @@ it('caps Dashcode shell regions at the Tabler-compatible desktop width', functio
     $header = file_get_contents(StarterPaths::path(
         'resources/themes/dashcode/views/starter/templates/layouts/navigation/header.blade.php',
     ));
-    $themeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/starter-theme.css'));
+    $themeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/dashcode.css'));
 
     expect($appLayout)
         ->toContain('class="starter-content-container page-content px-[15px] pb-8 pt-6 md:px-6"')
@@ -400,6 +614,19 @@ it('keeps the complete AI contract and indexed theme atlases', function (): void
             ->and($source['archive_sha256'])->toMatch('/^[a-f0-9]{64}$/')
             ->and(File::size($root.'/source-index.json'))->toBeLessThan(250_000);
     }
+
+    $vuexyRoot = StarterPaths::path('docs/template/vuexy');
+    $vuexyIndex = json_decode((string) file_get_contents($vuexyRoot.'/source-index.json'), true, flags: JSON_THROW_ON_ERROR);
+    $vuexyManifest = json_decode((string) file_get_contents($vuexyRoot.'/component-manifest.json'), true, flags: JSON_THROW_ON_ERROR);
+    $vuexySource = json_decode((string) file_get_contents($vuexyRoot.'/source.json'), true, flags: JSON_THROW_ON_ERROR);
+
+    expect($vuexyIndex['html_files'])->toBe(598)
+        ->and($vuexyIndex['html_files'])->toBe(count($vuexyIndex['files']))
+        ->and(array_diff($contract['required_components'], collect($vuexyManifest['components'])->pluck('id')->all()))->toBe([])
+        ->and($vuexySource['provider'])->toBe('local')
+        ->and($vuexySource['url'])->toBeNull()
+        ->and($vuexySource['distribution'])->toBe('private')
+        ->and($vuexySource['archive_sha256'])->toMatch('/^[a-f0-9]{64}$/');
 });
 
 it('keeps component selection and region order aligned across themes', function (): void {
@@ -410,7 +637,7 @@ it('keeps component selection and region order aligned across themes', function 
     );
 
     foreach ($contract['shared_layout_signatures'] as $view => $expectedRegions) {
-        foreach (['tabler', 'dashcode'] as $theme) {
+        foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
             $contents = file_get_contents(StarterPaths::path('resources/themes/'.$theme.'/views/'.$view));
             preg_match_all('/data-starter-region="([^"]+)"/', $contents, $matches);
 
@@ -418,6 +645,7 @@ it('keeps component selection and region order aligned across themes', function 
                 ->toBe($expectedRegions, $theme.' must preserve the shared component layout for '.$view);
         }
     }
+
 });
 
 it('keeps issue specifications chronologically sortable throughout their lifecycle', function (): void {
@@ -502,8 +730,15 @@ it('defines a complete theme from one intake instruction without vendor visual l
     $integration = file_get_contents(StarterPaths::path('docs/rules/theme-integration.md'));
     $connector = file_get_contents(StarterPaths::path('installer/templates/agents-connector.md'));
     $ui = file_get_contents(StarterPaths::path('docs/rules/ui-ux.md'));
+    $testing = file_get_contents(StarterPaths::path('docs/rules/testing.md'));
+    $registry = file_get_contents(StarterPaths::path('src/Support/Starter/StarterThemeRegistry.php'));
     $contract = json_decode(
         (string) file_get_contents(StarterPaths::path('docs/rules/theme-package-contract.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+    $evidenceSchema = json_decode(
+        (string) file_get_contents(StarterPaths::path('docs/rules/theme-verification-evidence.schema.json')),
         true,
         flags: JSON_THROW_ON_ERROR,
     );
@@ -511,9 +746,15 @@ it('defines a complete theme from one intake instruction without vendor visual l
 
     expect($agents)
         ->toContain('## One-shot theme integration contract')
+        ->toContain('fail-closed state machine')
+        ->toContain('.starter-theme-run/verification-evidence.json')
+        ->toContain('A phase may become `pass` only from current-run command or browser evidence')
+        ->toContain('Any change to source intake, baseline structure, contract, runtime Blade/CSS/JS, manifest, or ZIP invalidates')
+        ->toContain('php tools/validate-theme-evidence.php <theme-key>')
+        ->toContain('both a screenshot and recorded DOM/computed metrics at `1280x768` and `390x844`')
         ->toContain('theme-intake/<theme-key>-lama')
         ->toContain('PowerGrid width is content-driven')
-        ->toContain('css/custom.css')
+        ->toContain('runtime/css/<theme-key>.css')
         ->toContain('executable only while working in the canonical')
         ->and($integration)->toContain('Integrasikan theme <theme-key> dari theme-intake/<theme-key> sampai siap dipilih installer.')
         ->and($integration)->toContain('Pipeline ini hanya boleh dijalankan pada repository package canonical')
@@ -539,6 +780,14 @@ it('defines a complete theme from one intake instruction without vendor visual l
         ->and($integration)->toContain('hasil akhirnya seragam: ukur computed')
         ->and($integration)->toContain('height setiap input dan select')
         ->and($integration)->toContain('Packaging atomik')
+        ->and($integration)->toContain('## Fail-closed execution protocol for lower-cost LLMs')
+        ->and($integration)->toContain('Execute the following state machine in order')
+        ->and($integration)->toContain('Sampling is forbidden')
+        ->and($integration)->toContain('Objective geometry and visibility acceptance')
+        ->and($integration)->toContain('document root horizontal overflow is exactly `0px`')
+        ->and($integration)->toContain('tabs have at least `16px` clear separation')
+        ->and($integration)->toContain('Any edit to intake, baseline structural views, contract, target')
+        ->and($integration)->toContain('The last local command before a completion handoff')
         ->and($integration)->toContain('1280x768')
         ->and($ignore)->toContain('/theme-intake')
         ->and($ui)->toContain('practical intrinsic-width filter wrapper')
@@ -546,6 +795,10 @@ it('defines a complete theme from one intake instruction without vendor visual l
         ->and($ui)->not->toContain('Tabler PowerGrid follows')
         ->and($ui)->not->toContain('Always wrap tables inside a white background card')
         ->and($ui)->not->toContain('outermost `.modal`')
+        ->and($testing)->toContain('fail-closed current-run ledger')
+        ->toContain('CSS/media-query inspection is not rendered responsive evidence')
+        ->and($contract['schema_version'])->toBe(2)
+        ->and($registry)->toContain('private const PACKAGE_CONTRACT_SCHEMA_VERSION = 2;')
         ->and($contract['one_instruction']['authorized_outputs'])->toBe([
             'canonical-package-integration',
             'template-runtime-archive',
@@ -564,20 +817,86 @@ it('defines a complete theme from one intake instruction without vendor visual l
             'vendor-native-cosmetic-composition',
             'atomic-packaging-and-browser-verification',
         ])
-        ->and($contract['comparison_policy']['existing_theme_is_visual_target'])->toBeFalse()
+        ->and($contract['deterministic_execution'])->toMatchArray([
+            'mode' => 'fail-closed',
+            'rules_must_be_read_in_full_before_editing' => true,
+            'run_ledger_path' => 'theme-intake/<theme-key>/.starter-theme-run/verification-evidence.json',
+            'run_ledger_schema' => 'docs/rules/theme-verification-evidence.schema.json',
+            'completion_validator' => 'php tools/validate-theme-evidence.php <theme-key>',
+            'pass_requires_current_run_evidence' => true,
+            'sampling_forbidden' => true,
+            'phase_order_enforced' => true,
+            'invalidate_changed_stage_and_all_downstream' => true,
+            'resume_from_first_non_passing_gate' => true,
+        ])
+        ->and($contract['deterministic_execution']['stage_order'])->toBe([
+            '0-preflight',
+            '1-source',
+            '2-structure',
+            '3-cosmetics',
+            '4-browser',
+            '5-package-docs',
+            '6-final',
+        ])
+        ->and($contract['comparison_policy']['existing_theme_is_structural_target'])->toBeTrue()
+        ->and($contract['comparison_policy']['existing_theme_is_cosmetic_target'])->toBeFalse()
         ->and($contract['comparison_policy']['structural_parity_precedes_cosmetics'])->toBeTrue()
         ->and($contract['native_css_policy']['compiled_class_existence_required'])->toBeTrue()
-        ->and($contract['native_css_policy']['custom_stylesheet_target'])->toBe('runtime/css/custom.css')
+        ->and($contract['native_css_policy']['custom_stylesheet_target_pattern'])->toBe('runtime/css/<theme-key>.css')
+        ->and($contract['native_css_policy']['custom_script_target_pattern'])->toBe('runtime/js/<theme-key>.js')
+        ->and($contract['native_css_policy']['named_custom_assets_required_per_theme'])->toBeTrue()
         ->and($contract['powergrid_width_policy']['layout'])->toBe('content-driven-auto')
         ->and($contract['powergrid_width_policy']['fixed_table_layout_forbidden'])->toBeTrue()
         ->and($contract['powergrid_width_policy']['overflow_owner'])->toBe('inner-table-frame')
         ->and($contract['comparison_host_policy']['layout_order'])->toBe(['vertical', 'horizontal'])
         ->and($contract['browser_matrix']['desktop_safe_area'])->toBe('1280x768')
+        ->and($contract['browser_matrix']['mobile_safe_area'])->toBe('390x844')
+        ->and($contract['browser_matrix']['required_viewports'])->toBe(['1280x768', '390x844'])
+        ->and($contract['browser_matrix']['screenshot_and_computed_metrics_required_per_row'])->toBeTrue()
+        ->and($contract['browser_matrix']['computed_layout_inspection_always_required'])->toBeTrue()
+        ->and($contract['browser_matrix']['css_source_inspection_cannot_replace_rendered_mobile_evidence'])->toBeTrue()
+        ->and($contract['geometry_acceptance'])->toMatchArray([
+            'root_horizontal_overflow_px' => 0,
+            'structural_measurement_max_delta_px' => 4,
+            'structural_measurement_max_delta_percent' => 2,
+            'repeated_family_height_max_delta_px' => 2,
+            'aligned_edge_max_delta_px' => 2,
+            'optical_center_max_delta_px' => 1,
+            'tab_to_section_heading_min_gap_px' => 16,
+            'action_to_divider_or_edge_min_gap_px' => 16,
+            'media_preview_visible_boundary_required' => true,
+        ])
+        ->and($contract['change_invalidation'])->toMatchArray([
+            'global_selector_or_token_change_retests_all_consumers' => true,
+            'component_change_retests_all_owner_pages_and_states' => true,
+            'javascript_change_retests_initial_load_livewire_navigation_and_morph' => true,
+            'archive_change_requires_reinstall_and_browser_smoke' => true,
+        ])
         ->and($contract['completion_gates'])->toContain(
+            'valid-current-run-verification-ledger',
+            'verification-ledger-validator-passes',
+            'current-input-fingerprints',
             'side-by-side-structural-parity',
+            'full-page-state-matrix-without-sampling-or-skips',
+            'screenshot-and-computed-metrics-per-browser-row',
+            'objective-geometry-tolerances',
             'archive-manifest-checksum-consistency',
+            'fresh-runtime-post-package-browser-smoke',
             'no-unexplained-todo-or-known-core-ui-bug',
-        );
+        )
+        ->and($evidenceSchema['$schema'])->toBe('https://json-schema.org/draft/2020-12/schema')
+        ->and($evidenceSchema['required'])->toContain('fingerprints', 'stages', 'page_matrix', 'automated_checks', 'completion')
+        ->and($evidenceSchema['properties']['page_matrix']['items']['required'])->toContain(
+            'page_group',
+            'baseline_screenshot',
+            'target_screenshot',
+            'vendor_references',
+            'computed_metrics',
+            'console_errors',
+            'network_errors',
+        )
+        ->and($evidenceSchema['allOf'])->not->toBeEmpty()
+        ->and(is_file(StarterPaths::path('tools/validate-theme-evidence.php')))->toBeTrue();
 });
 
 it('uses a required interactive installation wizard without public identity shortcuts', function (): void {

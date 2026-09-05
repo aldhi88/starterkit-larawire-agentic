@@ -3,6 +3,7 @@
 use Aldhi88\StarterKit\Support\Starter\StarterDomain;
 use Aldhi88\StarterKit\Themes\Starter\DashcodePowerGridTheme;
 use Aldhi88\StarterKit\Themes\Starter\TablerPowerGridTheme;
+use Aldhi88\StarterKit\Themes\Starter\VuexyPowerGridTheme;
 
 $configuredDomain = strtolower(rtrim((string) env('APP_DOMAIN'), '.'));
 $domain = $configuredDomain !== ''
@@ -36,6 +37,18 @@ return [
             'assets' => 'assets/dashcode',
             'docs' => 'docs/template/dashcode',
             'powergrid' => DashcodePowerGridTheme::class,
+            'layouts' => [
+                'vertical' => 'starter.templates.layouts.navigation.vertical',
+                'horizontal' => 'starter.templates.layouts.navigation.horizontal',
+            ],
+        ],
+        'vuexy' => [
+            'label' => 'Vuexy (licensed local runtime)',
+            'root' => dirname(__DIR__),
+            'views' => 'resources/themes/vuexy/views',
+            'assets' => 'assets/vuexy',
+            'docs' => 'docs/template/vuexy',
+            'powergrid' => VuexyPowerGridTheme::class,
             'layouts' => [
                 'vertical' => 'starter.templates.layouts.navigation.vertical',
                 'horizontal' => 'starter.templates.layouts.navigation.horizontal',

@@ -1,0 +1,93 @@
+{
+    "schema_version": 1,
+    "theme": "vuexy",
+    "files": [
+        {
+            "source": "runtime/css/vuexy.css",
+            "target": "css/vuexy.css",
+            "sha256": "d4df9c0a32c07b692ad0adac6713904be5d9d443bd4296c41ae68596378acf5b",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/errors/layout.blade.php",
+                "resources/themes/vuexy/views/starter/templates/layouts/head.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/img/branding/vuexy-mark.svg",
+            "target": "img/branding/vuexy-mark.svg",
+            "sha256": "8ae50905df96b653733278d7d055a7403dec306b99041c60af0c09d65e75a223",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/vuexy/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/vuexy/views/starter/templates/layouts/brand.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/img/favicon/favicon.ico",
+            "target": "img/favicon/favicon.ico",
+            "sha256": "fd7b39f702227b69ee9309dd32eda3d524fe0cbbf9dc4f9dea5a3d3eb352c282",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/errors/layout.blade.php",
+                "resources/themes/vuexy/views/starter/templates/layouts/head.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/img/illustrations/auth-login-illustration-light.png",
+            "target": "img/illustrations/auth-login-illustration-light.png",
+            "sha256": "0d03addc0c3b8aca0aa9f44c774b60fe1ec4d7e75c02b652007f3b238c4e69a6",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/templates/layouts/auth.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/img/illustrations/bg-shape-image-light.png",
+            "target": "img/illustrations/bg-shape-image-light.png",
+            "sha256": "dc481ddbaf981ef54f72384b3b89615fb434a6a81e355e2dc372afddb99ca610",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/templates/layouts/auth.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/js/vuexy.js",
+            "target": "js/vuexy.js",
+            "sha256": "5c4e3ab7bf1baae45a85c174075afe98c963aae2f69e12ed3f85730a110019eb",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/errors/layout.blade.php",
+                "resources/themes/vuexy/views/starter/templates/layouts/scripts.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/vendor/css/core.css",
+            "target": "vendor/css/core.css",
+            "sha256": "e636eda00a7861807c4948048aca19acc731173c3101d521a6a5eb877c86489e",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/errors/layout.blade.php",
+                "resources/themes/vuexy/views/starter/templates/layouts/head.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/vendor/css/pages/page-auth.css",
+            "target": "vendor/css/pages/page-auth.css",
+            "sha256": "5aec1c057a4117b67de2459fed9c81d59da96922effe2edad9a6dc3e69a14e16",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/templates/layouts/head.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/vendor/fonts/iconify-icons.css",
+            "target": "vendor/fonts/iconify-icons.css",
+            "sha256": "6d5cbc5f7bd5de9ec92ec30fab77d20dc885dbac8a8af72a09d1d60c7b2ce1a3",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/errors/layout.blade.php",
+                "resources/themes/vuexy/views/starter/templates/layouts/head.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/vendor/js/helpers.js",
+            "target": "vendor/js/helpers.js",
+            "sha256": "4b5c8c344aa6db9c5fbfd394129d693b630cb311755801b448aa0b56a7b351f8",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/templates/layouts/head.blade.php"
+            ]
+        }
+    ]
+}

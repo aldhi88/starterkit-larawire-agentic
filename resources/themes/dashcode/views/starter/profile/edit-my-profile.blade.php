@@ -23,51 +23,55 @@
         </div>
     @endif
 
-    <section class="mb-4" aria-label="Ringkasan akun" data-starter-region="account-summary">
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
-            <div class="flex min-w-0 items-center gap-4 rounded-[6px] border border-slate-600 bg-slate-900 p-4 text-white">
-                <span class="avatar avatar-lg flex-shrink-0" style="background-image: url({{ $loginAvatarUrl }})"></span>
-                <div class="min-w-0">
-                    <div class="text-truncate text-lg font-medium text-white">{{ $login->name }}</div>
-                    <div class="text-truncate text-sm text-slate-300" title="{{ $login->email }}">{{ $login->email }}</div>
-                    <div class="mt-2">
-                        <span class="badge bg-primary-500 bg-opacity-30 text-white">{{ $login->role?->name ?? 'Tanpa Role' }}</span>
+    <section class="card dashcode-account-summary mb-4" aria-label="Ringkasan akun" data-starter-region="account-summary">
+        <div class="card-body">
+            <div class="dashcode-account-summary-row">
+                <div class="dashcode-account-identity">
+                    <span class="avatar avatar-lg flex-shrink-0" style="background-image: url({{ $loginAvatarUrl }})"></span>
+                    <div class="min-w-0">
+                        <div class="dashcode-account-name text-truncate">{{ $login->name }}</div>
+                        <div class="dashcode-account-email text-truncate" title="{{ $login->email }}">{{ $login->email }}</div>
+                        <div class="mt-2">
+                            <span class="badge dashcode-account-role">{{ $login->role?->name ?? 'Tanpa Role' }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="flex items-center gap-4 rounded-[6px] border border-info-500 bg-[#E5F9FF] p-4">
-                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-info-700 text-white">
-                    @include('starter.templates.layouts.icon', ['name' => 'shield-check', 'class' => 'm-0'])
-                </span>
-                <div class="min-w-0">
-                    <div class="mb-1 text-sm font-medium text-slate-600">Email terverifikasi</div>
-                    <div class="font-medium text-slate-900">{{ $login->email_verified_at?->format('d M Y H:i') ?? '-' }}</div>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 rounded-[6px] border border-primary-500 bg-[#EAE5FF] p-4">
-                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-primary-700 text-white">
-                    @include('starter.templates.layouts.icon', ['name' => 'user-circle', 'class' => 'm-0'])
-                </span>
-                <div class="min-w-0">
-                    <div class="mb-1 text-sm font-medium text-slate-600">Username</div>
-                    <div class="text-truncate font-medium text-slate-900" title="{{ $login->username }}">{{ $login->username }}</div>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 rounded-[6px] border border-success-500 bg-[#EDFFE5] p-4">
-                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-success-700 text-white">
-                    @include('starter.templates.layouts.icon', ['name' => 'history', 'class' => 'm-0'])
-                </span>
-                <div class="min-w-0">
-                    <div class="mb-1 text-sm font-medium text-slate-600">Login terakhir</div>
-                    <div class="font-medium text-slate-900">{{ $login->last_login_at?->format('d M Y H:i') ?? '-' }}</div>
+                <div class="dashcode-account-metadata">
+                    <div class="dashcode-account-meta-item">
+                        <span class="dashcode-account-meta-icon dashcode-account-meta-icon-info">
+                            @include('starter.templates.layouts.icon', ['name' => 'shield-check', 'class' => 'm-0'])
+                        </span>
+                        <div class="min-w-0">
+                            <div class="dashcode-account-meta-label">Email terverifikasi</div>
+                            <div class="dashcode-account-meta-value">{{ $login->email_verified_at?->format('d M Y H:i') ?? '-' }}</div>
+                        </div>
+                    </div>
+                    <div class="dashcode-account-meta-item">
+                        <span class="dashcode-account-meta-icon dashcode-account-meta-icon-primary">
+                            @include('starter.templates.layouts.icon', ['name' => 'user-circle', 'class' => 'm-0'])
+                        </span>
+                        <div class="min-w-0">
+                            <div class="dashcode-account-meta-label">Username</div>
+                            <div class="dashcode-account-meta-value text-truncate" title="{{ $login->username }}">{{ $login->username }}</div>
+                        </div>
+                    </div>
+                    <div class="dashcode-account-meta-item">
+                        <span class="dashcode-account-meta-icon dashcode-account-meta-icon-success">
+                            @include('starter.templates.layouts.icon', ['name' => 'history', 'class' => 'm-0'])
+                        </span>
+                        <div class="min-w-0">
+                            <div class="dashcode-account-meta-label">Login terakhir</div>
+                            <div class="dashcode-account-meta-value">{{ $login->last_login_at?->format('d M Y H:i') ?? '-' }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="dashcode-profile-layout">
-        <div>
+    <div class="dashcode-profile-layout starter-profile-layout">
+        <div class="starter-profile-nav-column">
             <aside class="card dashcode-profile-menu-card" aria-label="Pengaturan akun" data-starter-region="section-navigation">
                 <div class="card-body">
                     <h3 class="dashcode-profile-menu-title">Pengaturan Akun</h3>
@@ -205,8 +209,8 @@
                                 </div>
                                 @error('passwordForm.current_password') <div id="profile-current-password-error" class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
-                            <div>
-                                <div class="dashcode-profile-security-guide dashcode-full-height">
+                            <div class="dashcode-profile-security-guide-row" data-starter-password-guidance>
+                                <div class="dashcode-profile-security-guide">
                                     <span class="dashcode-profile-security-guide-icon">
                                         @include('starter.templates.layouts.icon', ['name' => 'info-circle', 'class' => 'm-0'])
                                     </span>

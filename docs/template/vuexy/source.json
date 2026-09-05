@@ -1,0 +1,12 @@
+{
+    "schema_version": 1,
+    "theme": "vuexy",
+    "provider": "local",
+    "url": null,
+    "archive_sha256": "062dec226c8b7c73fa78911e6bf5fe97d70c5703603f234a9d83763e1e462b89",
+    "archive_max_bytes": 1048576,
+    "required_local_path": "theme-intake/vuexy",
+    "license": "Commercial; owner confirmed personal/internal use on 2026-09-05. Public redistribution is not authorized.",
+    "distribution": "private",
+    "html_files": 598
+}

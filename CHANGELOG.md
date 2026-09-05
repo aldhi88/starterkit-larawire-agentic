@@ -5,6 +5,37 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+### Added
+
+- Add the licensed-private Vuexy 3.0.0 theme with independent vertical and
+  horizontal starter views, PowerGrid adapter, indexed source atlas, and a
+  checksum-verified local runtime archive workflow.
+- Require every theme addition to update the canonical package, documentation
+  site, and template-repository documentation and distribution notices.
+
+### Changed
+
+- Tighten the cross-theme contract so layout and component composition remain
+  identical while each theme deliberately selects its native cosmetic variants.
+- Refine Vuexy spacing, profile proportions, icon alignment, responsive tabs,
+  semantic color hierarchy, and PowerGrid pagination density.
+- Make the profile section-navigation surface match the active content height
+  on desktop across Tabler, DashCode, and Vuexy while retaining natural height
+  in stacked responsive layouts.
+- Replace DashCode's four-card account summary with the shared single white row
+  while retaining native DashCode typography, medallions, and responsive styling.
+- Place password requirements on a dedicated full-width row before the paired
+  new-password controls in every theme.
+- Restore Vuexy settings-section spacing and a visible, proportionate company
+  logo preview surface.
+- Rebalance Vuexy activity-summary cards with compact metric typography,
+  consistently sized icon medallions, and a tighter vertical rhythm.
+- Make new-theme templating fail closed for lower-cost LLMs through an ordered
+  state machine, fingerprinted run ledger, full browser-state matrix, objective
+  geometry tolerances, evidence invalidation, and a machine-readable schema.
+
 ## [1.1.1] - 2026-08-25
 
 ### Changed

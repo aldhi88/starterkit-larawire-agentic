@@ -77,8 +77,8 @@
         </div>
     </section>
 
-    <div class="row g-3 align-items-start">
-        <div class="col-12 col-lg-3">
+    <div class="row g-3 align-items-stretch starter-profile-layout">
+        <div class="col-12 col-lg-3 starter-profile-nav-column">
             <aside class="card" aria-label="Pengaturan akun" data-starter-region="section-navigation">
                 <div class="card-body p-3">
                     <h3 class="card-title mb-1">Pengaturan Akun</h3>
@@ -136,7 +136,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="border rounded p-3 mb-4">
+                        <div class="mb-4">
                             <div class="row align-items-center g-3">
                                 <div class="col-auto">
                                     <span class="avatar avatar-xl" style="background-image: url({{ $profilePhotoPreviewUrl }})"></span>
@@ -205,8 +205,8 @@
                                 </div>
                                 @error('passwordForm.current_password') <div id="profile-current-password-error" class="invalid-feedback d-block">{{ $message }}</div> @enderror
                             </div>
-                            <div class="col-md-6">
-                                <div class="alert alert-info h-100 mb-0" role="note">
+                            <div class="col-12" data-starter-password-guidance>
+                                <div class="alert alert-info mb-0" role="note">
                                     <div class="d-flex gap-2">
                                         <span class="alert-icon flex-shrink-0">@include('starter.templates.layouts.icon', ['name' => 'info-circle', 'class' => 'm-0'])</span>
                                         <div>

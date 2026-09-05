@@ -87,11 +87,22 @@ separate interaction and may follow the active theme.
 
 ## Cross-theme contract and visual ownership
 
-- Themes share only the product contract: the same information, actions, authorization, validation, loading/empty/error states, accessibility meaning, and responsive capability must remain available.
-- Every visual decision is theme-owned. Select the component, hierarchy, markup, class names, density, typography, spacing, color, icon treatment, and interaction presentation from the active vendor template.
-- Never use one theme as the visual fallback for another. A new theme must use its own table, toolbar, dropdown, pagination, form, card, tab, alert, and modal presentation rather than restyling another theme.
+- Themes share the complete structural contract: page layout, hierarchy, component type and count, order, grouping, placement, practical proportions, density, information, actions, authorization, validation, loading/empty/error states, accessibility meaning, and responsive behavior must remain equivalent.
+- Cosmetic decisions are theme-owned. Select class names and vendor-required wrappers, typography, colors, borders, radii, shadows, icons, and control decoration from the active vendor template without changing the shared structural contract.
+- Never use one theme as the cosmetic fallback for another. A new theme must apply its own native visual variants to the shared table, toolbar, dropdown, pagination, form, card, tab, alert, and modal composition rather than importing another theme's style.
 - Shared `data-starter-*`, Livewire events, PHP data, and authorization may be reused. Theme Blade and theme assets must translate that shared behavior into their own vendor component patterns.
-- Identical theme view files are acceptable only when the file has no visual hierarchy of its own, such as a thin status/error forwarder. A rendered component or page with visible structure must be composed independently from its theme atlas.
+- Shared semantic Blade structure is valid and preferred when it protects cross-theme layout parity. Each theme may change only the classes and wrappers required to express that structure through its own atlas and runtime.
+
+## Cosmetic selection and color discipline
+
+- For each visible component family, shortlist three to five indexed native variants and inspect one to three closest examples. Choose deliberately from semantic role, hierarchy, density, adjacent surfaces, interaction frequency, and responsive cost; do not use the first available variant or reproduce a screenshot mechanically.
+- Use one stable semantic color map throughout a theme: `primary` for the main action/current navigation and neutral product identity, `success` for verified/active/completed states, `info` for non-critical guidance, `warning` for conditions requiring attention, `danger` for destructive/error states, and `secondary` for neutral supporting metadata. Do not assign colors merely to make neighboring widgets different.
+- A tinted/label surface must set its matching readable foreground explicitly. Never inherit white text on a pale tint, place a low-opacity icon on a similar tint, or use saturated text and background together when the component is informational rather than urgent. Target WCAG AA text contrast (4.5:1 for normal text, 3:1 for large text) and at least 3:1 for meaningful icons/control boundaries.
+- Establish one spacing rhythm and one control-height family per context. Repeated cards, icon medallions, form controls, table toolbars, pagination rows, dividers, and action footers must align by measured bounding boxes; inherited vendor margins are not evidence that the result is proportional.
+- In a desktop two-column settings/detail composition, the section-navigation surface must stretch to the measured height of its sibling content surface. On stacked responsive layouts each surface returns to its natural content height. Apply this geometry consistently in every registered theme rather than patching a single theme screenshot.
+- A shared account-summary region remains one containing surface and one desktop row in every theme. Theme cosmetics may style its avatar, icon medallions, type, and accents, but must not split the same identity and metadata inventory into separate dashboard cards. The row may wrap or stack only at the responsive breakpoint.
+- Password-requirement guidance must occupy its own full-width row after current-password verification and immediately before the new-password and confirmation controls. Never pair that guidance as the visual counterpart of the current-password field; keep the two new-credential controls paired on desktop and stack all controls in reading order on narrow screens.
+- Prefer a quiet neutral surface with one clear accent over rainbow decoration. A cluster may use multiple semantic colors only when each color communicates a different state that the user needs to distinguish.
 
 ## Base rules
 

@@ -96,12 +96,13 @@ php artisan starter:sync
 
 ### Themes and layouts
 
-Starterkit includes two themes with `vertical` and `horizontal` layouts:
+Starterkit includes themes with `vertical` and `horizontal` layouts:
 
 | Theme | Source license | Notes |
 |---|---|---|
 | Tabler | MIT | Use under the Tabler license |
 | DashCode | Commercial | License managed by the owner for internal team projects |
+| Vuexy 3.0.0 | Commercial, local/private | Licensed personal/internal use; package and browser matrix verified |
 
 The selection is stored in the environment:
 
@@ -110,12 +111,18 @@ STARTER_THEME=tabler
 STARTER_LAYOUT=vertical
 ```
 
-The `starter:install` wizard asks for Tabler or DashCode and a layout. The
-installer automatically downloads a pinned GitHub archive, verifies its size
-and checksum, and publishes the minimal runtime to `public/assets/<theme>/`.
-No manual template download or copy step is required. DashCode vendor sources
-and demo pages are not distributed. Its runtime is intended for internal
-projects covered by the repository owner's vendor license.
+The `starter:install` wizard asks for Tabler, DashCode, or Vuexy and a layout.
+Open-source themes use a pinned GitHub archive; the installer verifies its size
+and checksum and publishes the minimal runtime to `public/assets/<theme>/`.
+Vuexy uses the owner-provided local runtime verified against `VUEXY_SHA256SUMS`;
+extract its private archive into `theme-intake/vuexy/` before installation. It
+has no public download URL. Vendor sources and demo pages are not distributed.
+Commercial runtimes are intended for internal projects covered by the
+repository owner's vendor license.
+Every theme preserves the same page layout, content hierarchy, component types
+and count, ordering, grouping, placement, and density. Only cosmetic styling
+and vendor-required wrappers may differ. Each theme's custom integration assets
+must be named `css/<theme-key>.css` and `js/<theme-key>.js`.
 Archives are maintained separately in
 [`starterkit-larawire-agentic-template`](https://github.com/aldhi88/starterkit-larawire-agentic-template).
 
@@ -153,9 +160,9 @@ From the Laravel project root:
 composer require aldhi88/starterkit-larawire-agentic
 ```
 
-No manual template download or copy is needed. After theme selection, the
-installer downloads Tabler assets from GitHub and verifies them before changing
-the project's source or database.
+No manual demo-template copy is needed. After theme selection, the installer
+downloads and verifies an open-source runtime, or validates the licensed local
+Vuexy runtime, before changing the project's source or database.
 
 Example `.env` values:
 
@@ -176,7 +183,7 @@ Run the installer:
 php artisan starter:install
 ```
 
-The wizard asks for the theme (Tabler or DashCode), the vertical/horizontal
+The wizard asks for the theme (Tabler, DashCode, or locally licensed Vuexy), the vertical/horizontal
 layout, then these five identities:
 
 | Question | Spaces allowed? | Example input |
@@ -254,8 +261,9 @@ php artisan starter:sync
 
 Sync also verifies the theme recipe and publishes package, PowerGrid, and
 Livewire runtime assets. There is no separate asset-publish command. Commit the
-generated `public/assets/<theme>/`. Sync can redownload the verified GitHub
-archive when the local asset cache is unavailable.
+generated `public/assets/<theme>/`. For open-source themes, sync can redownload
+the verified GitHub archive when the local asset cache is unavailable; Vuexy
+requires the licensed local runtime instead.
 
 ### Update the package locally
 

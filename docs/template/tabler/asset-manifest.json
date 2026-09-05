@@ -2,14 +2,87 @@
     "schema_version": 1,
     "theme": "tabler",
     "files": [
-        {"source": "runtime/css/starter-theme.css", "target": "css/starter-theme.css", "sha256": "c317fd59233d44e2280a611e45109075d95db0930cb7db9ca28d9de71a90fe31", "referenced_by": ["resources/themes/tabler/views/starter/templates/layouts/app.blade.php", "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php", "resources/themes/tabler/views/starter/templates/layouts/landing.blade.php", "resources/themes/tabler/views/starter/errors/layout.blade.php"]},
-        {"source": "runtime/css/custom.css", "target": "css/custom.css", "sha256": "a68cc8dfa438f308455ee978e133d3a9fcef9d081c62f6d3001d2febb5dd869f", "referenced_by": ["resources/themes/tabler/views/starter/templates/layouts/app.blade.php", "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php", "resources/themes/tabler/views/starter/templates/layouts/landing.blade.php", "resources/themes/tabler/views/starter/errors/layout.blade.php"]},
-        {"source": "runtime/dist/css/tabler-vendors.min.css", "target": "dist/css/tabler-vendors.min.css", "sha256": "2e3431497c97041fd1ddcd839b13c25b1a2c504309448174c9cce7cd068616a1", "referenced_by": ["resources/themes/tabler/views/starter/templates/layouts/app.blade.php"]},
-        {"source": "runtime/dist/css/tabler.min.css", "target": "dist/css/tabler.min.css", "sha256": "1df55eae3e490f83607b1d708d1a47ee86a42b10b0b633d8620a4171295a194d", "referenced_by": ["resources/themes/tabler/views/starter/templates/layouts/app.blade.php", "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php", "resources/themes/tabler/views/starter/templates/layouts/landing.blade.php", "resources/themes/tabler/views/starter/errors/layout.blade.php"]},
-        {"source": "runtime/dist/js/tabler-theme.min.js", "target": "dist/js/tabler-theme.min.js", "sha256": "e6f3c850c97413628be54842dab5abbb7d1265321976837b3a81df92218a6229", "referenced_by": ["resources/themes/tabler/views/starter/templates/layouts/app.blade.php", "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php"]},
-        {"source": "runtime/dist/js/tabler.min.js", "target": "dist/js/tabler.min.js", "sha256": "b88ed24c6731f562d09686cae1560e78501c5d39f7189a10d124d72405856314", "referenced_by": ["resources/themes/tabler/views/starter/templates/layouts/app.blade.php", "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php"]},
-        {"source": "runtime/js/starter-theme.js", "target": "js/starter-theme.js", "sha256": "6a741d695668493d17d7e719fc1dd6f2ac7e78e76019490ab69f7d236f9bd711", "referenced_by": ["resources/themes/tabler/views/starter/templates/layouts/app.blade.php"]},
-        {"source": "runtime/static/logo-small.svg", "target": "static/logo-small.svg", "sha256": "91dd78a0d197833bfa7afb3f737ac04f1859156896e5d7ab99236cc97854ca89", "referenced_by": ["resources/themes/tabler/views/starter/templates/layouts/app.blade.php", "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php"]},
-        {"source": "runtime/static/logo-white.svg", "target": "static/logo-white.svg", "sha256": "a0e9cfb1c04c89c384db84bc0ffdc108c6153ec5b8b5ba201d3ae2e77c8333cc", "referenced_by": ["resources/themes/tabler/views/starter/templates/layouts/app.blade.php"]}
+        {
+            "source": "runtime/css/tabler.css",
+            "target": "css/tabler.css",
+            "sha256": "9628bb2709b6c548cbe92fc7982ab69f8532609b45e19acc513ad764a9e13406",
+            "referenced_by": [
+                "resources/themes/tabler/views/starter/errors/layout.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/landing.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/dist/css/tabler-vendors.min.css",
+            "target": "dist/css/tabler-vendors.min.css",
+            "sha256": "2e3431497c97041fd1ddcd839b13c25b1a2c504309448174c9cce7cd068616a1",
+            "referenced_by": [
+                "resources/themes/tabler/views/starter/templates/layouts/app.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/dist/css/tabler.min.css",
+            "target": "dist/css/tabler.min.css",
+            "sha256": "1df55eae3e490f83607b1d708d1a47ee86a42b10b0b633d8620a4171295a194d",
+            "referenced_by": [
+                "resources/themes/tabler/views/starter/errors/layout.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/landing.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/dist/js/tabler-theme.min.js",
+            "target": "dist/js/tabler-theme.min.js",
+            "sha256": "e6f3c850c97413628be54842dab5abbb7d1265321976837b3a81df92218a6229",
+            "referenced_by": [
+                "resources/themes/tabler/views/starter/errors/layout.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/landing.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/dist/js/tabler.min.js",
+            "target": "dist/js/tabler.min.js",
+            "sha256": "b88ed24c6731f562d09686cae1560e78501c5d39f7189a10d124d72405856314",
+            "referenced_by": [
+                "resources/themes/tabler/views/starter/errors/layout.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/landing.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/js/tabler.js",
+            "target": "js/tabler.js",
+            "sha256": "6a741d695668493d17d7e719fc1dd6f2ac7e78e76019490ab69f7d236f9bd711",
+            "referenced_by": [
+                "resources/themes/tabler/views/starter/errors/layout.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/landing.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/static/logo-small.svg",
+            "target": "static/logo-small.svg",
+            "sha256": "91dd78a0d197833bfa7afb3f737ac04f1859156896e5d7ab99236cc97854ca89",
+            "referenced_by": [
+                "resources/themes/tabler/views/starter/errors/layout.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/app.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php",
+                "resources/themes/tabler/views/starter/templates/layouts/landing.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/static/logo-white.svg",
+            "target": "static/logo-white.svg",
+            "sha256": "a0e9cfb1c04c89c384db84bc0ffdc108c6153ec5b8b5ba201d3ae2e77c8333cc",
+            "referenced_by": [
+                "resources/themes/tabler/views/starter/templates/layouts/app.blade.php"
+            ]
+        }
     ]
 }

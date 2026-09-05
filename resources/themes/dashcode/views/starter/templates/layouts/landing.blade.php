@@ -6,14 +6,14 @@
     <title>{{ $title ?? config('app.name') }} | {{ config('app.name') }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/dashcode/images/logo/favicon.svg') }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/app.css') }}?v={{ filemtime(public_path('assets/dashcode/css/app.css')) }}">
-    <link rel="stylesheet" href="{{ asset('assets/dashcode/css/starter-theme.css') }}?v={{ filemtime(public_path('assets/dashcode/css/starter-theme.css')) }}">
-    <link rel="stylesheet" href="{{ asset('assets/dashcode/css/custom.css') }}?v={{ filemtime(public_path('assets/dashcode/css/custom.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/dashcode/css/dashcode.css') }}?v={{ filemtime(public_path('assets/dashcode/css/dashcode.css')) }}">
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')
     @livewireStyles
 </head>
 <body class="font-inter bg-white dashcode-landing" data-starter-theme="dashcode">
     {{ $slot }}
+    <script src="{{ asset('assets/dashcode/js/dashcode.js') }}?v={{ filemtime(public_path('assets/dashcode/js/dashcode.js')) }}" data-navigate-once defer></script>
     @livewireScripts
     @stack('page-scripts')
     @includeIf('extensions.starter.layout.body-end')

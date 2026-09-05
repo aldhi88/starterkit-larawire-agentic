@@ -33,4 +33,18 @@ is explicit; Composer archive contains no raw vendor HTML/assets; and the
 fresh-host browser matrix proves both layouts without cross-theme residue. A
 scaffold-only or manifest-only integration is not a passing theme.
 
+Every new or re-audited theme must maintain the fail-closed current-run ledger at
+`theme-intake/<theme-key>/.starter-theme-run/verification-evidence.json` and keep
+it valid against `theme-verification-evidence.schema.json`. The final ledger may
+say `pass` only when all input fingerprints are current, every ordered stage is
+`pass`, every automated command exits zero, every required page/state/layout at
+`1280x768` and `390x844` has both screenshot and computed-layout evidence, and
+the known-defect and skipped-check lists are empty. CSS/media-query inspection is not rendered responsive evidence. A shared component, selector, token, adapter,
+or JavaScript change invalidates and reopens every consuming matrix row; an
+archive change additionally requires reinstalling that exact archive and
+repeating browser smoke from the packaged runtime.
+The final mandatory check is
+`php tools/validate-theme-evidence.php <theme-key>`; any non-zero exit keeps the
+theme incomplete and must be fixed without weakening the validator or evidence.
+
 Done means: acceptance criteria met; no unexplained TODO/TBD; relevant tests and Pint pass; App config/routes were dry-run synced; browser verification was completed for UX changes; no unapproved scope/dependency/config/business decision exists; and the confirmed/approved single issue specification is archived only after verified completion. Core changes must be focused-committed and released canonically before the Laravel host updates its Composer lock.

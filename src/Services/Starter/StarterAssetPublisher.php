@@ -99,11 +99,16 @@ class StarterAssetPublisher
 
     public function explainMissingThemeSource(Command $command, string $theme): void
     {
+        $source = $this->themeSourceMetadata($theme);
+        $privateLocalTheme = ($source['provider'] ?? null) === 'local';
+
         if (app()->isProduction()) {
             $command->line('<fg=red;options=bold>ASET RUNTIME THEME PRODUCTION TIDAK TERSEDIA ATAU TIDAK VALID.</>');
             $command->line("Theme aktif: {$theme}");
             $command->line('Jangan download atau menyalin source template ke server production.');
-            $command->line('Di local: jalankan starter:sync agar arsip GitHub diunduh dan aset runtime dibuat ulang, lalu commit public/assets/'.$theme.'/');
+            $command->line($privateLocalTheme
+                ? 'Di local: siapkan runtime berlisensi owner pada directory theme-intake/'.$theme.'/runtime, jalankan starter:sync, lalu commit public/assets/'.$theme.'/.'
+                : 'Di local: jalankan starter:sync agar arsip GitHub diunduh dan aset runtime dibuat ulang, lalu commit public/assets/'.$theme.'/');
             $command->line('Di production: pull commit tersebut dan jalankan kembali starter:deploy.');
 
             return;
@@ -111,7 +116,9 @@ class StarterAssetPublisher
 
         $command->line('<fg=red;options=bold>ASET THEME GAGAL DISIAPKAN.</>');
         $command->line("Theme: {$theme}");
-        $command->line('Periksa koneksi internet dan pastikan URL arsip GitHub theme dapat diakses.');
+        $command->line($privateLocalTheme
+            ? 'Theme ini bersifat lokal/privat. Sediakan runtime berlisensi owner pada directory theme-intake/'.$theme.'/runtime.'
+            : 'Periksa koneksi internet dan pastikan URL arsip GitHub theme dapat diakses.');
         $command->line('Installer menolak arsip yang URL, ukuran, checksum, atau isinya tidak sesuai manifest package.');
     }
 
@@ -180,6 +187,11 @@ class StarterAssetPublisher
     {
         try {
             $source = $this->themeSourceMetadata($theme);
+            if (($source['provider'] ?? null) === 'local') {
+                $command->error("Theme [{$theme}] is licensed for private use. Supply the licensed runtime in theme-intake/{$theme}/runtime/ before installation; public downloading is disabled.");
+
+                return false;
+            }
             $url = (string) $source['url'];
             $expectedHash = (string) $source['archive_sha256'];
             $maximumBytes = (int) $source['archive_max_bytes'];

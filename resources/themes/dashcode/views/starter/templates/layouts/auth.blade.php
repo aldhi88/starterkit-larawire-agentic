@@ -10,8 +10,7 @@
     <link rel="shortcut icon" href="{{ asset('assets/dashcode/images/logo/favicon.svg') }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/app.css') }}?v={{ filemtime(public_path('assets/dashcode/css/app.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/starter/css/starter.css') }}?v={{ filemtime(public_path('assets/starter/css/starter.css')) }}">
-    <link rel="stylesheet" href="{{ asset('assets/dashcode/css/starter-theme.css') }}?v={{ filemtime(public_path('assets/dashcode/css/starter-theme.css')) }}">
-    <link rel="stylesheet" href="{{ asset('assets/dashcode/css/custom.css') }}?v={{ filemtime(public_path('assets/dashcode/css/custom.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/dashcode/css/dashcode.css') }}?v={{ filemtime(public_path('assets/dashcode/css/dashcode.css')) }}">
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')
     @livewireStyles
@@ -82,7 +81,7 @@
         </div>
     </main>
 
-    <script src="{{ asset('assets/dashcode/js/starter-theme.js') }}?v={{ filemtime(public_path('assets/dashcode/js/starter-theme.js')) }}" data-navigate-once defer></script>
+    <script src="{{ asset('assets/dashcode/js/dashcode.js') }}?v={{ filemtime(public_path('assets/dashcode/js/dashcode.js')) }}" data-navigate-once defer></script>
     <script src="{{ asset('assets/starter/js/starter-runtime.js') }}?v={{ filemtime(public_path('assets/starter/js/starter-runtime.js')) }}" data-navigate-once defer></script>
     @livewireScripts
     @stack('page-scripts')
