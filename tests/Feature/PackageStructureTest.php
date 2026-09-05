@@ -28,7 +28,7 @@ it('maps generated host assets without carrying their payloads in Composer', fun
 
     foreach ([
         'tabler' => '285b006c61c5b945cb57692ca767eda9851b377f002094d951c4872e93a83846',
-        'dashcode' => '43a6970ad1a84e0bb1830cbd219f1a392cae80f551d731462b4334aafb1b55a4',
+        'dashcode' => 'b761264a44658e6d290c3911ac0de7d78ddc484ccebfd1fb5f6eed850df41764',
     ] as $theme => $checksum) {
         $source = json_decode(
             (string) file_get_contents(StarterPaths::path('docs/template/'.$theme.'/source.json')),
@@ -220,7 +220,9 @@ it('keeps Dashcode account controls responsive and its app switcher compact', fu
     $header = file_get_contents($dashcodeRoot.'/templates/layouts/navigation/header.blade.php');
     $sidebar = file_get_contents($dashcodeRoot.'/templates/layouts/navigation/sidebar.blade.php');
     $appSwitcher = file_get_contents($dashcodeRoot.'/templates/layouts/app-switcher.blade.php');
+    $accountMenu = file_get_contents($dashcodeRoot.'/templates/layouts/account-menu.blade.php');
     $themeCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/starter-theme.css'));
+    $customCss = file_get_contents(StarterPaths::path('theme-intake/dashcode/runtime/css/custom.css'));
 
     expect($profile)
         ->toContain('<section class="mb-4" aria-label="Ringkasan akun"')
@@ -232,12 +234,47 @@ it('keeps Dashcode account controls responsive and its app switcher compact', fu
         ->toContain('border border-success-500 bg-[#EDFFE5] p-4')
         ->not->toContain('max-w-[516px]')
         ->and(substr_count($header, '<div class="xl:hidden">'))->toBe(2)
+        ->and(substr_count($header, 'h-[28px] w-[28px]'))->toBe(2)
+        ->and(substr_count($header, 'lg:h-8 lg:w-8'))->toBe(2)
+        ->and($header)->toContain('uppercase leading-none tracking-wide')
+        ->and($header)->toContain('font-semibold leading-tight')
+        ->and($header)->toContain('nav-tools flex items-center space-x-3 leading-0 rtl:space-x-reverse lg:space-x-5')
+        ->and($header)->not->toContain('class="flex items-center gap-2"')
         ->and($sidebar)->toContain('<div class="sidebarCloseIcon">')
         ->and($appSwitcher)
+        ->toContain('h-[28px] w-[28px]')
+        ->toContain('lg:h-8 lg:w-8')
         ->toContain('class="divide-y divide-slate-100" role="menu"')
         ->toContain('flex w-full items-center gap-3 px-4 py-3')
         ->not->toContain('starter-app-grid')
+        ->not->toContain('starter-icon-button')
+        ->and($accountMenu)
+        ->toContain('class="inline-flex cursor-pointer items-center rounded-lg text-center text-sm font-medium text-slate-800"')
+        ->toContain('h-7 w-7 flex-none rounded-full bg-slate-200 bg-cover bg-center ltr:mr-[10px] rtl:ml-[10px] lg:h-8 lg:w-8')
+        ->toContain('hidden max-w-[160px] flex-none items-center overflow-hidden text-ellipsis whitespace-nowrap text-sm font-normal text-slate-600 lg:flex')
+        ->toContain("'class' => 'ml-[10px] hidden h-[16px] w-[16px] lg:inline-block'")
+        ->not->toContain('class="starter-account-summary"')
+        ->not->toContain('class="starter-avatar')
+        ->not->toContain('class="starter-account-name"')
+        ->and($customCss)
+        ->toContain('.starter-shell-header,')
+        ->toContain('.starter-shell-footer {')
+        ->toContain('padding-inline: 0;')
+        ->toContain('.sidebar-wrapper .starter-sidebar-details > summary,')
+        ->toContain('.sidebar-wrapper .starter-submenu-link:not(.is-disabled),')
+        ->toContain('.sidebar-wrapper a.navItem {')
+        ->toContain('transition: color 0.2s ease;')
+        ->toContain('.sidebar-wrapper a.navItem:hover {')
+        ->toContain('background: transparent;')
+        ->toContain('color: var(--starter-slate-700);')
+        ->not->toContain('color: var(--starter-primary);')
+        ->not->toContain('cursor: pointer;')
         ->and($themeCss)
+        ->toContain(':where(.dashcode-app,.dashcode-auth) svg')
+        ->not->toContain('.dashcode-app svg,.dashcode-auth svg')
+        ->not->toContain('.starter-account-summary {')
+        ->not->toContain('.starter-avatar {')
+        ->not->toContain('.starter-account-name {')
         ->not->toContain('.starter-app-grid')
         ->not->toContain('.starter-app-option {');
 });
@@ -299,9 +336,13 @@ it('caps Dashcode shell regions at the Tabler-compatible desktop width', functio
 
     expect($appLayout)
         ->toContain('class="starter-content-container page-content px-[15px] pb-8 pt-6 md:px-6"')
-        ->toContain('class="starter-content-container flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"')
+        ->toContain('class="site-footer starter-shell-footer bg-white py-4 text-sm text-slate-500 ltr:ml-[248px] rtl:mr-[248px]"')
+        ->toContain('class="starter-content-container grid grid-cols-1 px-[15px] md:grid-cols-2 md:gap-5 md:px-6"')
+        ->toContain('class="text-center text-sm ltr:md:text-start rtl:md:text-right"')
+        ->toContain('class="text-center text-sm ltr:md:text-right rtl:md:text-end"')
         ->and($header)
-        ->toContain('class="starter-content-container flex h-full items-center justify-between gap-4"')
+        ->toContain('class="app-header starter-shell-header bg-white shadow-sm ltr:ml-[248px] rtl:mr-[248px]"')
+        ->toContain('class="starter-content-container flex h-full items-center justify-between gap-4 px-[15px] md:px-6"')
         ->and($themeCss)
         ->toContain('.starter-content-container { margin-inline:auto;max-width:1680px;width:100%; }')
         ->toContain('.horizontalMenu .page-content { margin-inline:auto;max-width:1680px; }');
@@ -464,6 +505,9 @@ it('defines a complete theme from one intake instruction without vendor visual l
         ->and($integration)->toContain('table-layout: fixed')
         ->and($integration)->toContain('Host pembanding dan audit side-by-side')
         ->and($integration)->toContain('starterkit-larawire-laravel-<theme-key>')
+        ->and($integration)->toContain('Pada viewport lebar, ukur bounding rectangle shell secara langsung')
+        ->and($integration)->toContain('dan content cap. Responsive padding berada pada satu constrained container')
+        ->and($integration)->toContain('spacing, sizing, serta visibility breakpoint dari')
         ->and($integration)->toContain('Packaging atomik')
         ->and($integration)->toContain('1280x768')
         ->and($ignore)->toContain('/theme-intake')

@@ -16,7 +16,7 @@
         {
             "source": "runtime/css/starter-theme.css",
             "target": "css/starter-theme.css",
-            "sha256": "2c77adf2199b23331f121dc3490a9b252aa10dabcee2395d32a6a2f00f71fe58",
+            "sha256": "d9be3f0be6d64f780a705f57e659e0dc924c731761df9a0414384e16892241d7",
             "referenced_by": [
                 "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
                 "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php",
@@ -27,7 +27,7 @@
         {
             "source": "runtime/css/custom.css",
             "target": "css/custom.css",
-            "sha256": "ad47a6062eb41ecc6f50961e6eed1fa5568e2eb1f333248f584744ce5e4d630c",
+            "sha256": "1723dced790920a3742ab95d594da43f5172ee7df8fae001765b33c36a09dead",
             "referenced_by": [
                 "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
                 "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php",

@@ -1,8 +1,8 @@
 <details class="starter-account-menu {{ $class ?? '' }}" data-starter-details>
-    <summary class="starter-account-summary" role="button" aria-label="Buka menu user" data-starter-account-summary>
-        <span class="starter-avatar starter-avatar-sm" style="background-image: url({{ $loginAvatarUrl }})" data-starter-account-avatar></span>
-        <span class="starter-account-name" data-starter-account-name>{{ $loginName ?? 'User' }}</span>
-        @include('starter.templates.layouts.icon', ['name' => 'chevron-down', 'class' => 'starter-account-chevron'])
+    <summary class="inline-flex cursor-pointer items-center rounded-lg text-center text-sm font-medium text-slate-800" role="button" aria-label="Buka menu user" data-starter-account-summary>
+        <span class="h-7 w-7 flex-none rounded-full bg-slate-200 bg-cover bg-center ltr:mr-[10px] rtl:ml-[10px] lg:h-8 lg:w-8" style="background-image: url({{ $loginAvatarUrl }})" data-starter-account-avatar></span>
+        <span class="hidden max-w-[160px] flex-none items-center overflow-hidden text-ellipsis whitespace-nowrap text-sm font-normal text-slate-600 lg:flex" data-starter-account-name>{{ $loginName ?? 'User' }}</span>
+        @include('starter.templates.layouts.icon', ['name' => 'chevron-down', 'class' => 'ml-[10px] hidden h-[16px] w-[16px] lg:inline-block'])
     </summary>
 
     <div class="starter-account-panel">

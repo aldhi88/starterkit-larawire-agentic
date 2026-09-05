@@ -1,16 +1,16 @@
 @php($horizontal = (bool) ($horizontal ?? false))
 <header class="z-[99] {{ $horizontal ? 'starter-header-horizontal' : '' }}" id="app_header">
-    <div class="app-header bg-white shadow-sm ltr:ml-[248px] rtl:mr-[248px]">
-        <div class="starter-content-container flex h-full items-center justify-between gap-4">
+    <div class="app-header starter-shell-header bg-white shadow-sm ltr:ml-[248px] rtl:mr-[248px]">
+        <div class="starter-content-container flex h-full items-center justify-between gap-4 px-[15px] md:px-6">
             <div class="vertical-box items-center gap-3">
                 <div class="xl:hidden">
-                    <button type="button" class="starter-icon-button" data-starter-sidebar-open aria-label="Buka navigasi">
+                    <button type="button" class="flex h-[28px] w-[28px] cursor-pointer flex-col items-center justify-center rounded-full bg-slate-100 text-[20px] text-slate-900 lg:h-8 lg:w-8" data-starter-sidebar-open aria-label="Buka navigasi">
                         @include('starter.templates.layouts.icon', ['name' => 'menu-2'])
                     </button>
                 </div>
                 <div class="min-w-0">
-                    <div class="text-xs font-medium uppercase tracking-wide text-slate-400">App Aktif</div>
-                    <div class="truncate text-sm font-semibold text-slate-800" data-starter-current-app-name>{{ $currentAppName ?? 'App' }}</div>
+                    <div class="text-xs font-medium uppercase leading-none tracking-wide text-slate-400">App Aktif</div>
+                    <div class="truncate text-sm font-semibold leading-tight text-slate-800" data-starter-current-app-name>{{ $currentAppName ?? 'App' }}</div>
                 </div>
             </div>
 
@@ -19,7 +19,7 @@
                     <img src="{{ $brandLogoDarkUrl }}" alt="{{ $brandLogoAlt }}" data-starter-brand-logo data-fallback-src="{{ $defaultBrandLogoDarkUrl }}" @if ($clientLogoUrl) data-company-logo="true" @endif>
                 </a>
                 <div class="xl:hidden">
-                    <button type="button" class="starter-icon-button" data-starter-sidebar-open aria-label="Buka navigasi">
+                    <button type="button" class="flex h-[28px] w-[28px] cursor-pointer flex-col items-center justify-center rounded-full bg-slate-100 text-[20px] text-slate-900 lg:h-8 lg:w-8" data-starter-sidebar-open aria-label="Buka navigasi">
                         @include('starter.templates.layouts.icon', ['name' => 'menu-2'])
                     </button>
                 </div>
@@ -37,7 +37,7 @@
                 </ul>
             </nav>
 
-            <div class="flex items-center gap-2" x-persist="{{ $accountPersistBase }}-dashcode-header">
+            <div class="nav-tools flex items-center space-x-3 leading-0 rtl:space-x-reverse lg:space-x-5" x-persist="{{ $accountPersistBase }}-dashcode-header">
                 @includeIf('extensions.starter.header-actions.index', ['compact' => $horizontal])
                 @include('starter.templates.layouts.app-switcher', ['compact' => $horizontal])
                 @include('starter.templates.layouts.account-menu')

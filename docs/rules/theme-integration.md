@@ -221,6 +221,13 @@ Tidak boleh ada fallback presentasi ke theme lain.
   filter intrinsic width, wrapping, checkbox center, dropdown clipping, root
   overflow, dan spacing form bila screenshot tidak cukup. Ulangi pada viewport
   kecil yang representatif dan reset viewport setelah audit.
+- Pada viewport lebar, ukur bounding rectangle shell secara langsung: inner edge
+  header, page content, dan footer wajib sejajar setelah memperhitungkan sidebar
+  dan content cap. Responsive padding berada pada satu constrained container,
+  bukan digandakan pada parent dan child. Header action cluster, avatar, label,
+  dan chevron wajib memakai spacing, sizing, serta visibility breakpoint dari
+  reference vendor aktif dan setiap utility tersebut harus terbukti tersedia
+  pada compiled CSS.
 - Jangan menyatakan "sama" hanya dari satu screenshot. Inspect halaman pendek
   dan panjang, scroll, focus, invalid/focus-invalid, checked/unchecked, open/
   closed dropdown, loading, empty, error, dan content panjang.

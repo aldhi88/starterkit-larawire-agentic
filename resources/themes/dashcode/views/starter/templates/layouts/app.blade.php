@@ -62,10 +62,10 @@
                 </div>
             </div>
 
-            <footer class="site-footer bg-white px-6 py-4 text-sm text-slate-500 ltr:ml-[248px] rtl:mr-[248px]">
-                <div class="starter-content-container flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                    <span>{{ now()->year }} © {{ config('app.name') }}.</span>
-                    <span>{{ $currentAppName ?? 'Starter' }}</span>
+            <footer class="site-footer starter-shell-footer bg-white py-4 text-sm text-slate-500 ltr:ml-[248px] rtl:mr-[248px]">
+                <div class="starter-content-container grid grid-cols-1 px-[15px] md:grid-cols-2 md:gap-5 md:px-6">
+                    <span class="text-center text-sm ltr:md:text-start rtl:md:text-right">{{ now()->year }} © {{ config('app.name') }}.</span>
+                    <span class="text-center text-sm ltr:md:text-right rtl:md:text-end">{{ $currentAppName ?? 'Starter' }}</span>
                 </div>
             </footer>
         </div>

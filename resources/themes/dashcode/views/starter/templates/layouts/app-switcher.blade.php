@@ -5,7 +5,7 @@
 @endphp
 
 <div class="starter-app-switcher" data-starter-app-switcher>
-    <button type="button" class="starter-icon-button starter-app-toggle" aria-label="Tampilkan menu app" aria-expanded="false" data-starter-app-toggle>
+    <button type="button" class="starter-app-toggle flex h-[28px] w-[28px] cursor-pointer flex-col items-center justify-center rounded-full bg-slate-100 text-[20px] text-slate-900 lg:h-8 lg:w-8" aria-label="Tampilkan menu app" aria-expanded="false" data-starter-app-toggle>
         @include('starter.templates.layouts.icon', ['name' => 'apps'])
         <span class="starter-notification-dot"></span>
     </button>
