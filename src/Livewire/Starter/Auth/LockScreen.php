@@ -31,7 +31,8 @@ class LockScreen extends Component
 
     public function mount(
         StarterConfigService $configs,
-        NavigationAuthorizedRedirectService $redirects
+        NavigationAuthorizedRedirectService $redirects,
+        AuditLogService $auditLogs,
     ) {
         $login = $this->login();
 
@@ -53,7 +54,25 @@ class LockScreen extends Component
             session()->put('starter.lock.intended', $redirect);
         }
 
+        $wasLocked = (bool) session()->get('starter.locked', false);
+
         session()->put('starter.locked', true);
+
+        if (! $wasLocked) {
+            $reason = match (true) {
+                request()->boolean('manual') => 'manual',
+                request()->query('reason') === 'idle_timeout' => 'inactivity_timeout',
+                default => 'direct',
+            };
+
+            $auditLogs->recordSecurityEvent(
+                'auth.screen_locked',
+                $reason === 'manual' ? 'Layar dikunci' : 'Layar dikunci otomatis',
+                target: $login,
+                actor: $login,
+                metadata: ['reason' => $reason],
+            );
+        }
 
         return null;
     }

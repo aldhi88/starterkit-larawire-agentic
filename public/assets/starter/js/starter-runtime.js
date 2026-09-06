@@ -441,18 +441,21 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         const timeoutSeconds = Number(document.querySelector('meta[name="starter-lock-screen-timeout"]')?.content || 0);
         const lockUrl = document.querySelector('meta[name="starter-lock-screen-url"]')?.content;
         const activityUrl = document.querySelector('meta[name="starter-session-activity-url"]')?.content;
+        const activityScope = document.querySelector('meta[name="starter-session-activity-scope"]')?.content;
 
         if (! document.body?.hasAttribute('data-starter-app-shell') || ! enabled || timeoutSeconds < 60 || ! lockUrl) {
             return null;
         }
 
         return {
+            activityScope,
             activityUrl,
             lockUrl,
+            sessionTouchIntervalMilliseconds: Math.min(60000, Math.max(15000, timeoutSeconds * 1000 / 3)),
             timeoutMilliseconds: Math.min(timeoutSeconds, 86400) * 1000,
         };
     },
-    configureAutoLock() {
+    configureAutoLock(navigationCompleted = false) {
         clearTimeout(this.autoLockTimer);
         this.autoLockConfigValue = this.autoLockConfig();
         this.autoLocking = false;
@@ -461,10 +464,48 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             return;
         }
 
-        this.lastBrowserActivityAt ??= Date.now();
+        this.lastBrowserActivityAt = Math.max(
+            navigationCompleted ? Date.now() : 0,
+            this.lastBrowserActivityAt || 0,
+            this.sharedBrowserActivityAt(),
+        ) || Date.now();
         this.lastSessionTouchAt ??= this.lastBrowserActivityAt;
+        this.shareBrowserActivity(this.lastBrowserActivityAt);
         this.scheduleAutoLock();
         this.bindAutoLockActivity();
+    },
+    autoLockActivityStorageKey() {
+        const scope = this.autoLockConfigValue?.activityScope;
+
+        return scope ? `starter:auto-lock:${scope}` : null;
+    },
+    sharedBrowserActivityAt() {
+        const key = this.autoLockActivityStorageKey();
+
+        if (! key) {
+            return 0;
+        }
+
+        try {
+            const timestamp = Number(window.localStorage.getItem(key) || 0);
+
+            return Number.isFinite(timestamp) ? Math.min(timestamp, Date.now()) : 0;
+        } catch (error) {
+            return 0;
+        }
+    },
+    shareBrowserActivity(timestamp) {
+        const key = this.autoLockActivityStorageKey();
+
+        if (! key) {
+            return;
+        }
+
+        try {
+            window.localStorage.setItem(key, String(timestamp));
+        } catch (error) {
+            // Storage can be unavailable in privacy-restricted browser contexts.
+        }
     },
     scheduleAutoLock() {
         clearTimeout(this.autoLockTimer);
@@ -473,16 +514,17 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             return;
         }
 
+        this.lastBrowserActivityAt = Math.max(this.lastBrowserActivityAt || 0, this.sharedBrowserActivityAt());
         const elapsed = Date.now() - this.lastBrowserActivityAt;
         const remaining = this.autoLockConfigValue.timeoutMilliseconds - elapsed;
 
         if (remaining <= 0) {
-            this.performAutoLock();
+            this.reconcileAutoLock();
             return;
         }
 
         this.autoLockTimer = setTimeout(
-            () => this.performAutoLock(),
+            () => this.reconcileAutoLock(),
             remaining,
         );
     },
@@ -511,6 +553,19 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             window.addEventListener(eventName, () => this.resumeAutoLock());
         });
 
+        window.addEventListener('storage', (event) => {
+            if (event.key !== this.autoLockActivityStorageKey()) {
+                return;
+            }
+
+            const timestamp = Number(event.newValue || 0);
+
+            if (Number.isFinite(timestamp) && timestamp > (this.lastBrowserActivityAt || 0)) {
+                this.lastBrowserActivityAt = timestamp;
+                this.scheduleAutoLock();
+            }
+        });
+
         this.autoLockActivityBound = true;
     },
     resumeAutoLock() {
@@ -518,10 +573,11 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             return;
         }
 
+        this.lastBrowserActivityAt = Math.max(this.lastBrowserActivityAt || 0, this.sharedBrowserActivityAt());
         const elapsed = Date.now() - this.lastBrowserActivityAt;
 
         if (elapsed >= this.autoLockConfigValue.timeoutMilliseconds) {
-            this.performAutoLock();
+            this.reconcileAutoLock();
             return;
         }
 
@@ -533,50 +589,105 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         }
 
         this.lastBrowserActivityAt = Date.now();
+        this.shareBrowserActivity(this.lastBrowserActivityAt);
         this.scheduleAutoLock();
 
         const now = Date.now();
 
-        if (! forceTouch && now - this.lastSessionTouchAt < 60000) {
+        if (! forceTouch && now - this.lastSessionTouchAt < this.autoLockConfigValue.sessionTouchIntervalMilliseconds) {
             return;
         }
 
-        this.lastSessionTouchAt = now;
         this.touchSessionActivity();
     },
     async touchSessionActivity() {
         const activityUrl = this.autoLockConfigValue?.activityUrl;
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
-        if (! activityUrl || ! csrfToken || this.autoLockTouching) {
+        if (! activityUrl || ! csrfToken) {
+            return 'unavailable';
+        }
+
+        if (this.autoLockTouchPromise) {
+            return this.autoLockTouchPromise;
+        }
+
+        const controller = new AbortController();
+        const abortTimer = setTimeout(() => controller.abort(), 10000);
+
+        this.autoLockTouchPromise = (async () => {
+            try {
+                const response = await fetch(activityUrl, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    signal: controller.signal,
+                });
+
+                if (response.status === 423) {
+                    this.performAutoLock();
+
+                    return 'locked';
+                }
+
+                if ([401, 419].includes(response.status) || response.redirected) {
+                    window.location.assign(response.redirected ? response.url : this.authLoginUrl());
+
+                    return 'redirected';
+                }
+
+                if (! response.ok) {
+                    return 'unavailable';
+                }
+
+                this.lastSessionTouchAt = Date.now();
+
+                return 'active';
+            } catch (error) {
+                return 'unavailable';
+            } finally {
+                clearTimeout(abortTimer);
+            }
+        })();
+
+        try {
+            return await this.autoLockTouchPromise;
+        } finally {
+            this.autoLockTouchPromise = null;
+        }
+    },
+    async reconcileAutoLock() {
+        if (! this.autoLockConfigValue || this.autoLocking || this.autoLockReconciling || document.hidden) {
             return;
         }
 
-        this.autoLockTouching = true;
+        const sharedActivityAt = this.sharedBrowserActivityAt();
+
+        if (sharedActivityAt > (this.lastBrowserActivityAt || 0)) {
+            this.lastBrowserActivityAt = sharedActivityAt;
+            this.scheduleAutoLock();
+
+            return;
+        }
+
+        this.autoLockReconciling = true;
 
         try {
-            const response = await fetch(activityUrl, {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    Accept: 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-            });
+            const status = await this.touchSessionActivity();
 
-            if (response.status === 423) {
+            if (status === 'active') {
+                this.lastBrowserActivityAt = Date.now();
+                this.shareBrowserActivity(this.lastBrowserActivityAt);
+                this.scheduleAutoLock();
+            } else if (status === 'unavailable') {
                 this.performAutoLock();
-                return;
             }
-
-            if ([401, 419].includes(response.status) || response.redirected) {
-                window.location.assign(response.redirected ? response.url : this.authLoginUrl());
-            }
-        } catch (error) {
-            this.lastSessionTouchAt = 0;
         } finally {
-            this.autoLockTouching = false;
+            this.autoLockReconciling = false;
         }
     },
     performAutoLock() {
@@ -589,6 +700,7 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
 
         const lockUrl = new URL(this.autoLockConfigValue.lockUrl, window.location.href);
         lockUrl.searchParams.set('redirect', window.location.href);
+        lockUrl.searchParams.set('reason', 'idle_timeout');
         this.clearLivewireLoader();
         this.hideNavigateLoader();
 
@@ -739,7 +851,7 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
 
         this.livewireBound = true;
     },
-    init() {
+    init(navigationCompleted = false) {
         this.bind();
         this.bindLivewire();
         this.activateNavigation();
@@ -747,7 +859,7 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         this.prepareTheme();
         this.prepareClientBranding();
         this.consumeFlashToasts();
-        this.configureAutoLock();
+        this.configureAutoLock(navigationCompleted);
     },
 });
 
@@ -758,7 +870,7 @@ document.addEventListener('livewire:navigating', () => window.StarterTemplate.di
 document.addEventListener('livewire:navigated', () => {
     window.StarterTemplate.hideNavigateLoader();
     window.StarterTemplate.clearLivewireLoader();
-    window.StarterTemplate.init();
+    window.StarterTemplate.init(true);
 });
 window.addEventListener('pageshow', () => {
     window.StarterTemplate.hideNavigateLoader();

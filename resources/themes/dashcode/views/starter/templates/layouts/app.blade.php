@@ -11,6 +11,7 @@
     <meta name="starter-lock-screen-timeout" content="{{ $lockScreenTimeoutSeconds }}">
     <meta name="starter-lock-screen-url" content="{{ $lockScreenUrl }}">
     <meta name="starter-session-activity-url" content="{{ $sessionActivityUrl }}">
+    <meta name="starter-session-activity-scope" content="{{ $sessionActivityScope }}">
     <title>{{ $title ?? ($currentAppName ?? config('app.name')) }} | {{ config('app.name') }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/dashcode/images/logo/favicon.svg') }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/app.css') }}?v={{ filemtime(public_path('assets/dashcode/css/app.css')) }}">

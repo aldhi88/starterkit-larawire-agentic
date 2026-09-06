@@ -17,6 +17,7 @@
     <meta name="starter-lock-screen-timeout" content="{{ $lockScreenTimeoutSeconds }}">
     <meta name="starter-lock-screen-url" content="{{ $lockScreenUrl }}">
     <meta name="starter-session-activity-url" content="{{ $sessionActivityUrl }}">
+    <meta name="starter-session-activity-scope" content="{{ $sessionActivityScope }}">
     <link rel="stylesheet" href="{{ asset('assets/starter/vendor/flatpickr/flatpickr.min.css') }}">
 </head>
 <body data-starter-app-shell data-starter-theme="vuexy" data-starter-layout="{{ $starterLayout }}">

@@ -3,6 +3,7 @@
 namespace Aldhi88\StarterKit\Http\Middleware\Starter;
 
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Services\Starter\AuditLogService;
 use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
 use Closure;
 use Illuminate\Http\Request;
@@ -10,7 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StarterLockScreen
 {
-    public function __construct(private readonly StarterConfigService $configs) {}
+    public function __construct(
+        private readonly StarterConfigService $configs,
+        private readonly AuditLogService $auditLogs,
+    ) {}
 
     /**
      * Handle an incoming request.
@@ -49,6 +53,16 @@ class StarterLockScreen
             }
 
             $request->session()->put('starter.locked', true);
+            $this->auditLogs->recordSecurityEvent(
+                'auth.screen_locked',
+                'Layar dikunci otomatis',
+                target: $login,
+                actor: $login,
+                metadata: [
+                    'reason' => 'inactivity_timeout',
+                    'timeout_seconds' => $timeoutSeconds,
+                ],
+            );
 
             return redirect()->route('starter.lock-screen');
         }

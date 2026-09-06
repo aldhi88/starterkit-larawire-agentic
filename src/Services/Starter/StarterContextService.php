@@ -90,6 +90,9 @@ class StarterContextService
             'lockScreenTimeoutSeconds' => $lockScreenTimeoutSeconds,
             'lockScreenUrl' => route('starter.lock-screen'),
             'sessionActivityUrl' => route('starter.session.activity'),
+            'sessionActivityScope' => $login
+                ? hash_hmac('sha256', request()->session()->getId(), (string) config('app.key'))
+                : null,
         ];
     }
 
