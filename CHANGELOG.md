@@ -5,6 +5,22 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-07
+
+### Added
+
+- Synchronize browser activity across tabs for the same authenticated session,
+  reconcile idle expiry with the server, and audit automatic, manual, and
+  direct screen-lock events.
+- Require an explicit Composition Decision for page-defining surfaces and bind
+  theme color choices to complete native token, contrast, and interaction-state
+  pairs.
+
+### Changed
+
+- Refresh session activity at a timeout-aware interval and cache-bust the
+  shared starter runtime consistently across all supported themes.
+
 ## [1.2.3] - 2026-09-07
 
 ### Added
