@@ -5,6 +5,17 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-09-06
+
+### Changed
+
+- Normalize icon-to-label spacing in horizontal navigation across Tabler,
+  DashCode, and Vuexy.
+- Keep the active App identity visible in every horizontal layout on desktop
+  and mobile without introducing horizontal overflow.
+- Increase the Tabler horizontal brand logo from 32px to 36px while preserving
+  the vertical-sidebar proportion.
+
 ## [1.2.0] - 2026-09-05
 
 ### Added
