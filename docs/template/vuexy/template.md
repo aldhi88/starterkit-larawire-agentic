@@ -6,6 +6,15 @@ The full intake remains ignored and outside Composer. The integration is
 registered as the private `vuexy` installer option after package, fresh-host,
 and browser verification on 2026-09-05.
 
+## Live vendor demo
+
+- Canonical visual reference: <https://demos.pixinvent.com/vuexy-html-admin-template/html/vertical-menu-template-semi-dark/app-ecommerce-dashboard.html>
+- This public URL shows a vertical semi-dark eCommerce variant. Use it only to
+  compare Vuexy's rendered visual grammar, scale, density, spacing, states, and
+  responsive behavior. Do not treat its layout choice, remote assets, or
+  generated DOM as the runtime contract; the indexed Vuexy 3.0.0 no-customizer
+  intake remains the versioned implementation source of truth.
+
 ## Reference families
 
 | Family | Location | Runtime decision |

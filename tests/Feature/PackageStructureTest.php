@@ -35,7 +35,7 @@ it('maps generated host assets without carrying their payloads in Composer', fun
 
     foreach ([
         'tabler' => '2b9ac7d6166664296c07e285052271a832554e0653734b01b6a74bc74f601f7e',
-        'dashcode' => 'e4b4ee2a270a04c264ad3aa4f0aaa38fe5ae74e8f8c9fb3dd7466e74b2db422a',
+        'dashcode' => '1d83c5f819c37ad2eba1049aa8b409a8cdcdf241fa4e370c51f13ef6bd3f44cd',
     ] as $theme => $checksum) {
         $source = json_decode(
             (string) file_get_contents(StarterPaths::path('docs/template/'.$theme.'/source.json')),
@@ -160,6 +160,40 @@ it('keeps the Tabler horizontal brand proportionate without enlarging the vertic
         expect($css)
             ->toContain('.starter-sidebar-brand-image-horizontal {')
             ->toContain('height: 2.25rem;');
+    }
+});
+
+it('keeps role-form geometry aligned and its summary avatar centered across every theme', function (): void {
+    $dashcode = file_get_contents(StarterPaths::path(
+        'resources/themes/dashcode/views/starter/user-management/role-form.blade.php',
+    ));
+
+    expect($dashcode)
+        ->toContain('<div class="dashcode-page-heading w-full">')
+        ->toContain('<div class="min-w-0" data-role-identity-panel')
+        ->toContain('<div class="min-w-0" data-role-access-panel')
+        ->toContain('<div class="dashcode-responsive-row w-full">')
+        ->toContain('data-role-summary-avatar');
+
+    foreach (['tabler', 'vuexy'] as $theme) {
+        $view = file_get_contents(StarterPaths::path(
+            'resources/themes/'.$theme.'/views/starter/user-management/role-form.blade.php',
+        ));
+
+        expect($view)
+            ->toContain('<div class="row g-3 align-items-start">')
+            ->toContain('<div class="col-12 col-md-auto align-self-md-end">')
+            ->toContain('data-role-summary-avatar');
+    }
+
+    $dashcodeCss = packageStructureLocalThemeCss('dashcode');
+
+    if ($dashcodeCss !== null) {
+        expect($dashcodeCss)
+            ->toContain('.avatar { align-items:center;')
+            ->toContain('display:inline-flex;')
+            ->toContain('justify-content:center;')
+            ->toContain('overflow:hidden;');
     }
 });
 
@@ -801,6 +835,53 @@ it('keeps planning deterministic for LLM execution and table navigation semantic
         ->toContain('Determine a no-filter column from its header and representative content only')
         ->toContain('long fields such as descriptions may wrap across multiple readable lines')
         ->toContain('`table-responsive` horizontal scrolling over compressing controls or content');
+});
+
+it('locks theme-native scale and PowerGrid toolbar composition into the UI contract', function (): void {
+    $ui = file_get_contents(StarterPaths::path('docs/rules/ui-ux.md'));
+
+    expect($ui)
+        ->toContain('## Template fidelity and visual scale')
+        ->toContain('binding design system, not a loose gallery of inspiration')
+        ->toContain('Typography scale is inherited from the selected native component')
+        ->toContain('Empty space is resolved through width, grouping, alignment, or information priority')
+        ->toContain('run a bounded composition exercise')
+        ->toContain('concrete user benefit')
+        ->toContain('one shared above-table structural contract across all supported themes')
+        ->toContain('verified starter activity-log toolbar as the structural baseline for search-only grids')
+        ->toContain('one active-filter summary row only when at least one filter is active')
+        ->toContain('Render exactly one global search control')
+        ->toContain('do not stretch a short search field across the entire grid surface')
+        ->toContain('same native control-height family')
+        ->toContain('no empty toolbar/filter bands, no orphan chip or clipped clear action');
+});
+
+it('publishes live vendor demos as visual references without replacing indexed theme evidence', function (): void {
+    $ui = file_get_contents(StarterPaths::path('docs/rules/ui-ux.md'));
+    $demoUrls = [
+        'tabler' => 'https://preview.tabler.io/',
+        'dashcode' => 'https://dashcode-react.codeshaper.net/dashboard',
+        'vuexy' => 'https://demos.pixinvent.com/vuexy-html-admin-template/html/vertical-menu-template-semi-dark/app-ecommerce-dashboard.html',
+    ];
+
+    foreach ($demoUrls as $theme => $demoUrl) {
+        $atlas = file_get_contents(StarterPaths::path('docs/template/'.$theme.'/template.md'));
+
+        expect($atlas)
+            ->toContain('## Live vendor demo')
+            ->toContain($demoUrl)
+            ->toContain('implementation source of truth');
+    }
+
+    expect(file_get_contents(StarterPaths::path('docs/template/dashcode/template.md')))
+        ->toContain('https://dashcode-html.codeshaper.tech/index.html')
+        ->toContain('sign-in screen');
+
+    expect($ui)
+        ->toContain('canonical live vendor-demo URL')
+        ->toContain('Use it to inspect rendered density, typography scale, proportions')
+        ->toContain('Never copy its remote assets, generated DOM, framework-specific code, or unverified class names')
+        ->toContain('An unavailable live demo is not a blocker when the indexed local evidence is complete');
 });
 
 it('publishes the official website and documentation entry points', function (): void {

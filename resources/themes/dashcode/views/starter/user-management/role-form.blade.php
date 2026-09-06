@@ -45,7 +45,7 @@
     }"
 >
     <div class="page-header mb-3" aria-label="Header halaman" data-starter-region="page-header">
-        <div class="dashcode-page-heading">
+        <div class="dashcode-page-heading w-full">
             <div class="min-w-0">
                 <div class="page-pretitle">Pengaturan / Roles</div>
                 <h2 class="page-title">{{ $isCreating ? 'Tambah Role' : ($isSuperuserRole ? 'Detail Role' : 'Edit Role') }}</h2>
@@ -72,7 +72,7 @@
 
     <form id="role-form" wire:submit="save">
         <div class="dashcode-role-layout" data-role-form-layout="split">
-            <div data-role-identity-panel data-starter-region="identity-form">
+            <div class="min-w-0" data-role-identity-panel data-starter-region="identity-form">
                 <div class="card sticky-xl-top">
                     <div class="card-header">
                         <div>
@@ -91,7 +91,7 @@
                     <div class="card-body">
                         <div class="rounded border bg-slate-50 p-3 mb-4" data-role-form-summary>
                             <div class="flex items-center gap-3 min-w-0">
-                                <span class="avatar {{ $isSuperuserRole ? 'bg-danger-lt text-danger' : 'bg-primary-lt text-primary' }}">
+                                <span class="avatar {{ $isSuperuserRole ? 'bg-danger-lt text-danger' : 'bg-primary-lt text-primary' }}" data-role-summary-avatar>
                                     @include('starter.templates.layouts.icon', ['name' => $isSuperuserRole ? 'shield-check' : 'shield-lock', 'class' => 'icon'])
                                 </span>
                                 <div class="min-w-0">
@@ -239,7 +239,7 @@
                 </div>
             </div>
 
-            <div data-role-access-panel data-starter-region="module-access">
+            <div class="min-w-0" data-role-access-panel data-starter-region="module-access">
                 <div class="card sticky-xl-top">
                     <div class="card-header flex items-center">
                         <div class="flex-1 min-w-0">
@@ -377,7 +377,7 @@
                     @error('roleForm.module_ids.*') <div class="text-danger small px-3 py-2">{{ $message }}</div> @enderror
 
                     <div class="card-footer position-sticky bottom-0 z-2 bg-body shadow-sm" data-starter-region="page-actions">
-                        <div class="dashcode-responsive-row">
+                        <div class="dashcode-responsive-row w-full">
                             <div class="text-secondary small">
                                 {{ $isSuperuserRole ? 'Role sistem hanya dapat dilihat.' : 'Pastikan setiap app memiliki halaman awal sebelum disimpan.' }}
                             </div>

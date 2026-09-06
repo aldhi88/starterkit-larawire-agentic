@@ -90,7 +90,7 @@
                     <div class="card-body">
                         <div class="rounded border bg-body-tertiary p-3 mb-4" data-role-form-summary>
                             <div class="d-flex align-items-center gap-3 min-w-0">
-                                <span class="avatar {{ $isSuperuserRole ? 'bg-label-danger' : 'bg-label-primary' }}">
+                                <span class="avatar {{ $isSuperuserRole ? 'bg-label-danger' : 'bg-label-primary' }}" data-role-summary-avatar>
                                     @include('starter.templates.layouts.icon', ['name' => $isSuperuserRole ? 'shield-check' : 'shield-lock', 'class' => 'icon'])
                                 </span>
                                 <div class="min-w-0">

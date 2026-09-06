@@ -4,6 +4,14 @@ Atlas ini hanya menjadi sumber visual untuk theme Tabler. Theme lain memakai
 capability produk yang sama, tetapi wajib memilih markup, komponen, class, dan
 presentasi dari vendor theme-nya sendiri.
 
+## Live vendor demo
+
+- Canonical visual reference: <https://preview.tabler.io/>
+- Open the closest relevant page or component after selecting candidates from
+  this local atlas. Use the demo to compare rendered scale, density, spacing,
+  states, and responsive behavior only; the indexed local HTML remains the
+  versioned implementation source of truth.
+
 Distribusi demo Tabler tidak disimpan di package. Seluruh 395 file HTML yang
 diaudit tetap tercatat beserta path, hash, dan sinyal pencariannya di
 `source-index.json`. File mentah tersedia hanya pada arsip owner dan intake

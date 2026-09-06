@@ -10,6 +10,17 @@ Use [`runtime-map.md`](runtime-map.md) for the components selected for productio
 and their verification states. This file is the discovery index used to compare
 candidates before a runtime pattern is selected.
 
+## Live vendor demo
+
+- Canonical HTML visual reference: <https://dashcode-html.codeshaper.tech/index.html>
+- Supplemental vendor dashboard: <https://dashcode-react.codeshaper.net/dashboard>
+- The supplemental URL uses the React edition and may redirect to the vendor
+  sign-in screen. Use it only when its relevant view is publicly accessible and
+  only to compare DashCode's rendered visual grammar, scale, density, spacing,
+  states, and responsive behavior. Never copy React DOM, component code, or
+  class names into the Laravel theme; the indexed owner-provided HTML remains
+  the versioned implementation source of truth.
+
 ## Discovery workflow
 
 1. Define the page purpose, data, primary actions, and required states.

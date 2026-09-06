@@ -5,6 +5,20 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-09-06
+
+### Added
+
+- Add canonical live vendor-demo references to each theme atlas while keeping
+  versioned local evidence as the implementation source of truth.
+- Add a bounded native-composition exercise and a shared PowerGrid toolbar
+  structure to the UI/UX contract.
+
+### Fixed
+
+- Keep Role form columns within their grid bounds and center summary-avatar
+  icons consistently across Tabler, DashCode, and Vuexy.
+
 ## [1.2.1] - 2026-09-06
 
 ### Changed
