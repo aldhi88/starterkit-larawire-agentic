@@ -11,7 +11,7 @@
         @if ($menu['hasChildren'])
             <details class="starter-horizontal-details starter-navigation-details" data-starter-details data-starter-navigation-details>
                 <summary class="starter-horizontal-link" role="button" aria-controls="{{ $menuId }}">
-                    <span class="flex items-center gap-[6px]">
+                    <span class="flex flex-1 items-center space-x-[6px] rtl:space-x-reverse">
                         <span class="icon-box">@include('starter.templates.layouts.icon', ['name' => $icon])</span>
                         <span>{{ $menu['label'] }}</span>
                     </span>

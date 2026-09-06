@@ -85,6 +85,28 @@ it('keeps active vertical branches open without forcing horizontal dropdowns ope
     }
 });
 
+it('keeps horizontal navigation icon and label spacing native to every theme', function (): void {
+    $tabler = file_get_contents(StarterPaths::path(
+        'resources/themes/tabler/views/starter/templates/layouts/menu-item-horizontal.blade.php',
+    ));
+    $dashcode = file_get_contents(StarterPaths::path(
+        'resources/themes/dashcode/views/starter/templates/layouts/menu-item-horizontal.blade.php',
+    ));
+    $vuexy = file_get_contents(StarterPaths::path(
+        'resources/themes/vuexy/views/starter/templates/layouts/menu-item-horizontal.blade.php',
+    ));
+
+    expect($tabler)
+        ->toContain('class="nav-link-icon d-md-none d-lg-inline-block"')
+        ->toContain('class="nav-link-title"')
+        ->and($dashcode)
+        ->toContain('class="flex flex-1 items-center space-x-[6px] rtl:space-x-reverse"')
+        ->not->toContain('gap-[6px]')
+        ->and($vuexy)
+        ->toContain("'class' => 'menu-icon'")
+        ->toContain('<div>{{ $menu[\'label\'] }}</div>');
+});
+
 it('keeps Vuexy shells on their native layout hierarchy', function (): void {
     $root = StarterPaths::path('resources/themes/vuexy/views/starter/templates/layouts');
     $app = file_get_contents($root.'/app.blade.php');
