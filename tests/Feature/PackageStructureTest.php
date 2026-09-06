@@ -459,13 +459,28 @@ it('keeps Vuexy cosmetics native, legible, centered, and proportionate', functio
         ->toMatchArray([
             'indexed_variant_shortlist_minimum' => 3,
             'indexed_variant_shortlist_maximum' => 5,
+            'native_palette_and_tokens_required' => true,
             'semantic_color_map_required' => true,
             'decorative_color_assignment_forbidden' => true,
+            'foreground_background_pair_required' => true,
             'tinted_surface_requires_explicit_matching_foreground' => true,
+            'complete_interaction_state_ladder_required' => true,
+            'custom_color_requires_complete_theme_owned_token_set' => true,
+            'supported_color_context_verification_required' => true,
             'minimum_normal_text_contrast' => '4.5:1',
             'minimum_meaningful_graphic_contrast' => '3:1',
             'measured_spacing_and_proportion_required' => true,
         ]);
+
+    $ui = file_get_contents(StarterPaths::path('docs/rules/ui-ux.md'));
+
+    expect($ui)
+        ->toContain("Treat the active dashboard's palette, design tokens, utility classes, component variants, and light/dark-mode mappings as the binding color system")
+        ->toContain('Choose foreground and background as one inseparable pair')
+        ->toContain("A dark or saturated background requires the template's light/on-color foreground")
+        ->toContain('Preserve the native interaction-state ladder')
+        ->toContain('Custom color is allowed only when no indexed native variant or verified semantic token can express a real product/state requirement')
+        ->toContain('inventory its visible hues and remove colors that carry no identity, hierarchy, status, or interaction meaning');
 });
 
 it('stretches two-column profile navigation consistently across every theme', function (): void {
