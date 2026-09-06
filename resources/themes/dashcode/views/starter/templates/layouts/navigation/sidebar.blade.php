@@ -13,6 +13,13 @@
         </div>
     </div>
 
+    @if ($horizontal ?? false)
+        <div class="border-b border-slate-200 px-4 py-3 xl:hidden" data-starter-active-app>
+            <div class="text-xs font-medium uppercase leading-none tracking-wide text-slate-400">App Aktif</div>
+            <div class="mt-1 truncate text-sm font-semibold leading-tight text-slate-800" data-starter-current-app-name>{{ $currentAppName ?? 'App' }}</div>
+        </div>
+    @endif
+
     <nav class="sidebar-menus" data-starter-navigation>
         <ul class="sidebar-menu">
             <li class="sidebar-menu-title">Menu Utama</li>

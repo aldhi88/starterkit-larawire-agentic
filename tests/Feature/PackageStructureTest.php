@@ -107,6 +107,40 @@ it('keeps horizontal navigation icon and label spacing native to every theme', f
         ->toContain('<div>{{ $menu[\'label\'] }}</div>');
 });
 
+it('keeps the active App identity available in every horizontal layout', function (): void {
+    $dashcodeHeader = file_get_contents(StarterPaths::path(
+        'resources/themes/dashcode/views/starter/templates/layouts/navigation/header.blade.php',
+    ));
+    $dashcodeSidebar = file_get_contents(StarterPaths::path(
+        'resources/themes/dashcode/views/starter/templates/layouts/navigation/sidebar.blade.php',
+    ));
+    $dashcodeHorizontal = file_get_contents(StarterPaths::path(
+        'resources/themes/dashcode/views/starter/templates/layouts/navigation/horizontal.blade.php',
+    ));
+    $tabler = file_get_contents(StarterPaths::path(
+        'resources/themes/tabler/views/starter/templates/layouts/navigation/horizontal.blade.php',
+    ));
+    $vuexy = file_get_contents(StarterPaths::path(
+        'resources/themes/vuexy/views/starter/templates/layouts/navbar.blade.php',
+    ));
+
+    expect($dashcodeHeader)
+        ->toContain('class="hidden min-w-0 xl:inline-block" data-starter-active-app')
+        ->toContain('data-starter-current-app-name')
+        ->and($dashcodeSidebar)
+        ->toContain('@if ($horizontal ?? false)')
+        ->toContain('class="border-b border-slate-200 px-4 py-3 xl:hidden" data-starter-active-app')
+        ->and($dashcodeHorizontal)
+        ->toContain("@include('starter.templates.layouts.navigation.sidebar', ['horizontal' => true])")
+        ->and(substr_count($tabler, 'data-starter-active-app'))->toBe(2)
+        ->and($tabler)
+        ->toContain('class="d-none d-md-flex flex-column lh-sm me-3" data-starter-active-app')
+        ->toContain('class="nav-item d-md-none px-2 pt-3 pb-2" data-starter-active-app')
+        ->and($vuexy)
+        ->toContain('class="nav-item d-flex align-items-center gap-3" data-starter-active-app')
+        ->and(substr_count($vuexy, 'data-starter-current-app-name'))->toBe(1);
+});
+
 it('keeps Vuexy shells on their native layout hierarchy', function (): void {
     $root = StarterPaths::path('resources/themes/vuexy/views/starter/templates/layouts');
     $app = file_get_contents($root.'/app.blade.php');

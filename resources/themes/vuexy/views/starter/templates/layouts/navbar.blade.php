@@ -13,7 +13,7 @@
     </div>
     <div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
         <div class="navbar-nav align-items-center me-auto">
-            <div class="nav-item d-flex align-items-center gap-3">
+            <div class="nav-item d-flex align-items-center gap-3" data-starter-active-app>
                 <span class="avatar avatar-sm d-none d-sm-inline-flex"><span class="avatar-initial rounded bg-label-primary">@include('starter.templates.layouts.icon', ['name' => 'layout-dashboard', 'class' => 'icon-sm'])</span></span>
                 <div class="lh-sm">
                     <span class="small text-body-secondary d-block">App Aktif</span>

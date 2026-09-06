@@ -17,6 +17,11 @@
             </a>
         </div>
 
+        <div class="d-none d-md-flex flex-column lh-sm me-3" data-starter-active-app>
+            <span class="small text-secondary">App Aktif</span>
+            <span class="fw-semibold text-truncate" data-starter-current-app-name>{{ $currentAppName ?? 'App' }}</span>
+        </div>
+
         <div class="navbar-nav flex-row order-md-last ms-auto align-items-center gap-2" x-persist="{{ $accountPersistBase }}-horizontal">
             @includeIf('extensions.starter.header-actions.index', ['compact' => true])
             @include('starter.templates.layouts.app-switcher', ['compact' => true])
@@ -25,7 +30,7 @@
 
         <div class="collapse navbar-collapse" id="starter-horizontal-menu" data-starter-navigation data-starter-navigation-collapse>
             <ul class="navbar-nav">
-                <li class="nav-item d-md-none px-2 pt-3 pb-2">
+                <li class="nav-item d-md-none px-2 pt-3 pb-2" data-starter-active-app>
                     <div class="small text-secondary">App Aktif</div>
                     <div class="fw-semibold text-truncate" data-starter-current-app-name>{{ $currentAppName ?? 'App' }}</div>
                 </li>

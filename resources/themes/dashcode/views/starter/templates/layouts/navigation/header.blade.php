@@ -18,6 +18,10 @@
                 <a href="{{ $currentDashboardUrl }}" class="starter-header-brand" data-starter-navigate aria-label="{{ $brandLogoAlt }}">
                     <img src="{{ $brandLogoDarkUrl }}" alt="{{ $brandLogoAlt }}" data-starter-brand-logo data-fallback-src="{{ $defaultBrandLogoDarkUrl }}" @if ($clientLogoUrl) data-company-logo="true" @endif>
                 </a>
+                <div class="hidden min-w-0 xl:inline-block" data-starter-active-app>
+                    <div class="text-xs font-medium uppercase leading-none tracking-wide text-slate-400">App Aktif</div>
+                    <div class="max-w-[160px] truncate text-sm font-semibold leading-tight text-slate-800" data-starter-current-app-name>{{ $currentAppName ?? 'App' }}</div>
+                </div>
                 <div class="xl:hidden">
                     <button type="button" class="flex h-[28px] w-[28px] cursor-pointer flex-col items-center justify-center rounded-full bg-slate-100 text-[20px] text-slate-900 lg:h-8 lg:w-8" data-starter-sidebar-open aria-label="Buka navigasi">
                         @include('starter.templates.layouts.icon', ['name' => 'menu-2'])
