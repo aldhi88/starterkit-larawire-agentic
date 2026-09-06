@@ -34,13 +34,18 @@ canonical Composer package `aldhi88/starterkit-larawire-agentic`.
   tag release, atau push.
 - Verifikasi core melalui Laravel host bila perubahan menyentuh integrasi
   framework, installer, Artisan, migration, route, Livewire, theme, atau asset.
+- Semua project demo per-theme lokal yang telah ditetapkan developer sebagai
+  fixture testing merupakan target verifikasi standar. Setelah perubahan lokal
+  canonical memengaruhi perilaku host, view, runtime theme, atau asset, siapkan
+  archive/runtime exact terbaru, jalankan `starter:sync` pada setiap project
+  demo tersebut, lalu jalankan test host yang relevan sebelum selesai.
 - Untuk perubahan theme, verifikasi terhadap HTML dan atlas vendor theme aktif,
   bukan terhadap tampilan theme lain. Kesetaraan lintas theme hanya berlaku pada
   capability dan perilaku; struktur dan visual tetap diverifikasi per theme.
-- Jangan menyinkronkan commit starterkit ke Laravel host mana pun, termasuk
-  `dosen/dosen-bo` dan `starterkit-test`, kecuali developer memerintahkannya
-  secara eksplisit pada task yang sedang berjalan. Permintaan perubahan atau
-  push repository canonical tidak otomatis mengizinkan sinkronisasi host.
+- Otorisasi tetap project-scoped: jangan menyinkronkan starterkit ke host bisnis,
+  staging, atau production mana pun kecuali developer memerintahkannya secara
+  eksplisit pada task yang sedang berjalan. Permintaan perubahan atau push
+  repository canonical tidak otomatis mengizinkan sinkronisasi host non-demo.
 - Jika verifikasi host diperintahkan, pasang package melalui Composer path/VCS
   repository, jalankan `starter:sync`, dan verifikasi relevan. Jangan mengedit
   source di dalam `vendor`.

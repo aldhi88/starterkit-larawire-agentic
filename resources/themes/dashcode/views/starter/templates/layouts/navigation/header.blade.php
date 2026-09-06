@@ -1,5 +1,5 @@
 @php($horizontal = (bool) ($horizontal ?? false))
-<header class="z-[99] {{ $horizontal ? 'starter-header-horizontal' : '' }}" id="app_header">
+<header class="z-[99] starter-header-overlay-owner {{ $horizontal ? 'starter-header-horizontal' : '' }}" id="app_header">
     <div class="app-header starter-shell-header bg-white shadow-sm ltr:ml-[248px] rtl:mr-[248px]">
         <div class="starter-content-container flex h-full items-center justify-between gap-4 px-[15px] md:px-6">
             <div class="vertical-box items-center gap-3">

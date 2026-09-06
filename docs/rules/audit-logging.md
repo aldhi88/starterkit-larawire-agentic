@@ -1,6 +1,25 @@
 # Universal Audit Log
 
-`starter_logs` records user-initiated create, update, and delete events—not reads. A single multi-table business action uses one `action_id` with ordered sequences.
+`starter_logs` records every meaningful server-side application action initiated by an authenticated login, including reads and mutations. A single multi-table business action uses one `action_id` with ordered sequences.
+
+## Row ownership
+
+- Every application-owned database table must physically define both `created_by` and `updated_by`, including starter core, App business, pivot, configuration, registry, append-only, and audit tables. Both columns use nullable foreign keys to `starter_client_logins.id` with `nullOnDelete()` so historical rows remain valid after an actor is permanently removed.
+- Laravel/framework runtime tables written directly by the framework—migration history, cache, cache locks, jobs, job batches, failed jobs, sessions, and password-reset tokens—are the only standing exception. Any other exception requires an explicit developer decision documented in the owning rule and covered by a regression test.
+- Nullability exists only for bootstrap, migration, import, integration, console, or system work that genuinely has no authenticated login. Every row created by an authenticated action sets both columns to that login ID. Every later mutation, including archive, restore, relationship/pivot sync, and soft delete, preserves `created_by` and sets `updated_by` to the current login ID.
+- `created_by` is immutable after insertion. Permanent deletion preserves the actor and target snapshot in `starter_logs` before the row disappears. Append-only rows set `updated_by` equal to `created_by` at insertion and never change it.
+- Never accept either actor column from request, form, import payload, API payload, or mass assignment. The authenticated action boundary passes the actor explicitly; the service/repository or a tested shared model mechanism stamps the columns. Raw SQL, upsert, bulk, and event-bypassing writes must set the actor columns explicitly.
+- Models expose typed `creator` and `updater` `belongsTo` relations when the records are consumed as business data. Migrations index both actor columns. Existing tables are brought into compliance through forward-only expand/backfill migrations; never edit an already-applied migration or invent a historical actor when evidence is unavailable.
+
+## Action coverage and actor identity
+
+- An audit action is one meaningful server-side user intent, not a browser-only toggle, DOM event, Livewire hydration/render cycle, internal retry, or individual keystroke. Log page/list/detail access, completed search/filter/sort/pagination state, export/download/print, create/update, relationship changes, status/workflow transitions, archive/restore/permanent delete, bulk/by-filter operations, approvals, settings, and privileged/security operations.
+- Debounce or coalesce high-frequency browse/search/filter input into one audit entry for the completed server request/state; this reduces duplicate noise but must not omit the authenticated action. Background work retains the initiating login ID and action ID when it continues a user action; genuinely scheduled/system work uses a stable system action key and a null actor.
+- Every audit entry for an authenticated action has a non-null `client_login_id` and immutable actor snapshots (`actor_name`, `actor_username`, `actor_role`, and Superuser state). Pre-authentication success/failure/throttle events may have a null actor but must record a safe target identity and outcome without credentials.
+- Record validation failures, denied authorization, failed business actions, and successful actions with a stable key and safe outcome metadata when the request reached the application action boundary. Never log secrets, raw credentials, session identifiers, tokens, sensitive query text, or unrestricted request payloads.
+- A state-changing action and its success audit are atomic: keep both in the same database transaction and fail the mutation if the required audit cannot be persisted. Record a failed attempt outside the rolled-back business transaction when safe and technically possible.
+
+## Recording mechanics and verification
 
 - Global Eloquent listeners record `created`, `updated`, and `deleted` through `AuditLogService`; use normal Eloquent mutations where appropriate. Audit models are excluded and sensitive attributes (passwords, tokens, secrets, credentials) are filtered.
 - Wrap a multi-step action in `AuditLogService::withinAction()` and `DB::transaction()`. Use a stable business key such as `<domain>.<action>` and a user-understandable Indonesian label.
@@ -8,4 +27,5 @@
 - Use `recordSecurityEvent()` for authentication/session events. Record success/failure/throttle/lock for login, password confirmation/reset/change, lock/unlock, logout, and session termination, without credentials or password values.
 - Archive, restore, and permanent delete use distinct stable keys: `<domain>.archive`, `.restore`, `.delete_permanently`. Record lifecycle state changes; permanent-delete logs contain safe target identity and relation counts, not large/sensitive payloads.
 - Selected/filtered/all bulk actions use one action group and summary with safe applied scope/filter, success count, and failed/skipped count. Permanent delete runs only from a service, transaction, and archived target (unless an approved append-only/derived lifecycle says otherwise), and must remove or prove cascade of owned relations.
-- Test action key, actor, target/table/event, multi-table grouping, sensitive-data exclusion, success/failure security cases, and bulk scope summaries.
+- Test the physical actor columns, foreign keys/indexes, create/update stamping, immutable `created_by`, unauthenticated/system nullability, actor removal, Eloquent/raw/bulk/pivot paths, and forward-migration backfill behavior.
+- Test action key, authenticated actor and snapshots, target/table/event, read and mutation coverage, denied/failed outcomes, multi-table grouping, transaction rollback, sensitive-data exclusion, success/failure security cases, and bulk scope summaries. A feature is incomplete if any exposed server-side action has no asserted audit path.

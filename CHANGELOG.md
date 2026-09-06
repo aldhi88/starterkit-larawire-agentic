@@ -5,6 +5,25 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+
+- Require indexed `created_by` and `updated_by` actor ownership on every
+  application-owned table and actor-bound audit coverage for every meaningful
+  authenticated server-side action.
+- Treat developer-designated local per-theme demo projects as standing
+  synchronization and host-verification targets for affected canonical changes.
+
+### Fixed
+
+- Remove decorative page pretitles from every theme and restore a proportional,
+  vendor-anchored typography hierarchy for page, modal, card, subsection,
+  label, and supporting text—including activity-detail dialogs.
+- Keep DashCode role-form header actions aligned to the page end and establish
+  a tested header overlay layer in DashCode, Tabler, and Vuexy so account and
+  App dropdowns remain above sticky content cards.
+- Adopt DashCode's native three-dot row-action menu with semantic icons and
+  explicit hover, focus, and disabled states across starter PowerGrid tables.
+
 ## [1.2.2] - 2026-09-06
 
 ### Added

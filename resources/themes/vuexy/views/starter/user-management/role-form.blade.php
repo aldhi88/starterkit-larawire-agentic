@@ -46,7 +46,6 @@
     <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman" data-starter-region="page-header">
         <div class="row g-3 align-items-start">
             <div class="col min-w-0">
-                <div class="page-pretitle">Pengaturan / Roles</div>
                 <h2 class="page-title">{{ $isCreating ? 'Tambah Role' : ($isSuperuserRole ? 'Detail Role' : 'Edit Role') }}</h2>
                 <div class="text-secondary mt-1">
                     {{ $isCreating ? 'Buat identitas role, pilih akses module, lalu tentukan halaman awal.' : 'Kelola identitas dan cakupan akses role pada halaman khusus ini.' }}

@@ -2,7 +2,6 @@
     @unless ($embedded)
         <div class="page-header mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between" aria-label="Header halaman">
             <div>
-                <div class="page-pretitle">Starter / Manajemen User</div>
                 <h2 class="page-title">Roles</h2>
                 <div class="text-secondary">Kelola role tanpa mencampurkan daftar dengan form pengaturan akses.</div>
             </div>

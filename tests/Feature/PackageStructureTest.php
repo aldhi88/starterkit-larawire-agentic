@@ -34,8 +34,8 @@ it('maps generated host assets without carrying their payloads in Composer', fun
         ->and(glob(StarterPaths::path('docs/template/*/*.html')) ?: [])->toBe([]);
 
     foreach ([
-        'tabler' => '2b9ac7d6166664296c07e285052271a832554e0653734b01b6a74bc74f601f7e',
-        'dashcode' => '1d83c5f819c37ad2eba1049aa8b409a8cdcdf241fa4e370c51f13ef6bd3f44cd',
+        'tabler' => 'd6b914330c01f3015824eaea66f9fa32ff546a3cb48b4ec436af9f2ecfa23d06',
+        'dashcode' => '9ce970916ab799f13e7c38223c3e4f7a7f976e59aeb4a91ede51c0c1296a723d',
     ] as $theme => $checksum) {
         $source = json_decode(
             (string) file_get_contents(StarterPaths::path('docs/template/'.$theme.'/source.json')),
@@ -190,10 +190,102 @@ it('keeps role-form geometry aligned and its summary avatar centered across ever
 
     if ($dashcodeCss !== null) {
         expect($dashcodeCss)
+            ->toContain('.dashcode-page-heading { align-items:flex-end;display:flex;flex:1 1 auto;')
+            ->toContain('justify-content:space-between;min-width:0;width:100%;')
             ->toContain('.avatar { align-items:center;')
             ->toContain('display:inline-flex;')
             ->toContain('justify-content:center;')
             ->toContain('overflow:hidden;');
+    }
+});
+
+it('keeps every theme header menu above sticky page surfaces', function (): void {
+    $dashcodeHeader = file_get_contents(StarterPaths::path(
+        'resources/themes/dashcode/views/starter/templates/layouts/navigation/header.blade.php',
+    ));
+    $tablerHeaders = file_get_contents(StarterPaths::path(
+        'resources/themes/tabler/views/starter/templates/layouts/navigation/horizontal.blade.php',
+    )).file_get_contents(StarterPaths::path(
+        'resources/themes/tabler/views/starter/templates/layouts/navigation/vertical.blade.php',
+    ));
+    $vuexyHeader = file_get_contents(StarterPaths::path(
+        'resources/themes/vuexy/views/starter/templates/layouts/navbar.blade.php',
+    ));
+
+    expect($dashcodeHeader)
+        ->toContain('id="app_header"')
+        ->toContain('starter-header-overlay-owner')
+        ->and(substr_count($tablerHeaders, 'starter-header-overlay-owner'))->toBe(3)
+        ->and($vuexyHeader)->toContain('layout-navbar navbar navbar-expand-xl align-items-center starter-header-overlay-owner');
+
+    foreach (['dashcode', 'tabler', 'vuexy'] as $theme) {
+        $themeCss = packageStructureLocalThemeCss($theme);
+
+        if ($themeCss !== null) {
+            expect($themeCss)
+                ->toContain('starter-header-overlay-owner')
+                ->toMatch('/isolation:\\s*isolate/')
+                ->toMatch('/overflow:\\s*visible/')
+                ->toMatch('/z-index:\\s*\\d+/');
+        }
+    }
+
+    $dashcodeCss = packageStructureLocalThemeCss('dashcode');
+
+    if ($dashcodeCss !== null) {
+        expect($dashcodeCss)
+            ->toContain('#app_header.starter-header-overlay-owner')
+            ->toContain('z-index:1300;')
+            ->toContain('.starter-account-panel,.starter-app-panel')
+            ->toContain('z-index:1080;');
+    }
+});
+
+it('removes decorative page pretitles and preserves proportional text tiers in every theme', function (): void {
+    foreach (['dashcode', 'tabler', 'vuexy'] as $theme) {
+        $root = StarterPaths::path('resources/themes/'.$theme.'/views/starter');
+        $views = collect(File::allFiles($root))
+            ->map(fn (SplFileInfo $file): string => $file->getContents())
+            ->implode("\n");
+        $activity = file_get_contents($root.'/logs/activity-log-index.blade.php');
+        $security = file_get_contents($root.'/settings/security-settings.blade.php');
+        $themeCss = packageStructureLocalThemeCss($theme);
+
+        expect($views)->not->toContain('page-pretitle')
+            ->and(substr_count($activity, 'starter-modal-section-title'))->toBe(1)
+            ->and(substr_count($security, 'starter-settings-section-title'))->toBe(2);
+
+        if ($themeCss !== null) {
+            expect($themeCss)
+                ->toContain('.page-title')
+                ->toContain('.modal-title')
+                ->toContain('.starter-modal-section-title')
+                ->toContain('.starter-settings-section-title');
+        }
+    }
+
+    $dashcodeCss = packageStructureLocalThemeCss('dashcode');
+    $tablerCss = packageStructureLocalThemeCss('tabler');
+    $vuexyCss = packageStructureLocalThemeCss('vuexy');
+
+    if ($dashcodeCss !== null) {
+        expect($dashcodeCss)
+            ->toContain('font-size:clamp(1.375rem,1.8vw,1.5rem)')
+            ->toContain('.modal-title { font-size:1.125rem;')
+            ->toContain('.starter-modal-section-title { font-size:1rem;')
+            ->toContain('.starter-form-section-title,.starter-settings-section-title { color:var(--starter-slate-900);font-size:.9375rem;');
+    }
+
+    if ($tablerCss !== null) {
+        expect($tablerCss)
+            ->toMatch('/\\.modal-title\\s*\\{[^}]*font-size:\\s*1rem;/s')
+            ->toMatch('/\\.starter-settings-section-title,[^}]*\\.starter-modal-section-title\\s*\\{[^}]*font-size:\\s*\\.9375rem;/s');
+    }
+
+    if ($vuexyCss !== null) {
+        expect($vuexyCss)
+            ->toContain('.modal-title { font-size:1.125rem;')
+            ->toContain('.starter-settings-section-title,.starter-form-section-title,.starter-modal-section-title { font-size:1rem;');
     }
 });
 
@@ -460,6 +552,14 @@ it('contains wide PowerGrid content inside the Dashcode table frame', function (
     $roleActions = file_get_contents(StarterPaths::path(
         'resources/themes/dashcode/views/starter/user-management/powergrid/roles-row-actions.blade.php',
     ));
+    $rowActions = collect([
+        StarterPaths::path('resources/themes/dashcode/views/starter/user-management/powergrid/roles-row-actions.blade.php'),
+        StarterPaths::path('resources/themes/dashcode/views/starter/user-management/powergrid/users-row-actions.blade.php'),
+        StarterPaths::path('resources/themes/dashcode/views/starter/logs/powergrid/logs-row-actions.blade.php'),
+    ])->map(fn (string $path): string => file_get_contents($path))->implode("\n");
+    $dashcodeIcons = file_get_contents(StarterPaths::path(
+        'resources/themes/dashcode/views/starter/templates/layouts/icon.blade.php',
+    ));
     $activityLog = file_get_contents(StarterPaths::path(
         'resources/themes/dashcode/views/starter/logs/activity-log-index.blade.php',
     ));
@@ -505,7 +605,25 @@ it('contains wide PowerGrid content inside the Dashcode table frame', function (
         ->not->toContain('inset-y-0')
         ->not->toContain('style=')
         ->not->toContain('whitespace-nowrap normal-case')
-        ->and($roleActions)->toContain('dashcode-table-dropdown dashcode-row-dropdown')
+        ->and($roleActions)
+        ->toContain('dashcode-table-dropdown dashcode-row-dropdown')
+        ->toContain("['name' => 'users', 'class' => 'dashcode-table-dropdown-icon']")
+        ->toContain("['name' => 'shield-lock', 'class' => 'dashcode-table-dropdown-icon']")
+        ->and(substr_count($rowActions, 'aria-label="Buka menu aksi"'))->toBe(3)
+        ->and(substr_count($rowActions, 'aria-haspopup="menu"'))->toBe(3)
+        ->and(substr_count($rowActions, 'x-ref="menu"'))->toBe(3)
+        ->and($rowActions)
+        ->toContain('menu.offsetWidth')
+        ->toContain('menu.offsetHeight')
+        ->toContain("['name' => 'eye', 'class' => 'dashcode-table-dropdown-icon']")
+        ->toContain("['name' => 'edit', 'class' => 'dashcode-table-dropdown-icon']")
+        ->toContain("['name' => 'archive', 'class' => 'dashcode-table-dropdown-icon']")
+        ->toContain("['name' => 'trash', 'class' => 'dashcode-table-dropdown-icon']")
+        ->and($dashcodeIcons)
+        ->toContain("'archive'")
+        ->toContain("'edit'")
+        ->toContain("@case('archive')")
+        ->toContain("@case('edit')")
         ->and($activityLog)
         ->toContain('class="dashcode-activity-stats"')
         ->toContain('<table class="min-w-full divide-y divide-slate-100">')
@@ -514,6 +632,10 @@ it('contains wide PowerGrid content inside the Dashcode table frame', function (
 
     if ($themeCss !== null) {
         expect($themeCss)
+            ->toContain('.dashcode-table-action { align-items:center;background:transparent;border:0;')
+            ->toContain('.dashcode-table-dropdown-item { align-items:center;')
+            ->toContain('.dashcode-table-dropdown-item:hover,.dashcode-table-dropdown-item:focus-visible { background:var(--starter-slate-900);color:#fff;')
+            ->toContain('.dashcode-table-dropdown-item .dashcode-table-dropdown-icon { flex:0 0 auto;height:1rem;width:1rem; }')
             ->toContain('.starter-pg-filter-cell { box-sizing:border-box; }')
             ->toContain('.dashcode-data-table .starter-pg-filter-cell input { margin-left:0; }')
             ->toContain('.starter-pg-filter { box-sizing:border-box;display:inline-block;max-width:none;width:fit-content; }')
@@ -837,6 +959,46 @@ it('keeps planning deterministic for LLM execution and table navigation semantic
         ->toContain('`table-responsive` horizontal scrolling over compressing controls or content');
 });
 
+it('requires row ownership actors and complete authenticated action auditing', function (): void {
+    $agents = file_get_contents(StarterPaths::path('AGENTS.md'));
+    $audit = file_get_contents(StarterPaths::path('docs/rules/audit-logging.md'));
+
+    expect($agents)
+        ->toContain('Every application-owned database table physically defines indexed `created_by` and `updated_by`')
+        ->toContain('Every meaningful authenticated server-side action')
+        ->and($audit)
+        ->toContain('## Row ownership')
+        ->toContain('including starter core, App business, pivot, configuration, registry, append-only, and audit tables')
+        ->toContain('Laravel/framework runtime tables written directly by the framework')
+        ->toContain('Every row created by an authenticated action sets both columns to that login ID')
+        ->toContain('`created_by` is immutable after insertion')
+        ->toContain('Never accept either actor column from request')
+        ->toContain('forward-only expand/backfill migrations')
+        ->toContain('## Action coverage and actor identity')
+        ->toContain('page/list/detail access, completed search/filter/sort/pagination state')
+        ->toContain('Every audit entry for an authenticated action has a non-null `client_login_id`')
+        ->toContain('A state-changing action and its success audit are atomic')
+        ->toContain('A feature is incomplete if any exposed server-side action has no asserted audit path.')
+        ->not->toContain('create, update, and delete events—not reads');
+});
+
+it('requires affected canonical changes to update every designated local demo', function (): void {
+    $agents = file_get_contents(StarterPaths::path('AGENTS.md'));
+    $maintenance = file_get_contents(StarterPaths::path('docs/rules/core-maintenance.md'));
+
+    expect($agents)
+        ->toContain('Local per-theme demo projects explicitly designated by the developer as testing fixtures are standing verification targets')
+        ->toContain('update and synchronize every such demo before completion')
+        ->toContain('does not extend to business, staging, or production hosts')
+        ->and($maintenance)
+        ->toContain('Semua project demo per-theme lokal yang telah ditetapkan developer')
+        ->toContain('archive/runtime exact terbaru')
+        ->toContain('jalankan `starter:sync` pada setiap project')
+        ->toContain('demo tersebut, lalu jalankan test host')
+        ->toContain('host bisnis')
+        ->toContain('staging, atau production');
+});
+
 it('locks theme-native scale and PowerGrid toolbar composition into the UI contract', function (): void {
     $ui = file_get_contents(StarterPaths::path('docs/rules/ui-ux.md'));
 
@@ -844,6 +1006,13 @@ it('locks theme-native scale and PowerGrid toolbar composition into the UI contr
         ->toContain('## Template fidelity and visual scale')
         ->toContain('binding design system, not a loose gallery of inspiration')
         ->toContain('Typography scale is inherited from the selected native component')
+        ->toContain('Do not make a pretitle, eyebrow, kicker, uppercase category label, or colored breadcrumb-like label above the title part of the page-header standard')
+        ->toContain('Lock the typography hierarchy to computed values from the closest native dashboard reference')
+        ->toContain('An HTML heading tag does not choose its visual tier by itself')
+        ->toContain('roughly `1.125` to `1.333` times the tier below')
+        ->toContain('A modal title must remain below the page-title tier')
+        ->toContain('Separate card and modal titles may share a vendor-defined tier')
+        ->toContain('Record the page-title, modal-title, card/section-title, subsection, body/control, label, and help/metadata measurements')
         ->toContain('Empty space is resolved through width, grouping, alignment, or information priority')
         ->toContain('run a bounded composition exercise')
         ->toContain('concrete user benefit')

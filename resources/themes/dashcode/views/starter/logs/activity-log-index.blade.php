@@ -26,7 +26,6 @@
 <div class="dashcode-activity-page">
     <div class="page-header dashcode-activity-header mb-5" aria-label="Header halaman" data-starter-region="page-header">
         <div>
-            <div class="page-pretitle">Sistem / Riwayat Data</div>
             <h2 class="page-title">Log Aktivitas</h2>
             <div class="text-secondary mt-1">Riwayat pembuatan, perubahan, dan penghapusan data dari seluruh app perusahaan.</div>
         </div>
@@ -154,7 +153,7 @@
 
                             <div class="px-3 py-3 bg-slate-50">
                                 <div class="dashcode-inline-heading">
-                                    <h4 class="mb-0">Rincian Aktivitas</h4>
+                                    <h4 class="starter-modal-section-title">Rincian Aktivitas</h4>
                                     <span class="small text-secondary">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($selectedLogs->count()) }} item</span>
                                 </div>
                                 <div class="vstack gap-2">

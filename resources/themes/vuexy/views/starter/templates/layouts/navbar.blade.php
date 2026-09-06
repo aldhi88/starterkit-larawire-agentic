@@ -1,4 +1,4 @@
-<nav class="layout-navbar navbar navbar-expand-xl align-items-center {{ $starterLayout === 'vertical' ? 'container-xxl navbar-detached bg-navbar-theme' : '' }}" id="layout-navbar" aria-label="Navigasi akun">
+<nav class="layout-navbar navbar navbar-expand-xl align-items-center starter-header-overlay-owner {{ $starterLayout === 'vertical' ? 'container-xxl navbar-detached bg-navbar-theme' : '' }}" id="layout-navbar" aria-label="Navigasi akun">
     @if ($starterLayout === 'horizontal')
         <div class="container-xxl">
             <div class="navbar-brand app-brand d-none d-xl-flex py-0 me-6 ms-0">

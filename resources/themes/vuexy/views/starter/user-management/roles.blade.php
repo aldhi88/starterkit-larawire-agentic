@@ -3,7 +3,6 @@
         <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman">
             <div class="row g-3 align-items-center">
                 <div class="col">
-                    <div class="page-pretitle">Starter / Manajemen User</div>
                     <h2 class="page-title">Roles</h2>
                     <div class="text-secondary">Kelola role tanpa mencampurkan daftar dengan form pengaturan akses.</div>
                 </div>

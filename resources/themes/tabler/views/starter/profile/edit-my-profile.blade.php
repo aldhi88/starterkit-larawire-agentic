@@ -2,7 +2,6 @@
     <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman" data-starter-region="page-header">
         <div class="row g-2 align-items-center">
             <div class="col">
-                <div class="page-pretitle">Starter / Profil Saya</div>
                 <h2 class="page-title">Edit Profil Saya</h2>
             </div>
         </div>

@@ -16,7 +16,7 @@
         {
             "source": "runtime/css/dashcode.css",
             "target": "css/dashcode.css",
-            "sha256": "fe2b72bcd57ed3b1c4ed2e34a0204a1723963a182fc35987e905c81a3c97c74f",
+            "sha256": "f1375f731e1e70d9aa118285b8907283a64e1f8ba49b1642f5a562e8382e919a",
             "referenced_by": [
                 "resources/themes/dashcode/views/starter/errors/layout.blade.php",
                 "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",

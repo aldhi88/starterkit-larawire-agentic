@@ -3,7 +3,7 @@
     "theme": "tabler",
     "provider": "github",
     "url": "https://raw.githubusercontent.com/aldhi88/starterkit-larawire-agentic-template/master/tabler.zip",
-    "archive_sha256": "2b9ac7d6166664296c07e285052271a832554e0653734b01b6a74bc74f601f7e",
+    "archive_sha256": "d6b914330c01f3015824eaea66f9fa32ff546a3cb48b4ec436af9f2ecfa23d06",
     "archive_max_bytes": 5242880,
     "required_local_path": "theme-intake/tabler",
     "license": "MIT",

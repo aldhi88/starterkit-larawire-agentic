@@ -47,7 +47,6 @@
     <div class="page-header mb-3" aria-label="Header halaman" data-starter-region="page-header">
         <div class="dashcode-page-heading w-full">
             <div class="min-w-0">
-                <div class="page-pretitle">Pengaturan / Roles</div>
                 <h2 class="page-title">{{ $isCreating ? 'Tambah Role' : ($isSuperuserRole ? 'Detail Role' : 'Edit Role') }}</h2>
                 <div class="text-secondary mt-1">
                     {{ $isCreating ? 'Buat identitas role, pilih akses module, lalu tentukan halaman awal.' : 'Kelola identitas dan cakupan akses role pada halaman khusus ini.' }}

@@ -4,7 +4,7 @@
             <h2 class="mb-4">Keamanan Sistem</h2>
         @endif
 
-        <h3 class="card-title">Sesi dan Lock Screen</h3>
+        <h3 class="card-title starter-settings-section-title">Sesi dan Lock Screen</h3>
         <div class="row g-4 mb-4" data-starter-region="session-security">
             <div class="col-md-6">
                 <label class="form-check form-switch mb-4">
@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <h3 class="card-title mt-4">Proteksi Login</h3>
+        <h3 class="card-title starter-settings-section-title mt-4">Proteksi Login</h3>
         <div class="row g-4" data-starter-region="login-protection">
             <div class="col-md-6">
                 <label class="form-label" for="login-attempts">Maksimum percobaan login</label>

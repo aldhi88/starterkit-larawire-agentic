@@ -2,7 +2,6 @@
     @unless ($embedded)
         <div class="dashcode-page-heading" aria-label="Header halaman" data-starter-region="page-header">
             <div>
-                <div class="page-pretitle">Starter / Pengaturan</div>
                 <h2 class="page-title">Profil Perusahaan</h2>
             </div>
         </div>

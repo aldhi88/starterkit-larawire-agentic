@@ -7,14 +7,14 @@ Only theme-neutral error forwarders and the session redirect are reused.
 
 | Runtime | Native reference |
 |---|---|
-| Application shell and navigation | `html-starter/vertical-menu-template-no-customizer/index.html`, corresponding horizontal starter |
+| Application shell and navigation | `html-starter/vertical-menu-template-no-customizer/index.html`, corresponding horizontal starter; account/App menus use an explicit navbar overlay layer |
 | Authentication | `html/vertical-menu-template-no-customizer/auth-login-cover.html` |
 | Landing | `html/front-pages-no-customizer/landing-page.html` |
 | Forms and switches | `forms-basic-inputs.html`, `forms-switches.html` |
-| Profile and settings | `pages-account-settings-account.html`, `pages-account-settings-security.html` |
+| Profile and settings | `pages-account-settings-account.html`, `pages-account-settings-security.html`; direct page titles without decorative pretitles and native descending text tiers |
 | Role/module selection | `app-access-roles.html`, `ui-accordion.html`, native checkboxes/radios |
 | PowerGrid | `tables-basic.html`, `tables-datatables-basic.html`, `ui-pagination-breadcrumbs.html` |
-| Feedback | `ui-alerts.html`, `ui-modals.html`, `ui-toasts.html` |
+| Feedback | `ui-alerts.html`, `ui-modals.html`, `ui-toasts.html`; native `h5`-scale modal titles and smaller internal section titles |
 
 Relative single-file references above belong to
 `html/vertical-menu-template-no-customizer/`.
@@ -27,7 +27,9 @@ action-loader visibility, practical PowerGrid column widths, independently
 centered pagination, portaled row-action positioning, and the measured content
 offset for Vuexy's fixed horizontal menu. Native Vuexy dropdown markup is used;
 menu coordinates are measured dynamically to avoid viewport and scroll-frame
-clipping. Colors, spacing, surfaces, and controls remain native Vuexy. Cosmetic
+clipping. A narrow typography bridge prevents semantic `h2`/`h3` markup from
+inheriting Vuexy display-scale headings inside application pages and modals.
+Colors, spacing, surfaces, and controls remain native Vuexy. Cosmetic
 selection uses Vuexy's native label badges, line tabs, bordered controls, soft
 alerts, and three-zone pagination after comparing the nearest vendor variants.
 The palette is semantic: primary for current navigation and primary actions,

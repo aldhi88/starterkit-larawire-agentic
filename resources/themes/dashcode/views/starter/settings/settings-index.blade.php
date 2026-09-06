@@ -27,7 +27,6 @@
 <div class="dashcode-settings-page">
     <div class="page-header dashcode-settings-header mb-5 flex flex-col gap-3 md:flex-row md:items-center" aria-label="Header halaman" data-starter-region="page-header">
         <div>
-            <div class="page-pretitle">Administrasi Sistem</div>
             <h2 class="page-title">Pengaturan</h2>
             <div class="text-secondary">Kelola akses, akun user, dan identitas perusahaan dari satu tempat.</div>
         </div>

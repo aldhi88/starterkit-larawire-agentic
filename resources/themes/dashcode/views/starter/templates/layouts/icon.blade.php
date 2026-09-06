@@ -12,6 +12,7 @@
     $allowedIcons = [
         'apps',
         'alert-triangle',
+        'archive',
         'arrow-left',
         'activity',
         'building',
@@ -25,6 +26,7 @@
         'circle-x',
         'dots',
         'dots-vertical',
+        'edit',
         'eye',
         'eye-off',
         'folder',
@@ -73,6 +75,12 @@
             <path d="M12 9v4" />
             <path d="M12 17h.01" />
             <path d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z" />
+            @break
+
+        @case('archive')
+            <path d="M3 6a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+            <path d="M5 10v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-8" />
+            <path d="M10 14h4" />
             @break
 
         @case('arrow-left')
@@ -159,6 +167,11 @@
             <path d="M10.6 10.6a2 2 0 1 0 2.8 2.8" />
             <path d="M9.9 4.2a9.1 9.1 0 0 1 2.1 -.2c3.6 0 6.6 2 9 6a16.4 16.4 0 0 1 -2 2.7" />
             <path d="M6.6 6.6c-1.3 .9 -2.5 2 -3.6 3.4c2.4 4 5.4 6 9 6c1 0 2 -.2 2.9 -.5" />
+            @break
+
+        @case('edit')
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3l-11 11l-4 1l1 -4z" />
             @break
 
         @case('folder')

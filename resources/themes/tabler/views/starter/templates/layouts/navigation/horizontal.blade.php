@@ -1,4 +1,4 @@
-<header class="navbar navbar-expand-md navbar-overlap sticky-top d-print-none starter-navbar-horizontal" data-bs-theme="dark">
+<header class="navbar navbar-expand-md navbar-overlap sticky-top d-print-none starter-navbar-horizontal starter-header-overlay-owner" data-bs-theme="dark">
     <div class="container-fluid starter-content-container">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#starter-horizontal-menu" aria-controls="starter-horizontal-menu" aria-expanded="false" aria-label="Buka atau tutup navigasi">
             <span class="navbar-toggler-icon"></span>

@@ -1,4 +1,4 @@
-<aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
+<aside class="navbar navbar-vertical navbar-expand-lg starter-header-overlay-owner" data-bs-theme="dark">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#starter-sidebar-menu" aria-controls="starter-sidebar-menu" aria-expanded="false" aria-label="Buka atau tutup navigasi">
             <span class="navbar-toggler-icon"></span>
@@ -53,7 +53,7 @@
     </div>
 </aside>
 
-<header class="navbar navbar-expand-lg d-none d-lg-flex d-print-none" x-persist="{{ $accountPersistBase }}-topbar">
+<header class="navbar navbar-expand-lg d-none d-lg-flex d-print-none starter-header-overlay-owner" x-persist="{{ $accountPersistBase }}-topbar">
     <div class="container-fluid starter-content-container">
         <div class="d-none d-lg-flex flex-column lh-sm me-auto">
             <span class="small text-secondary">App Aktif</span>

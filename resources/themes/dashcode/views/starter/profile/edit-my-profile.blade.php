@@ -1,7 +1,6 @@
 <div class="dashcode-profile-page" x-data="{ activeTab: @js($activeTab) }">
     <div class="dashcode-page-heading" aria-label="Header halaman" data-starter-region="page-header">
             <div>
-                <div class="page-pretitle">Starter / Profil Saya</div>
                 <h2 class="page-title">Edit Profil Saya</h2>
             </div>
     </div>

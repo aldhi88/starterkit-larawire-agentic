@@ -38,7 +38,6 @@
     <div class="page-header d-print-none mt-0 mb-3" data-starter-region="page-header">
         <div class="row g-3 align-items-end">
             <div class="col">
-                <div class="page-pretitle">Sistem / Riwayat Data</div>
                 <h2 class="page-title">Log Aktivitas</h2>
                 <div class="text-secondary mt-1">Riwayat pembuatan, perubahan, dan penghapusan data dari seluruh app perusahaan.</div>
             </div>
@@ -425,7 +424,7 @@
 
                             <div class="px-3 py-3 bg-body-tertiary">
                                 <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <h4 class="mb-0">Rincian Aktivitas</h4>
+                                    <h4 class="starter-modal-section-title">Rincian Aktivitas</h4>
                                     <span class="small text-secondary">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($selectedLogs->count()) }} item</span>
                                 </div>
                                 <div class="vstack gap-2">
