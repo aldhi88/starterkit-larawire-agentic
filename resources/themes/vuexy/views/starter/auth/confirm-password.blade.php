@@ -3,7 +3,7 @@
         <div class="starter-auth-mark mx-auto">
             @include('starter.templates.layouts.icon', ['name' => 'shield-lock', 'class' => 'icon'])
         </div>
-        <h2 class="mt-3 mb-1">Konfirmasi Password</h2>
+        <h2 class="h4 mt-3 mb-1">Konfirmasi Password</h2>
         <div class="text-secondary">Verifikasi diperlukan sebelum membuka pengaturan sensitif.</div>
     </div>
 

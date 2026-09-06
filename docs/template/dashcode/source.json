@@ -3,7 +3,7 @@
     "theme": "dashcode",
     "provider": "github",
     "url": "https://raw.githubusercontent.com/aldhi88/starterkit-larawire-agentic-template/master/dashcode.zip",
-    "archive_sha256": "9ce970916ab799f13e7c38223c3e4f7a7f976e59aeb4a91ede51c0c1296a723d",
+    "archive_sha256": "a67f3383d7ed3aa7e0666e03db89e2cf905ec18f5737cf272453bdf149045840",
     "archive_max_bytes": 1048576,
     "required_local_path": "theme-intake/dashcode",
     "license": "Commercial license held by the repository owner; runtime distribution authorized for the internal team",

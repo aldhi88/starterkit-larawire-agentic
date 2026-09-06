@@ -4,6 +4,7 @@
             <div class="row g-2 align-items-center">
                 <div class="col">
                     <h2 class="page-title">Profil Perusahaan</h2>
+                    <div class="text-secondary">Perbarui identitas, kontak, dan logo perusahaan.</div>
                 </div>
             </div>
         </div>
@@ -12,7 +13,7 @@
     <form class="{{ $embedded ? '' : 'card' }}" wire:submit="save">
         <div class="card-body">
             @if(! $embedded)
-                <h2 class="mb-4">Pengaturan Perusahaan</h2>
+                <h2 class="card-title mb-4">Pengaturan Perusahaan</h2>
             @endif
 
             <h3 class="card-title">Logo</h3>

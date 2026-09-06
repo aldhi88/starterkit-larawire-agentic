@@ -2,7 +2,11 @@
     @if ($starterLayout === 'horizontal')
         <div class="container-xxl">
             <div class="navbar-brand app-brand d-none d-xl-flex py-0 me-6 ms-0">
-                @include('starter.templates.layouts.brand', ['url' => $currentDashboardUrl])
+                @include('starter.templates.layouts.brand', [
+                    'url' => $currentDashboardUrl,
+                    'showText' => false,
+                    'markClass' => 'vuexy-brand-mark-horizontal',
+                ])
             </div>
     @endif
 

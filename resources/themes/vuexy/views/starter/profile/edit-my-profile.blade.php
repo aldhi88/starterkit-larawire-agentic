@@ -3,6 +3,7 @@
         <div class="row g-2 align-items-center">
             <div class="col">
                 <h2 class="page-title">Edit Profil Saya</h2>
+                <div class="text-secondary">Perbarui identitas akun, foto profil, dan keamanan kredensial Anda.</div>
             </div>
         </div>
     </div>

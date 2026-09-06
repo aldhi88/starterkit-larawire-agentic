@@ -34,8 +34,8 @@ it('maps generated host assets without carrying their payloads in Composer', fun
         ->and(glob(StarterPaths::path('docs/template/*/*.html')) ?: [])->toBe([]);
 
     foreach ([
-        'tabler' => 'd6b914330c01f3015824eaea66f9fa32ff546a3cb48b4ec436af9f2ecfa23d06',
-        'dashcode' => '9ce970916ab799f13e7c38223c3e4f7a7f976e59aeb4a91ede51c0c1296a723d',
+        'tabler' => '5db831a7202fa356ceaf517cfa5aac0e52c2551fa99e3bb2a8af41db77437dec',
+        'dashcode' => 'a67f3383d7ed3aa7e0666e03db89e2cf905ec18f5737cf272453bdf149045840',
     ] as $theme => $checksum) {
         $source = json_decode(
             (string) file_get_contents(StarterPaths::path('docs/template/'.$theme.'/source.json')),
@@ -163,6 +163,36 @@ it('keeps the Tabler horizontal brand proportionate without enlarging the vertic
     }
 });
 
+it('keeps horizontal company wordmarks legible without duplicated Vuexy brand text', function (): void {
+    $vuexyBrand = file_get_contents(StarterPaths::path(
+        'resources/themes/vuexy/views/starter/templates/layouts/brand.blade.php',
+    ));
+    $vuexyNavbar = file_get_contents(StarterPaths::path(
+        'resources/themes/vuexy/views/starter/templates/layouts/navbar.blade.php',
+    ));
+    $dashcodeCss = packageStructureLocalThemeCss('dashcode');
+    $vuexyCss = packageStructureLocalThemeCss('vuexy');
+
+    expect($vuexyBrand)
+        ->toContain('@php($showText = $showText ?? true)')
+        ->toContain('@if ($showText)')
+        ->toContain("{{ \$markClass ?? '' }}")
+        ->and($vuexyNavbar)
+        ->toContain("'showText' => false")
+        ->toContain("'markClass' => 'vuexy-brand-mark-horizontal'");
+
+    if ($dashcodeCss !== null) {
+        expect($dashcodeCss)
+            ->toContain('.starter-header-brand img { height:2.5rem;max-width:11.5rem;object-fit:contain; }')
+            ->toContain('.starter-header-brand img { height:2.25rem;max-width:8.5rem; }');
+    }
+
+    if ($vuexyCss !== null) {
+        expect($vuexyCss)
+            ->toContain('.vuexy-brand-mark-horizontal { block-size:2.5rem;inline-size:auto;max-inline-size:11.5rem; }');
+    }
+});
+
 it('keeps role-form geometry aligned and its summary avatar centered across every theme', function (): void {
     $dashcode = file_get_contents(StarterPaths::path(
         'resources/themes/dashcode/views/starter/user-management/role-form.blade.php',
@@ -248,19 +278,30 @@ it('removes decorative page pretitles and preserves proportional text tiers in e
             ->map(fn (SplFileInfo $file): string => $file->getContents())
             ->implode("\n");
         $activity = file_get_contents($root.'/logs/activity-log-index.blade.php');
+        $profile = file_get_contents($root.'/profile/edit-my-profile.blade.php');
+        $clientProfile = file_get_contents($root.'/settings/client-profile.blade.php');
         $security = file_get_contents($root.'/settings/security-settings.blade.php');
+        $alertModal = file_get_contents($root.'/templates/components/alert-modal.blade.php');
         $themeCss = packageStructureLocalThemeCss($theme);
 
         expect($views)->not->toContain('page-pretitle')
             ->and(substr_count($activity, 'starter-modal-section-title'))->toBe(1)
-            ->and(substr_count($security, 'starter-settings-section-title'))->toBe(2);
+            ->and($profile)->toContain('Perbarui identitas akun, foto profil, dan keamanan kredensial Anda.')
+            ->and($clientProfile)
+            ->toContain('Perbarui identitas, kontak, dan logo perusahaan.')
+            ->toContain('<h2 class="card-title mb-4">Pengaturan Perusahaan</h2>')
+            ->and($security)
+            ->toContain('<h2 class="card-title mb-4">Keamanan Sistem</h2>')
+            ->and(substr_count($security, 'starter-settings-section-title'))->toBe(2)
+            ->and($alertModal)->toContain('<h3 class="modal-title">{{ $title }}</h3>');
 
         if ($themeCss !== null) {
             expect($themeCss)
                 ->toContain('.page-title')
                 ->toContain('.modal-title')
                 ->toContain('.starter-modal-section-title')
-                ->toContain('.starter-settings-section-title');
+                ->toContain('.starter-settings-section-title')
+                ->toMatch('/\.starter-settings-section-title\s*\{[^}]*margin-(?:block-end|bottom):\s*1rem;/s');
         }
     }
 
@@ -271,6 +312,7 @@ it('removes decorative page pretitles and preserves proportional text tiers in e
     if ($dashcodeCss !== null) {
         expect($dashcodeCss)
             ->toContain('font-size:clamp(1.375rem,1.8vw,1.5rem)')
+            ->not->toContain('font-size:1.9rem')
             ->toContain('.modal-title { font-size:1.125rem;')
             ->toContain('.starter-modal-section-title { font-size:1rem;')
             ->toContain('.starter-form-section-title,.starter-settings-section-title { color:var(--starter-slate-900);font-size:.9375rem;');
@@ -284,9 +326,15 @@ it('removes decorative page pretitles and preserves proportional text tiers in e
 
     if ($vuexyCss !== null) {
         expect($vuexyCss)
+            ->toContain('.card-title { font-size:1.125rem;font-weight:500;line-height:1.4; }')
             ->toContain('.modal-title { font-size:1.125rem;')
-            ->toContain('.starter-settings-section-title,.starter-form-section-title,.starter-modal-section-title { font-size:1rem;');
+            ->toContain('.starter-settings-section-title,.starter-form-section-title,.starter-modal-section-title { font-size:1rem;')
+            ->toContain('.alert-title { font-size:1rem;font-weight:600;line-height:1.4;margin:0; }');
     }
+
+    expect(file_get_contents(StarterPaths::path(
+        'resources/themes/vuexy/views/starter/auth/confirm-password.blade.php',
+    )))->toContain('<h2 class="h4 mt-3 mb-1">Konfirmasi Password</h2>');
 });
 
 it('keeps Vuexy shells on their native layout hierarchy', function (): void {
@@ -307,7 +355,9 @@ it('keeps Vuexy shells on their native layout hierarchy', function (): void {
         ->toContain('class="menu-inner py-1"');
 
     if ($customCss !== null) {
-        expect($customCss)->toContain('.layout-horizontal .content-wrapper > .menu-horizontal + main.container-xxl');
+        expect($customCss)
+            ->not->toContain('.layout-horizontal .content-wrapper > .menu-horizontal + main.container-xxl')
+            ->not->toContain('margin-block-start: 3rem');
     }
 });
 
@@ -1012,6 +1062,11 @@ it('locks theme-native scale and PowerGrid toolbar composition into the UI contr
         ->toContain('roughly `1.125` to `1.333` times the tier below')
         ->toContain('A modal title must remain below the page-title tier')
         ->toContain('Separate card and modal titles may share a vendor-defined tier')
+        ->toContain('The same page family must not omit the description on only one sibling page')
+        ->toContain('never stack a custom margin on top of an existing vendor fixed-menu offset')
+        ->toContain('Section headings must have a deliberate following gap')
+        ->toContain('Treat a supplied company wordmark as the complete visual brand')
+        ->toContain('do not repeat the company/application name beside it')
         ->toContain('Record the page-title, modal-title, card/section-title, subsection, body/control, label, and help/metadata measurements')
         ->toContain('Empty space is resolved through width, grouping, alignment, or information priority')
         ->toContain('run a bounded composition exercise')

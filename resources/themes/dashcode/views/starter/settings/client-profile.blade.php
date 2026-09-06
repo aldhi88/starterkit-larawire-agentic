@@ -3,6 +3,7 @@
         <div class="dashcode-page-heading" aria-label="Header halaman" data-starter-region="page-header">
             <div>
                 <h2 class="page-title">Profil Perusahaan</h2>
+                <div class="text-secondary">Perbarui identitas, kontak, dan logo perusahaan.</div>
             </div>
         </div>
     @endunless
@@ -10,7 +11,7 @@
     <form class="{{ $embedded ? '' : 'card' }}" wire:submit="save">
         <div class="card-body space-y-6">
             @if(! $embedded)
-                <h2 class="mb-4">Pengaturan Perusahaan</h2>
+                <h2 class="card-title mb-4">Pengaturan Perusahaan</h2>
             @endif
 
             <section class="space-y-4" aria-labelledby="company-logo-heading">

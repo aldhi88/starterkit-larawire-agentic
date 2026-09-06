@@ -1,7 +1,7 @@
 <form class="{{ $embedded ? '' : 'card' }}" wire:submit="save">
     <div class="card-body">
         @if(! $embedded)
-            <h2 class="mb-4">Keamanan Sistem</h2>
+            <h2 class="card-title mb-4">Keamanan Sistem</h2>
         @endif
 
         <h3 class="card-title starter-settings-section-title">Sesi dan Lock Screen</h3>

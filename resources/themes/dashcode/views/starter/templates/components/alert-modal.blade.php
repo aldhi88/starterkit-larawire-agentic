@@ -52,7 +52,7 @@
                 <div class="text-center">
                     @include('starter.templates.layouts.icon', ['name' => $icon, 'class' => 'mb-2 text-'.$type, 'size' => 48])
 
-                    <h3>{{ $title }}</h3>
+                    <h3 class="modal-title">{{ $title }}</h3>
 
                     <div class="text-secondary">
                         @if ($message instanceof \Illuminate\Contracts\Support\Htmlable)

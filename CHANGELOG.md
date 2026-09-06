@@ -5,6 +5,8 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.2.3] - 2026-09-07
+
 ### Added
 
 - Require indexed `created_by` and `updated_by` actor ownership on every
@@ -15,6 +17,11 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ### Fixed
 
+- Enlarge horizontal DashCode and Vuexy company wordmarks, remove duplicated
+  Vuexy brand text, restore Vuexy's native fixed-menu content spacing, and add
+  consistent profile-page descriptions.
+- Normalize card, alert, standalone settings, and confirmation typography plus
+  section-to-control spacing across all three themes.
 - Remove decorative page pretitles from every theme and restore a proportional,
   vendor-anchored typography hierarchy for page, modal, card, subsection,
   label, and supporting text—including activity-detail dialogs.

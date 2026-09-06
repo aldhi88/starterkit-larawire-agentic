@@ -5,7 +5,7 @@ may share data and actions, but they must not share presentation structure.
 
 | Runtime need | Vendor source | Selected DashCode pattern | Primary runtime | Verification states |
 |---|---|---|---|---|
-| Vertical and horizontal shell | `blank-page.html`, `assets/js/app.js` | app wrapper, fixed light sidebar, native horizontal menu | `templates/layouts/*` | desktop, drawer, sticky, short and long page |
+| Vertical and horizontal shell | `blank-page.html`, `assets/js/app.js` | app wrapper, fixed light sidebar, native horizontal menu, proportionate wordmark and separate active-App identity | `templates/layouts/*` | desktop, drawer, sticky, wordmark bounds, short and long page |
 | Landing | `blank-page.html`, `basic-widgets.html` | branded navigation, hero, application preview, capability cards | `templates/landing.blade.php` | no apps, apps available, desktop, mobile |
 | App dashboard | `index.html`, `project-dashboard.html` | welcome panel, statistic cards, module list, next steps | `templates/app-dashboard.blade.php` | modules, empty module set, wrapped content |
 | Authentication | `signin-one.html`, `signin-two.html` | split layout, focused form, responsive mobile brand | `auth/*`, `templates/layouts/auth.blade.php` | default, invalid, loading, mobile |

@@ -7,7 +7,7 @@ Only theme-neutral error forwarders and the session redirect are reused.
 
 | Runtime | Native reference |
 |---|---|
-| Application shell and navigation | `html-starter/vertical-menu-template-no-customizer/index.html`, corresponding horizontal starter; account/App menus use an explicit navbar overlay layer |
+| Application shell and navigation | `html-starter/vertical-menu-template-no-customizer/index.html`, corresponding horizontal starter; account/App menus use an explicit navbar overlay layer, while the horizontal company wordmark omits duplicated brand text and preserves Vuexy's native fixed-menu content offset |
 | Authentication | `html/vertical-menu-template-no-customizer/auth-login-cover.html` |
 | Landing | `html/front-pages-no-customizer/landing-page.html` |
 | Forms and switches | `forms-basic-inputs.html`, `forms-switches.html` |
@@ -25,7 +25,8 @@ Relative single-file references above belong to
 Starter-specific runtime mechanisms: shared
 action-loader visibility, practical PowerGrid column widths, independently
 centered pagination, portaled row-action positioning, and the measured content
-offset for Vuexy's fixed horizontal menu. Native Vuexy dropdown markup is used;
+relationship for Vuexy's fixed horizontal menu without adding a second top
+offset. Native Vuexy dropdown markup is used;
 menu coordinates are measured dynamically to avoid viewport and scroll-frame
 clipping. A narrow typography bridge prevents semantic `h2`/`h3` markup from
 inheriting Vuexy display-scale headings inside application pages and modals.
