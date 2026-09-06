@@ -34,7 +34,7 @@ it('maps generated host assets without carrying their payloads in Composer', fun
         ->and(glob(StarterPaths::path('docs/template/*/*.html')) ?: [])->toBe([]);
 
     foreach ([
-        'tabler' => '834540b17f1f20fa888198de1dfc13ade5187305f02ece63312720dc6cad1898',
+        'tabler' => '2b9ac7d6166664296c07e285052271a832554e0653734b01b6a74bc74f601f7e',
         'dashcode' => 'e4b4ee2a270a04c264ad3aa4f0aaa38fe5ae74e8f8c9fb3dd7466e74b2db422a',
     ] as $theme => $checksum) {
         $source = json_decode(
@@ -139,6 +139,28 @@ it('keeps the active App identity available in every horizontal layout', functio
         ->and($vuexy)
         ->toContain('class="nav-item d-flex align-items-center gap-3" data-starter-active-app')
         ->and(substr_count($vuexy, 'data-starter-current-app-name'))->toBe(1);
+});
+
+it('keeps the Tabler horizontal brand proportionate without enlarging the vertical sidebar logo', function (): void {
+    $horizontal = file_get_contents(StarterPaths::path(
+        'resources/themes/tabler/views/starter/templates/layouts/navigation/horizontal.blade.php',
+    ));
+    $vertical = file_get_contents(StarterPaths::path(
+        'resources/themes/tabler/views/starter/templates/layouts/navigation/vertical.blade.php',
+    ));
+    $css = packageStructureLocalThemeCss('tabler');
+
+    expect($horizontal)
+        ->toContain('class="starter-sidebar-brand-image starter-sidebar-brand-image-horizontal"')
+        ->and($vertical)
+        ->toContain('class="starter-sidebar-brand-image"')
+        ->not->toContain('starter-sidebar-brand-image-horizontal');
+
+    if ($css !== null) {
+        expect($css)
+            ->toContain('.starter-sidebar-brand-image-horizontal {')
+            ->toContain('height: 2.25rem;');
+    }
 });
 
 it('keeps Vuexy shells on their native layout hierarchy', function (): void {

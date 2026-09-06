@@ -8,7 +8,7 @@
             <a href="{{ $currentDashboardUrl }}" class="starter-sidebar-brand" aria-label="{{ $brandLogoAlt }}" data-starter-navigate>
                 <img
                     src="{{ $brandLogoUrl }}"
-                    class="starter-sidebar-brand-image"
+                    class="starter-sidebar-brand-image starter-sidebar-brand-image-horizontal"
                     alt="{{ $brandLogoAlt }}"
                     data-starter-brand-logo
                     data-fallback-src="{{ $defaultBrandLogoUrl }}"
