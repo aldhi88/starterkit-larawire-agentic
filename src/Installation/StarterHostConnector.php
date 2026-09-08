@@ -20,6 +20,7 @@ class StarterHostConnector
     {
         $this->assertRequiredFiles();
         $this->removeDefaultMigrations();
+        $this->removeDefaultFeatureTest();
         $this->configureFrameworkTableNames();
         $this->write(
             base_path('bootstrap/app.php'),
@@ -126,6 +127,33 @@ PHP;
             }
 
             $this->write($path, $contents);
+        }
+    }
+
+    private function removeDefaultFeatureTest(): void
+    {
+        $path = base_path('tests/Feature/ExampleTest.php');
+
+        if (! is_file($path)) {
+            return;
+        }
+
+        $contents = $this->read($path);
+        $scaffoldMarkers = [
+            'class ExampleTest extends TestCase',
+            'A basic test example.',
+            'test_the_application_returns_a_successful_response',
+            "\$this->get('/')",
+        ];
+
+        foreach ($scaffoldMarkers as $marker) {
+            if (! str_contains($contents, $marker)) {
+                return;
+            }
+        }
+
+        if (! unlink($path)) {
+            throw new RuntimeException('Test contoh bawaan Laravel tidak dapat dihapus.');
         }
     }
 

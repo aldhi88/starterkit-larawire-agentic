@@ -275,6 +275,39 @@ php artisan starter:sync
 Review and commit both `composer.json` and `composer.lock` in the Laravel
 application repository.
 
+### Customize starter-owned views
+
+Never edit files under `vendor/`. Publish project-owned copies for the active
+theme before customizing starter views:
+
+```bash
+php artisan starter:views-publish
+```
+
+Overrides are stored per theme under
+`resources/views/vendor/starterkit-larawire/<theme>/starter/` and must be
+committed with the application. `composer update` never overwrites them. After
+updating the package, inspect their state and preview any replacement:
+
+```bash
+php artisan starter:views-status
+php artisan starter:views-replace --dry-run
+```
+
+Status distinguishes current, customized, update-available, and conflicting
+views. Restore one override to the active package default with:
+
+```bash
+php artisan starter:views-replace auth/login.blade.php
+```
+
+The replacement command shows its plan, asks for confirmation, and creates a
+backup under `storage/app/starter/backups/views/` before writing or deleting
+files. Use `--force` only for explicitly authorized local automation. Mutating
+publish and replace operations are rejected in production. Custom views must
+preserve the active theme's Livewire, authorization, validation, accessibility,
+and responsive contracts.
+
 ### First production deployment
 
 ```bash
@@ -318,6 +351,9 @@ Before installation, `starter:install` is available. After installation:
 | `starter:reset` | Delete the old installation and rerun the wizard; local only |
 | `starter:sync` | Synchronize developer source into the local database |
 | `starter:app` | Create a new App/subdomain through a wizard |
+| `starter:views-publish` | Copy active-theme views into the project override area |
+| `starter:views-status` | Compare project overrides with the active package |
+| `starter:views-replace` | Restore selected overrides with an automatic backup |
 | `starter:deploy` | Deploy to production with complete preflight validation |
 
 ## C. Optional API Gateway

@@ -148,7 +148,8 @@ separate interaction and may follow the active theme.
 
 ## Base rules
 
-- The starter owns shell layout, account dropdown, auth, lock screen, and error pages. Project features extend only the documented extension paths; never copy or override core views.
+- The starter owns shell layout, account dropdown, auth, lock screen, and error pages. Prefer the documented additive extension paths. A project may structurally customize starter-owned UI only through the active-theme override tree created by `starter:views-publish`; never edit `vendor`, manually shadow core views elsewhere, or reuse an override from another theme.
+- Composer updates never overwrite project view overrides. After every package update, run `starter:views-status`, review `update-available` and `conflict` entries, then use `starter:views-replace --dry-run` before an explicit replacement. Replacement must remain local-only, create a recoverable backup, and never silently discard custom markup. Re-run relevant server and browser tests because an override remains responsible for current Livewire, authorization, validation, accessibility, asset, and responsive contracts.
 - The permitted global extension contracts are `resources/views/extensions/starter/header-actions/index.blade.php`, `profile-menu/index.blade.php`, `layout/head.blade.php`, and `layout/body-end.blade.php`. Extensions add content; they never replace starter layouts/views.
 - Use Indonesian UI text, sensible information density, visible status, empty/loading/error states, keyboard-accessible controls, and responsive layouts.
 - Use the active vendor's native component variant for visible controls. For example, boolean settings use the vendor switch pattern when it exists; do not fall back to a plain checkbox or another theme's control styling.

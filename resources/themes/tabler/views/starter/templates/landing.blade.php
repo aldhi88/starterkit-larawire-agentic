@@ -3,7 +3,9 @@
 <main class="page min-vh-100 bg-light">
     <header class="navbar navbar-expand-md d-print-none" data-starter-region="page-header">
         <div class="container-xl">
-            <div class="navbar-brand navbar-brand-autodark">{{ config('app.name') }}</div>
+            <div class="navbar-brand navbar-brand-autodark">
+                @include('starter.templates.components.company-brand')
+            </div>
             <div class="navbar-nav flex-row order-md-last">
                 <a href="{{ \Aldhi88\StarterKit\Support\Starter\StarterNavigation::authLoginUrl() }}" class="btn btn-primary">Login</a>
             </div>

@@ -4,6 +4,9 @@ use Aldhi88\StarterKit\Console\Commands\Starter\AppCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\DeployCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\InstallCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\ResetCommand;
+use Aldhi88\StarterKit\Console\Commands\Starter\ViewsPublishCommand;
+use Aldhi88\StarterKit\Console\Commands\Starter\ViewsReplaceCommand;
+use Aldhi88\StarterKit\Console\Commands\Starter\ViewsStatusCommand;
 use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use Illuminate\Support\Facades\File;
 
@@ -34,8 +37,8 @@ it('maps generated host assets without carrying their payloads in Composer', fun
         ->and(glob(StarterPaths::path('docs/template/*/*.html')) ?: [])->toBe([]);
 
     foreach ([
-        'tabler' => '5db831a7202fa356ceaf517cfa5aac0e52c2551fa99e3bb2a8af41db77437dec',
-        'dashcode' => 'a67f3383d7ed3aa7e0666e03db89e2cf905ec18f5737cf272453bdf149045840',
+        'tabler' => '11eeac8c27a37f7ac900abc61fcc45b50702efb44f3fb7f29956a3288a811e9c',
+        'dashcode' => '6c2158a55bab2f31105d24150fdd62e6ed0b19fcb0bdc8beb64e4e977ba3ec11',
     ] as $theme => $checksum) {
         $source = json_decode(
             (string) file_get_contents(StarterPaths::path('docs/template/'.$theme.'/source.json')),
@@ -43,8 +46,8 @@ it('maps generated host assets without carrying their payloads in Composer', fun
             flags: JSON_THROW_ON_ERROR,
         );
 
-        expect($source['url'])->toBe(
-            'https://raw.githubusercontent.com/aldhi88/starterkit-larawire-agentic-template/master/'.$theme.'.zip',
+        expect($source['url'])->toMatch(
+            '#^https://raw\.githubusercontent\.com/aldhi88/starterkit-larawire-agentic-template/[0-9a-f]{40}/'.preg_quote($theme, '#').'\.zip$#',
         )->and($source['archive_sha256'])->toBe($checksum);
     }
 });
@@ -1323,6 +1326,9 @@ it('uses a required interactive installation wizard without public identity shor
     $app = new AppCommand;
     $deploy = new DeployCommand;
     $reset = new ResetCommand;
+    $viewsPublish = new ViewsPublishCommand;
+    $viewsReplace = new ViewsReplaceCommand;
+    $viewsStatus = new ViewsStatusCommand;
 
     expect($install->getDefinition()->hasOption('company'))->toBeFalse()
         ->and($install->getDefinition()->hasOption('email'))->toBeFalse()
@@ -1332,7 +1338,10 @@ it('uses a required interactive installation wizard without public identity shor
         ->and($install->getName())->toBe('starter:install')
         ->and($app->getName())->toBe('starter:app')
         ->and($deploy->getName())->toBe('starter:deploy')
-        ->and($reset->getName())->toBe('starter:reset');
+        ->and($reset->getName())->toBe('starter:reset')
+        ->and($viewsPublish->getName())->toBe('starter:views-publish')
+        ->and($viewsReplace->getName())->toBe('starter:views-replace')
+        ->and($viewsStatus->getName())->toBe('starter:views-status');
 });
 
 it('does not store initial superuser credentials in package configuration', function (): void {
@@ -1341,6 +1350,17 @@ it('does not store initial superuser credentials in package configuration', func
 
     expect($config)->not->toContain('STARTER_SUPERUSER')
         ->and($environment)->not->toContain('STARTER_SUPERUSER');
+});
+
+it('removes only the recognized fresh laravel feature-test scaffold during installation', function (): void {
+    $connector = file_get_contents(StarterPaths::path('src/Installation/StarterHostConnector.php'));
+
+    expect($connector)
+        ->toContain('removeDefaultFeatureTest()')
+        ->toContain('test_the_application_returns_a_successful_response')
+        ->toContain("\$this->get('/')")
+        ->toContain('if (! str_contains($contents, $marker))')
+        ->toContain('Test contoh bawaan Laravel tidak dapat dihapus.');
 });
 
 it('generates app tests in a PSR-4 namespace matching their directory', function (): void {

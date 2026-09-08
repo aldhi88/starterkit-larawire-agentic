@@ -16,7 +16,7 @@
         {
             "source": "runtime/css/dashcode.css",
             "target": "css/dashcode.css",
-            "sha256": "7fb4d487a056fc1e14820435c01c0ad027639cab64a37790ef0b3758b859c871",
+            "sha256": "435e96719ae6f3bf931c06993e109f679debbf3e7c5dd3dcb1002d2d7d94b3e8",
             "referenced_by": [
                 "resources/themes/dashcode/views/starter/errors/layout.blade.php",
                 "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
@@ -55,7 +55,6 @@
             "referenced_by": [
                 "resources/themes/dashcode/views/starter/errors/layout.blade.php",
                 "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
-                "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php",
                 "resources/themes/dashcode/views/starter/templates/layouts/landing.blade.php"
             ]
         },
@@ -72,7 +71,7 @@
             "target": "images/logo/logo-c.svg",
             "sha256": "93d40d0bdd55e7959a7fa200d7377b9a63cec199433b28c467c9f6bfa84778d3",
             "referenced_by": [
-                "resources/themes/dashcode/views/starter/templates/landing.blade.php"
+                "resources/themes/dashcode/views/starter/templates/components/company-brand.blade.php"
             ]
         },
         {

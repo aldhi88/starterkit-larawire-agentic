@@ -1,3 +1,8 @@
+@php
+    $defaultBrandLogoUrl = asset('assets/dashcode/images/logo/logo.svg');
+    $brandLogoUrl = $clientLogoUrl ?: $defaultBrandLogoUrl;
+    $brandLogoAlt = $clientLogoUrl ? ($clientName ?: config('app.name')) : config('app.name');
+@endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" class="light">
 
@@ -7,7 +12,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="starter-auth-login-url" content="{{ \Aldhi88\StarterKit\Support\Starter\StarterNavigation::authLoginUrl() }}">
     <title>{{ $title ?? 'Login' }} | {{ config('app.name') }}</title>
-    <link rel="shortcut icon" href="{{ asset('assets/dashcode/images/logo/favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ $brandLogoUrl }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/app.css') }}?v={{ filemtime(public_path('assets/dashcode/css/app.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/starter/css/starter.css') }}?v={{ filemtime(public_path('assets/starter/css/starter.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/dashcode.css') }}?v={{ filemtime(public_path('assets/dashcode/css/dashcode.css')) }}">
@@ -30,9 +35,6 @@
         <div class="lg-inner-column">
             <section class="left-column relative z-[1]" aria-label="Identitas aplikasi" data-starter-region="identity-panel">
                 <div class="starter-auth-intro max-w-[520px] pt-20 ltr:pl-20 rtl:pr-20">
-                    <a href="{{ url('/') }}" data-starter-navigate>
-                        <img src="{{ asset('assets/dashcode/images/logo/logo.svg') }}" alt="{{ config('app.name') }}" class="starter-auth-logo">
-                    </a>
                     <h1 class="starter-auth-heading">
                         Akses aplikasi perusahaan<br>
                         <span class="font-bold">dengan aman.</span>
@@ -46,9 +48,9 @@
             <section class="right-column relative" data-starter-region="primary-content">
                 <div class="inner-content flex h-full flex-col bg-white">
                     <div class="auth-box starter-auth-box flex h-full flex-col justify-center">
-                        <div class="mobile-logo mb-6 text-center lg:hidden">
+                        <div class="starter-auth-form-brand mb-6 text-center">
                             <a href="{{ url('/') }}" data-starter-navigate>
-                                <img src="{{ asset('assets/dashcode/images/logo/logo.svg') }}" alt="{{ config('app.name') }}" class="starter-auth-logo mx-auto">
+                                <img src="{{ $brandLogoUrl }}" alt="{{ $brandLogoAlt }}" class="starter-auth-logo {{ $clientLogoUrl ? 'starter-auth-company-logo' : '' }} mx-auto" data-starter-brand-logo data-fallback-src="{{ $defaultBrandLogoUrl }}" @if ($clientLogoUrl) data-company-logo="true" @endif>
                             </a>
                         </div>
                         <div class="mb-6 text-center">

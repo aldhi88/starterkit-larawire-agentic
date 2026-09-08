@@ -1,3 +1,8 @@
+@php
+    $defaultBrandLogoUrl = asset('assets/tabler/static/logo-small.svg');
+    $brandLogoUrl = $clientLogoUrl ?: $defaultBrandLogoUrl;
+    $brandLogoAlt = $clientLogoUrl ? ($clientName ?: config('app.name')) : config('app.name');
+@endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -8,7 +13,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="starter-auth-login-url" content="{{ \Aldhi88\StarterKit\Support\Starter\StarterNavigation::authLoginUrl() }}">
     <title>{{ $title ?? 'Login' }} | {{ config('app.name') }}</title>
-    <link rel="shortcut icon" href="{{ asset('assets/tabler/static/logo-small.svg') }}">
+    <link rel="shortcut icon" href="{{ $brandLogoUrl }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/css/tabler.css') }}?v={{ filemtime(public_path('assets/tabler/css/tabler.css')) }}">
     @includeIf('extensions.starter.layout.head')
@@ -56,7 +61,18 @@
                     <div class="container-tight">
                         <div class="text-center mb-4">
                             <a href="{{ url('/') }}" class="text-decoration-none" wire:navigate>
-                                <span class="starter-auth-mark">{{ str(config('app.name'))->substr(0, 1)->upper() }}</span>
+                                @if ($clientLogoUrl)
+                                    <img
+                                        src="{{ $brandLogoUrl }}"
+                                        class="starter-auth-company-logo"
+                                        alt="{{ $brandLogoAlt }}"
+                                        data-starter-brand-logo
+                                        data-fallback-src="{{ $defaultBrandLogoUrl }}"
+                                        data-company-logo="true"
+                                    >
+                                @else
+                                    <span class="starter-auth-mark">{{ str(config('app.name'))->substr(0, 1)->upper() }}</span>
+                                @endif
                             </a>
                             @if (($title ?? null) !== 'Layar Dikunci')
                                 <div class="mt-3">

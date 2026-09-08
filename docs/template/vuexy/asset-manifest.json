@@ -5,7 +5,7 @@
         {
             "source": "runtime/css/vuexy.css",
             "target": "css/vuexy.css",
-            "sha256": "0e50d5879bd3c6288636005109bfec611746f0cea8a9d26fb9f391d70a75f637",
+            "sha256": "268512ae79b3b7f116801e10cde79635911639339ad6c9096b6950618e9ac2cd",
             "referenced_by": [
                 "resources/themes/vuexy/views/starter/errors/layout.blade.php",
                 "resources/themes/vuexy/views/starter/templates/layouts/head.blade.php"
@@ -16,6 +16,7 @@
             "target": "img/branding/vuexy-mark.svg",
             "sha256": "8ae50905df96b653733278d7d055a7403dec306b99041c60af0c09d65e75a223",
             "referenced_by": [
+                "resources/themes/vuexy/views/starter/templates/components/company-brand.blade.php",
                 "resources/themes/vuexy/views/starter/templates/layouts/app.blade.php",
                 "resources/themes/vuexy/views/starter/templates/layouts/auth.blade.php",
                 "resources/themes/vuexy/views/starter/templates/layouts/brand.blade.php"

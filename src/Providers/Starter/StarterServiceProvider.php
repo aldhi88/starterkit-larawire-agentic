@@ -6,6 +6,9 @@ use Aldhi88\StarterKit\Console\Commands\Starter\AppCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\DeployCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\ResetCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\SyncCommand;
+use Aldhi88\StarterKit\Console\Commands\Starter\ViewsPublishCommand;
+use Aldhi88\StarterKit\Console\Commands\Starter\ViewsReplaceCommand;
+use Aldhi88\StarterKit\Console\Commands\Starter\ViewsStatusCommand;
 use Aldhi88\StarterKit\Contracts\Starter\ActivityLogInterface;
 use Aldhi88\StarterKit\Contracts\Starter\AppInterface;
 use Aldhi88\StarterKit\Contracts\Starter\AppModInterface;
@@ -49,6 +52,7 @@ use Aldhi88\StarterKit\Services\Starter\SecuritySettingsService;
 use Aldhi88\StarterKit\Services\Starter\SettingsOverviewService;
 use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
 use Aldhi88\StarterKit\Services\Starter\StarterContextService;
+use Aldhi88\StarterKit\Services\Starter\StarterViewOverrideService;
 use Aldhi88\StarterKit\Services\Starter\UserManagementRoleService;
 use Aldhi88\StarterKit\Services\Starter\UserManagementUserService;
 use Aldhi88\StarterKit\Support\Starter\StarterInternalRunContext;
@@ -107,6 +111,9 @@ class StarterServiceProvider extends ServiceProvider
                 DeployCommand::class,
                 ResetCommand::class,
                 SyncCommand::class,
+                ViewsPublishCommand::class,
+                ViewsReplaceCommand::class,
+                ViewsStatusCommand::class,
             ]);
         }
     }
@@ -123,6 +130,12 @@ class StarterServiceProvider extends ServiceProvider
         $this->configureApiDocumentation();
         $this->configurePowerGridTranslations();
         View::addNamespace('errors', StarterTheme::viewPath('starter/errors'));
+
+        $viewOverrides = app(StarterViewOverrideService::class);
+
+        if ($viewOverrides->hasOverrides()) {
+            View::prependNamespace('layouts', $viewOverrides->layoutsRoot());
+        }
 
         Number::useLocale(str_replace('_', '-', (string) config('app.locale')));
         $strictDevelopment = $this->app->isLocal() || $this->app->runningUnitTests();
@@ -149,6 +162,16 @@ class StarterServiceProvider extends ServiceProvider
             'apps.*',
         ], function ($view): void {
             $view->with(app(StarterContextService::class)->data());
+        });
+
+        View::composer([
+            'layouts::auth',
+            'layouts::landing',
+            'starter.templates.layouts.auth',
+            'starter.templates.layouts.landing',
+            'starter.templates.landing',
+        ], function ($view): void {
+            $view->with(app(StarterContextService::class)->brandData());
         });
 
         Livewire::addPersistentMiddleware([
@@ -189,6 +212,7 @@ class StarterServiceProvider extends ServiceProvider
     {
         $viewPaths = (array) $this->app['config']->get('view.paths', [resource_path('views')]);
         $starterViewPaths = [
+            app(StarterViewOverrideService::class)->overrideThemeRoot(),
             StarterTheme::viewPath('starter'),
             StarterTheme::viewPath(),
         ];

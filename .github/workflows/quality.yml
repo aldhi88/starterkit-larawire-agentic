@@ -72,6 +72,18 @@ jobs:
           php -r '$path = ".env"; $env = file_get_contents($path); $env = preg_replace("/^APP_URL=.*$/m", "APP_URL=http://company.test:8123", $env); file_put_contents($path, $env);'
           php -r 'file_put_contents("database/database.sqlite", "");'
       - run: php tests/Integration/install-fresh-host.php "$GITHUB_WORKSPACE/host"
+      - name: Verify project-owned view overrides
+        working-directory: host
+        run: |
+          php artisan starter:views-publish auth/login.blade.php templates/layouts/auth.blade.php --no-interaction
+          php artisan starter:views-status
+          printf '\n{{-- CI project customization --}}\n' >> resources/views/vendor/starterkit-larawire/tabler/starter/auth/login.blade.php
+          php artisan starter:views-replace auth/login.blade.php --dry-run --no-interaction
+          grep -q 'CI project customization' resources/views/vendor/starterkit-larawire/tabler/starter/auth/login.blade.php
+          php artisan starter:views-replace auth/login.blade.php --force --no-interaction
+          if grep -q 'CI project customization' resources/views/vendor/starterkit-larawire/tabler/starter/auth/login.blade.php; then
+            exit 1
+          fi
       - working-directory: host
         run: php artisan starter:sync --dry-run
       - working-directory: host
@@ -99,3 +111,9 @@ jobs:
           php -r '$path = ".env"; $env = file_get_contents($path); foreach (["APP_ENV" => "production", "APP_DEBUG" => "false", "APP_URL" => "https://company.test", "SESSION_SECURE_COOKIE" => "true"] as $key => $value) { $env = preg_replace("/^".preg_quote($key, "/")."=.*$/m", $key."=".$value, $env); } file_put_contents($path, $env);'
       - working-directory: host
         run: php artisan starter:deploy --force
+      - name: Reject mutating view commands in production
+        working-directory: host
+        run: |
+          if php artisan starter:views-publish auth/login.blade.php --no-interaction; then
+            exit 1
+          fi

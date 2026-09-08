@@ -280,6 +280,40 @@ php artisan starter:sync
 Periksa dan commit `composer.json` serta `composer.lock` pada repository
 aplikasi Laravel.
 
+### Custom view bawaan starterkit
+
+Jangan edit file di `vendor/`. Untuk mulai melakukan custom view pada theme
+aktif, publish salinan yang dimiliki project:
+
+```bash
+php artisan starter:views-publish
+```
+
+Override disimpan per theme di
+`resources/views/vendor/starterkit-larawire/<theme>/starter/` dan harus
+di-commit bersama project. `composer update` tidak pernah menimpa file tersebut.
+Setelah package diperbarui, periksa perbedaannya:
+
+```bash
+php artisan starter:views-status
+php artisan starter:views-replace --dry-run
+```
+
+Status membedakan view yang masih sama, sudah dicustom, memiliki update, atau
+konflik antara custom project dan package terbaru. Untuk mengembalikan view
+tertentu ke default package, jalankan:
+
+```bash
+php artisan starter:views-replace auth/login.blade.php
+```
+
+Command replace menampilkan rencana, meminta konfirmasi, dan membuat backup di
+`storage/app/starter/backups/views/` sebelum menulis atau menghapus file.
+Gunakan `--force` hanya pada otomasi local yang memang mengizinkan penggantian.
+Command publish dan replace yang menulis file ditolak di production. Custom
+view tetap wajib mempertahankan kontrak Livewire, authorization, validasi,
+aksesibilitas, dan responsive theme aktif.
+
 ### Deployment production pertama kali
 
 ```bash
@@ -325,6 +359,9 @@ Sebelum instalasi tersedia `starter:install`. Setelah instalasi berhasil:
 | `starter:reset` | Menghapus instalasi lama dan mengulang wizard; hanya local |
 | `starter:sync` | Menyelaraskan source developer ke database local |
 | `starter:app` | Membuat App/subdomain baru melalui wizard |
+| `starter:views-publish` | Menyalin view theme aktif ke area override project |
+| `starter:views-status` | Membandingkan override project dengan package aktif |
+| `starter:views-replace` | Mengembalikan override terpilih ke default dengan backup |
 | `starter:deploy` | Deploy production dengan preflight lengkap |
 
 ## C. Gateway API Opsional

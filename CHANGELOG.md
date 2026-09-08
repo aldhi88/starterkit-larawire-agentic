@@ -5,6 +5,28 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-08
+
+### Added
+
+- Add theme-specific, project-owned starter view overrides with checksum-based
+  status reporting, conflict detection, dry-run replacement, path validation,
+  and automatic pre-replacement backups.
+- Add `starter:views-publish`, `starter:views-status`, and
+  `starter:views-replace` while keeping Composer updates non-destructive.
+
+### Changed
+
+- Use the configured company logo consistently across application, landing,
+  favicon, and authentication surfaces for all supported themes.
+
+### Fixed
+
+- Restore native-scale company logos above the authentication form in Tabler,
+  DashCode, and Vuexy, including centered desktop and mobile placement.
+- Remove only the recognized fresh-Laravel feature-test scaffold before
+  domain-aware starter verification so current Laravel 13 hosts install cleanly.
+
 ## [1.3.0] - 2026-09-07
 
 ### Added

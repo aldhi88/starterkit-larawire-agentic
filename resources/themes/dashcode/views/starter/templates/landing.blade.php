@@ -2,10 +2,7 @@
 
 <main class="dashcode-landing-page">
     <header class="dashcode-landing-nav" data-starter-region="page-header">
-        <a href="{{ url('/') }}" class="dashcode-landing-brand">
-            <img src="{{ asset('assets/dashcode/images/logo/logo-c.svg') }}" alt="">
-            <strong>{{ config('app.name') }}</strong>
-        </a>
+        @include('starter.templates.components.company-brand')
         <a href="{{ \Aldhi88\StarterKit\Support\Starter\StarterNavigation::authLoginUrl() }}" class="dashcode-landing-login">Login</a>
     </header>
 

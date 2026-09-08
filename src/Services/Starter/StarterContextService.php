@@ -45,6 +45,28 @@ class StarterContextService
     }
 
     /**
+     * @return array{clientName: ?string, clientLogoUrl: ?string}
+     */
+    public function brandData(): array
+    {
+        $attribute = 'starter.context.brand';
+
+        if (request()->attributes->has($attribute)) {
+            return request()->attributes->get($attribute);
+        }
+
+        $client = $this->clients->current();
+        $data = [
+            'clientName' => $client->name,
+            'clientLogoUrl' => $this->clientLogoUrl($client),
+        ];
+
+        request()->attributes->set($attribute, $data);
+
+        return $data;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function build(): array
@@ -53,7 +75,7 @@ class StarterContextService
         $login = $login instanceof ClientLogin ? $login : null;
 
         $login = $login ? $this->clientLogins->loadRole($login) : null;
-        $client = $login ? $this->clients->current() : null;
+        $brand = $this->brandData();
         $modIds = $this->authorizedModIds($login);
 
         $accessibleApps = $this->accessibleApps($login, $modIds);
@@ -74,8 +96,8 @@ class StarterContextService
             'loginEmail' => $login?->email,
             'loginAvatarUrl' => $this->avatarUrl($login),
             'loginRoleName' => $login?->role?->name,
-            'clientName' => $client?->name,
-            'clientLogoUrl' => $this->clientLogoUrl($client),
+            'clientName' => $brand['clientName'],
+            'clientLogoUrl' => $brand['clientLogoUrl'],
             'currentApp' => $currentApp,
             'currentAppKey' => $currentAppKey,
             'currentAppName' => $currentApp?->name,

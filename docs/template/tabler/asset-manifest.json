@@ -5,7 +5,7 @@
         {
             "source": "runtime/css/tabler.css",
             "target": "css/tabler.css",
-            "sha256": "132440c6cb0500cdd2f4bae5de8d0ad68bea6e422201d29a003b0bab5a4fc06f",
+            "sha256": "97c66033ce27571f8993768db00d05144512533fcf242010304147d6fd0ca973",
             "referenced_by": [
                 "resources/themes/tabler/views/starter/errors/layout.blade.php",
                 "resources/themes/tabler/views/starter/templates/layouts/app.blade.php",
@@ -71,6 +71,7 @@
             "sha256": "91dd78a0d197833bfa7afb3f737ac04f1859156896e5d7ab99236cc97854ca89",
             "referenced_by": [
                 "resources/themes/tabler/views/starter/errors/layout.blade.php",
+                "resources/themes/tabler/views/starter/templates/components/company-brand.blade.php",
                 "resources/themes/tabler/views/starter/templates/layouts/app.blade.php",
                 "resources/themes/tabler/views/starter/templates/layouts/auth.blade.php",
                 "resources/themes/tabler/views/starter/templates/layouts/landing.blade.php"

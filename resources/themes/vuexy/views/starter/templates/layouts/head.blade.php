@@ -3,7 +3,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="starter-auth-login-url" content="{{ \Aldhi88\StarterKit\Support\Starter\StarterNavigation::authLoginUrl() }}">
 <title>{{ $title ?? config('app.name') }} | {{ config('app.name') }}</title>
-<link rel="icon" href="{{ asset('assets/vuexy/img/favicon/favicon.ico') }}">
+<link rel="icon" href="{{ $clientLogoUrl ?: asset('assets/vuexy/img/favicon/favicon.ico') }}">
 <link rel="stylesheet" href="{{ asset('assets/vuexy/vendor/css/core.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/vuexy/vendor/fonts/iconify-icons.css') }}">
 @if (($vuexyPage ?? 'app') === 'auth')
