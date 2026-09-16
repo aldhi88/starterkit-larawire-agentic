@@ -6,5 +6,5 @@ use RuntimeException;
 
 class TemporaryPasswordDeliveryException extends RuntimeException
 {
-    // Marks a mail transport failure so credential mutations can be rolled back safely.
+    // Marks a queue-registration failure before credential mutation is committed.
 }

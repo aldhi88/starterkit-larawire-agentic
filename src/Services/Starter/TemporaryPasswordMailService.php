@@ -15,17 +15,17 @@ class TemporaryPasswordMailService
         private readonly MailFactory $mail,
     ) {}
 
-    public function sendForNewAccount(ClientLogin $login, string $temporaryPassword): void
+    public function queueForNewAccount(ClientLogin $login, string $temporaryPassword): void
     {
-        $this->send($login, $temporaryPassword, passwordWasReset: false);
+        $this->queue($login, $temporaryPassword, passwordWasReset: false);
     }
 
-    public function sendForReset(ClientLogin $login, string $temporaryPassword): void
+    public function queueForReset(ClientLogin $login, string $temporaryPassword): void
     {
-        $this->send($login, $temporaryPassword, passwordWasReset: true);
+        $this->queue($login, $temporaryPassword, passwordWasReset: true);
     }
 
-    private function send(ClientLogin $login, string $temporaryPassword, bool $passwordWasReset): void
+    private function queue(ClientLogin $login, string $temporaryPassword, bool $passwordWasReset): void
     {
         try {
             $message = new TemporaryPasswordMail(
@@ -38,10 +38,10 @@ class TemporaryPasswordMailService
             );
             $message->to($login->email, $login->name);
 
-            $this->mail->mailer($this->mailerName())->send($message);
+            $this->mail->mailer($this->mailerName())->queue($message);
         } catch (Throwable $exception) {
             throw new TemporaryPasswordDeliveryException(
-                'Temporary password email could not be delivered.',
+                'Temporary password email could not be processed by the configured queue.',
                 previous: $exception,
             );
         }

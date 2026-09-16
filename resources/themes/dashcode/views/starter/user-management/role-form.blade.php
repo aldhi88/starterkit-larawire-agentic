@@ -44,7 +44,7 @@
         },
     }"
 >
-    <div class="page-header mb-3" aria-label="Header halaman" data-starter-region="page-header">
+    <div class="page-header mb-5" aria-label="Header halaman" data-starter-region="page-header">
         <div class="dashcode-page-heading w-full">
             <div class="min-w-0">
                 <h2 class="page-title">{{ $isCreating ? 'Tambah Role' : ($isSuperuserRole ? 'Detail Role' : 'Edit Role') }}</h2>

@@ -183,6 +183,7 @@
                     x-cloak
                     role="tabpanel"
                     wire:submit="changePassword"
+                    data-starter-password-form
                 >
                     <div class="card-header">
                         <div>
@@ -194,16 +195,20 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label" for="profile-current-password">Password Saat Ini</label>
-                                <div class="input-group input-group-flat" x-data="{ visible: false }">
+                                <div class="input-group input-group-flat starter-password-field" x-data="{ visible: false }">
                                     <input :type="visible ? 'text' : 'password'" type="password" id="profile-current-password" class="form-control @error('passwordForm.current_password') is-invalid @enderror" wire:model.defer="passwordForm.current_password" autocomplete="current-password" @error('passwordForm.current_password') aria-invalid="true" aria-describedby="profile-current-password-error" @enderror>
-                                    <span class="input-group-text">
+                                    <span class="input-group-text starter-password-toggle">
                                         <button type="button" class="btn btn-link btn-sm p-0 text-secondary" x-on:click="visible = ! visible" x-bind:aria-pressed="visible" x-bind:aria-label="visible ? 'Sembunyikan Password Saat Ini' : 'Tampilkan Password Saat Ini'">
                                             <span x-show="! visible">@include('starter.templates.layouts.icon', ['name' => 'eye', 'class' => 'icon-sm m-0'])</span>
                                             <span x-show="visible" x-cloak>@include('starter.templates.layouts.icon', ['name' => 'eye-off', 'class' => 'icon-sm m-0'])</span>
                                         </button>
                                     </span>
                                 </div>
-                                @error('passwordForm.current_password') <div id="profile-current-password-error" class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                                @if ($errors->has('passwordForm.current_password'))
+                                    <div id="profile-current-password-error" class="invalid-feedback d-block starter-password-error">
+                                        @foreach ($errors->get('passwordForm.current_password') as $message)<div>{{ $message }}</div>@endforeach
+                                    </div>
+                                @endif
                             </div>
                             <div class="col-12" data-starter-password-guidance>
                                 <div class="alert alert-info mb-0 starter-password-guidance" role="note">
@@ -211,36 +216,45 @@
                                         <span class="alert-icon rounded flex-shrink-0">@include('starter.templates.layouts.icon', ['name' => 'info-circle', 'class' => 'm-0'])</span>
                                         <div>
                                             <div class="fw-semibold starter-guidance-title">Syarat password baru</div>
-                                            <div class="small starter-guidance-copy">Minimal 10 karakter serta memiliki huruf besar, huruf kecil, dan angka.</div>
+                                            <div class="small starter-guidance-copy">Minimal 6 karakter serta memiliki huruf besar, huruf kecil, dan angka.</div>
+                                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" wire:click="generatePassword" wire:loading.attr="disabled" wire:target="generatePassword">Generate Password Otomatis</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label" for="profile-new-password">Password Baru</label>
-                                <div class="input-group input-group-flat" x-data="{ visible: false }">
+                                <div class="input-group input-group-flat starter-password-field" x-data="{ visible: false }">
                                     <input :type="visible ? 'text' : 'password'" type="password" id="profile-new-password" class="form-control @error('passwordForm.password') is-invalid @enderror" wire:model.defer="passwordForm.password" autocomplete="new-password" @error('passwordForm.password') aria-invalid="true" aria-describedby="profile-new-password-error" @enderror>
-                                    <span class="input-group-text">
+                                    <span class="input-group-text starter-password-toggle">
                                         <button type="button" class="btn btn-link btn-sm p-0 text-secondary" x-on:click="visible = ! visible" x-bind:aria-pressed="visible" x-bind:aria-label="visible ? 'Sembunyikan Password Baru' : 'Tampilkan Password Baru'">
                                             <span x-show="! visible">@include('starter.templates.layouts.icon', ['name' => 'eye', 'class' => 'icon-sm m-0'])</span>
                                             <span x-show="visible" x-cloak>@include('starter.templates.layouts.icon', ['name' => 'eye-off', 'class' => 'icon-sm m-0'])</span>
                                         </button>
                                     </span>
                                 </div>
-                                @error('passwordForm.password') <div id="profile-new-password-error" class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                                @if ($errors->has('passwordForm.password'))
+                                    <div id="profile-new-password-error" class="invalid-feedback d-block starter-password-error">
+                                        @foreach ($errors->get('passwordForm.password') as $message)<div>{{ $message }}</div>@endforeach
+                                    </div>
+                                @endif
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label" for="profile-password-confirmation">Konfirmasi Password Baru</label>
-                                <div class="input-group input-group-flat" x-data="{ visible: false }">
+                                <div class="input-group input-group-flat starter-password-field" x-data="{ visible: false }">
                                     <input :type="visible ? 'text' : 'password'" type="password" id="profile-password-confirmation" class="form-control @error('passwordForm.password_confirmation') is-invalid @enderror" wire:model.defer="passwordForm.password_confirmation" autocomplete="new-password" @error('passwordForm.password_confirmation') aria-invalid="true" aria-describedby="profile-password-confirmation-error" @enderror>
-                                    <span class="input-group-text">
+                                    <span class="input-group-text starter-password-toggle">
                                         <button type="button" class="btn btn-link btn-sm p-0 text-secondary" x-on:click="visible = ! visible" x-bind:aria-pressed="visible" x-bind:aria-label="visible ? 'Sembunyikan Konfirmasi Password' : 'Tampilkan Konfirmasi Password'">
                                             <span x-show="! visible">@include('starter.templates.layouts.icon', ['name' => 'eye', 'class' => 'icon-sm m-0'])</span>
                                             <span x-show="visible" x-cloak>@include('starter.templates.layouts.icon', ['name' => 'eye-off', 'class' => 'icon-sm m-0'])</span>
                                         </button>
                                     </span>
                                 </div>
-                                @error('passwordForm.password_confirmation') <div id="profile-password-confirmation-error" class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                                @if ($errors->has('passwordForm.password_confirmation'))
+                                    <div id="profile-password-confirmation-error" class="invalid-feedback d-block starter-password-error">
+                                        @foreach ($errors->get('passwordForm.password_confirmation') as $message)<div>{{ $message }}</div>@endforeach
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

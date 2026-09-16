@@ -25,7 +25,7 @@
         'title' => 'Reset password user?',
         'message' => filled($passwordResetUserName) ? 'Password sementara baru untuk '.$passwordResetUserName.' akan dikirim ke '.$passwordResetUserEmail.'.' : 'Password sementara baru akan dikirim ke email user ini.',
         'confirmText' => 'Reset dan Kirim Email',
-        'loadingText' => 'Mengirim email...',
+        'loadingText' => 'Memproses email...',
         'confirmAction' => 'resetSelectedPassword',
         'cancelAction' => 'cancelPasswordReset',
         'visible' => $passwordResetModalOpen,

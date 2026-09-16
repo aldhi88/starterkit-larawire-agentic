@@ -1,5 +1,5 @@
 <div class="dashcode-profile-page" x-data="{ activeTab: @js($activeTab) }">
-    <div class="dashcode-page-heading" aria-label="Header halaman" data-starter-region="page-header">
+    <div class="dashcode-page-heading mb-5" aria-label="Header halaman" data-starter-region="page-header">
             <div>
                 <h2 class="page-title">Edit Profil Saya</h2>
                 <div class="text-secondary">Perbarui identitas akun, foto profil, dan keamanan kredensial Anda.</div>
@@ -176,6 +176,7 @@
                     x-cloak
                     role="tabpanel"
                     wire:submit="changePassword"
+                    data-starter-password-form
                 >
                     <header class="dashcode-profile-form-header">
                         <div>
@@ -190,7 +191,7 @@
                         <div class="dashcode-form-grid dashcode-form-grid-2">
                             <div>
                                 <label class="form-label" for="profile-current-password">Password Saat Ini</label>
-                                <div class="relative" x-data="{ visible: false }">
+                                <div class="relative starter-password-field" x-data="{ visible: false }">
                                     <input
                                         :type="visible ? 'text' : 'password'"
                                         type="password"
@@ -200,14 +201,18 @@
                                         autocomplete="current-password"
                                         @error('passwordForm.current_password') aria-invalid="true" aria-describedby="profile-current-password-error" @enderror
                                     >
-                                    <span class="absolute right-0 top-1/2 h-full w-9 -translate-y-1/2 border-l border-l-slate-200 flex items-center justify-center">
+                                    <span class="starter-password-toggle absolute right-0 top-1/2 h-full w-9 -translate-y-1/2 border-l border-l-slate-200 flex items-center justify-center">
                                         <button type="button" class="text-secondary" x-on:click="visible = ! visible" x-bind:aria-pressed="visible" x-bind:aria-label="visible ? 'Sembunyikan Password Saat Ini' : 'Tampilkan Password Saat Ini'">
                                             <span x-show="! visible">@include('starter.templates.layouts.icon', ['name' => 'eye', 'class' => 'icon-sm m-0'])</span>
                                             <span x-show="visible" x-cloak>@include('starter.templates.layouts.icon', ['name' => 'eye-off', 'class' => 'icon-sm m-0'])</span>
                                         </button>
                                     </span>
                                 </div>
-                                @error('passwordForm.current_password') <div id="profile-current-password-error" class="invalid-feedback">{{ $message }}</div> @enderror
+                                @if ($errors->has('passwordForm.current_password'))
+                                    <div id="profile-current-password-error" class="invalid-feedback block starter-password-error">
+                                        @foreach ($errors->get('passwordForm.current_password') as $message)<div>{{ $message }}</div>@endforeach
+                                    </div>
+                                @endif
                             </div>
                             <div class="dashcode-profile-security-guide-row" data-starter-password-guidance>
                                 <div class="dashcode-profile-security-guide">
@@ -216,13 +221,14 @@
                                     </span>
                                     <div>
                                         <div class="dashcode-profile-security-guide-title">Syarat password baru</div>
-                                        <div class="dashcode-profile-security-guide-copy">Minimal 10 karakter serta memiliki huruf besar, huruf kecil, dan angka.</div>
+                                        <div class="dashcode-profile-security-guide-copy">Minimal 6 karakter serta memiliki huruf besar, huruf kecil, dan angka.</div>
+                                        <button type="button" class="btn btn-outline-primary mt-2" wire:click="generatePassword" wire:loading.attr="disabled" wire:target="generatePassword">Generate Password Otomatis</button>
                                     </div>
                                 </div>
                             </div>
                             <div>
                                 <label class="form-label" for="profile-new-password">Password Baru</label>
-                                <div class="relative" x-data="{ visible: false }">
+                                <div class="relative starter-password-field" x-data="{ visible: false }">
                                     <input
                                         :type="visible ? 'text' : 'password'"
                                         type="password"
@@ -232,18 +238,22 @@
                                         autocomplete="new-password"
                                         @error('passwordForm.password') aria-invalid="true" aria-describedby="profile-new-password-error" @enderror
                                     >
-                                    <span class="absolute right-0 top-1/2 h-full w-9 -translate-y-1/2 border-l border-l-slate-200 flex items-center justify-center">
+                                    <span class="starter-password-toggle absolute right-0 top-1/2 h-full w-9 -translate-y-1/2 border-l border-l-slate-200 flex items-center justify-center">
                                         <button type="button" class="text-secondary" x-on:click="visible = ! visible" x-bind:aria-pressed="visible" x-bind:aria-label="visible ? 'Sembunyikan Password Baru' : 'Tampilkan Password Baru'">
                                             <span x-show="! visible">@include('starter.templates.layouts.icon', ['name' => 'eye', 'class' => 'icon-sm m-0'])</span>
                                             <span x-show="visible" x-cloak>@include('starter.templates.layouts.icon', ['name' => 'eye-off', 'class' => 'icon-sm m-0'])</span>
                                         </button>
                                     </span>
                                 </div>
-                                @error('passwordForm.password') <div id="profile-new-password-error" class="invalid-feedback">{{ $message }}</div> @enderror
+                                @if ($errors->has('passwordForm.password'))
+                                    <div id="profile-new-password-error" class="invalid-feedback block starter-password-error">
+                                        @foreach ($errors->get('passwordForm.password') as $message)<div>{{ $message }}</div>@endforeach
+                                    </div>
+                                @endif
                             </div>
                             <div>
                                 <label class="form-label" for="profile-password-confirmation">Konfirmasi Password Baru</label>
-                                <div class="relative" x-data="{ visible: false }">
+                                <div class="relative starter-password-field" x-data="{ visible: false }">
                                     <input
                                         :type="visible ? 'text' : 'password'"
                                         type="password"
@@ -253,14 +263,18 @@
                                         autocomplete="new-password"
                                         @error('passwordForm.password_confirmation') aria-invalid="true" aria-describedby="profile-password-confirmation-error" @enderror
                                     >
-                                    <span class="absolute right-0 top-1/2 h-full w-9 -translate-y-1/2 border-l border-l-slate-200 flex items-center justify-center">
+                                    <span class="starter-password-toggle absolute right-0 top-1/2 h-full w-9 -translate-y-1/2 border-l border-l-slate-200 flex items-center justify-center">
                                         <button type="button" class="text-secondary" x-on:click="visible = ! visible" x-bind:aria-pressed="visible" x-bind:aria-label="visible ? 'Sembunyikan Konfirmasi Password' : 'Tampilkan Konfirmasi Password'">
                                             <span x-show="! visible">@include('starter.templates.layouts.icon', ['name' => 'eye', 'class' => 'icon-sm m-0'])</span>
                                             <span x-show="visible" x-cloak>@include('starter.templates.layouts.icon', ['name' => 'eye-off', 'class' => 'icon-sm m-0'])</span>
                                         </button>
                                     </span>
                                 </div>
-                                @error('passwordForm.password_confirmation') <div id="profile-password-confirmation-error" class="invalid-feedback">{{ $message }}</div> @enderror
+                                @if ($errors->has('passwordForm.password_confirmation'))
+                                    <div id="profile-password-confirmation-error" class="invalid-feedback block starter-password-error">
+                                        @foreach ($errors->get('passwordForm.password_confirmation') as $message)<div>{{ $message }}</div>@endforeach
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

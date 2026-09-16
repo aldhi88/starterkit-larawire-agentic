@@ -518,6 +518,46 @@ it('stretches two-column profile navigation consistently across every theme', fu
         ]);
 });
 
+it('keeps page titles grouped with descriptions and separated from page content', function (): void {
+    $standardViews = [
+        'profile/edit-my-profile.blade.php',
+        'user-management/user-form.blade.php',
+        'user-management/role-form.blade.php',
+        'user-management/users.blade.php',
+        'user-management/roles.blade.php',
+        'settings/settings-index.blade.php',
+        'settings/client-profile.blade.php',
+        'logs/activity-log-index.blade.php',
+    ];
+
+    foreach (['tabler', 'vuexy'] as $theme) {
+        foreach ($standardViews as $view) {
+            $source = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/{$view}"));
+
+            expect($source)->toMatch('/class="[^"]*page-header[^"]*\bmb-3\b[^"]*"/');
+        }
+    }
+
+    foreach ($standardViews as $view) {
+        $source = file_get_contents(StarterPaths::path("resources/themes/dashcode/views/starter/{$view}"));
+
+        expect($source)->toMatch('/class="[^"]*(?:page-header|dashcode-page-heading)[^"]*\bmb-5\b[^"]*"/');
+    }
+
+    $dashcodeDashboard = file_get_contents(StarterPaths::path(
+        'resources/themes/dashcode/views/starter/templates/app-dashboard.blade.php',
+    ));
+    $ui = file_get_contents(StarterPaths::path('docs/rules/ui-ux.md'));
+
+    expect($dashcodeDashboard)
+        ->toStartWith('<div class="space-y-5">')
+        ->and($ui)
+        ->toContain('Treat the page title and its description as one compact header group')
+        ->toContain('`0–8px`')
+        ->toContain('`12–20px`')
+        ->toContain('Own that outer gap exactly once');
+});
+
 it('places password guidance before the paired new credentials across every theme', function (): void {
     foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
         $profile = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/profile/edit-my-profile.blade.php"));
@@ -532,7 +572,16 @@ it('places password guidance before the paired new credentials across every them
             ->and($confirmation)->toBeInt()
             ->and($currentPassword)->toBeLessThan($guidance)
             ->and($guidance)->toBeLessThan($newPassword)
-            ->and($newPassword)->toBeLessThan($confirmation);
+            ->and($newPassword)->toBeLessThan($confirmation)
+            ->and($profile)->toContain('Minimal 6 karakter')
+            ->toContain('wire:click="generatePassword"')
+            ->toContain('Generate Password Otomatis')
+            ->toContain('data-starter-password-form')
+            ->toContain('starter-password-field')
+            ->toContain('starter-password-toggle')
+            ->toContain('starter-password-error')
+            ->toContain("\$errors->get('passwordForm.password')")
+            ->not->toContain('Minimal 10 karakter');
     }
 
     $tabler = file_get_contents(StarterPaths::path('resources/themes/tabler/views/starter/profile/edit-my-profile.blade.php'));
@@ -547,6 +596,21 @@ it('places password guidance before the paired new credentials across every them
     if ($dashcodeCss !== null) {
         expect($dashcodeCss)->toContain('.dashcode-profile-security-guide-row { grid-column:1/-1; }');
     }
+
+    $starterCss = file_get_contents(StarterPaths::path('public/assets/starter/css/starter.css'));
+
+    expect($starterCss)
+        ->toContain('.starter-password-field .form-control.is-invalid')
+        ->toContain('.starter-password-field:has(.form-control.is-invalid) .starter-password-toggle')
+        ->toContain('.starter-password-error');
+
+    $starterRuntime = file_get_contents(StarterPaths::path('public/assets/starter/js/starter-runtime.js'));
+
+    expect($starterRuntime)
+        ->toContain('fillGeneratedPassword(detail = {})')
+        ->toContain("form?.querySelector('#profile-new-password')")
+        ->toContain("form?.querySelector('#profile-password-confirmation')")
+        ->toContain("input.dispatchEvent(new Event('input', { bubbles: true }))");
 });
 
 it('keeps spacing between the vertical navigation heading and menu items', function (): void {

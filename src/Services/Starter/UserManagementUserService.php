@@ -161,7 +161,7 @@ class UserManagementUserService
                             'must_change_password' => true,
                         ]);
 
-                        $this->temporaryPasswordMail->sendForNewAccount($createdLogin, $temporaryPassword);
+                        $this->temporaryPasswordMail->queueForNewAccount($createdLogin, $temporaryPassword);
 
                         return $createdLogin;
                     });
@@ -171,7 +171,7 @@ class UserManagementUserService
             $this->recordTemporaryPasswordDeliveryFailure($currentLogin, $createdLogin, 'user_created');
 
             throw ValidationException::withMessages([
-                'userForm.email' => 'User tidak dibuat karena email password sementara gagal dikirim. Periksa konfigurasi mail lalu coba lagi.',
+                'userForm.email' => 'User tidak dibuat karena email password sementara gagal diproses oleh queue. Periksa konfigurasi lalu coba lagi.',
             ]);
         }
     }
@@ -197,7 +197,7 @@ class UserManagementUserService
                             'auth_version' => max(1, (int) $login->auth_version) + 1,
                         ]);
 
-                        $this->temporaryPasswordMail->sendForReset($login, $temporaryPassword);
+                        $this->temporaryPasswordMail->queueForReset($login, $temporaryPassword);
                         $this->auditLogs->recordSecurityEvent(
                             'auth.password_reset_by_admin',
                             'Password direset oleh administrator',
@@ -205,7 +205,7 @@ class UserManagementUserService
                             actor: $currentLogin,
                             metadata: [
                                 'must_change_password' => true,
-                                'delivery' => 'email',
+                                'delivery' => 'queued_email',
                             ],
                         );
                     });
@@ -215,7 +215,7 @@ class UserManagementUserService
             $this->recordTemporaryPasswordDeliveryFailure($currentLogin, $login, 'password_reset');
 
             throw ValidationException::withMessages([
-                'passwordResetEmail' => 'Password tidak direset karena email gagal dikirim. Periksa konfigurasi mail lalu coba lagi.',
+                'passwordResetEmail' => 'Password tidak direset karena email gagal diproses oleh queue. Periksa konfigurasi lalu coba lagi.',
             ]);
         }
     }
@@ -243,7 +243,7 @@ class UserManagementUserService
             actor: $currentLogin,
             metadata: [
                 'operation' => $operation,
-                'delivery' => 'email',
+                'delivery' => 'queued_email',
             ],
         );
     }

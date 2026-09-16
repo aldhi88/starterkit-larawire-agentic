@@ -11,6 +11,8 @@ use Aldhi88\StarterKit\Services\Starter\AuditLogService;
 use Aldhi88\StarterKit\Services\Starter\TemporaryPasswordMailService;
 use Aldhi88\StarterKit\Services\Starter\UserManagementUserService;
 use Aldhi88\StarterKit\Support\Starter\StarterPaths;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
@@ -74,7 +76,7 @@ beforeEach(function (): void {
     config()->set('mail.mailers.array', ['transport' => 'array']);
 });
 
-it('emails a generated password when a user is created without returning it to Livewire', function (): void {
+it('queues an encrypted generated password after user creation without returning it to Livewire', function (): void {
     $mail = Mail::fake();
     $role = temporaryPasswordRole();
     $currentLogin = temporaryPasswordLogin(1, temporaryPasswordRole('superuser', true), 'superuser', 'admin@example.test');
@@ -119,7 +121,7 @@ it('emails a generated password when a user is created without returning it to L
     expect($result)->toBe($createdLogin)
         ->and($createdPayload)->not->toBeNull();
 
-    Mail::assertSent(TemporaryPasswordMail::class, function (TemporaryPasswordMail $message) use ($createdPayload): bool {
+    Mail::assertQueued(TemporaryPasswordMail::class, function (TemporaryPasswordMail $message) use ($createdPayload): bool {
         return $message->hasTo('new-user@example.test')
             && $message->appName === 'Example App'
             && $message->username === 'new-user'
@@ -129,7 +131,7 @@ it('emails a generated password when a user is created without returning it to L
     });
 });
 
-it('emails a new temporary password after a superuser confirms reset', function (): void {
+it('queues an encrypted temporary password after a superuser confirms reset', function (): void {
     $mail = Mail::fake();
     $role = temporaryPasswordRole();
     $currentLogin = temporaryPasswordLogin(1, temporaryPasswordRole('superuser', true), 'superuser', 'admin@example.test');
@@ -159,7 +161,7 @@ it('emails a new temporary password after a superuser confirms reset', function 
         'Password direset oleh administrator',
         $targetLogin,
         $currentLogin,
-        ['must_change_password' => true, 'delivery' => 'email'],
+        ['must_change_password' => true, 'delivery' => 'queued_email'],
     );
 
     $service = temporaryPasswordUserService(
@@ -171,7 +173,7 @@ it('emails a new temporary password after a superuser confirms reset', function 
 
     $service->resetPassword($currentLogin, 2);
 
-    Mail::assertSent(TemporaryPasswordMail::class, function (TemporaryPasswordMail $message) use ($resetPayload): bool {
+    Mail::assertQueued(TemporaryPasswordMail::class, function (TemporaryPasswordMail $message) use ($resetPayload): bool {
         return $message->hasTo('existing@example.test')
             && $message->appName === 'Example App'
             && $message->temporaryPassword === $resetPayload['password']
@@ -180,7 +182,7 @@ it('emails a new temporary password after a superuser confirms reset', function 
     });
 });
 
-it('rolls back user creation when credential email delivery fails', function (): void {
+it('rolls back user creation when credential email cannot be queued', function (): void {
     Schema::create('temporary_password_creation_probe', function ($table): void {
         $table->id();
         $table->string('marker');
@@ -202,7 +204,7 @@ it('rolls back user creation when credential email delivery fails', function ():
         });
 
         $mailService = Mockery::mock(TemporaryPasswordMailService::class);
-        $mailService->shouldReceive('sendForNewAccount')->once()->andThrow(new TemporaryPasswordDeliveryException);
+        $mailService->shouldReceive('queueForNewAccount')->once()->andThrow(new TemporaryPasswordDeliveryException);
 
         $auditLogs = Mockery::mock(AuditLogService::class);
         $auditLogs->shouldReceive('withinAction')->once()->andReturnUsing(
@@ -213,7 +215,7 @@ it('rolls back user creation when credential email delivery fails', function ():
             'Pengiriman email password sementara gagal',
             $createdLogin,
             $currentLogin,
-            ['operation' => 'user_created', 'delivery' => 'email'],
+            ['operation' => 'user_created', 'delivery' => 'queued_email'],
         );
 
         $service = temporaryPasswordUserService($clientLogins, $clientRoles, $auditLogs, $mailService);
@@ -232,7 +234,7 @@ it('rolls back user creation when credential email delivery fails', function ():
     }
 });
 
-it('rolls back a password reset when credential email delivery fails', function (): void {
+it('rolls back a password reset when credential email cannot be queued', function (): void {
     Schema::create('temporary_password_mutation_probe', function ($table): void {
         $table->id();
         $table->string('marker');
@@ -253,7 +255,7 @@ it('rolls back a password reset when credential email delivery fails', function 
         });
 
         $mailService = Mockery::mock(TemporaryPasswordMailService::class);
-        $mailService->shouldReceive('sendForReset')->once()->andThrow(new TemporaryPasswordDeliveryException);
+        $mailService->shouldReceive('queueForReset')->once()->andThrow(new TemporaryPasswordDeliveryException);
 
         $auditLogs = Mockery::mock(AuditLogService::class);
         $auditLogs->shouldReceive('withinAction')->once()->andReturnUsing(
@@ -264,7 +266,7 @@ it('rolls back a password reset when credential email delivery fails', function 
             'Pengiriman email password sementara gagal',
             $targetLogin,
             $currentLogin,
-            ['operation' => 'password_reset', 'delivery' => 'email'],
+            ['operation' => 'password_reset', 'delivery' => 'queued_email'],
         );
 
         $service = temporaryPasswordUserService($clientLogins, $clientRoles, $auditLogs, $mailService);
@@ -296,13 +298,13 @@ it('keeps temporary passwords out of every Livewire component and theme view', f
     }
 });
 
-it('disables reset confirmation and shows an email delivery loader in every theme', function (): void {
+it('disables reset confirmation and shows a queue loader in every theme', function (): void {
     foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
         $usersView = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/user-management/users.blade.php"));
         $modalView = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/templates/components/alert-modal.blade.php"));
 
         expect($usersView)
-            ->toContain("'loadingText' => 'Mengirim email...'")
+            ->toContain("'loadingText' => 'Memproses email...'")
             ->toContain("'confirmAction' => 'resetSelectedPassword'")
             ->and($modalView)
             ->toContain('wire:loading.attr="disabled"')
@@ -323,6 +325,8 @@ it('brands html and text email from the configured application name', function (
     );
 
     expect($mail->envelope()->subject)->toBe('Password sementara baru - Example App')
+        ->and($mail)->toBeInstanceOf(ShouldQueueAfterCommit::class)
+        ->and($mail)->toBeInstanceOf(ShouldBeEncrypted::class)
         ->and($mail->content()->view)->toBe('starter-shared::mail.temporary-password')
         ->and($mail->content()->text)->toBe('starter-shared::mail.temporary-password-text')
         ->and($mail->render())->toContain('Example App')

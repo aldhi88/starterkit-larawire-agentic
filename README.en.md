@@ -212,7 +212,7 @@ command arguments, logs, or temporary files.
 
 Local passwords may be simple for practical development, but they are still
 required and confirmed. When `starter:deploy` creates the first Superuser in an
-empty production database, the password must contain at least 10 characters,
+empty production database, the password must contain at least 6 characters,
 uppercase and lowercase letters, and a number.
 
 The installer automatically runs internal security validation and the complete
@@ -337,8 +337,9 @@ php artisan starter:deploy
 Production uses the package version locked by the Laravel project's
 `composer.lock`. `starter:deploy` is production-only. It validates the complete
 environment—including explicit theme/layout values, a delivery-capable mailer
-(not `log` or `array`), and committed theme runtime assets—before mutation, then
-applies migrations, App registry synchronization, and production caches. For the first empty production database,
+(not `log` or `array`), an explicit non-null queue connection, and committed
+theme runtime assets—before mutation, then applies migrations, App registry
+synchronization, and production caches. For the first empty production database,
 it securely prompts for Superuser credentials. `starter:sync` and
 `starter:reset` are rejected in production.
 

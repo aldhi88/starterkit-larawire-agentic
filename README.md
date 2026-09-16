@@ -218,7 +218,7 @@ argumen command, log, atau file sementara.
 
 Password local boleh sederhana agar development praktis, tetapi tetap wajib
 diisi dan dikonfirmasi. Saat `starter:deploy` perlu membuat Superuser pada
-database production kosong, password wajib minimal 10 karakter serta mengandung
+database production kosong, password wajib minimal 6 karakter serta mengandung
 huruf besar, huruf kecil, dan angka.
 
 Installer otomatis menjalankan validasi keamanan internal dan seluruh test
@@ -344,7 +344,8 @@ php artisan starter:deploy
 Production memakai versi package yang terkunci di `composer.lock` project
 Laravel. `starter:deploy` khusus production dan melakukan preflight lengkap:
 environment production, debug mati, HTTPS, cookie aman, domain, theme/layout
-eksplisit, mailer pengirim email (bukan `log`/`array`), aset runtime theme dari repository, extension, directory runtime,
+eksplisit, mailer pengirim email (bukan `log`/`array`), queue connection eksplisit
+selain `null`, aset runtime theme dari repository, extension, directory runtime,
 koneksi database, migration, registry App, dan cache.
 Pada database production pertama yang masih kosong, command meminta kredensial
 Superuser melalui prompt aman. Jika preflight gagal, deployment berhenti sebelum

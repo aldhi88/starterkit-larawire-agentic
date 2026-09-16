@@ -3,13 +3,15 @@
 namespace Aldhi88\StarterKit\Mail\Starter;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class TemporaryPasswordMail extends Mailable
+class TemporaryPasswordMail extends Mailable implements ShouldBeEncrypted, ShouldQueueAfterCommit
 {
     use Queueable, SerializesModels;
 

@@ -1,5 +1,5 @@
 <div class="dashcode-user-form">
-    <div class="dashcode-page-heading" data-starter-region="page-header">
+    <div class="dashcode-page-heading mb-5" data-starter-region="page-header">
             <div>
                 <h2 class="page-title">{{ $userLoginId ? 'Edit User' : 'Tambah User' }}</h2>
                 <div class="text-secondary">Atur identitas akun, role, dan status akun.</div>

@@ -1,6 +1,6 @@
 <div class="dashcode-company-form">
     @unless ($embedded)
-        <div class="dashcode-page-heading" aria-label="Header halaman" data-starter-region="page-header">
+        <div class="dashcode-page-heading mb-5" aria-label="Header halaman" data-starter-region="page-header">
             <div>
                 <h2 class="page-title">Profil Perusahaan</h2>
                 <div class="text-secondary">Perbarui identitas, kontak, dan logo perusahaan.</div>

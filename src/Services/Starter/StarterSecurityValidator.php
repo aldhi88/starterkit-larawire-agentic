@@ -108,6 +108,8 @@ class StarterSecurityValidator
         $environmentLayout = strtolower((string) $this->environmentValue('STARTER_LAYOUT'));
         $mailer = strtolower((string) config('mail.default'));
         $environmentMailer = strtolower((string) $this->environmentValue('MAIL_MAILER'));
+        $queue = strtolower((string) config('queue.default'));
+        $environmentQueue = strtolower((string) $this->environmentValue('QUEUE_CONNECTION'));
 
         return [
             $this->check('Production environment', app()->isProduction(), 'APP_ENV harus production.'),
@@ -135,6 +137,13 @@ class StarterSecurityValidator
                     && hash_equals($mailer, $environmentMailer)
                     && $this->mailerCanDeliver($mailer),
                 'MAIL_MAILER wajib eksplisit dan seluruh transport-nya harus mengirim email; log/array tidak boleh dipakai di production.',
+            ),
+            $this->check(
+                'Production queue connection',
+                $environmentQueue !== ''
+                    && hash_equals($queue, $environmentQueue)
+                    && $this->queueCanProcess($queue),
+                'QUEUE_CONNECTION wajib eksplisit, terdaftar, dan tidak boleh memakai driver null. sync dan backend asynchronous sama-sama didukung.',
             ),
             $this->check(
                 'Committed theme runtime assets',
@@ -191,6 +200,14 @@ class StarterSecurityValidator
         };
 
         return is_string($extension) && extension_loaded($extension);
+    }
+
+    private function queueCanProcess(string $queue): bool
+    {
+        $connection = config("queue.connections.{$queue}");
+
+        return is_array($connection)
+            && strtolower((string) ($connection['driver'] ?? '')) !== 'null';
     }
 
     /** @param  list<string>  $visited */

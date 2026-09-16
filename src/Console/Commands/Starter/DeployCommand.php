@@ -221,7 +221,7 @@ class DeployCommand extends Command
 
         $this->newLine();
         $this->line('<fg=yellow;options=bold>DATABASE BARU: buat Superuser production pertama.</>');
-        $this->line('<fg=red;options=bold>Password production wajib minimal 10 karakter dengan huruf besar, huruf kecil, dan angka.</>');
+        $this->line('<fg=red;options=bold>Password production wajib minimal 6 karakter dengan huruf besar, huruf kecil, dan angka.</>');
         $email = strtolower(trim((string) $this->ask('Email Superuser')));
 
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {

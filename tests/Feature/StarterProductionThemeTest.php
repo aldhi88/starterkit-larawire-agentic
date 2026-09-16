@@ -4,13 +4,47 @@ use Aldhi88\StarterKit\Services\Starter\StarterAssetPublisher;
 use Aldhi88\StarterKit\Services\Starter\StarterSecurityValidator;
 use Illuminate\Support\Facades\File;
 
-it('does not restrict the queue driver used by the hosting environment', function (): void {
+it('does not restrict the queue driver outside production preflight', function (): void {
     config()->set('queue.default', 'database');
 
     $assets = Mockery::mock(StarterAssetPublisher::class);
     $checks = collect((new StarterSecurityValidator($assets))->checks())->keyBy('label');
 
     expect($checks)->not->toHaveKey('Synchronous queue driver');
+});
+
+it('accepts explicit sync or asynchronous queues and rejects null queues in production preflight', function (): void {
+    $host = sys_get_temp_dir().'/starter-production-queue-'.bin2hex(random_bytes(6));
+    $originalBasePath = base_path();
+    File::ensureDirectoryExists($host);
+    File::put($host.'/.env', "QUEUE_CONNECTION=sync\n");
+    app()->setBasePath($host);
+    config()->set('queue.default', 'sync');
+    config()->set('queue.connections.sync', ['driver' => 'sync']);
+    config()->set('queue.connections.database', ['driver' => 'database']);
+    config()->set('queue.connections.null', ['driver' => 'null']);
+
+    $assets = Mockery::mock(StarterAssetPublisher::class);
+    $assets->shouldReceive('themeAssetsReady')->times(3)->andReturn(true);
+    $validator = new StarterSecurityValidator($assets);
+
+    try {
+        $sync = collect($validator->checks(production: true))->keyBy('label');
+        expect($sync['Production queue connection']['passed'])->toBeTrue();
+
+        File::put($host.'/.env', "QUEUE_CONNECTION=database\n");
+        config()->set('queue.default', 'database');
+        $database = collect($validator->checks(production: true))->keyBy('label');
+        expect($database['Production queue connection']['passed'])->toBeTrue();
+
+        File::put($host.'/.env', "QUEUE_CONNECTION=null\n");
+        config()->set('queue.default', 'null');
+        $null = collect($validator->checks(production: true))->keyBy('label');
+        expect($null['Production queue connection']['passed'])->toBeFalse();
+    } finally {
+        app()->setBasePath($originalBasePath);
+        File::deleteDirectory($host);
+    }
 });
 
 it('requires explicit matching theme values and committed runtime in production', function (): void {

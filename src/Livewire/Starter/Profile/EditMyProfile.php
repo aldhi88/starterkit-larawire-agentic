@@ -217,6 +217,27 @@ class EditMyProfile extends Component
         return null;
     }
 
+    public function generatePassword(): void
+    {
+        $this->activeTab = 'security';
+        $password = StarterPasswordRules::generate();
+        $this->passwordForm['password'] = $password;
+        $this->passwordForm['password_confirmation'] = $password;
+        $this->resetValidation([
+            'passwordForm.password',
+            'passwordForm.password_confirmation',
+        ]);
+
+        $encodedPassword = json_encode($password, JSON_THROW_ON_ERROR);
+        $this->js("window.StarterTemplate.fillGeneratedPassword({ password: {$encodedPassword} })");
+
+        $this->dispatch(
+            'starter-toast',
+            type: 'success',
+            message: 'Password aman berhasil dibuat dan konfirmasi telah diisi otomatis.',
+        );
+    }
+
     public function render()
     {
         $login = $this->login();

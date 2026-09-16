@@ -5,6 +5,29 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-09-16
+
+### Added
+
+- Add a profile-security password generator that fills matching 12-character
+  mixed-case alphanumeric credentials across all supported themes.
+- Queue temporary-password mail through encrypted after-commit jobs, supporting
+  both inline `sync` execution and durable asynchronous queue backends.
+
+### Changed
+
+- Align production and account password validation at a six-character minimum
+  with uppercase, lowercase, and numeric requirements.
+- Require an explicit configured non-null production queue connection and
+  report successful queue processing without claiming asynchronous delivery.
+- Standardize page-header composition so title and description remain grouped
+  while content starts with a distinct theme-native gap.
+
+### Fixed
+
+- Show every password validation reason without overlapping the visibility
+  toggle or invalid-state decoration in Tabler, DashCode, and Vuexy.
+
 ## [1.5.0] - 2026-09-16
 
 ### Added

@@ -90,7 +90,7 @@ class UserForm extends Component
             'starter-toast',
             type: 'success',
             message: $creating
-                ? 'User berhasil dibuat. Password sementara telah dikirim ke '.$login->email.'.'
+                ? 'User berhasil dibuat. Permintaan email password sementara berhasil diproses untuk '.$login->email.'.'
                 : 'User berhasil disimpan.',
         );
     }

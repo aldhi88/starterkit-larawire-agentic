@@ -159,6 +159,22 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
 
         this.themeAdapter().closeNavigation?.();
     },
+    fillGeneratedPassword(detail = {}) {
+        if (typeof detail.password !== 'string' || detail.password === '') {
+            return;
+        }
+
+        const form = document.querySelector('[data-starter-password-form]');
+        const password = form?.querySelector('#profile-new-password');
+        const confirmation = form?.querySelector('#profile-password-confirmation');
+        const valueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+
+        [password, confirmation].filter(Boolean).forEach((input) => {
+            valueSetter?.call(input, detail.password);
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    },
     disposeTheme() {
         document.querySelectorAll('[data-starter-details][open]').forEach((element) => {
             element.removeAttribute('open');

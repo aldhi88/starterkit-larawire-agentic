@@ -74,7 +74,7 @@ class Users extends Component
                 'starter-toast',
                 type: 'danger',
                 message: collect($exception->errors())->flatten()->first()
-                    ?? 'Password tidak direset karena email gagal dikirim.',
+                    ?? 'Password tidak direset karena email gagal diproses oleh queue.',
             );
 
             return;
@@ -87,7 +87,7 @@ class Users extends Component
         $this->dispatch(
             'starter-toast',
             type: 'success',
-            message: 'Password sementara baru telah dikirim ke '.$login->email.'.',
+            message: 'Permintaan email password sementara baru berhasil diproses untuk '.$login->email.'.',
         );
     }
 
