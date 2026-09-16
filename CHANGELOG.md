@@ -5,6 +5,14 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-09-16
+
+### Fixed
+
+- Redirect users with a temporary password directly to the profile security
+  tab after login, avoiding an unnecessary App dashboard transition that could
+  cause a reload loop on some session and domain configurations.
+
 ## [1.4.1] - 2026-09-16
 
 ### Changed

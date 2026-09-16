@@ -145,7 +145,7 @@ class AuthLoginService
         );
 
         if ($authenticatedLogin->must_change_password) {
-            return $this->redirects->firstAuthorizedUrl($authenticatedLogin);
+            return route('starter.profile.edit', ['tab' => 'security']);
         }
 
         session()->pull('url.intended');
