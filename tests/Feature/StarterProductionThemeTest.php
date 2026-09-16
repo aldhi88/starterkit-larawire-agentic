@@ -4,6 +4,15 @@ use Aldhi88\StarterKit\Services\Starter\StarterAssetPublisher;
 use Aldhi88\StarterKit\Services\Starter\StarterSecurityValidator;
 use Illuminate\Support\Facades\File;
 
+it('does not restrict the queue driver used by the hosting environment', function (): void {
+    config()->set('queue.default', 'database');
+
+    $assets = Mockery::mock(StarterAssetPublisher::class);
+    $checks = collect((new StarterSecurityValidator($assets))->checks())->keyBy('label');
+
+    expect($checks)->not->toHaveKey('Synchronous queue driver');
+});
+
 it('requires explicit matching theme values and committed runtime in production', function (): void {
     $host = sys_get_temp_dir().'/starter-production-theme-'.bin2hex(random_bytes(6));
     $originalBasePath = base_path();

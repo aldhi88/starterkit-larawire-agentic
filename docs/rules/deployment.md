@@ -3,7 +3,7 @@
 ## Prerequisites and environment
 
 - Deploy the package version locked by the Laravel application's `composer.lock`. PHP must match locked dependencies, `intl` and the selected database driver must exist, document root must be `public`, root/App subdomains point to the same install, and `storage/` plus `bootstrap/cache/` are writable.
-- Production baseline: `APP_ENV=production`, `APP_DEBUG=false`, HTTPS `APP_URL`, matching scheme-free `APP_DOMAIN`, `STARTER_API_ENABLED=false` unless needed, explicit `STARTER_THEME` and `STARTER_LAYOUT` matching local, production DB credentials, database session/cache, sync queue, secure cookie on HTTPS, and `id`/`id`/`id_ID` locales. Superuser credentials never belong in environment files.
+- Production baseline: `APP_ENV=production`, `APP_DEBUG=false`, HTTPS `APP_URL`, matching scheme-free `APP_DOMAIN`, `STARTER_API_ENABLED=false` unless needed, explicit `STARTER_THEME` and `STARTER_LAYOUT` matching local, production DB credentials, database session/cache, a hosting-compatible queue driver, secure cookie on HTTPS, and `id`/`id`/`id_ID` locales. Queue defaults to `sync`; `database` is allowed when a reliable cron-driven queue process is configured. Superuser credentials never belong in environment files.
 - The installer derives `APP_DOMAIN`, `SESSION_DOMAIN`, `SESSION_SECURE_COOKIE`, and a domain-specific `SESSION_COOKIE` from `APP_URL`; verify the generated production values and test root/auth/App cookie sharing on a real domain. If API is enabled, point `api.<APP_DOMAIN>` to the same `public`; docs still require Superuser in production.
 
 ## Deployment flow

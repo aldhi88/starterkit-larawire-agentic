@@ -5,6 +5,14 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-09-16
+
+### Changed
+
+- Stop requiring the synchronous queue driver during security and production
+  deployment validation; keep `sync` as the installer default while allowing a
+  database queue on hosting with reliable cron-driven processing.
+
 ## [1.4.0] - 2026-09-08
 
 ### Added

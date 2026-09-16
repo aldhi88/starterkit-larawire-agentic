@@ -92,11 +92,6 @@ class StarterSecurityValidator
                 config('cache.default') === 'database',
                 'CACHE_STORE harus database.',
             ),
-            $this->check(
-                'Synchronous queue driver',
-                config('queue.default') === 'sync',
-                'QUEUE_CONNECTION harus sync pada baseline shared hosting.',
-            ),
         ];
 
         return $production ? [...$checks, ...$this->productionChecks()] : $checks;

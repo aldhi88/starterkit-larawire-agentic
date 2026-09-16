@@ -1,6 +1,6 @@
 # Performance and Resource Efficiency
 
-This standard applies automatically to the starter and derived projects. Target is one shared-hosting instance with database cache/session and sync queue; no Redis, Octane, daemon, worker, CDN, reverse proxy, or special server tuning may be required. Optimize proven flow/query behavior without weakening validation, authorization, transactions, audits, session security, or data integrity.
+This standard applies automatically to the starter and derived projects. Target is one shared-hosting instance with database cache/session. Queue defaults to `sync`; a database queue with reliable cron-driven processing is also supported. Redis, Octane, a continuously running daemon, CDN, reverse proxy, or special server tuning must not be required. Optimize proven flow/query behavior without weakening validation, authorization, transactions, audits, session security, or data integrity.
 
 ## Database queries and PowerGrid
 
