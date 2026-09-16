@@ -111,7 +111,7 @@ class StarterContextService
             'lockScreenEnabled' => $lockScreenEnabled,
             'lockScreenTimeoutSeconds' => $lockScreenTimeoutSeconds,
             'lockScreenUrl' => route('starter.lock-screen'),
-            'sessionActivityUrl' => route('starter.session.activity'),
+            'sessionActivityUrl' => route('starter.session.activity', absolute: false),
             'sessionActivityScope' => $login
                 ? hash_hmac('sha256', request()->session()->getId(), (string) config('app.key'))
                 : null,

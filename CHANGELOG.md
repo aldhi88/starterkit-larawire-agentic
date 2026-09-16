@@ -5,6 +5,28 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-16
+
+### Added
+
+- Send generated temporary passwords for new users and administrator resets by
+  synchronous email, with application-branded HTML and text messages.
+- Validate a delivery-capable production mailer and reject `log`, `array`, or
+  composite transports that contain either non-delivery transport.
+
+### Changed
+
+- Keep temporary credentials out of Livewire state and rendered theme views,
+  and roll back account creation or password reset when email delivery fails.
+- Disable modal controls and show targeted progress while password-reset email
+  delivery is in progress across Tabler, DashCode, and Vuexy.
+
+### Fixed
+
+- Keep the session-activity heartbeat same-origin and allow it during mandatory
+  password changes, preventing profile-security reload loops across root and
+  App subdomains.
+
 ## [1.4.2] - 2026-09-16
 
 ### Fixed

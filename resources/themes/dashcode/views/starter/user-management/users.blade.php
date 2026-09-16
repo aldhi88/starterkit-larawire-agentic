@@ -12,23 +12,6 @@
         </div>
     @endunless
 
-    @if ($temporaryPassword)
-        <div class="dashcode-alert dashcode-alert-warning" role="alert" data-temporary-credentials-alert>
-            <span class="dashcode-alert-icon flex-shrink-0">
-                @include('starter.templates.layouts.icon', ['name' => 'lock', 'class' => 'icon-sm'])
-            </span>
-            <div class="flex-fill">
-                <h3 class="dashcode-alert-title">Simpan kredensial sementara ini sekarang</h3>
-                <div>Username: <strong class="font-monospace">{{ $temporaryPasswordUsername }}</strong></div>
-                <div>Password: <strong class="font-monospace">{{ $temporaryPassword }}</strong></div>
-                <div class="small mt-1">Password tidak akan ditampilkan lagi dan pengguna wajib menggantinya saat login.</div>
-            </div>
-            <button type="button" class="dashcode-icon-button dashcode-push-right" wire:click="dismissTemporaryPassword" aria-label="Tutup">
-                @include('starter.templates.layouts.icon', ['name' => 'circle-x', 'class' => 'icon-sm'])
-            </button>
-        </div>
-    @endif
-
     @if ($embedded)
         <livewire:starter.user-management.users-table />
     @else
@@ -40,8 +23,9 @@
     @include('starter.templates.components.danger-modal', [
         'id' => 'reset-user-password-modal',
         'title' => 'Reset password user?',
-        'message' => filled($passwordResetUserName) ? 'Password sementara baru akan dibuat untuk '.$passwordResetUserName.'.' : 'Password sementara baru akan dibuat untuk user ini.',
-        'confirmText' => 'Reset Password',
+        'message' => filled($passwordResetUserName) ? 'Password sementara baru untuk '.$passwordResetUserName.' akan dikirim ke '.$passwordResetUserEmail.'.' : 'Password sementara baru akan dikirim ke email user ini.',
+        'confirmText' => 'Reset dan Kirim Email',
+        'loadingText' => 'Mengirim email...',
         'confirmAction' => 'resetSelectedPassword',
         'cancelAction' => 'cancelPasswordReset',
         'visible' => $passwordResetModalOpen,

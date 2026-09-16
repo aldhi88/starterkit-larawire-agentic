@@ -20,7 +20,11 @@ class StarterForcePasswordChange
 
         if ($login instanceof ClientLogin
             && $login->must_change_password
-            && ! $request->routeIs('starter.profile.edit', 'auth.logout')) {
+            && ! $request->routeIs(
+                'starter.profile.edit',
+                'starter.session.activity',
+                'auth.logout',
+            )) {
             return redirect()->route('starter.profile.edit', ['tab' => 'security']);
         }
 

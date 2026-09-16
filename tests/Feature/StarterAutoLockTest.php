@@ -44,7 +44,19 @@ it('keeps browser and server activity synchronized before auto locking', functio
         ->toContain('const controller = new AbortController()')
         ->toContain("lockUrl.searchParams.set('reason', 'idle_timeout')")
         ->toContain('window.StarterTemplate.init(true)')
+        ->toContain("document.addEventListener('DOMContentLoaded', () => window.StarterTemplate.init(true))")
+        ->toContain('window.StarterTemplate.init(! event.persisted)')
         ->not->toContain('() => this.performAutoLock(),');
+});
+
+it('keeps session heartbeats on the current root or app origin', function (): void {
+    $context = file_get_contents(StarterPaths::path('src/Services/Starter/StarterContextService.php'));
+    $runtime = file_get_contents(StarterPaths::path('public/assets/starter/js/starter-runtime.js'));
+
+    expect($context)
+        ->toContain("'sessionActivityUrl' => route('starter.session.activity', absolute: false)")
+        ->and($runtime)
+        ->toContain("credentials: 'same-origin'");
 });
 
 it('scopes shared browser activity to the authenticated session in every theme', function (): void {

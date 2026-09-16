@@ -5,12 +5,14 @@ namespace Aldhi88\StarterKit\Services\Starter;
 use Aldhi88\StarterKit\Contracts\Starter\AppModInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientRoleInterface;
+use Aldhi88\StarterKit\Exceptions\Starter\TemporaryPasswordDeliveryException;
 use Aldhi88\StarterKit\Models\Starter\AppMod;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Models\Starter\ClientRole;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -24,6 +26,7 @@ class UserManagementUserService
         private readonly ClientRoleInterface $clientRoles,
         private readonly AppModInterface $appMods,
         private readonly AuditLogService $auditLogs,
+        private readonly TemporaryPasswordMailService $temporaryPasswordMail,
     ) {}
 
     /**
@@ -99,7 +102,7 @@ class UserManagementUserService
     }
 
     /**
-     * @param  array{name: string, username: string, email: string, client_role_id: int|string, status: string, password?: string}  $data
+     * @param  array{name: string, username: string, email: string, client_role_id: int|string, status: string}  $data
      */
     public function saveUser(ClientLogin $currentLogin, ?int $userLoginId, array $data): ClientLogin
     {
@@ -135,51 +138,86 @@ class UserManagementUserService
             'status' => $data['status'],
         ];
 
-        if (! $login instanceof ClientLogin) {
-            $payload += [
-                'password' => $data['password'] ?? Str::password(16),
-                'must_change_password' => true,
-            ];
+        if ($login instanceof ClientLogin) {
+            return $this->auditLogs->withinAction(
+                'user.update',
+                'Mengubah user '.$payload['name'],
+                fn (): ClientLogin => $this->clientLogins->updateUser($login, $payload),
+            );
         }
 
-        $actionKey = $login instanceof ClientLogin ? 'user.update' : 'user.create';
-        $actionLabel = ($login instanceof ClientLogin ? 'Mengubah user ' : 'Membuat user ').$payload['name'];
+        $temporaryPassword = Str::password(16);
+        $createdLogin = null;
 
-        return $this->auditLogs->withinAction(
-            $actionKey,
-            $actionLabel,
-            fn (): ClientLogin => $login instanceof ClientLogin
-                ? $this->clientLogins->updateUser($login, $payload)
-                : $this->clientLogins->createUser($payload),
-        );
+        try {
+            return $this->auditLogs->withinAction(
+                'user.create',
+                'Membuat user '.$payload['name'],
+                function () use ($payload, $temporaryPassword, &$createdLogin): ClientLogin {
+                    return DB::transaction(function () use ($payload, $temporaryPassword, &$createdLogin): ClientLogin {
+                        $createdLogin = $this->clientLogins->createUser([
+                            ...$payload,
+                            'password' => $temporaryPassword,
+                            'must_change_password' => true,
+                        ]);
+
+                        $this->temporaryPasswordMail->sendForNewAccount($createdLogin, $temporaryPassword);
+
+                        return $createdLogin;
+                    });
+                },
+            );
+        } catch (TemporaryPasswordDeliveryException) {
+            $this->recordTemporaryPasswordDeliveryFailure($currentLogin, $createdLogin, 'user_created');
+
+            throw ValidationException::withMessages([
+                'userForm.email' => 'User tidak dibuat karena email password sementara gagal dikirim. Periksa konfigurasi mail lalu coba lagi.',
+            ]);
+        }
     }
 
-    public function resetPassword(ClientLogin $currentLogin, int $userLoginId): string
+    public function resetPassword(ClientLogin $currentLogin, int $userLoginId): void
     {
         $login = $this->findPasswordResetTarget($currentLogin, $userLoginId);
         $temporaryPassword = Str::password(16);
 
-        $this->auditLogs->withinAction('user.reset_password', 'Reset password user '.$login->name, function () use ($login, $temporaryPassword): void {
-            $this->clientLogins->updateUser($login, [
-                'password' => $temporaryPassword,
-                'must_change_password' => true,
-                'password_changed_at' => now(),
-                'failed_login_count' => 0,
-                'locked_until' => null,
-                'remember_token' => Str::random(60),
-                'auth_version' => max(1, (int) $login->auth_version) + 1,
+        try {
+            $this->auditLogs->withinAction(
+                'user.reset_password',
+                'Reset password user '.$login->name,
+                function () use ($currentLogin, $login, $temporaryPassword): void {
+                    DB::transaction(function () use ($currentLogin, $login, $temporaryPassword): void {
+                        $this->clientLogins->updateUser($login, [
+                            'password' => $temporaryPassword,
+                            'must_change_password' => true,
+                            'password_changed_at' => now(),
+                            'failed_login_count' => 0,
+                            'locked_until' => null,
+                            'remember_token' => Str::random(60),
+                            'auth_version' => max(1, (int) $login->auth_version) + 1,
+                        ]);
+
+                        $this->temporaryPasswordMail->sendForReset($login, $temporaryPassword);
+                        $this->auditLogs->recordSecurityEvent(
+                            'auth.password_reset_by_admin',
+                            'Password direset oleh administrator',
+                            target: $login,
+                            actor: $currentLogin,
+                            metadata: [
+                                'must_change_password' => true,
+                                'delivery' => 'email',
+                            ],
+                        );
+                    });
+                },
+            );
+        } catch (TemporaryPasswordDeliveryException) {
+            $this->recordTemporaryPasswordDeliveryFailure($currentLogin, $login, 'password_reset');
+
+            throw ValidationException::withMessages([
+                'passwordResetEmail' => 'Password tidak direset karena email gagal dikirim. Periksa konfigurasi mail lalu coba lagi.',
             ]);
-        });
-
-        $this->auditLogs->recordSecurityEvent(
-            'auth.password_reset_by_admin',
-            'Password direset oleh administrator',
-            target: $login,
-            actor: $currentLogin,
-            metadata: ['must_change_password' => true],
-        );
-
-        return $temporaryPassword;
+        }
     }
 
     public function appCount(): int
@@ -191,6 +229,23 @@ class UserManagementUserService
     public function availableModules(): Collection
     {
         return $this->availableModulesCache ??= $this->appMods->allForUserAccessPreview();
+    }
+
+    private function recordTemporaryPasswordDeliveryFailure(
+        ClientLogin $currentLogin,
+        ?ClientLogin $target,
+        string $operation,
+    ): void {
+        $this->auditLogs->recordSecurityEvent(
+            'auth.temporary_password_delivery_failed',
+            'Pengiriman email password sementara gagal',
+            target: $target,
+            actor: $currentLogin,
+            metadata: [
+                'operation' => $operation,
+                'delivery' => 'email',
+            ],
+        );
     }
 
     /** @param list<int> $ids */

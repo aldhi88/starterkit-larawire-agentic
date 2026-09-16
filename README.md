@@ -320,7 +320,7 @@ aksesibilitas, dan responsive theme aktif.
 git clone <repository-laravel> <folder-project>
 cd <folder-project>
 cp .env.example .env
-# atur APP_URL, database, secret production, serta pertahankan STARTER_THEME dan STARTER_LAYOUT dari local
+# atur APP_URL, database, mailer pengirim email, secret production, serta pertahankan STARTER_THEME dan STARTER_LAYOUT dari local
 composer install --no-dev --optimize-autoloader
 php artisan starter:deploy
 ```
@@ -344,7 +344,7 @@ php artisan starter:deploy
 Production memakai versi package yang terkunci di `composer.lock` project
 Laravel. `starter:deploy` khusus production dan melakukan preflight lengkap:
 environment production, debug mati, HTTPS, cookie aman, domain, theme/layout
-eksplisit, aset runtime theme dari repository, extension, directory runtime,
+eksplisit, mailer pengirim email (bukan `log`/`array`), aset runtime theme dari repository, extension, directory runtime,
 koneksi database, migration, registry App, dan cache.
 Pada database production pertama yang masih kosong, command meminta kredensial
 Superuser melalui prompt aman. Jika preflight gagal, deployment berhenti sebelum

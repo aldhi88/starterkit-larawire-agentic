@@ -14,18 +14,6 @@
         </div>
     </div>
 
-    @if ($temporaryPassword)
-        <div class="alert alert-warning alert-dismissible" role="alert" data-temporary-credentials-alert data-starter-region="temporary-credentials">
-            <div>
-                <h3 class="alert-title">Simpan kredensial sementara ini sekarang</h3>
-                <div>Username: <strong class="font-monospace">{{ $temporaryPasswordUsername }}</strong></div>
-                <div>Password: <strong class="font-monospace">{{ $temporaryPassword }}</strong></div>
-                <div class="small mt-1">Password tidak akan ditampilkan lagi. User wajib menggantinya setelah login.</div>
-            </div>
-            <button type="button" class="btn-close" wire:click="dismissTemporaryPassword" aria-label="Tutup" data-temporary-credentials-dismiss></button>
-        </div>
-    @endif
-
     <form wire:submit="save">
         <div class="row row-cards">
             <div class="col-xl-7" data-starter-region="identity-form">
@@ -51,7 +39,7 @@
                             <div class="col-md-6">
                                 <label class="form-label" for="user-email">Email</label>
                                 <input type="email" id="user-email" class="form-control @error('userForm.email') is-invalid @enderror" wire:model.defer="userForm.email" autocomplete="email">
-                                <div class="form-hint">Digunakan untuk notifikasi dan persiapan reset password mandiri.</div>
+                                <div class="form-hint">Password sementara akun baru dan hasil reset dikirim ke alamat ini.</div>
                                 @error('userForm.email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6">

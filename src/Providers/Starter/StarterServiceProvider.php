@@ -53,6 +53,7 @@ use Aldhi88\StarterKit\Services\Starter\SettingsOverviewService;
 use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
 use Aldhi88\StarterKit\Services\Starter\StarterContextService;
 use Aldhi88\StarterKit\Services\Starter\StarterViewOverrideService;
+use Aldhi88\StarterKit\Services\Starter\TemporaryPasswordMailService;
 use Aldhi88\StarterKit\Services\Starter\UserManagementRoleService;
 use Aldhi88\StarterKit\Services\Starter\UserManagementUserService;
 use Aldhi88\StarterKit\Support\Starter\StarterInternalRunContext;
@@ -102,6 +103,7 @@ class StarterServiceProvider extends ServiceProvider
         $this->app->scoped(SettingsOverviewService::class);
         $this->app->scoped(StarterConfigService::class);
         $this->app->scoped(StarterContextService::class);
+        $this->app->scoped(TemporaryPasswordMailService::class);
         $this->app->scoped(UserManagementRoleService::class);
         $this->app->scoped(UserManagementUserService::class);
 

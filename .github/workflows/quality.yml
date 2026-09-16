@@ -108,7 +108,7 @@ jobs:
         run: php artisan config:cache
       - working-directory: host
         run: |
-          php -r '$path = ".env"; $env = file_get_contents($path); foreach (["APP_ENV" => "production", "APP_DEBUG" => "false", "APP_URL" => "https://company.test", "SESSION_SECURE_COOKIE" => "true"] as $key => $value) { $env = preg_replace("/^".preg_quote($key, "/")."=.*$/m", $key."=".$value, $env); } file_put_contents($path, $env);'
+          php -r '$path = ".env"; $env = file_get_contents($path); foreach (["APP_ENV" => "production", "APP_DEBUG" => "false", "APP_URL" => "https://company.test", "SESSION_SECURE_COOKIE" => "true", "MAIL_MAILER" => "smtp"] as $key => $value) { $env = preg_replace("/^".preg_quote($key, "/")."=.*$/m", $key."=".$value, $env); } file_put_contents($path, $env);'
       - working-directory: host
         run: php artisan starter:deploy --force
       - name: Reject mutating view commands in production

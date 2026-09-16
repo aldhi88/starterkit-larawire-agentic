@@ -360,7 +360,6 @@
         ],
         "starter/user-management/user-form.blade.php": [
             "page-header",
-            "temporary-credentials",
             "identity-form",
             "page-actions",
             "role-access"

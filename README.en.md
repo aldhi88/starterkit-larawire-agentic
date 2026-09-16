@@ -314,7 +314,7 @@ and responsive contracts.
 git clone <laravel-repository> <project-folder>
 cd <project-folder>
 cp .env.example .env
-# configure production APP_URL, database, and secrets; preserve local STARTER_THEME and STARTER_LAYOUT
+# configure production APP_URL, database, delivery mailer, and secrets; preserve local STARTER_THEME and STARTER_LAYOUT
 composer install --no-dev --optimize-autoloader
 php artisan starter:deploy
 ```
@@ -336,9 +336,9 @@ php artisan starter:deploy
 
 Production uses the package version locked by the Laravel project's
 `composer.lock`. `starter:deploy` is production-only. It validates the complete
-environment—including explicit theme/layout values and committed theme runtime
-assets—before mutation, then applies migrations, App registry synchronization,
-and production caches. For the first empty production database,
+environment—including explicit theme/layout values, a delivery-capable mailer
+(not `log` or `array`), and committed theme runtime assets—before mutation, then
+applies migrations, App registry synchronization, and production caches. For the first empty production database,
 it securely prompts for Superuser credentials. `starter:sync` and
 `starter:reset` are rejected in production.
 

@@ -8,7 +8,6 @@ use Aldhi88\StarterKit\Models\Starter\ClientRole;
 use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
 use Aldhi88\StarterKit\Services\Starter\UserManagementUserService;
 use Aldhi88\StarterKit\Support\Starter\StarterTheme;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -21,10 +20,6 @@ class UserForm extends Component
     private AuthenticatedLoginService $authenticatedLogins;
 
     public ?int $userLoginId = null;
-
-    public ?string $temporaryPassword = null;
-
-    public ?string $temporaryPasswordUsername = null;
 
     /** @var array{name: string, username: string, email: string, role_id: string, status: string} */
     public array $userForm = [
@@ -80,30 +75,24 @@ class UserForm extends Component
             'userForm.status' => ['required', Rule::in(['active', 'inactive', 'locked'])],
         ])['userForm'];
 
-        $temporaryPassword = $this->userLoginId === null ? Str::password(16) : null;
+        $creating = $this->userLoginId === null;
         $login = $this->users()->saveUser($this->login(), $this->userLoginId, [
             'name' => $validated['name'],
             'username' => $validated['username'],
             'email' => $validated['email'],
             'client_role_id' => $validated['role_id'],
             'status' => $validated['status'],
-            'password' => $temporaryPassword,
         ]);
 
         $this->userLoginId = $login->id;
 
-        if ($temporaryPassword !== null) {
-            $this->temporaryPasswordUsername = $login->username;
-            $this->temporaryPassword = $temporaryPassword;
-        }
-
-        $this->dispatch('starter-toast', type: 'success', message: 'User berhasil disimpan.');
-    }
-
-    public function dismissTemporaryPassword(): void
-    {
-        $this->temporaryPassword = null;
-        $this->temporaryPasswordUsername = null;
+        $this->dispatch(
+            'starter-toast',
+            type: 'success',
+            message: $creating
+                ? 'User berhasil dibuat. Password sementara telah dikirim ke '.$login->email.'.'
+                : 'User berhasil disimpan.',
+        );
     }
 
     public function render()

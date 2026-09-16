@@ -106,6 +106,8 @@ class StarterSecurityValidator
         $layout = strtolower((string) config('starter.layout'));
         $environmentTheme = strtolower((string) $this->environmentValue('STARTER_THEME'));
         $environmentLayout = strtolower((string) $this->environmentValue('STARTER_LAYOUT'));
+        $mailer = strtolower((string) config('mail.default'));
+        $environmentMailer = strtolower((string) $this->environmentValue('MAIL_MAILER'));
 
         return [
             $this->check('Production environment', app()->isProduction(), 'APP_ENV harus production.'),
@@ -126,6 +128,13 @@ class StarterSecurityValidator
                 'Explicit production UI layout',
                 $environmentLayout !== '' && hash_equals($layout, $environmentLayout),
                 'STARTER_LAYOUT wajib ada di .env production dan sama dengan pilihan layout local.',
+            ),
+            $this->check(
+                'Production mail delivery',
+                $environmentMailer !== ''
+                    && hash_equals($mailer, $environmentMailer)
+                    && $this->mailerCanDeliver($mailer),
+                'MAIL_MAILER wajib eksplisit dan seluruh transport-nya harus mengirim email; log/array tidak boleh dipakai di production.',
             ),
             $this->check(
                 'Committed theme runtime assets',
@@ -182,6 +191,37 @@ class StarterSecurityValidator
         };
 
         return is_string($extension) && extension_loaded($extension);
+    }
+
+    /** @param  list<string>  $visited */
+    private function mailerCanDeliver(string $mailer, array $visited = []): bool
+    {
+        if ($mailer === '' || in_array($mailer, $visited, true)) {
+            return false;
+        }
+
+        $config = config("mail.mailers.{$mailer}");
+
+        if (! is_array($config)) {
+            return false;
+        }
+
+        $transport = strtolower((string) ($config['transport'] ?? ''));
+
+        if ($transport === '' || in_array($transport, ['log', 'array'], true)) {
+            return false;
+        }
+
+        if (! in_array($transport, ['failover', 'roundrobin'], true)) {
+            return true;
+        }
+
+        $nestedMailers = $config['mailers'] ?? [];
+
+        return is_array($nestedMailers)
+            && $nestedMailers !== []
+            && collect($nestedMailers)->every(fn (mixed $nestedMailer): bool => is_string($nestedMailer)
+                && $this->mailerCanDeliver($nestedMailer, [...$visited, $mailer]));
     }
 
     private function environmentValue(string $key): ?string

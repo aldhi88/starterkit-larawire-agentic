@@ -16,6 +16,8 @@
     $confirmAction = $confirmAction ?? null;
     $cancelAction = $cancelAction ?? null;
     $wireSubmit = $wireSubmit ?? null;
+    $loadingTarget = trim((string) ($loadingTarget ?? ($wireSubmit ?: $confirmAction)));
+    $loadingText = (string) ($loadingText ?? 'Memproses...');
     $formAction = $formAction ?? null;
     $formMethod = strtoupper((string) ($formMethod ?? 'POST'));
     $dismissOnConfirm = $dismissOnConfirm ?? ($type === 'success' || (! $password && ! $confirmAction));
@@ -33,7 +35,7 @@
     <div class="modal-dialog modal-{{ $size }} relative w-auto pointer-events-none" role="document">
         <div class="modal-content relative flex w-full flex-col bg-white text-current pointer-events-auto">
             @if ($closeButton)
-                <button type="button" class="dashcode-icon-button dashcode-modal-close" @if ($cancelAction) wire:click="{{ $cancelAction }}" @else data-starter-modal-close @endif aria-label="Tutup">
+                <button type="button" class="dashcode-icon-button dashcode-modal-close" @if ($cancelAction) wire:click="{{ $cancelAction }}" @else data-starter-modal-close @endif @if ($loadingTarget !== '') wire:loading.attr="disabled" wire:target="{{ $loadingTarget }}" @endif aria-label="Tutup">
                     @include('starter.templates.layouts.icon', ['name' => 'circle-x', 'class' => 'icon-sm'])
                 </button>
             @endif
@@ -83,13 +85,21 @@
             </div>
 
             <div class="modal-footer dashcode-modal-actions flex items-center gap-2 border-t border-slate-200">
-                <button type="button" class="btn inline-flex justify-center btn-outline-dark" @if ($cancelAction) wire:click="{{ $cancelAction }}" @else data-starter-modal-close @endif>{{ $cancelText }}</button>
+                <button type="button" class="btn inline-flex justify-center btn-outline-dark" @if ($cancelAction) wire:click="{{ $cancelAction }}" @else data-starter-modal-close @endif @if ($loadingTarget !== '') wire:loading.attr="disabled" wire:target="{{ $loadingTarget }}" @endif>{{ $cancelText }}</button>
                 <button
                     type="{{ $password ? 'submit' : 'button' }}"
                     class="btn inline-flex justify-center {{ $confirmClass }}"
                     @if (! $password && $confirmAction) wire:click="{{ $confirmAction }}" @endif
                     @if ($dismissOnConfirm) data-starter-modal-close @endif
-                >{{ $confirmText }}</button>
+                    @if ($loadingTarget !== '') wire:loading.attr="disabled" wire:target="{{ $loadingTarget }}" @endif
+                >
+                    <span @if ($loadingTarget !== '') wire:loading.remove wire:target="{{ $loadingTarget }}" @endif>{{ $confirmText }}</span>
+                    @if ($loadingTarget !== '')
+                        <span wire:loading wire:target="{{ $loadingTarget }}" role="status">
+                            <span class="starter-spinner me-1" aria-hidden="true"></span>{{ $loadingText }}
+                        </span>
+                    @endif
+                </button>
             </div>
 
             @if ($password)

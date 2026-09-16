@@ -16,6 +16,8 @@
     $confirmAction = $confirmAction ?? null;
     $cancelAction = $cancelAction ?? null;
     $wireSubmit = $wireSubmit ?? null;
+    $loadingTarget = trim((string) ($loadingTarget ?? ($wireSubmit ?: $confirmAction)));
+    $loadingText = (string) ($loadingText ?? 'Memproses...');
     $formAction = $formAction ?? null;
     $formMethod = strtoupper((string) ($formMethod ?? 'POST'));
     $dismissOnConfirm = $dismissOnConfirm ?? ($type === 'success' || (! $password && ! $confirmAction));
@@ -34,7 +36,7 @@
     <div class="modal-dialog modal-{{ $size }}" role="document">
         <div class="modal-content">
             @if ($closeButton)
-                <button type="button" class="btn-close" @if ($cancelAction) wire:click="{{ $cancelAction }}" @else data-bs-dismiss="modal" @endif aria-label="Tutup"></button>
+                <button type="button" class="btn-close" @if ($cancelAction) wire:click="{{ $cancelAction }}" @else data-bs-dismiss="modal" @endif @if ($loadingTarget !== '') wire:loading.attr="disabled" wire:target="{{ $loadingTarget }}" @endif aria-label="Tutup"></button>
             @endif
 
             <div class="modal-status {{ $statusClass }}"></div>
@@ -87,7 +89,7 @@
                 <div class="w-100">
                     <div class="row">
                         <div class="col">
-                            <button type="button" class="btn w-100" @if ($cancelAction) wire:click="{{ $cancelAction }}" @else data-bs-dismiss="modal" @endif>{{ $cancelText }}</button>
+                            <button type="button" class="btn w-100" @if ($cancelAction) wire:click="{{ $cancelAction }}" @else data-bs-dismiss="modal" @endif @if ($loadingTarget !== '') wire:loading.attr="disabled" wire:target="{{ $loadingTarget }}" @endif>{{ $cancelText }}</button>
                         </div>
                         <div class="col">
                             <button
@@ -95,7 +97,15 @@
                                 class="btn {{ $confirmClass }} w-100"
                                 @if (! $password && $confirmAction) wire:click="{{ $confirmAction }}" @endif
                                 @if ($dismissOnConfirm) data-bs-dismiss="modal" @endif
-                            >{{ $confirmText }}</button>
+                                @if ($loadingTarget !== '') wire:loading.attr="disabled" wire:target="{{ $loadingTarget }}" @endif
+                            >
+                                <span @if ($loadingTarget !== '') wire:loading.remove wire:target="{{ $loadingTarget }}" @endif>{{ $confirmText }}</span>
+                                @if ($loadingTarget !== '')
+                                    <span wire:loading wire:target="{{ $loadingTarget }}" role="status">
+                                        <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>{{ $loadingText }}
+                                    </span>
+                                @endif
+                            </button>
                         </div>
                     </div>
                 </div>

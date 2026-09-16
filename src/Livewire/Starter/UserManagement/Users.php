@@ -6,6 +6,7 @@ use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
 use Aldhi88\StarterKit\Services\Starter\UserManagementUserService;
 use Aldhi88\StarterKit\Support\Starter\StarterTheme;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -19,8 +20,6 @@ class Users extends Component
 
     public bool $embedded = false;
 
-    public ?string $temporaryPassword = null;
-
     public function boot(
         UserManagementUserService $userService,
         AuthenticatedLoginService $authenticatedLogins,
@@ -29,11 +28,11 @@ class Users extends Component
         $this->authenticatedLogins = $authenticatedLogins;
     }
 
-    public ?string $temporaryPasswordUsername = null;
-
     public ?int $passwordResetUserId = null;
 
     public string $passwordResetUserName = '';
+
+    public string $passwordResetUserEmail = '';
 
     public bool $passwordResetModalOpen = false;
 
@@ -48,6 +47,7 @@ class Users extends Component
         $login = $this->users()->findPasswordResetTarget($this->login(), $id);
         $this->passwordResetUserId = $login->id;
         $this->passwordResetUserName = $login->name;
+        $this->passwordResetUserEmail = $login->email;
         $this->passwordResetModalOpen = true;
     }
 
@@ -55,6 +55,7 @@ class Users extends Component
     {
         $this->passwordResetUserId = null;
         $this->passwordResetUserName = '';
+        $this->passwordResetUserEmail = '';
         $this->passwordResetModalOpen = false;
     }
 
@@ -65,17 +66,29 @@ class Users extends Component
         }
 
         $login = $this->users()->findPasswordResetTarget($this->login(), $this->passwordResetUserId);
-        $this->showTemporaryPassword($login, $this->users()->resetPassword($this->login(), $login->id));
+
+        try {
+            $this->users()->resetPassword($this->login(), $login->id);
+        } catch (ValidationException $exception) {
+            $this->dispatch(
+                'starter-toast',
+                type: 'danger',
+                message: collect($exception->errors())->flatten()->first()
+                    ?? 'Password tidak direset karena email gagal dikirim.',
+            );
+
+            return;
+        }
+
         $this->passwordResetUserId = null;
         $this->passwordResetUserName = '';
+        $this->passwordResetUserEmail = '';
         $this->passwordResetModalOpen = false;
-        $this->dispatch('starter-toast', type: 'success', message: 'Password sementara baru berhasil dibuat.');
-    }
-
-    public function dismissTemporaryPassword(): void
-    {
-        $this->temporaryPassword = null;
-        $this->temporaryPasswordUsername = null;
+        $this->dispatch(
+            'starter-toast',
+            type: 'success',
+            message: 'Password sementara baru telah dikirim ke '.$login->email.'.',
+        );
     }
 
     public function render()
@@ -83,12 +96,6 @@ class Users extends Component
         return view(StarterTheme::viewName('starter.user-management.users'), [
             'appCount' => $this->users()->appCount(),
         ])->title('Manajemen User');
-    }
-
-    private function showTemporaryPassword(ClientLogin $login, string $password): void
-    {
-        $this->temporaryPasswordUsername = $login->username;
-        $this->temporaryPassword = $password;
     }
 
     private function users(): UserManagementUserService

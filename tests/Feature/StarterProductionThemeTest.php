@@ -68,3 +68,33 @@ it('fails production validation when selected theme runtime is unavailable', fun
         File::deleteDirectory($host);
     }
 });
+
+it('rejects simulated mail transports in production preflight', function (): void {
+    $host = sys_get_temp_dir().'/starter-production-mail-'.bin2hex(random_bytes(6));
+    $originalBasePath = base_path();
+    File::ensureDirectoryExists($host);
+    File::put($host.'/.env', "MAIL_MAILER=log\n");
+    app()->setBasePath($host);
+    config()->set('mail.default', 'log');
+    config()->set('mail.mailers.log', ['transport' => 'log']);
+    config()->set('mail.mailers.array', ['transport' => 'array']);
+    config()->set('mail.mailers.smtp', ['transport' => 'smtp']);
+
+    $assets = Mockery::mock(StarterAssetPublisher::class);
+    $assets->shouldReceive('themeAssetsReady')->twice()->andReturn(true);
+    $validator = new StarterSecurityValidator($assets);
+
+    try {
+        $invalid = collect($validator->checks(production: true))->keyBy('label');
+        expect($invalid['Production mail delivery']['passed'])->toBeFalse();
+
+        File::put($host.'/.env', "MAIL_MAILER=smtp\n");
+        config()->set('mail.default', 'smtp');
+        $valid = collect($validator->checks(production: true))->keyBy('label');
+
+        expect($valid['Production mail delivery']['passed'])->toBeTrue();
+    } finally {
+        app()->setBasePath($originalBasePath);
+        File::deleteDirectory($host);
+    }
+});

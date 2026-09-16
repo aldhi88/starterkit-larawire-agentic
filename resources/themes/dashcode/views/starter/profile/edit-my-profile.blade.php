@@ -15,7 +15,7 @@
                 <div>
                     <h3 class="dashcode-alert-title">Password sementara harus diganti</h3>
                     <div>
-                        Masukkan password sementara yang diberikan admin pada kolom <strong>Password Saat Ini</strong>,
+                        Masukkan password sementara yang dikirim ke email Anda pada kolom <strong>Password Saat Ini</strong>,
                         kemudian buat <strong>Password Baru</strong>. Anda dapat melanjutkan ke halaman lain setelah password berhasil diubah.
                     </div>
                 </div>

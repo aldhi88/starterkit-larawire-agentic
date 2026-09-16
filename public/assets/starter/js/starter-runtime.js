@@ -863,7 +863,7 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
     },
 });
 
-document.addEventListener('DOMContentLoaded', () => window.StarterTemplate.init());
+document.addEventListener('DOMContentLoaded', () => window.StarterTemplate.init(true));
 document.addEventListener('livewire:initialized', () => window.StarterTemplate.bindLivewire());
 document.addEventListener('livewire:navigate', () => window.StarterTemplate.showNavigateLoader());
 document.addEventListener('livewire:navigating', () => window.StarterTemplate.disposeTheme());
@@ -872,8 +872,8 @@ document.addEventListener('livewire:navigated', () => {
     window.StarterTemplate.clearLivewireLoader();
     window.StarterTemplate.init(true);
 });
-window.addEventListener('pageshow', () => {
+window.addEventListener('pageshow', (event) => {
     window.StarterTemplate.hideNavigateLoader();
     window.StarterTemplate.clearLivewireLoader();
-    window.StarterTemplate.init();
+    window.StarterTemplate.init(! event.persisted);
 });
