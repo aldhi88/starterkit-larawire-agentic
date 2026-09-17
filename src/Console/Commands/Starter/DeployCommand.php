@@ -4,6 +4,7 @@ namespace Aldhi88\StarterKit\Console\Commands\Starter;
 
 use Aldhi88\StarterKit\Installation\StarterDatabaseProvisioner;
 use Aldhi88\StarterKit\Installation\StarterDatabaseProvisioning;
+use Aldhi88\StarterKit\Installation\StarterEnvironmentManager;
 use Aldhi88\StarterKit\Installation\StarterInstallState;
 use Aldhi88\StarterKit\Rules\Starter\StarterPasswordRules;
 use Aldhi88\StarterKit\Services\Starter\StarterAppScaffolder;
@@ -41,6 +42,7 @@ class DeployCommand extends Command
         StarterIdentityService $identities,
         StarterSecurityValidator $security,
         StarterDatabaseProvisioner $databases,
+        StarterEnvironmentManager $environment,
         StarterInternalRunContext $internal,
     ): int {
         if ($this->option('installing')) {
@@ -57,7 +59,7 @@ class DeployCommand extends Command
             }
         }
 
-        $restarted = $this->restartAfterClearingBootCache();
+        $restarted = $this->restartAfterPreparingEnvironment($environment);
 
         if ($restarted !== null) {
             return $restarted;
@@ -66,25 +68,51 @@ class DeployCommand extends Command
         return $this->deploy($deployment, $identities, $security, $databases, $internal);
     }
 
-    private function restartAfterClearingBootCache(): ?int
+    private function restartAfterPreparingEnvironment(StarterEnvironmentManager $environment): ?int
     {
-        if (! app()->configurationIsCached() && ! app()->routesAreCached()) {
-            return null;
+        $restartRequired = false;
+
+        if (app()->configurationIsCached() || app()->routesAreCached()) {
+            $this->components->info('Cache bootstrap lama terdeteksi dan dibersihkan sebelum preflight.');
+
+            if ($this->call('config:clear') !== self::SUCCESS
+                || $this->call('route:clear') !== self::SUCCESS) {
+                $this->components->error('Cache bootstrap lama tidak dapat dibersihkan.');
+
+                return self::FAILURE;
+            }
+
+            $restartRequired = true;
         }
 
-        $this->components->info('Cache bootstrap lama terdeteksi dan dibersihkan sebelum preflight.');
-
-        if ($this->call('config:clear') !== self::SUCCESS
-            || $this->call('route:clear') !== self::SUCCESS) {
-            $this->components->error('Cache bootstrap lama tidak dapat dibersihkan.');
+        try {
+            if ($environment->synchronizeDomainFromAppUrl(base_path('.env'))) {
+                $this->components->info('Konfigurasi domain .env diselaraskan dari APP_URL.');
+                $restartRequired = true;
+            }
+        } catch (Throwable $exception) {
+            $this->components->error($exception->getMessage());
 
             return self::FAILURE;
         }
 
+        if (! $restartRequired) {
+            return null;
+        }
+
+        return $this->restartInFreshProcess();
+    }
+
+    private function restartInFreshProcess(): int
+    {
         $command = [PHP_BINARY, base_path('artisan'), 'starter:deploy', '--ansi'];
 
         if ($this->option('force')) {
             $command[] = '--force';
+        }
+
+        if (! $this->input->isInteractive()) {
+            $command[] = '--no-interaction';
         }
 
         $process = new Process($command, base_path(), null, null, null);
@@ -197,8 +225,22 @@ class DeployCommand extends Command
             }
         }
 
+        $this->components->info('Mengirim sinyal restart ke worker queue...');
+
+        try {
+            if ($this->call('queue:restart') !== self::SUCCESS) {
+                $this->components->error('Deployment selesai, tetapi sinyal restart worker queue gagal diterbitkan.');
+
+                return self::FAILURE;
+            }
+        } catch (Throwable $exception) {
+            $this->components->error('Deployment selesai, tetapi worker queue gagal direstart: '.$exception->getMessage());
+
+            return self::FAILURE;
+        }
+
         $this->newLine();
-        $this->components->info('Deployment production selesai dan seluruh validasi lulus.');
+        $this->components->info('Deployment production selesai, seluruh validasi lulus, dan worker queue menerima sinyal restart.');
 
         return self::SUCCESS;
     }

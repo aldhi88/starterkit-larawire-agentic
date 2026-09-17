@@ -431,6 +431,10 @@ class SyncCommand extends Command
                 $this->fail("Every menu in module [{$subdomain}.{$modCode}] must define a label.");
             }
 
+            if (array_key_exists('visible', $menu) && ! is_bool($menu['visible'])) {
+                $this->fail("Menu [{$menu['label']}] visibility must be a boolean.");
+            }
+
             $routeName = $menu['route'] ?? null;
 
             if ($routeName !== null) {
@@ -773,6 +777,7 @@ class SyncCommand extends Command
             'icon' => $parent ? null : ($menuConfig['icon'] ?? null),
             'order' => $order,
             'is_landing_candidate' => $routeName !== null && ($menuConfig['landing'] ?? false) === true,
+            'is_visible' => $menuConfig['visible'] ?? true,
             'app_route_id' => $routeName ? $routes->get($routeName)?->id : null,
         ]);
 

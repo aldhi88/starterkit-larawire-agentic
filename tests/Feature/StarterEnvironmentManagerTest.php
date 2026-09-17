@@ -84,3 +84,67 @@ it('keeps production domain and HTTPS cookie values derived from APP_URL in env 
 
     File::deleteDirectory($directory);
 });
+
+it('synchronizes only domain settings from APP_URL and remains idempotent', function (): void {
+    $directory = sys_get_temp_dir().'/starterkit-domain-sync-'.bin2hex(random_bytes(6));
+    File::ensureDirectoryExists($directory);
+    $path = $directory.'/.env';
+    File::put($path, <<<'ENV'
+APP_NAME=ERP
+APP_URL="https://new.example.test:8443"
+QUEUE_CONNECTION=database
+# starterkit-larawire:begin
+APP_DOMAIN=old.example.test
+SESSION_DOMAIN=.old.example.test
+SESSION_COOKIE=old_example_test_session
+SESSION_SECURE_COOKIE=false
+# starterkit-larawire:end
+ENV);
+
+    $environment = new StarterEnvironmentManager;
+
+    expect($environment->synchronizeDomainFromAppUrl($path))->toBeTrue();
+
+    $contents = File::get($path);
+
+    expect($contents)->toContain('APP_DOMAIN=new.example.test')
+        ->and($contents)->toContain('SESSION_DOMAIN=.new.example.test')
+        ->and($contents)->toContain('SESSION_COOKIE=new_example_test_session')
+        ->and($contents)->toContain('SESSION_SECURE_COOKIE=true')
+        ->and($contents)->toContain('QUEUE_CONNECTION=database')
+        ->and($environment->synchronizeDomainFromAppUrl($path))->toBeFalse();
+
+    File::deleteDirectory($directory);
+});
+
+it('adds missing local domain settings without changing unrelated environment values', function (): void {
+    $directory = sys_get_temp_dir().'/starterkit-local-domain-sync-'.bin2hex(random_bytes(6));
+    File::ensureDirectoryExists($directory);
+    $path = $directory.'/.env';
+    File::put($path, "APP_URL=http://localhost:8000\nMAIL_MAILER=smtp\n");
+
+    expect((new StarterEnvironmentManager)->synchronizeDomainFromAppUrl($path))->toBeTrue();
+
+    $contents = File::get($path);
+
+    expect($contents)->toContain('APP_DOMAIN=localhost')
+        ->and($contents)->toContain('SESSION_DOMAIN=null')
+        ->and($contents)->toContain('SESSION_COOKIE=localhost_session')
+        ->and($contents)->toContain('SESSION_SECURE_COOKIE=false')
+        ->and($contents)->toContain('MAIL_MAILER=smtp');
+
+    File::deleteDirectory($directory);
+});
+
+it('rejects domain synchronization when APP_URL has no valid host', function (): void {
+    $directory = sys_get_temp_dir().'/starterkit-invalid-domain-sync-'.bin2hex(random_bytes(6));
+    File::ensureDirectoryExists($directory);
+    $path = $directory.'/.env';
+    File::put($path, "APP_URL=not-a-url\nAPP_DOMAIN=preserved.test\n");
+
+    expect(fn (): bool => (new StarterEnvironmentManager)->synchronizeDomainFromAppUrl($path))
+        ->toThrow(RuntimeException::class, 'APP_URL tidak memiliki host/domain yang valid.')
+        ->and(File::get($path))->toBe("APP_URL=not-a-url\nAPP_DOMAIN=preserved.test\n");
+
+    File::deleteDirectory($directory);
+});

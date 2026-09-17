@@ -65,15 +65,18 @@ class StarterAppScaffolder
                     'menus' => [[
                         'label' => 'Contoh Menu',
                         'icon' => 'layout-dashboard',
+                        'visible' => true,
                         'children' => [
                             [
                                 'label' => 'Contoh Submenu 1',
                                 'route' => "{$subdomain}.dashboard",
                                 'landing' => true,
+                                'visible' => true,
                             ],
                             [
                                 'label' => 'Contoh Submenu 2',
                                 'route' => "{$subdomain}.dashboard.submenu-two",
+                                'visible' => true,
                             ],
                         ],
                     ]],
@@ -148,9 +151,12 @@ it('ships an explicit example menu structure', function () {
 
     expect(\$menus)->toHaveCount(1)
         ->and(\$menus[0]['label'])->toBe('Contoh Menu')
+        ->and(\$menus[0]['visible'])->toBeTrue()
         ->and(\$menus[0]['children'])->toHaveCount(2)
         ->and(\$menus[0]['children'][0]['label'])->toBe('Contoh Submenu 1')
-        ->and(\$menus[0]['children'][1]['label'])->toBe('Contoh Submenu 2');
+        ->and(\$menus[0]['children'][0]['visible'])->toBeTrue()
+        ->and(\$menus[0]['children'][1]['label'])->toBe('Contoh Submenu 2')
+        ->and(\$menus[0]['children'][1]['visible'])->toBeTrue();
 });
 PHP.PHP_EOL;
         }
@@ -194,9 +200,12 @@ class {$className}DashboardTest extends TestCase
 
         \$this->assertCount(1, \$menus);
         \$this->assertSame('Contoh Menu', \$menus[0]['label']);
+        \$this->assertTrue(\$menus[0]['visible']);
         \$this->assertCount(2, \$menus[0]['children']);
         \$this->assertSame('Contoh Submenu 1', \$menus[0]['children'][0]['label']);
+        \$this->assertTrue(\$menus[0]['children'][0]['visible']);
         \$this->assertSame('Contoh Submenu 2', \$menus[0]['children'][1]['label']);
+        \$this->assertTrue(\$menus[0]['children'][1]['visible']);
     }
 }
 PHP.PHP_EOL;

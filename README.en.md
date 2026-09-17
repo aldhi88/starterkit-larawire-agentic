@@ -80,7 +80,20 @@ php artisan starter:app
 
 Routes define accessible pages. `config/apps/<app>.php` connects those routes
 to modules and menus. Menus are navigation only; module ownership is the actual
-authorization boundary.
+authorization boundary. Every new menu explicitly defines the boolean `visible`
+attribute; set it to `false` to hide the item from navigation without changing
+route access or landing candidacy. Legacy configuration without this attribute
+remains compatible and is treated as `visible => true`.
+
+```php
+[
+    'label' => 'Internal Process',
+    'route' => 'hr.internal-process.index',
+    'visible' => false,
+]
+```
+
+Hiding a parent also hides its complete navigation subtree.
 
 ### Dynamic role access
 
@@ -339,8 +352,12 @@ Production uses the package version locked by the Laravel project's
 environment—including explicit theme/layout values, a delivery-capable mailer
 (not `log` or `array`), an explicit non-null queue connection, and committed
 theme runtime assets—before mutation, then applies migrations, App registry
-synchronization, and production caches. For the first empty production database,
-it securely prompts for Superuser credentials. `starter:sync` and
+synchronization, production caches, and `queue:restart` as its final step. On
+every run it reconciles `APP_DOMAIN`, `SESSION_DOMAIN`, `SESSION_COOKIE`, and
+`SESSION_SECURE_COOKIE` in `.env` from `APP_URL`; when values change, the command
+restarts with fresh configuration before preflight. For the first empty
+production database, it securely prompts for Superuser credentials. If
+preflight fails, deployment stops before mutation. `starter:sync` and
 `starter:reset` are rejected in production.
 
 ### Starterkit commands

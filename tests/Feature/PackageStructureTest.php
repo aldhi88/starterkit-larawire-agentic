@@ -1408,6 +1408,17 @@ it('uses a required interactive installation wizard without public identity shor
         ->and($viewsStatus->getName())->toBe('starter:views-status');
 });
 
+it('keeps production deployment domain-aware and restarts queue workers last', function (): void {
+    $deploy = file_get_contents(StarterPaths::path('src/Console/Commands/Starter/DeployCommand.php'));
+
+    expect($deploy)
+        ->toContain('synchronizeDomainFromAppUrl')
+        ->toContain("call('queue:restart')")
+        ->toContain("\$command[] = '--no-interaction';")
+        ->and(strpos($deploy, "call('queue:restart')"))
+        ->toBeGreaterThan(strpos($deploy, 'Validasi akhir production gagal.'));
+});
+
 it('does not store initial superuser credentials in package configuration', function (): void {
     $config = file_get_contents(StarterPaths::path('config/starter.php'));
     $environment = file_get_contents(StarterPaths::path('src/Installation/StarterEnvironmentManager.php'));
@@ -1431,4 +1442,21 @@ it('generates app tests in a PSR-4 namespace matching their directory', function
     $scaffolder = file_get_contents(StarterPaths::path('src/Services/Starter/StarterAppScaffolder.php'));
 
     expect($scaffolder)->toContain('namespace Tests\\Feature\\Apps\\\\{$className};');
+});
+
+it('keeps menu visibility code-first and backward compatible', function (): void {
+    $scaffolder = file_get_contents(StarterPaths::path('src/Services/Starter/StarterAppScaffolder.php'));
+    $sync = file_get_contents(StarterPaths::path('src/Console/Commands/Starter/SyncCommand.php'));
+    $context = file_get_contents(StarterPaths::path('src/Services/Starter/StarterContextService.php'));
+
+    expect($scaffolder)->toContain("'visible' => true")
+        ->and($sync)
+        ->toContain("array_key_exists('visible', \$menu)")
+        ->toContain("'is_visible' => \$menuConfig['visible'] ?? true")
+        ->and($context)
+        ->toContain('if (! $menu->is_visible)')
+        ->toContain('if ($menu->app_route_id === null && $childPayload->isEmpty())')
+        ->and(is_file(StarterPaths::path(
+            'database/migrations/starter/2026_09_17_000000_add_is_visible_to_starter_app_menus.php',
+        )))->toBeTrue();
 });

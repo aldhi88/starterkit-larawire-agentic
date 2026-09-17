@@ -5,6 +5,22 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-09-17
+
+### Added
+
+- Add code-first `visible` menu metadata so App menus and complete subtrees can
+  be hidden from primary navigation without changing module authorization,
+  route access, or landing-page selection.
+
+### Changed
+
+- Reconcile `APP_DOMAIN`, `SESSION_DOMAIN`, `SESSION_COOKIE`, and
+  `SESSION_SECURE_COOKIE` from `APP_URL` on every production deployment,
+  restarting in a fresh process before preflight when values change.
+- Finish production deployment with `queue:restart` so long-running workers
+  load the current code and configuration.
+
 ## [1.6.0] - 2026-09-16
 
 ### Added

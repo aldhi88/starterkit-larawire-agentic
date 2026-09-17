@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $icon
  * @property int $order
  * @property bool $is_landing_candidate
+ * @property bool $is_visible
  * @property int $app_mod_id
  * @property int|null $app_route_id
  * @property int|null $parent_id
@@ -26,7 +27,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, AppMenu> $children
  * @property-read Collection<int, AppMenu> $childrenRecursive
  */
-#[Fillable(['label', 'icon', 'order', 'is_landing_candidate', 'app_mod_id', 'app_route_id', 'parent_id'])]
+#[Fillable(['label', 'icon', 'order', 'is_landing_candidate', 'is_visible', 'app_mod_id', 'app_route_id', 'parent_id'])]
 class AppMenu extends Model
 {
     protected $table = 'starter_app_menus';
@@ -35,6 +36,7 @@ class AppMenu extends Model
     {
         return [
             'is_landing_candidate' => 'bool',
+            'is_visible' => 'bool',
         ];
     }
 

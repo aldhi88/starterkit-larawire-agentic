@@ -107,7 +107,7 @@ class StarterContextService
             'appOptions' => $this->appOptions($accessibleApps, $currentApp),
             'sidebarMods' => $sidebarPayload,
             'accessibleAppCount' => $accessibleApps->count(),
-            'sidebarModCount' => $sidebarMods->count(),
+            'sidebarModCount' => $sidebarPayload->count(),
             'lockScreenEnabled' => $lockScreenEnabled,
             'lockScreenTimeoutSeconds' => $lockScreenTimeoutSeconds,
             'lockScreenUrl' => route('starter.lock-screen'),
@@ -274,27 +274,41 @@ class StarterContextService
     private function sidebarPayload(EloquentCollection $mods): Collection
     {
         return $mods
-            ->map(fn (AppMod $mod): array => [
-                'name' => $mod->name,
-                'menus' => $mod->menus
-                    ->map(fn (AppMenu $menu): array => $this->menuPayload($menu))
-                    ->values(),
-                'menuLabels' => implode(', ', $mod->menus
-                    ->map(fn (AppMenu $menu): string => $menu->label)
-                    ->all()),
-            ])
+            ->map(function (AppMod $mod): array {
+                $menus = $mod->menus
+                    ->map(fn (AppMenu $menu): ?array => $this->menuPayload($menu))
+                    ->filter(fn (?array $menu): bool => $menu !== null)
+                    ->values();
+
+                return [
+                    'name' => $mod->name,
+                    'menus' => $menus,
+                    'menuLabels' => $menus->pluck('label')->implode(', '),
+                ];
+            })
+            ->filter(fn (array $mod): bool => $mod['menus']->isNotEmpty())
             ->values();
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, mixed>|null
      */
-    private function menuPayload(AppMenu $menu): array
+    private function menuPayload(AppMenu $menu): ?array
     {
+        if (! $menu->is_visible) {
+            return null;
+        }
+
         $children = $menu->childrenRecursive;
         $childPayload = $children
-            ->map(fn (AppMenu $child): array => $this->menuPayload($child))
+            ->map(fn (AppMenu $child): ?array => $this->menuPayload($child))
+            ->filter(fn (?array $child): bool => $child !== null)
             ->values();
+
+        if ($menu->app_route_id === null && $childPayload->isEmpty()) {
+            return null;
+        }
+
         $isActive = $this->isCurrentUrl($this->menuUrl($menu));
         $isExpanded = $isActive || $childPayload->contains(fn (array $child): bool => $child['active'] || $child['expanded']);
 
@@ -303,7 +317,7 @@ class StarterContextService
             'icon' => $this->normalizeIcon($menu->icon, 'circle'),
             'url' => $this->menuUrl($menu),
             'children' => $childPayload,
-            'hasChildren' => $children->isNotEmpty(),
+            'hasChildren' => $childPayload->isNotEmpty(),
             'active' => $isActive,
             'expanded' => $isExpanded,
         ];

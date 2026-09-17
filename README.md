@@ -80,7 +80,20 @@ php artisan starter:app
 
 File route menentukan halaman yang tersedia. `config/apps/<app>.php`
 menghubungkan route dengan module dan menu. Menu hanya navigasi; module adalah
-batas authorization yang sebenarnya.
+batas authorization yang sebenarnya. Setiap menu baru menuliskan atribut
+boolean `visible`; gunakan `false` untuk menyembunyikannya dari navigasi tanpa
+mengubah akses route atau kandidat halaman awal. Config lama yang belum memiliki
+atribut tersebut tetap diperlakukan sebagai `visible => true`.
+
+```php
+[
+    'label' => 'Proses Internal',
+    'route' => 'hr.internal-process.index',
+    'visible' => false,
+]
+```
+
+Parent yang disembunyikan juga menyembunyikan seluruh turunannya dari navigasi.
 
 ### Mengatur akses role secara dinamis
 
@@ -346,7 +359,11 @@ Laravel. `starter:deploy` khusus production dan melakukan preflight lengkap:
 environment production, debug mati, HTTPS, cookie aman, domain, theme/layout
 eksplisit, mailer pengirim email (bukan `log`/`array`), queue connection eksplisit
 selain `null`, aset runtime theme dari repository, extension, directory runtime,
-koneksi database, migration, registry App, dan cache.
+koneksi database, migration, registry App, cache, dan `queue:restart` sebagai
+langkah terakhir. Pada setiap run, `APP_DOMAIN`, `SESSION_DOMAIN`,
+`SESSION_COOKIE`, dan `SESSION_SECURE_COOKIE` di `.env` diselaraskan otomatis
+dari `APP_URL`; bila berubah, command mengulang proses dengan konfigurasi baru
+sebelum preflight.
 Pada database production pertama yang masih kosong, command meminta kredensial
 Superuser melalui prompt aman. Jika preflight gagal, deployment berhenti sebelum
 mutation. `starter:sync` dan `starter:reset` ditolak di production.

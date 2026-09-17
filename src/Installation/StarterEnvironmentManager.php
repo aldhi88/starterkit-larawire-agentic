@@ -55,21 +55,12 @@ class StarterEnvironmentManager
             $values[$key] = $this->value($contents, $key);
         }
 
-        $appUrl = trim($this->value($contents, 'APP_URL'), "\"' ");
-        $domain = strtolower(rtrim((string) parse_url($appUrl, PHP_URL_HOST), '.'));
-
-        if ($domain === '') {
-            throw new RuntimeException('APP_URL tidak memiliki host/domain yang valid.');
-        }
-
-        $scheme = strtolower((string) parse_url($appUrl, PHP_URL_SCHEME));
-        $secure = $scheme === 'https' ? 'true' : 'false';
-        $localDomain = in_array($domain, ['localhost', '127.0.0.1', '::1'], true);
-        $sessionDomain = $localDomain ? 'null' : '.'.$domain;
-        $sessionCookie = trim((string) preg_replace('/[^a-z0-9]+/', '_', $domain), '_').'_session';
+        $domainValues = $this->domainValues(
+            trim($this->value($contents, 'APP_URL'), "\"' "),
+        );
 
         $defaults = [
-            'APP_DOMAIN' => $domain,
+            'APP_DOMAIN' => $domainValues['APP_DOMAIN'],
             'APP_LOCALE' => 'id',
             'APP_FALLBACK_LOCALE' => 'id',
             'APP_FAKER_LOCALE' => 'id_ID',
@@ -87,9 +78,9 @@ class StarterEnvironmentManager
             'DB_QUEUE_FAILED_TABLE' => 'x_failed_jobs',
             'SESSION_TABLE' => 'x_sessions',
             'AUTH_PASSWORD_RESET_TOKEN_TABLE' => 'x_password_reset_tokens',
-            'SESSION_DOMAIN' => $sessionDomain,
-            'SESSION_COOKIE' => $sessionCookie,
-            'SESSION_SECURE_COOKIE' => $secure,
+            'SESSION_DOMAIN' => $domainValues['SESSION_DOMAIN'],
+            'SESSION_COOKIE' => $domainValues['SESSION_COOKIE'],
+            'SESSION_SECURE_COOKIE' => $domainValues['SESSION_SECURE_COOKIE'],
             'SESSION_ENCRYPT' => 'true',
             'SESSION_HTTP_ONLY' => 'true',
             'SESSION_SAME_SITE' => 'lax',
@@ -150,6 +141,49 @@ class StarterEnvironmentManager
     public function appUrl(string $path): string
     {
         return trim($this->value($this->read($path), 'APP_URL'), "\"' ");
+    }
+
+    public function synchronizeDomainFromAppUrl(string $path): bool
+    {
+        $contents = $this->read($path);
+        $values = $this->domainValues(
+            trim($this->value($contents, 'APP_URL'), "\"' "),
+        );
+        $updated = $contents;
+
+        foreach ($values as $key => $value) {
+            $line = $key.'='.$value;
+            $pattern = '/^'.preg_quote($key, '/').'=.*$/m';
+
+            if (preg_match($pattern, $updated) === 1) {
+                $updated = preg_replace($pattern, $line, $updated) ?? $updated;
+
+                continue;
+            }
+
+            if (str_contains($updated, self::BLOCK_END)) {
+                $updated = preg_replace(
+                    '/^'.preg_quote(self::BLOCK_END, '/').'$/m',
+                    $line.PHP_EOL.self::BLOCK_END,
+                    $updated,
+                    1,
+                ) ?? $updated;
+
+                continue;
+            }
+
+            $updated = rtrim($updated).PHP_EOL.$line.PHP_EOL;
+        }
+
+        if ($updated === $contents) {
+            return false;
+        }
+
+        if (file_put_contents($path, $updated, LOCK_EX) === false) {
+            throw new RuntimeException("File environment tidak dapat ditulis: {$path}");
+        }
+
+        return true;
     }
 
     public function setApplicationName(string $path, string $name): void
@@ -256,6 +290,27 @@ class StarterEnvironmentManager
         return preg_match('/^'.preg_quote($key, '/').'=(.*)$/m', $contents, $matches) === 1
             ? trim($matches[1])
             : '';
+    }
+
+    /** @return array{APP_DOMAIN: string, SESSION_DOMAIN: string, SESSION_COOKIE: string, SESSION_SECURE_COOKIE: string} */
+    private function domainValues(string $appUrl): array
+    {
+        $domain = strtolower(rtrim((string) parse_url($appUrl, PHP_URL_HOST), '.'));
+
+        if ($domain === '') {
+            throw new RuntimeException('APP_URL tidak memiliki host/domain yang valid.');
+        }
+
+        $scheme = strtolower((string) parse_url($appUrl, PHP_URL_SCHEME));
+        $localDomain = in_array($domain, ['localhost', '127.0.0.1', '::1'], true);
+        $cookiePrefix = trim((string) preg_replace('/[^a-z0-9]+/', '_', $domain), '_');
+
+        return [
+            'APP_DOMAIN' => $domain,
+            'SESSION_DOMAIN' => $localDomain ? 'null' : '.'.$domain,
+            'SESSION_COOKIE' => ($cookiePrefix !== '' ? $cookiePrefix : 'larawire').'_session',
+            'SESSION_SECURE_COOKIE' => $scheme === 'https' ? 'true' : 'false',
+        ];
     }
 
     private function read(string $path): string
