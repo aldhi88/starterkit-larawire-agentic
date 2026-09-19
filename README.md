@@ -118,9 +118,12 @@ STARTER_LOGIN_OTP_ENABLED=true
 
 OTP terdiri dari enam digit, berlaku lima menit, dan dibatasi hingga lima
 percobaan. Pengiriman ulang tersedia setelah 60 detik dan dibatasi tiga kali
-dalam jendela lima menit. Flow ini memakai mailer Laravel yang aktif, mencatat
-security audit event, dan menonaktifkan remember-me agar sesi tidak dapat hidup
-kembali tanpa bukti OTP. Nilai default `false` mempertahankan flow login lama.
+dalam jendela lima menit. Flow ini memakai mailer dan queue Laravel yang aktif;
+payload job dienkripsi dan dikirim setelah transaction commit. Queue `sync`
+mengirim inline, sedangkan backend durable memerlukan worker aktif. Flow juga
+mencatat security audit event dan menonaktifkan remember-me agar sesi tidak dapat
+hidup kembali tanpa bukti OTP. Nilai default `false` mempertahankan flow login
+lama.
 
 ### Theme dan layout
 

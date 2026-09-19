@@ -31,7 +31,7 @@ class LoginOtpMailService
         );
         $message->to($login->email, $login->name);
 
-        $this->mail->mailer($this->mailerName())->send($message);
+        $this->mail->mailer($this->mailerName())->queue($message);
     }
 
     private function defaultThemeLogoUrl(): ?string

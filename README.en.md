@@ -117,10 +117,12 @@ STARTER_LOGIN_OTP_ENABLED=true
 
 The OTP contains six digits, expires after five minutes, and allows up to five
 attempts. Resending becomes available after 60 seconds and is limited to three
-sends within the five-minute window. The flow uses the active Laravel mailer,
-records security audit events, and disables remember-me so a session cannot be
-restored without OTP proof. The default `false` value preserves the existing
-login flow.
+sends within the five-minute window. The flow uses the active Laravel mailer and
+queue; its job payload is encrypted and dispatched after transaction commit.
+The `sync` queue sends inline, while a durable backend requires an active worker.
+The flow also records security audit events and disables remember-me so a
+session cannot be restored without OTP proof. The default `false` value
+preserves the existing login flow.
 
 ### Themes and layouts
 

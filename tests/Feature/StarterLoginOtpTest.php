@@ -13,6 +13,8 @@ use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
 use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
 use Aldhi88\StarterKit\Services\Starter\StarterContextService;
 use Aldhi88\StarterKit\Support\Starter\StarterPaths;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Http\Request;
 use Illuminate\Session\ArraySessionHandler;
 use Illuminate\Session\Store;
@@ -77,7 +79,7 @@ function starterLoginOtpClient(): Client
     return $client;
 }
 
-it('sends the OTP immediately through the configured mailer for every supported queue driver', function (string $queueDriver): void {
+it('queues the OTP through the configured queue driver', function (string $queueDriver): void {
     config()->set('app.name', 'Example App');
     config()->set('queue.default', $queueDriver);
     config()->set('mail.default', 'array');
@@ -92,7 +94,7 @@ it('sends the OTP immediately through the configured mailer for every supported 
 
     (new LoginOtpMailService($mail, $context))->send($login, '123456', 5);
 
-    Mail::assertSent(LoginOtpMail::class, function (LoginOtpMail $message): bool {
+    Mail::assertQueued(LoginOtpMail::class, function (LoginOtpMail $message): bool {
         return $message->hasTo('mail-otp-user@example.test')
             && $message->appName === 'Example App'
             && $message->brandName === 'Example Company'
@@ -101,7 +103,7 @@ it('sends the OTP immediately through the configured mailer for every supported 
             && $message->expiresInMinutes === 5
             && $message->mailer === 'array';
     });
-    Mail::assertNothingQueued();
+    Mail::assertNotSent(LoginOtpMail::class);
 })->with(['sync', 'database']);
 
 it('falls back to the active theme logo when the Laravel host has no company logo', function (string $theme, string $logoPath): void {
@@ -120,7 +122,7 @@ it('falls back to the active theme logo when the Laravel host has no company log
 
     (new LoginOtpMailService($mail, $context))->send($login, '123456', 5);
 
-    Mail::assertSent(LoginOtpMail::class, fn (LoginOtpMail $message): bool => $message->brandLogoUrl === asset($logoPath));
+    Mail::assertQueued(LoginOtpMail::class, fn (LoginOtpMail $message): bool => $message->brandLogoUrl === asset($logoPath));
 })->with([
     ['tabler', 'assets/tabler/static/logo-small.svg'],
     ['dashcode', 'assets/dashcode/images/logo/logo.svg'],
@@ -141,6 +143,8 @@ it('renders a neutral branded OTP email through host-overridable views', functio
     $hints = View::getFinder()->getHints();
 
     expect($mail->envelope()->subject)->toBe('Kode OTP login - Example Company')
+        ->and($mail)->toBeInstanceOf(ShouldQueueAfterCommit::class)
+        ->and($mail)->toBeInstanceOf(ShouldBeEncrypted::class)
         ->and($mail->content()->view)->toBe('starter-mail::login-otp')
         ->and($mail->content()->text)->toBe('starter-mail::login-otp-text')
         ->and($html)->toContain('Example Company')

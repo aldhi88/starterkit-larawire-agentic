@@ -5,6 +5,14 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.2] - 2026-09-19
+
+### Changed
+
+- Dispatch login OTP email through Laravel's configured queue connection using
+  encrypted after-commit jobs, preserving inline delivery with `sync` while
+  supporting durable asynchronous workers.
+
 ## [1.7.1] - 2026-09-19
 
 ### Added
