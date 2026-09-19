@@ -7,6 +7,7 @@ use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Models\Starter\ClientRole;
 use Aldhi88\StarterKit\Services\Starter\AuditLogService;
 use Aldhi88\StarterKit\Services\Starter\AuthLoginService;
+use Aldhi88\StarterKit\Services\Starter\LoginOtpMailService;
 use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
 use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
 use Illuminate\Http\Request;
@@ -80,15 +81,20 @@ it('redirects a user with a temporary password directly to profile security', fu
 
     Auth::shouldReceive('login')->once()->with($login, false);
 
+    $otpMail = Mockery::mock(LoginOtpMailService::class);
+    $otpMail->shouldNotReceive('send');
+
     $target = (new AuthLoginService(
         $clientLogins,
         $redirects,
         $clients,
         $configs,
         $auditLogs,
+        $otpMail,
     ))->attempt(' Staff-User ', 'Temporary123');
 
     expect($target)->toBe(route('starter.profile.edit', ['tab' => 'security']))
         ->and(parse_url($target, PHP_URL_HOST))->toBe('localhost')
-        ->and($session->get('starter.auth_version'))->toBe(1);
+        ->and($session->get('starter.auth_version'))->toBe(1)
+        ->and($session->has(AuthLoginService::SESSION_OTP_VERIFIED_LOGIN_ID))->toBeFalse();
 });

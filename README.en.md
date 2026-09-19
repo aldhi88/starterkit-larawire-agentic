@@ -25,7 +25,7 @@ Think of Starterkit Larawire as a larger version of Laravel's authentication
 starter kits. It starts a new private company application with authentication
 and the common foundations normally rebuilt in every internal project:
 
-- login with username or email;
+- login with username or email, with optional email OTP verification;
 - Superuser, users, roles, and module authorization;
 - company profile and security settings;
 - activity logs;
@@ -106,6 +106,21 @@ After route, module, or menu definitions change, synchronize code metadata:
 ```bash
 php artisan starter:sync
 ```
+
+### Optional login OTP
+
+Enable email OTP verification after password validation through the environment:
+
+```dotenv
+STARTER_LOGIN_OTP_ENABLED=true
+```
+
+The OTP contains six digits, expires after five minutes, and allows up to five
+attempts. Resending becomes available after 60 seconds and is limited to three
+sends within the five-minute window. The flow uses the active Laravel mailer,
+records security audit events, and disables remember-me so a session cannot be
+restored without OTP proof. The default `false` value preserves the existing
+login flow.
 
 ### Themes and layouts
 

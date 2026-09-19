@@ -19,6 +19,7 @@ class StarterEnvironmentManager
         'STARTER_THEME',
         'STARTER_LAYOUT',
         'STARTER_API_ENABLED',
+        'STARTER_LOGIN_OTP_ENABLED',
         'SESSION_DRIVER',
         'CACHE_STORE',
         'QUEUE_CONNECTION',
@@ -67,6 +68,7 @@ class StarterEnvironmentManager
             'STARTER_THEME' => $theme,
             'STARTER_LAYOUT' => $layout,
             'STARTER_API_ENABLED' => 'false',
+            'STARTER_LOGIN_OTP_ENABLED' => 'false',
             'SESSION_DRIVER' => 'database',
             'CACHE_STORE' => 'database',
             'QUEUE_CONNECTION' => 'sync',
@@ -252,6 +254,7 @@ class StarterEnvironmentManager
                 'APP_DOMAIN', 'APP_LOCALE', 'APP_FALLBACK_LOCALE', 'APP_FAKER_LOCALE',
             ],
             'Theme and layout' => ['STARTER_THEME', 'STARTER_LAYOUT'],
+            'Authentication' => ['STARTER_LOGIN_OTP_ENABLED'],
             'API gateway' => ['STARTER_API_ENABLED'],
             'Runtime drivers' => ['SESSION_DRIVER', 'CACHE_STORE', 'QUEUE_CONNECTION'],
             'Starterkit database tables' => [

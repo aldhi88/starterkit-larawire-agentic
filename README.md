@@ -25,7 +25,7 @@ Bayangkan Starterkit Larawire seperti Laravel authentication starter kit dengan
 fondasi yang lebih lengkap. Package ini menyiapkan project aplikasi internal
 perusahaan baru dengan fitur yang biasanya dibuat berulang kali:
 
-- login menggunakan username atau email;
+- login menggunakan username atau email, dengan OTP email opsional;
 - Superuser, user, role, dan authorization berdasarkan module;
 - profil perusahaan dan pengaturan keamanan;
 - log aktivitas;
@@ -107,6 +107,20 @@ Setelah route, module, atau menu berubah, sinkronkan metadata source code:
 ```bash
 php artisan starter:sync
 ```
+
+### OTP login opsional
+
+Aktifkan verifikasi OTP email setelah password benar melalui environment:
+
+```dotenv
+STARTER_LOGIN_OTP_ENABLED=true
+```
+
+OTP terdiri dari enam digit, berlaku lima menit, dan dibatasi hingga lima
+percobaan. Pengiriman ulang tersedia setelah 60 detik dan dibatasi tiga kali
+dalam jendela lima menit. Flow ini memakai mailer Laravel yang aktif, mencatat
+security audit event, dan menonaktifkan remember-me agar sesi tidak dapat hidup
+kembali tanpa bukti OTP. Nilai default `false` mempertahankan flow login lama.
 
 ### Theme dan layout
 

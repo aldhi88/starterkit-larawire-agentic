@@ -5,6 +5,21 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-09-19
+
+### Added
+
+- Add optional email OTP verification after password validation, with a
+  six-digit code, five-minute expiry, resend throttling, attempt limits,
+  security audit events, and consistent login UI across all supported themes.
+- Add host-overridable HTML and text OTP mail templates with company branding
+  and an active-theme logo fallback.
+
+### Changed
+
+- Require the authenticated session to retain OTP proof for the current login
+  while OTP protection is enabled, and disable remember-me for that flow.
+
 ## [1.7.0] - 2026-09-17
 
 ### Added

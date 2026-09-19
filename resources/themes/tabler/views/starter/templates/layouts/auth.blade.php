@@ -90,7 +90,9 @@
                                 <p class="text-secondary text-center mb-4">
                                     {{ ($title ?? null) === 'Layar Dikunci'
                                         ? 'Aplikasi dikunci untuk melindungi sesi Anda.'
-                                        : 'Masukkan username atau email dan password untuk melanjutkan.' }}
+                                        : (($otpRequired ?? false)
+                                            ? 'Verifikasi kode yang dikirim ke email akun Anda.'
+                                            : 'Selesaikan verifikasi login untuk melanjutkan.') }}
                                 </p>
                                 @if (session('starter-auth-message'))
                                     <div class="alert alert-warning" role="alert">

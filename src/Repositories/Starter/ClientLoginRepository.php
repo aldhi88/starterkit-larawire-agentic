@@ -97,6 +97,14 @@ class ClientLoginRepository implements ClientLoginInterface
             ->first();
     }
 
+    public function findForAuthentication(int $id): ?ClientLogin
+    {
+        return ClientLogin::query()
+            ->with('role')
+            ->whereKey($id)
+            ->first();
+    }
+
     public function findForManagement(int $id): ?ClientLogin
     {
         return ClientLogin::query()

@@ -58,7 +58,9 @@
                             <p class="mt-2 text-base text-slate-500">
                                 {{ ($title ?? null) === 'Layar Dikunci'
                                     ? 'Aplikasi dikunci untuk melindungi sesi Anda.'
-                                    : 'Masukkan username atau email dan password untuk melanjutkan.' }}
+                                    : (($otpRequired ?? false)
+                                        ? 'Verifikasi kode yang dikirim ke email akun Anda.'
+                                        : 'Selesaikan verifikasi login untuk melanjutkan.') }}
                             </p>
                         </div>
 

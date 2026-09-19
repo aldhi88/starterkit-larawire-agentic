@@ -48,6 +48,7 @@ use Aldhi88\StarterKit\Repositories\Starter\ClientRoleRepository;
 use Aldhi88\StarterKit\Repositories\Starter\StarterConfigRepository;
 use Aldhi88\StarterKit\Services\Starter\AuditLogService;
 use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\LoginOtpMailService;
 use Aldhi88\StarterKit\Services\Starter\SecuritySettingsService;
 use Aldhi88\StarterKit\Services\Starter\SettingsOverviewService;
 use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
@@ -99,6 +100,7 @@ class StarterServiceProvider extends ServiceProvider
         $this->app->bind(StarterConfigInterface::class, StarterConfigRepository::class);
         $this->app->scoped(AuditLogService::class);
         $this->app->scoped(AuthenticatedLoginService::class);
+        $this->app->scoped(LoginOtpMailService::class);
         $this->app->scoped(SecuritySettingsService::class);
         $this->app->scoped(SettingsOverviewService::class);
         $this->app->scoped(StarterConfigService::class);
@@ -225,6 +227,10 @@ class StarterServiceProvider extends ServiceProvider
         ])));
 
         View::addNamespace('starter-shared', StarterPaths::path('resources/views'));
+        View::addNamespace('starter-mail', [
+            resource_path('views/vendor/starter/mail'),
+            StarterPaths::path('resources/views/mail'),
+        ]);
     }
 
     private function loadAppMigrations(): void

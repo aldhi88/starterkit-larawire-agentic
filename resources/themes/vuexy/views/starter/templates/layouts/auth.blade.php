@@ -16,7 +16,9 @@
             <div class="d-flex col-12 col-xl-4 align-items-center authentication-bg p-sm-12 p-6" data-starter-region="primary-content"><div class="w-px-400 mx-auto mt-12 pt-5">
                 <div class="app-brand starter-auth-form-brand justify-content-center mb-6">@include('starter.templates.layouts.brand', ['url' => route('landing'), 'navigate' => false, 'clientLogoUrl' => $clientLogoUrl, 'brandLogoUrl' => $brandLogoUrl, 'brandLogoAlt' => $brandLogoAlt, 'brandText' => config('app.name'), 'markClass' => $clientLogoUrl ? 'starter-auth-company-logo' : '', 'showText' => ! $clientLogoUrl])</div>
                 <h4 class="mb-1">{{ $title ?? 'Selamat datang!' }} 👋</h4>
-                <p class="mb-6">{{ $subtitle ?? 'Silakan masuk untuk melanjutkan ke workspace Anda.' }}</p>
+                <p class="mb-6">{{ $subtitle ?? (($otpRequired ?? false)
+                    ? 'Verifikasi kode yang dikirim ke email akun Anda.'
+                    : 'Selesaikan verifikasi login untuk melanjutkan ke workspace Anda.') }}</p>
                 @if (session('starter-auth-message'))<div class="alert alert-warning" role="alert">{{ session('starter-auth-message') }}</div>@endif
                 {{ $slot }}
                 <footer class="text-center mt-6" data-starter-region="page-footer">{{ now()->year }} © {{ config('app.name') }}</footer>

@@ -31,6 +31,7 @@ ENV);
         ->and($contents)->toContain('QUEUE_CONNECTION=sync')
         ->and($contents)->toContain('STARTER_THEME=tabler')
         ->and($contents)->toContain('STARTER_LAYOUT=vertical')
+        ->and($contents)->toContain('STARTER_LOGIN_OTP_ENABLED=false')
         ->and($contents)->not->toContain('STARTER_SUPERUSER')
         ->and($contents)->toEndWith("# starterkit-larawire:end\n");
 
@@ -80,7 +81,8 @@ it('keeps production domain and HTTPS cookie values derived from APP_URL in env 
     expect($contents)->toContain('APP_DOMAIN=null')
         ->and($contents)->toContain('SESSION_DOMAIN=null')
         ->and($contents)->toContain('SESSION_COOKIE=larawire_session')
-        ->and($contents)->toContain('SESSION_SECURE_COOKIE=null');
+        ->and($contents)->toContain('SESSION_SECURE_COOKIE=null')
+        ->and($contents)->toContain('STARTER_LOGIN_OTP_ENABLED=false');
 
     File::deleteDirectory($directory);
 });

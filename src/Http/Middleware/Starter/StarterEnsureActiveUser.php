@@ -4,6 +4,7 @@ namespace Aldhi88\StarterKit\Http\Middleware\Starter;
 
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Services\Starter\AuditLogService;
+use Aldhi88\StarterKit\Services\Starter\AuthLoginService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +25,21 @@ class StarterEnsureActiveUser
     public function handle(Request $request, Closure $next): Response
     {
         $login = $request->user();
+
+        if ($login instanceof ClientLogin && $this->otpVerificationMissing($request, $login)) {
+            $this->auditLogs->recordSecurityEvent(
+                'auth.session_revoked',
+                'Session dihentikan karena verifikasi OTP tidak tersedia',
+                target: $login,
+                actor: $login,
+                metadata: ['reason' => 'otp_verification_missing'],
+            );
+
+            return $this->terminateSession(
+                $request,
+                'Sesi memerlukan verifikasi OTP. Silakan login kembali.',
+            );
+        }
 
         if ($login instanceof ClientLogin && $this->credentialsChanged($request, $login)) {
             $this->auditLogs->recordSecurityEvent(
@@ -56,6 +72,16 @@ class StarterEnsureActiveUser
         }
 
         return $next($request);
+    }
+
+    private function otpVerificationMissing(Request $request, ClientLogin $login): bool
+    {
+        if (! (bool) config('starter.auth.login_otp_enabled', false)) {
+            return false;
+        }
+
+        return (int) $request->session()->get(AuthLoginService::SESSION_OTP_VERIFIED_LOGIN_ID, 0)
+            !== (int) $login->getKey();
     }
 
     private function credentialsChanged(Request $request, ClientLogin $login): bool

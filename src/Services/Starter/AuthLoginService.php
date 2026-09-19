@@ -4,10 +4,12 @@ namespace Aldhi88\StarterKit\Services\Starter;
 
 use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class AuthLoginService
 {
@@ -15,15 +17,28 @@ class AuthLoginService
 
     private const SESSION_AUTH_VERSION = 'starter.auth_version';
 
+    private const SESSION_OTP_CHALLENGE = 'starter.login_otp';
+
+    public const SESSION_OTP_VERIFIED_LOGIN_ID = 'starter.login_otp_verified_login_id';
+
+    private const OTP_EXPIRES_SECONDS = 300;
+
+    private const OTP_MAX_ATTEMPTS = 5;
+
+    private const OTP_RESEND_SECONDS = 60;
+
+    private const OTP_MAX_SENDS = 3;
+
     public function __construct(
         private readonly ClientLoginInterface $clientLogins,
         private readonly NavigationAuthorizedRedirectService $redirects,
         private readonly ClientInterface $clients,
         private readonly StarterConfigService $configs,
         private readonly AuditLogService $auditLogs,
+        private readonly LoginOtpMailService $otpMail,
     ) {}
 
-    public function attempt(string $username, string $password, bool $remember = false, ?string $redirect = null): string
+    public function attempt(string $username, string $password, bool $remember = false, ?string $redirect = null): ?string
     {
         $identifier = str($username)->lower()->trim()->toString();
         $ipAddress = (string) request()->ip();
@@ -91,35 +106,224 @@ class AuthLoginService
             ]);
         }
 
-        if ($this->clients->current()->account_status !== 'approved') {
-            $this->auditLogs->recordSecurityEvent(
-                'auth.login_blocked',
-                'Login ditolak karena perusahaan tidak aktif',
-                target: $login,
-                metadata: ['reason' => 'company_inactive'],
-            );
-
-            throw ValidationException::withMessages([
-                'form.identifier' => 'Perusahaan tidak aktif atau belum disetujui.',
-            ]);
-        }
-
-        if (! $login->isActive()) {
-            $this->auditLogs->recordSecurityEvent(
-                'auth.login_blocked',
-                'Login ditolak karena akun tidak aktif',
-                target: $login,
-                metadata: ['reason' => 'account_inactive'],
-            );
-
-            throw ValidationException::withMessages([
-                'form.identifier' => 'Akun tidak aktif atau sedang dikunci. Hubungi administrator.',
-            ]);
-        }
-
+        $this->assertLoginAllowed($login, 'form.identifier');
         RateLimiter::clear($accountThrottleKey);
 
-        Auth::login($login, $remember && $this->configs->boolean('security.remember_me_enabled'));
+        if ((bool) config('starter.auth.login_otp_enabled', false)) {
+            $this->startOtpChallenge($login, $remember, $redirect);
+
+            return null;
+        }
+
+        return $this->completeAuthentication($login, $remember, $redirect, false);
+    }
+
+    public function verifyOtp(string $code): string
+    {
+        $challenge = $this->otpChallenge();
+
+        if ($challenge === null || ! (bool) config('starter.auth.login_otp_enabled', false)) {
+            $this->clearOtpChallenge();
+
+            throw ValidationException::withMessages([
+                'otpForm.code' => 'Sesi verifikasi tidak tersedia. Silakan login kembali.',
+            ]);
+        }
+
+        $login = $this->clientLogins->findForAuthentication($challenge['login_id']);
+
+        if (! $login || $challenge['expires_at'] < now()->timestamp) {
+            $this->clearOtpChallenge();
+
+            $this->auditLogs->recordSecurityEvent(
+                'auth.login_otp_expired',
+                'Kode OTP login kedaluwarsa',
+                target: $login,
+                metadata: ['reason' => 'expired'],
+            );
+
+            throw ValidationException::withMessages([
+                'otpForm.code' => 'Kode OTP sudah kedaluwarsa. Silakan login kembali.',
+            ]);
+        }
+
+        $this->assertLoginAllowed($login, 'otpForm.code');
+
+        if (! preg_match('/^\d{6}$/', $code) || ! Hash::check($code, $challenge['otp_hash'])) {
+            $attempts = $challenge['attempts'] + 1;
+            $blocked = $attempts >= self::OTP_MAX_ATTEMPTS;
+
+            if ($blocked) {
+                $this->clearOtpChallenge();
+            } else {
+                $challenge['attempts'] = $attempts;
+                request()->session()->put(self::SESSION_OTP_CHALLENGE, $challenge);
+            }
+
+            $this->auditLogs->recordSecurityEvent(
+                $blocked ? 'auth.login_otp_blocked' : 'auth.login_otp_failed',
+                $blocked ? 'Verifikasi OTP login dibatasi' : 'Verifikasi OTP login gagal',
+                target: $login,
+                metadata: [
+                    'reason' => 'invalid_code',
+                    'attempts' => $attempts,
+                ],
+            );
+
+            throw ValidationException::withMessages([
+                'otpForm.code' => $blocked
+                    ? 'Terlalu banyak kode yang salah. Silakan login kembali.'
+                    : 'Kode OTP tidak valid.',
+            ]);
+        }
+
+        $this->clearOtpChallenge();
+
+        return $this->completeAuthentication(
+            $login,
+            $challenge['remember'],
+            $challenge['redirect'],
+            true,
+        );
+    }
+
+    public function resendOtp(): void
+    {
+        $challenge = $this->otpChallenge();
+
+        if ($challenge === null || $challenge['expires_at'] < now()->timestamp) {
+            $this->clearOtpChallenge();
+
+            throw ValidationException::withMessages([
+                'otpForm.code' => 'Sesi verifikasi sudah berakhir. Silakan login kembali.',
+            ]);
+        }
+
+        $waitSeconds = $challenge['resend_available_at'] - now()->timestamp;
+
+        if ($waitSeconds > 0) {
+            throw ValidationException::withMessages([
+                'otpForm.code' => "Tunggu {$waitSeconds} detik sebelum mengirim ulang kode.",
+            ]);
+        }
+
+        $login = $this->clientLogins->findForAuthentication($challenge['login_id']);
+
+        if (! $login) {
+            $this->clearOtpChallenge();
+
+            throw ValidationException::withMessages([
+                'otpForm.code' => 'Akun tidak tersedia. Silakan login kembali.',
+            ]);
+        }
+
+        $this->assertLoginAllowed($login, 'otpForm.code');
+        $this->deliverOtp($login, $challenge['remember'], $challenge['redirect'], 'resent');
+    }
+
+    /** @return array{masked_email: string, resend_available_at: int}|null */
+    public function pendingOtp(): ?array
+    {
+        if (! (bool) config('starter.auth.login_otp_enabled', false)) {
+            $this->clearOtpChallenge();
+
+            return null;
+        }
+
+        $challenge = $this->otpChallenge();
+
+        if ($challenge === null || $challenge['expires_at'] < now()->timestamp) {
+            $this->clearOtpChallenge();
+
+            return null;
+        }
+
+        return [
+            'masked_email' => $challenge['masked_email'],
+            'resend_available_at' => $challenge['resend_available_at'],
+        ];
+    }
+
+    public function cancelOtp(): void
+    {
+        $this->clearOtpChallenge();
+    }
+
+    private function startOtpChallenge(ClientLogin $login, bool $remember, ?string $redirect): void
+    {
+        if (! request()->hasSession()) {
+            throw ValidationException::withMessages([
+                'form.identifier' => 'Sesi login tidak tersedia. Muat ulang halaman lalu coba kembali.',
+            ]);
+        }
+
+        $this->deliverOtp($login, $remember, $redirect, 'requested');
+    }
+
+    private function deliverOtp(ClientLogin $login, bool $remember, ?string $redirect, string $event): void
+    {
+        $sendThrottleKey = $this->otpSendThrottleKey($login->getKey(), (string) request()->ip());
+
+        if (RateLimiter::tooManyAttempts($sendThrottleKey, self::OTP_MAX_SENDS)) {
+            $this->auditLogs->recordSecurityEvent(
+                'auth.login_otp_blocked',
+                'Pengiriman OTP login dibatasi',
+                target: $login,
+                metadata: ['reason' => 'send_rate_limited'],
+            );
+
+            throw ValidationException::withMessages([
+                $event === 'requested' ? 'form.identifier' : 'otpForm.code' => 'Terlalu banyak permintaan kode OTP. Coba lagi dalam '.RateLimiter::availableIn($sendThrottleKey).' detik.',
+            ]);
+        }
+
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        RateLimiter::hit($sendThrottleKey, self::OTP_EXPIRES_SECONDS);
+
+        try {
+            $this->otpMail->send($login, $code, intdiv(self::OTP_EXPIRES_SECONDS, 60));
+        } catch (Throwable) {
+            $this->auditLogs->recordSecurityEvent(
+                'auth.login_otp_delivery_failed',
+                'Pengiriman OTP login gagal',
+                target: $login,
+                metadata: ['reason' => 'mail_delivery_failed'],
+            );
+
+            throw ValidationException::withMessages([
+                $event === 'requested' ? 'form.identifier' : 'otpForm.code' => 'Kode OTP gagal dikirim. Periksa konfigurasi email atau coba kembali.',
+            ]);
+        }
+
+        request()->session()->put(self::SESSION_OTP_CHALLENGE, [
+            'login_id' => (int) $login->getKey(),
+            'otp_hash' => Hash::make($code),
+            'remember' => $remember,
+            'redirect' => filled($redirect) ? $redirect : null,
+            'masked_email' => $this->maskEmail($login->email),
+            'expires_at' => now()->addSeconds(self::OTP_EXPIRES_SECONDS)->timestamp,
+            'attempts' => 0,
+            'resend_available_at' => now()->addSeconds(self::OTP_RESEND_SECONDS)->timestamp,
+        ]);
+
+        $this->auditLogs->recordSecurityEvent(
+            $event === 'requested' ? 'auth.login_otp_requested' : 'auth.login_otp_resent',
+            $event === 'requested' ? 'Kode OTP login dikirim' : 'Kode OTP login dikirim ulang',
+            target: $login,
+        );
+    }
+
+    private function completeAuthentication(
+        ClientLogin $login,
+        bool $remember,
+        ?string $redirect,
+        bool $otpVerified,
+    ): string {
+        Auth::login(
+            $login,
+            ! $otpVerified && $remember && $this->configs->boolean('security.remember_me_enabled'),
+        );
 
         $this->clientLogins->updateUser($login, [
             'last_login_at' => now(),
@@ -133,6 +337,13 @@ class AuthLoginService
             request()->session()->forget(['starter.locked', 'starter.lock.intended']);
             request()->session()->put('starter.last_activity_at', now()->timestamp);
             request()->session()->put(self::SESSION_AUTH_VERSION, max(1, (int) $login->auth_version));
+
+            if ($otpVerified) {
+                request()->session()->put(self::SESSION_OTP_VERIFIED_LOGIN_ID, (int) $login->getKey());
+            } else {
+                request()->session()->forget(self::SESSION_OTP_VERIFIED_LOGIN_ID);
+            }
+
             request()->session()->passwordConfirmed();
         }
 
@@ -157,6 +368,88 @@ class AuthLoginService
         );
     }
 
+    private function assertLoginAllowed(ClientLogin $login, string $field): void
+    {
+        if ($this->clients->current()->account_status !== 'approved') {
+            $this->auditLogs->recordSecurityEvent(
+                'auth.login_blocked',
+                'Login ditolak karena perusahaan tidak aktif',
+                target: $login,
+                metadata: ['reason' => 'company_inactive'],
+            );
+
+            throw ValidationException::withMessages([
+                $field => 'Perusahaan tidak aktif atau belum disetujui.',
+            ]);
+        }
+
+        if (! $login->isActive()) {
+            $this->auditLogs->recordSecurityEvent(
+                'auth.login_blocked',
+                'Login ditolak karena akun tidak aktif',
+                target: $login,
+                metadata: ['reason' => 'account_inactive'],
+            );
+
+            throw ValidationException::withMessages([
+                $field => 'Akun tidak aktif atau sedang dikunci. Hubungi administrator.',
+            ]);
+        }
+    }
+
+    /**
+     * @return array{
+     *     login_id: int,
+     *     otp_hash: string,
+     *     remember: bool,
+     *     redirect: string|null,
+     *     masked_email: string,
+     *     expires_at: int,
+     *     attempts: int,
+     *     resend_available_at: int
+     * }|null
+     */
+    private function otpChallenge(): ?array
+    {
+        if (! request()->hasSession()) {
+            return null;
+        }
+
+        $challenge = request()->session()->get(self::SESSION_OTP_CHALLENGE);
+
+        if (! is_array($challenge)
+            || ! is_int($challenge['login_id'] ?? null)
+            || ! is_string($challenge['otp_hash'] ?? null)
+            || ! is_bool($challenge['remember'] ?? null)
+            || (! is_string($challenge['redirect'] ?? null) && ($challenge['redirect'] ?? null) !== null)
+            || ! is_string($challenge['masked_email'] ?? null)
+            || ! is_int($challenge['expires_at'] ?? null)
+            || ! is_int($challenge['attempts'] ?? null)
+            || ! is_int($challenge['resend_available_at'] ?? null)) {
+            return null;
+        }
+
+        return $challenge;
+    }
+
+    private function clearOtpChallenge(): void
+    {
+        if (request()->hasSession()) {
+            request()->session()->forget(self::SESSION_OTP_CHALLENGE);
+        }
+    }
+
+    private function maskEmail(string $email): string
+    {
+        [$local, $domain] = array_pad(explode('@', $email, 2), 2, '');
+
+        if ($local === '' || $domain === '') {
+            return 'email akun Anda';
+        }
+
+        return mb_substr($local, 0, 1).str_repeat('*', max(3, min(8, mb_strlen($local) - 1))).'@'.$domain;
+    }
+
     private function accountThrottleKey(string $identifier, string $ipAddress): string
     {
         return 'login-account:'.hash('sha256', $identifier.'|'.$ipAddress);
@@ -165,5 +458,10 @@ class AuthLoginService
     private function ipThrottleKey(string $ipAddress): string
     {
         return 'login-ip:'.hash('sha256', $ipAddress);
+    }
+
+    private function otpSendThrottleKey(int|string $loginId, string $ipAddress): string
+    {
+        return 'login-otp-send:'.hash('sha256', $loginId.'|'.$ipAddress);
     }
 }

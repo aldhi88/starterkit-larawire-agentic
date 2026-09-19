@@ -27,6 +27,8 @@ interface ClientLoginInterface
 
     public function findBasicById(int $id): ?ClientLogin;
 
+    public function findForAuthentication(int $id): ?ClientLogin;
+
     public function findForManagement(int $id): ?ClientLogin;
 
     public function findWithTrashedForManagement(int $id): ?ClientLogin;

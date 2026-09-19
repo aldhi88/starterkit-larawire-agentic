@@ -305,6 +305,8 @@
             "page-footer"
         ],
         "starter/auth/login.blade.php": [
+            "otp-introduction",
+            "otp-form",
             "credentials-form",
             "secondary-help"
         ],

@@ -613,6 +613,31 @@ it('places password guidance before the paired new credentials across every them
         ->toContain("input.dispatchEvent(new Event('input', { bubbles: true }))");
 });
 
+it('keeps the two-step login OTP flow available in every theme', function (): void {
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $login = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/auth/login.blade.php"));
+
+        expect($login)
+            ->toContain('data-starter-region="credentials-form"')
+            ->toContain('data-starter-region="otp-form"')
+            ->toContain('wire:submit="verifyOtp"')
+            ->toContain('wire:click="resendOtp"')
+            ->toContain('wire:click="cancelOtp"')
+            ->toContain("@include('starter-shared::components.otp-code-input')");
+    }
+
+    $config = file_get_contents(StarterPaths::path('config/starter.php'));
+    $environment = file_get_contents(StarterPaths::path('src/Installation/StarterEnvironmentManager.php'));
+    $otpControl = file_get_contents(StarterPaths::path('resources/views/components/otp-code-input.blade.php'));
+
+    expect($config)->toContain("'login_otp_enabled' => env('STARTER_LOGIN_OTP_ENABLED', false)")
+        ->toContain("'login_otp_mail_view' => 'starter-mail::login-otp'")
+        ->and($environment)->toContain("'STARTER_LOGIN_OTP_ENABLED' => 'false'")
+        ->and($otpControl)->toContain('autocomplete="one-time-code"')
+        ->and(is_file(StarterPaths::path('resources/views/mail/login-otp.blade.php')))->toBeTrue()
+        ->and(is_file(StarterPaths::path('resources/views/mail/login-otp-text.blade.php')))->toBeTrue();
+});
+
 it('keeps spacing between the vertical navigation heading and menu items', function (): void {
     $navigation = file_get_contents(StarterPaths::path(
         'resources/themes/tabler/views/starter/templates/layouts/navigation/vertical.blade.php',
