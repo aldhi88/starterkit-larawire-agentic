@@ -131,6 +131,77 @@ it('queues an encrypted generated password after user creation without returning
     });
 });
 
+it('creates a user with an administrator supplied temporary password without sending credential email', function (): void {
+    $role = temporaryPasswordRole();
+    $currentLogin = temporaryPasswordLogin(1, temporaryPasswordRole('superuser', true), 'superuser', 'admin@example.test');
+    $createdLogin = temporaryPasswordLogin(2, $role, 'dummy-email-user', 'dummy@example.test');
+
+    $clientRoles = Mockery::mock(ClientRoleInterface::class);
+    $clientRoles->shouldReceive('findBasicById')->once()->with(2)->andReturn($role);
+
+    $clientLogins = Mockery::mock(ClientLoginInterface::class);
+    $clientLogins->shouldReceive('createUser')->once()->with(Mockery::on(fn (array $payload): bool => $payload['password'] === 'Manual123'
+        && $payload['must_change_password'] === true
+    ))->andReturn($createdLogin);
+
+    $auditLogs = Mockery::mock(AuditLogService::class);
+    $auditLogs->shouldReceive('withinAction')->once()->with(
+        'user.create',
+        'Membuat user Dummy Email User',
+        Mockery::type(Closure::class),
+    )->andReturnUsing(fn (string $key, string $label, Closure $callback): mixed => $callback());
+    $auditLogs->shouldNotReceive('recordSecurityEvent');
+
+    $mailService = Mockery::mock(TemporaryPasswordMailService::class);
+    $mailService->shouldNotReceive('queueForNewAccount');
+
+    $result = temporaryPasswordUserService(
+        $clientLogins,
+        $clientRoles,
+        $auditLogs,
+        $mailService,
+    )->saveUser($currentLogin, null, [
+        'name' => 'Dummy Email User',
+        'username' => 'dummy-email-user',
+        'email' => 'dummy@example.test',
+        'client_role_id' => 2,
+        'status' => 'active',
+    ], 'Manual123');
+
+    expect($result)->toBe($createdLogin);
+});
+
+it('rejects an administrator supplied temporary password that does not meet policy', function (): void {
+    $role = temporaryPasswordRole();
+    $currentLogin = temporaryPasswordLogin(1, temporaryPasswordRole('superuser', true), 'superuser', 'admin@example.test');
+
+    $clientRoles = Mockery::mock(ClientRoleInterface::class);
+    $clientRoles->shouldReceive('findBasicById')->once()->with(2)->andReturn($role);
+
+    $clientLogins = Mockery::mock(ClientLoginInterface::class);
+    $clientLogins->shouldNotReceive('createUser');
+
+    $auditLogs = Mockery::mock(AuditLogService::class);
+    $auditLogs->shouldNotReceive('withinAction');
+
+    $mailService = Mockery::mock(TemporaryPasswordMailService::class);
+    $mailService->shouldNotReceive('queueForNewAccount');
+
+    expect(fn () => temporaryPasswordUserService(
+        $clientLogins,
+        $clientRoles,
+        $auditLogs,
+        $mailService,
+    )->saveUser($currentLogin, null, [
+        'name' => 'Weak Password User',
+        'username' => 'weak-password-user',
+        'email' => 'dummy@example.test',
+        'client_role_id' => 2,
+        'status' => 'active',
+    ], 'weak'))
+        ->toThrow(ValidationException::class);
+});
+
 it('queues an encrypted temporary password after a superuser confirms reset', function (): void {
     $mail = Mail::fake();
     $role = temporaryPasswordRole();
@@ -279,7 +350,7 @@ it('rolls back a password reset when credential email cannot be queued', functio
     }
 });
 
-it('keeps temporary passwords out of every Livewire component and theme view', function (): void {
+it('keeps generated temporary passwords out of Livewire and provides manual password controls in every theme', function (): void {
     $livewire = file_get_contents(StarterPaths::path('src/Livewire/Starter/UserManagement/UserForm.php'))
         .file_get_contents(StarterPaths::path('src/Livewire/Starter/UserManagement/Users.php'));
 
@@ -290,11 +361,20 @@ it('keeps temporary passwords out of every Livewire component and theme view', f
     foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
         $views = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/user-management/user-form.blade.php"))
             .file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/user-management/users.blade.php"));
+        $profileView = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/profile/edit-my-profile.blade.php"));
 
         expect($views)
             ->not->toContain('$temporaryPassword')
             ->not->toContain('data-temporary-credentials-alert')
-            ->toContain('akan dikirim ke');
+            ->toContain('wire:model.live="userForm.use_manual_password"')
+            ->toContain('wire:model.defer="userForm.password"')
+            ->toContain('wire:model.defer="userForm.password_confirmation"')
+            ->toContain('Email kredensial tidak akan dikirim.')
+            ->toContain('User tetap wajib mengganti password saat login pertama.');
+
+        expect($profileView)
+            ->toContain('melalui email atau dari administrator')
+            ->not->toContain('password sementara yang dikirim ke email Anda');
     }
 });
 

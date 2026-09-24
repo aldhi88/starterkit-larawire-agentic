@@ -5,6 +5,20 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.4] - 2026-09-24
+
+### Added
+
+- Allow an authorized administrator to set and confirm a policy-compliant
+  temporary password while creating a user, including consistent controls and
+  guidance across Tabler, DashCode, and Vuexy.
+
+### Changed
+
+- Skip credential email delivery when the administrator explicitly supplies
+  the temporary password, while preserving mandatory first-login password
+  replacement and clearing the sensitive Livewire state after use.
+
 ## [1.7.3] - 2026-09-24
 
 ### Added

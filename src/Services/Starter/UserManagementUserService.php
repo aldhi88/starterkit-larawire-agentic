@@ -9,10 +9,12 @@ use Aldhi88\StarterKit\Exceptions\Starter\TemporaryPasswordDeliveryException;
 use Aldhi88\StarterKit\Models\Starter\AppMod;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Models\Starter\ClientRole;
+use Aldhi88\StarterKit\Rules\Starter\StarterPasswordRules;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -104,8 +106,12 @@ class UserManagementUserService
     /**
      * @param  array{name: string, username: string, email: string, client_role_id: int|string, status: string}  $data
      */
-    public function saveUser(ClientLogin $currentLogin, ?int $userLoginId, array $data): ClientLogin
-    {
+    public function saveUser(
+        ClientLogin $currentLogin,
+        ?int $userLoginId,
+        array $data,
+        ?string $manualTemporaryPassword = null,
+    ): ClientLogin {
         $role = $this->clientRoles->findBasicById((int) $data['client_role_id']);
 
         if (! $role instanceof ClientRole) {
@@ -146,22 +152,39 @@ class UserManagementUserService
             );
         }
 
-        $temporaryPassword = Str::password(16);
+        if ($manualTemporaryPassword !== null) {
+            $passwordValidator = Validator::make(
+                ['password' => $manualTemporaryPassword],
+                ['password' => StarterPasswordRules::rules()],
+                [],
+                ['password' => 'password sementara'],
+            );
+
+            if ($passwordValidator->fails()) {
+                throw ValidationException::withMessages([
+                    'userForm.password' => $passwordValidator->errors()->get('password'),
+                ]);
+            }
+        }
+
+        $temporaryPassword = $manualTemporaryPassword ?? Str::password(16);
         $createdLogin = null;
 
         try {
             return $this->auditLogs->withinAction(
                 'user.create',
                 'Membuat user '.$payload['name'],
-                function () use ($payload, $temporaryPassword, &$createdLogin): ClientLogin {
-                    return DB::transaction(function () use ($payload, $temporaryPassword, &$createdLogin): ClientLogin {
+                function () use ($payload, $temporaryPassword, $manualTemporaryPassword, &$createdLogin): ClientLogin {
+                    return DB::transaction(function () use ($payload, $temporaryPassword, $manualTemporaryPassword, &$createdLogin): ClientLogin {
                         $createdLogin = $this->clientLogins->createUser([
                             ...$payload,
                             'password' => $temporaryPassword,
                             'must_change_password' => true,
                         ]);
 
-                        $this->temporaryPasswordMail->queueForNewAccount($createdLogin, $temporaryPassword);
+                        if ($manualTemporaryPassword === null) {
+                            $this->temporaryPasswordMail->queueForNewAccount($createdLogin, $temporaryPassword);
+                        }
 
                         return $createdLogin;
                     });

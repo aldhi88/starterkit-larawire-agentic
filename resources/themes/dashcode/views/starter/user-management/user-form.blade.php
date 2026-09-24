@@ -37,7 +37,15 @@
                             <div>
                                 <label class="form-label" for="user-email">Email</label>
                                 <input type="email" id="user-email" class="form-control @error('userForm.email') is-invalid @enderror" wire:model.defer="userForm.email" autocomplete="email">
-                                <div class="form-hint">Password sementara akun baru dan hasil reset dikirim ke alamat ini.</div>
+                                <div class="form-hint">
+                                    @if ($userLoginId)
+                                        Password hasil reset akan dikirim ke alamat ini.
+                                    @elseif ($userForm['use_manual_password'])
+                                        Email tetap disimpan sebagai identitas akun, tetapi password sementara tidak dikirim.
+                                    @else
+                                        Password sementara akun baru akan dikirim ke alamat ini.
+                                    @endif
+                                </div>
                                 @error('userForm.email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div>
@@ -62,6 +70,46 @@
                                 <div class="form-hint">Akses module mengikuti role yang dipilih dan tidak dapat diubah dari halaman ini.</div>
                                 @error('userForm.role_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
+                            @if (! $userLoginId)
+                                <div class="md:col-span-2">
+                                    <label class="starter-switch-row" for="user-use-manual-password">
+                                        <span class="starter-switch-control">
+                                            <input type="checkbox" id="user-use-manual-password" class="starter-switch-input" wire:model.live="userForm.use_manual_password">
+                                            <span class="starter-switch-track" aria-hidden="true"></span>
+                                        </span>
+                                        <span class="starter-switch-label">
+                                            <span class="starter-switch-title">Tetapkan password sementara secara manual</span>
+                                            <span class="dashcode-help-text">Aktifkan untuk email dummy atau ketika password akan diberikan langsung oleh admin. Email kredensial tidak akan dikirim.</span>
+                                        </span>
+                                    </label>
+                                </div>
+                                @if ($userForm['use_manual_password'])
+                                    <div>
+                                        <label class="form-label" for="user-password">Password Sementara</label>
+                                        <input type="password" id="user-password" class="form-control @error('userForm.password') is-invalid @enderror" wire:model.defer="userForm.password" autocomplete="new-password">
+                                        <div class="form-hint">Minimal 6 karakter, dengan huruf besar, huruf kecil, dan angka.</div>
+                                        @error('userForm.password') <div class="invalid-feedback block">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div>
+                                        <label class="form-label" for="user-password-confirmation">Konfirmasi Password Sementara</label>
+                                        <input type="password" id="user-password-confirmation" class="form-control @error('userForm.password_confirmation') is-invalid @enderror" wire:model.defer="userForm.password_confirmation" autocomplete="new-password">
+                                        @error('userForm.password_confirmation') <div class="invalid-feedback block">{{ $message }}</div> @enderror
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <div class="dashcode-alert dashcode-alert-warning mb-0" role="note">
+                                            <span class="dashcode-alert-icon flex-shrink-0">
+                                                @include('starter.templates.layouts.icon', ['name' => 'alert-triangle', 'class' => 'icon-sm'])
+                                            </span>
+                                            <div>
+                                                User tetap wajib mengganti password saat login pertama.
+                                                @if (config('starter.auth.login_otp_enabled'))
+                                                    Karena OTP email aktif, gunakan alamat email yang tetap dapat menerima kode login.
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
                         </div>
                     </div>
                     <div class="card-footer" data-starter-region="page-actions">
