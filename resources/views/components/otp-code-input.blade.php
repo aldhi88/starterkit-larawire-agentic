@@ -22,7 +22,18 @@
     $inputId = $inputId ?? 'login-otp';
     $errorId = $errorId ?? $inputId.'-error';
     $label = $label ?? 'Kode OTP 6 digit';
+    $brand = $brand ?? null;
+    $theme = $theme ?? \Aldhi88\StarterKit\Support\Starter\StarterTheme::key();
 @endphp
+
+@if ($brand === 'google-authenticator')
+    <div class="mb-3 text-center" data-starter-region="otp-provider-brand">
+        @include('starter-shared::components.google-authenticator-brand', [
+            'theme' => $theme,
+            'compact' => true,
+        ])
+    </div>
+@endif
 
 <div
     class="starter-otp-control @error($field) has-error @enderror"

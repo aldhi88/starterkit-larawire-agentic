@@ -5,6 +5,18 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.6] - 2026-09-24
+
+### Added
+
+- Add a shared Google Authenticator provider badge to authenticator enrollment
+  and login verification across all supported themes.
+
+### Changed
+
+- Refine two-factor setup, verification actions, recovery-code overflow, and
+  responsive form composition for Tabler, DashCode, and Vuexy.
+
 ## [1.7.5] - 2026-09-24
 
 ### Added

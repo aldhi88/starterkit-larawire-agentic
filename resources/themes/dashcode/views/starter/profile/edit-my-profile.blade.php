@@ -111,7 +111,7 @@
             </aside>
         </div>
 
-        <div data-starter-region="section-content">
+        <div class="min-w-0" data-starter-region="section-content">
             <div class="tab-content">
                 <form
                     id="account-details"

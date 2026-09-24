@@ -49,6 +49,7 @@
                         'inputId' => 'login-authenticator',
                         'errorId' => 'login-authenticator-error',
                         'label' => 'Kode authenticator 6 digit',
+                        'brand' => 'google-authenticator',
                     ])
                 @endif
                 @error('authenticatorForm.code')

@@ -623,12 +623,14 @@ it('keeps the two-step login OTP flow available in every theme', function (): vo
             ->toContain('wire:submit="verifyOtp"')
             ->toContain('wire:click="resendOtp"')
             ->toContain('wire:click="cancelOtp"')
-            ->toContain("@include('starter-shared::components.otp-code-input')");
+            ->toContain("@include('starter-shared::components.otp-code-input')")
+            ->toContain("'brand' => 'google-authenticator'");
     }
 
     $config = file_get_contents(StarterPaths::path('config/starter.php'));
     $environment = file_get_contents(StarterPaths::path('src/Installation/StarterEnvironmentManager.php'));
     $otpControl = file_get_contents(StarterPaths::path('resources/views/components/otp-code-input.blade.php'));
+    $authenticatorBrand = file_get_contents(StarterPaths::path('resources/views/components/google-authenticator-brand.blade.php'));
 
     expect($config)->toContain("'login_otp_enabled' => env('STARTER_LOGIN_OTP_ENABLED', false)")
         ->toContain("'login_human_challenge_enabled' => env('STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED', true)")
@@ -638,6 +640,15 @@ it('keeps the two-step login OTP flow available in every theme', function (): vo
         ->toContain("'STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED' => 'true'")
         ->toContain("'STARTER_LOGIN_TWO_FACTOR_ENABLED' => 'true'")
         ->and($otpControl)->toContain('autocomplete="one-time-code"')
+        ->toContain('data-starter-region="otp-provider-brand"')
+        ->toContain('starter-shared::components.google-authenticator-brand')
+        ->and($authenticatorBrand)->toContain('data-starter-region="google-authenticator-brand"')
+        ->toContain('Powered by')
+        ->toContain('Google Authenticator')
+        ->toContain('#4285F4')
+        ->toContain('#34A853')
+        ->toContain('#FBBC05')
+        ->toContain('#EA4335')
         ->and(is_file(StarterPaths::path('resources/views/mail/login-otp.blade.php')))->toBeTrue()
         ->and(is_file(StarterPaths::path('resources/views/mail/login-otp-text.blade.php')))->toBeTrue();
 });
@@ -655,11 +666,46 @@ it('keeps authenticator settings inside the security panel in every theme', func
             ->and($twoFactorPanel)->toBeGreaterThan($securityPanel);
     }
 
+    $dashcodeProfile = file_get_contents(StarterPaths::path(
+        'resources/themes/dashcode/views/starter/profile/edit-my-profile.blade.php',
+    ));
     $twoFactorPanel = file_get_contents(StarterPaths::path('resources/views/components/two-factor-profile.blade.php'));
     $profileComponent = file_get_contents(StarterPaths::path('src/Livewire/Starter/Profile/EditMyProfile.php'));
 
     expect($twoFactorPanel)
         ->toContain("config('starter.auth.login_two_factor_enabled', true)")
+        ->toContain('data-starter-region="two-factor-setup"')
+        ->toContain('data-starter-region="two-factor-qr"')
+        ->toContain('data-starter-region="two-factor-manual-key"')
+        ->toContain('data-starter-region="two-factor-verification"')
+        ->toContain('data-starter-region="two-factor-actions"')
+        ->toContain('data-starter-region="two-factor-recovery-codes"')
+        ->toContain('data-starter-region="two-factor-start"')
+        ->toContain('starter-shared::components.google-authenticator-brand')
+        ->toContain('width="184" height="184"')
+        ->toContain('md:grid-cols-3')
+        ->toContain('overflow-x-auto pb-1')
+        ->toContain('w-full min-w-0')
+        ->toContain('display: block; min-width: 0; max-width: 100%; overflow: hidden;')
+        ->toContain('flex gap-2 min-w-max font-mono')
+        ->toContain('overflow-auto pb-1')
+        ->toContain('w-100 overflow-hidden')
+        ->toContain('d-flex flex-nowrap gap-2 font-monospace')
+        ->toContain('col-12 col-lg-4 text-center')
+        ->toContain('bg-label-secondary')
+        ->toContain('d-grid d-sm-flex gap-2 mt-3')
+        ->toContain('data-starter-region="two-factor-actions" style="max-width: 30rem;"')
+        ->toContain('btn btn-primary px-4')
+        ->toContain('style="flex: 1 1 0;"')
+        ->toContain('overflow-wrap: anywhere;')
+        ->toContain('min-height: 2.5rem; min-width: 9rem;')
+        ->toContain('dashcode-responsive-row')
+        ->toContain('form-control dashcode-grow')
+        ->toContain('style="min-height: 40px !important;"')
+        ->toContain('style="height: 40px !important;"')
+        ->toContain('Batalkan Aktivasi')
+        ->not->toContain('width="208" height="208"')
+        ->and($dashcodeProfile)->toContain('class="min-w-0" data-starter-region="section-content"')
         ->and($profileComponent)->toContain("assertTwoFactorFeatureEnabled('twoFactorForm.password')")
         ->toContain("assertTwoFactorFeatureEnabled('twoFactorForm.code')")
         ->toContain("assertTwoFactorFeatureEnabled('twoFactorDisableForm.password')");
