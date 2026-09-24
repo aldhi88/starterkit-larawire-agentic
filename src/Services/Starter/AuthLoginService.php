@@ -6,6 +6,7 @@ use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
@@ -20,6 +21,10 @@ class AuthLoginService
     private const SESSION_OTP_CHALLENGE = 'starter.login_otp';
 
     public const SESSION_OTP_VERIFIED_LOGIN_ID = 'starter.login_otp_verified_login_id';
+
+    private const SESSION_TWO_FACTOR_CHALLENGE = 'starter.login_two_factor';
+
+    public const SESSION_TWO_FACTOR_VERIFIED_LOGIN_ID = 'starter.login_two_factor_verified_login_id';
 
     private const OTP_EXPIRES_SECONDS = 300;
 
@@ -36,6 +41,7 @@ class AuthLoginService
         private readonly StarterConfigService $configs,
         private readonly AuditLogService $auditLogs,
         private readonly LoginOtpMailService $otpMail,
+        private readonly TwoFactorAuthenticationService $twoFactor,
     ) {}
 
     public function attempt(string $username, string $password, bool $remember = false, ?string $redirect = null): ?string
@@ -115,10 +121,16 @@ class AuthLoginService
             return null;
         }
 
-        return $this->completeAuthentication($login, $remember, $redirect, false);
+        if ($this->twoFactor->enabled() && $login->hasTwoFactorAuthenticationEnabled()) {
+            $this->startTwoFactorChallenge($login, $remember, $redirect, false);
+
+            return null;
+        }
+
+        return $this->completeAuthentication($login, $remember, $redirect, false, false);
     }
 
-    public function verifyOtp(string $code): string
+    public function verifyOtp(string $code): ?string
     {
         $challenge = $this->otpChallenge();
 
@@ -179,10 +191,136 @@ class AuthLoginService
 
         $this->clearOtpChallenge();
 
+        if ($this->twoFactor->enabled() && $login->hasTwoFactorAuthenticationEnabled()) {
+            $this->startTwoFactorChallenge(
+                $login,
+                $challenge['remember'],
+                $challenge['redirect'],
+                true,
+            );
+
+            return null;
+        }
+
         return $this->completeAuthentication(
             $login,
             $challenge['remember'],
             $challenge['redirect'],
+            true,
+            false,
+        );
+    }
+
+    public function verifyTwoFactor(string $code): string
+    {
+        if (! $this->twoFactor->enabled()) {
+            $this->clearTwoFactorChallenge();
+
+            throw ValidationException::withMessages([
+                'authenticatorForm.code' => 'Fitur authenticator sedang dinonaktifkan. Silakan login kembali.',
+            ]);
+        }
+
+        $challenge = $this->twoFactorChallenge();
+
+        if ($challenge === null) {
+            $this->clearTwoFactorChallenge();
+
+            throw ValidationException::withMessages([
+                'authenticatorForm.code' => 'Sesi authenticator tidak tersedia. Silakan login kembali.',
+            ]);
+        }
+
+        $login = $this->clientLogins->findForAuthentication($challenge['login_id']);
+
+        if (! $login || ! $login->hasTwoFactorAuthenticationEnabled() || $challenge['expires_at'] < now()->timestamp) {
+            $this->clearTwoFactorChallenge();
+            $this->auditLogs->recordSecurityEvent(
+                'auth.login_two_factor_expired',
+                'Verifikasi authenticator login kedaluwarsa',
+                target: $login,
+                metadata: ['reason' => 'expired_or_disabled'],
+            );
+
+            throw ValidationException::withMessages([
+                'authenticatorForm.code' => 'Sesi authenticator sudah berakhir. Silakan login kembali.',
+            ]);
+        }
+
+        $this->assertLoginAllowed($login, 'authenticatorForm.code');
+        $normalizedCode = strtoupper(trim($code));
+        $verified = $this->twoFactor->verifyCode((string) $login->two_factor_secret, $normalizedCode);
+
+        if (! $verified) {
+            $recoveryLogin = DB::transaction(function () use ($login, $normalizedCode): ?ClientLogin {
+                $lockedLogin = $this->clientLogins->findForAuthenticationWithLock((int) $login->getKey());
+
+                if (! $lockedLogin || ! is_array($lockedLogin->two_factor_recovery_codes)) {
+                    return null;
+                }
+
+                $remainingCodes = $this->twoFactor->consumeRecoveryCode(
+                    $normalizedCode,
+                    $lockedLogin->two_factor_recovery_codes,
+                );
+
+                if ($remainingCodes === null) {
+                    return null;
+                }
+
+                $updatedLogin = $this->clientLogins->updateUser($lockedLogin, [
+                    'two_factor_recovery_codes' => $remainingCodes,
+                ]);
+                $this->auditLogs->recordSecurityEvent(
+                    'auth.login_two_factor_recovery_used',
+                    'Kode pemulihan digunakan untuk login',
+                    target: $updatedLogin,
+                );
+
+                return $updatedLogin;
+            });
+
+            if ($recoveryLogin !== null) {
+                $login = $recoveryLogin;
+                $verified = true;
+            }
+        }
+
+        if (! $verified) {
+            $attempts = $challenge['attempts'] + 1;
+            $blocked = $attempts >= self::OTP_MAX_ATTEMPTS;
+
+            if ($blocked) {
+                $this->clearTwoFactorChallenge();
+            } else {
+                $challenge['attempts'] = $attempts;
+                request()->session()->put(self::SESSION_TWO_FACTOR_CHALLENGE, $challenge);
+            }
+
+            $this->auditLogs->recordSecurityEvent(
+                $blocked ? 'auth.login_two_factor_blocked' : 'auth.login_two_factor_failed',
+                $blocked ? 'Verifikasi authenticator login dibatasi' : 'Verifikasi authenticator login gagal',
+                target: $login,
+                metadata: [
+                    'reason' => 'invalid_code',
+                    'attempts' => $attempts,
+                ],
+            );
+
+            throw ValidationException::withMessages([
+                'authenticatorForm.code' => $blocked
+                    ? 'Terlalu banyak kode yang salah. Silakan login kembali.'
+                    : 'Kode authenticator atau kode pemulihan tidak valid.',
+            ]);
+        }
+
+        $this->clearTwoFactorChallenge();
+
+        return $this->completeAuthentication(
+            $login,
+            $challenge['remember'],
+            $challenge['redirect'],
+            $challenge['otp_verified'],
             true,
         );
     }
@@ -249,6 +387,31 @@ class AuthLoginService
         $this->clearOtpChallenge();
     }
 
+    public function pendingTwoFactor(): bool
+    {
+        if (! $this->twoFactor->enabled()) {
+            $this->clearTwoFactorChallenge();
+
+            return false;
+        }
+
+        $challenge = $this->twoFactorChallenge();
+
+        if ($challenge === null || $challenge['expires_at'] < now()->timestamp) {
+            $this->clearTwoFactorChallenge();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function cancelTwoFactor(): void
+    {
+        $this->clearOtpChallenge();
+        $this->clearTwoFactorChallenge();
+    }
+
     private function startOtpChallenge(ClientLogin $login, bool $remember, ?string $redirect): void
     {
         if (! request()->hasSession()) {
@@ -258,6 +421,34 @@ class AuthLoginService
         }
 
         $this->deliverOtp($login, $remember, $redirect, 'requested');
+    }
+
+    private function startTwoFactorChallenge(
+        ClientLogin $login,
+        bool $remember,
+        ?string $redirect,
+        bool $otpVerified,
+    ): void {
+        if (! request()->hasSession()) {
+            throw ValidationException::withMessages([
+                'form.identifier' => 'Sesi login tidak tersedia. Muat ulang halaman lalu coba kembali.',
+            ]);
+        }
+
+        request()->session()->put(self::SESSION_TWO_FACTOR_CHALLENGE, [
+            'login_id' => (int) $login->getKey(),
+            'remember' => $remember,
+            'redirect' => filled($redirect) ? $redirect : null,
+            'otp_verified' => $otpVerified,
+            'expires_at' => now()->addSeconds(self::OTP_EXPIRES_SECONDS)->timestamp,
+            'attempts' => 0,
+        ]);
+
+        $this->auditLogs->recordSecurityEvent(
+            'auth.login_two_factor_requested',
+            'Verifikasi authenticator login diminta',
+            target: $login,
+        );
     }
 
     private function deliverOtp(ClientLogin $login, bool $remember, ?string $redirect, string $event): void
@@ -319,10 +510,14 @@ class AuthLoginService
         bool $remember,
         ?string $redirect,
         bool $otpVerified,
+        bool $twoFactorVerified,
     ): string {
         Auth::login(
             $login,
-            ! $otpVerified && $remember && $this->configs->boolean('security.remember_me_enabled'),
+            ! $otpVerified
+                && ! $twoFactorVerified
+                && $remember
+                && $this->configs->boolean('security.remember_me_enabled'),
         );
 
         $this->clientLogins->updateUser($login, [
@@ -342,6 +537,12 @@ class AuthLoginService
                 request()->session()->put(self::SESSION_OTP_VERIFIED_LOGIN_ID, (int) $login->getKey());
             } else {
                 request()->session()->forget(self::SESSION_OTP_VERIFIED_LOGIN_ID);
+            }
+
+            if ($twoFactorVerified) {
+                request()->session()->put(self::SESSION_TWO_FACTOR_VERIFIED_LOGIN_ID, (int) $login->getKey());
+            } else {
+                request()->session()->forget(self::SESSION_TWO_FACTOR_VERIFIED_LOGIN_ID);
             }
 
             request()->session()->passwordConfirmed();
@@ -436,6 +637,44 @@ class AuthLoginService
     {
         if (request()->hasSession()) {
             request()->session()->forget(self::SESSION_OTP_CHALLENGE);
+        }
+    }
+
+    /**
+     * @return array{
+     *     login_id: int,
+     *     remember: bool,
+     *     redirect: string|null,
+     *     otp_verified: bool,
+     *     expires_at: int,
+     *     attempts: int
+     * }|null
+     */
+    private function twoFactorChallenge(): ?array
+    {
+        if (! request()->hasSession()) {
+            return null;
+        }
+
+        $challenge = request()->session()->get(self::SESSION_TWO_FACTOR_CHALLENGE);
+
+        if (! is_array($challenge)
+            || ! is_int($challenge['login_id'] ?? null)
+            || ! is_bool($challenge['remember'] ?? null)
+            || (! is_string($challenge['redirect'] ?? null) && ($challenge['redirect'] ?? null) !== null)
+            || ! is_bool($challenge['otp_verified'] ?? null)
+            || ! is_int($challenge['expires_at'] ?? null)
+            || ! is_int($challenge['attempts'] ?? null)) {
+            return null;
+        }
+
+        return $challenge;
+    }
+
+    private function clearTwoFactorChallenge(): void
+    {
+        if (request()->hasSession()) {
+            request()->session()->forget(self::SESSION_TWO_FACTOR_CHALLENGE);
         }
     }
 

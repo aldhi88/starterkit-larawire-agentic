@@ -631,11 +631,38 @@ it('keeps the two-step login OTP flow available in every theme', function (): vo
     $otpControl = file_get_contents(StarterPaths::path('resources/views/components/otp-code-input.blade.php'));
 
     expect($config)->toContain("'login_otp_enabled' => env('STARTER_LOGIN_OTP_ENABLED', false)")
+        ->toContain("'login_human_challenge_enabled' => env('STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED', true)")
+        ->toContain("'login_two_factor_enabled' => env('STARTER_LOGIN_TWO_FACTOR_ENABLED', true)")
         ->toContain("'login_otp_mail_view' => 'starter-mail::login-otp'")
         ->and($environment)->toContain("'STARTER_LOGIN_OTP_ENABLED' => 'false'")
+        ->toContain("'STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED' => 'true'")
+        ->toContain("'STARTER_LOGIN_TWO_FACTOR_ENABLED' => 'true'")
         ->and($otpControl)->toContain('autocomplete="one-time-code"')
         ->and(is_file(StarterPaths::path('resources/views/mail/login-otp.blade.php')))->toBeTrue()
         ->and(is_file(StarterPaths::path('resources/views/mail/login-otp-text.blade.php')))->toBeTrue();
+});
+
+it('keeps authenticator settings inside the security panel in every theme', function (): void {
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $profile = file_get_contents(StarterPaths::path(
+            "resources/themes/{$theme}/views/starter/profile/edit-my-profile.blade.php",
+        ));
+        $securityPanel = strpos($profile, 'id="security"');
+        $twoFactorPanel = strpos($profile, "@include('starter-shared::components.two-factor-profile')");
+
+        expect($securityPanel)->not->toBeFalse()
+            ->and($twoFactorPanel)->not->toBeFalse()
+            ->and($twoFactorPanel)->toBeGreaterThan($securityPanel);
+    }
+
+    $twoFactorPanel = file_get_contents(StarterPaths::path('resources/views/components/two-factor-profile.blade.php'));
+    $profileComponent = file_get_contents(StarterPaths::path('src/Livewire/Starter/Profile/EditMyProfile.php'));
+
+    expect($twoFactorPanel)
+        ->toContain("config('starter.auth.login_two_factor_enabled', true)")
+        ->and($profileComponent)->toContain("assertTwoFactorFeatureEnabled('twoFactorForm.password')")
+        ->toContain("assertTwoFactorFeatureEnabled('twoFactorForm.code')")
+        ->toContain("assertTwoFactorFeatureEnabled('twoFactorDisableForm.password')");
 });
 
 it('keeps spacing between the vertical navigation heading and menu items', function (): void {

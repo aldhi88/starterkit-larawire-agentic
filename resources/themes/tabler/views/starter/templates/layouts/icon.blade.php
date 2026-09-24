@@ -33,11 +33,13 @@
         'file-plus',
         'info-circle',
         'layout-dashboard',
+        'key',
         'lock',
         'logout',
         'menu-2',
         'clipboard-text',
         'report-analytics',
+        'refresh',
         'school',
         'shield-check',
         'shield-lock',
@@ -78,6 +80,16 @@
             <path d="M5 12l14 0" />
             <path d="M5 12l6 6" />
             <path d="M5 12l6 -6" />
+            @break
+
+        @case('refresh')
+            <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+            @break
+
+        @case('key')
+            <path d="M16.555 3.843a6 6 0 0 1 -7.638 8.638l-4.917 4.519v3h3v-2h2v-2h2l1.519 -1.517a6 6 0 0 1 4.036 -10.64z" />
+            <path d="M15 8h.01" />
             @break
 
         @case('activity')

@@ -33,6 +33,29 @@ function starterActiveOtpLogin(int $id): ClientLogin
     return $login;
 }
 
+it('allows an enrolled authenticator session without proof while the global switch is disabled', function (): void {
+    config()->set('app.key', 'base64:'.base64_encode(random_bytes(32)));
+    config()->set('starter.auth.login_otp_enabled', false);
+    config()->set('starter.auth.login_two_factor_enabled', false);
+    $login = starterActiveOtpLogin(70);
+    $login->forceFill([
+        'two_factor_secret' => 'JBSWY3DPEHPK3PXP',
+        'two_factor_confirmed_at' => now(),
+    ]);
+    $request = starterActiveOtpRequest($login);
+
+    $auditLogs = Mockery::mock(AuditLogService::class);
+    $auditLogs->shouldNotReceive('recordSecurityEvent');
+
+    $response = (new StarterEnsureActiveUser($auditLogs))->handle(
+        $request,
+        fn () => response('allowed'),
+    );
+
+    expect($response->getContent())->toBe('allowed')
+        ->and($login->hasTwoFactorAuthenticationEnabled())->toBeTrue();
+});
+
 it('allows an OTP-protected session only when its proof belongs to the authenticated login', function (): void {
     config()->set('starter.auth.login_otp_enabled', true);
     $login = starterActiveOtpLogin(71);

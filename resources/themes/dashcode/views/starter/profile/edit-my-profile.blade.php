@@ -278,6 +278,7 @@
                             </div>
                         </div>
                     </div>
+                    @include('starter-shared::components.two-factor-profile')
                     <footer class="dashcode-profile-actions">
                         <button type="submit" class="btn btn-primary">
                             @include('starter.templates.layouts.icon', ['name' => 'lock'])

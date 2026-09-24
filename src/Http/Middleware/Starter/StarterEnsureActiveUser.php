@@ -41,6 +41,21 @@ class StarterEnsureActiveUser
             );
         }
 
+        if ($login instanceof ClientLogin && $this->twoFactorVerificationMissing($request, $login)) {
+            $this->auditLogs->recordSecurityEvent(
+                'auth.session_revoked',
+                'Session dihentikan karena verifikasi authenticator tidak tersedia',
+                target: $login,
+                actor: $login,
+                metadata: ['reason' => 'two_factor_verification_missing'],
+            );
+
+            return $this->terminateSession(
+                $request,
+                'Sesi memerlukan verifikasi authenticator. Silakan login kembali.',
+            );
+        }
+
         if ($login instanceof ClientLogin && $this->credentialsChanged($request, $login)) {
             $this->auditLogs->recordSecurityEvent(
                 'auth.session_revoked',
@@ -100,6 +115,17 @@ class StarterEnsureActiveUser
         }
 
         return (int) $sessionVersion !== $currentVersion;
+    }
+
+    private function twoFactorVerificationMissing(Request $request, ClientLogin $login): bool
+    {
+        if (! (bool) config('starter.auth.login_two_factor_enabled', true)
+            || ! $login->hasTwoFactorAuthenticationEnabled()) {
+            return false;
+        }
+
+        return (int) $request->session()->get(AuthLoginService::SESSION_TWO_FACTOR_VERIFIED_LOGIN_ID, 0)
+            !== (int) $login->getKey();
     }
 
     private function terminateSession(Request $request, string $message): Response

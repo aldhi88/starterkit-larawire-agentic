@@ -92,7 +92,9 @@
                                         ? 'Aplikasi dikunci untuk melindungi sesi Anda.'
                                         : (($otpRequired ?? false)
                                             ? 'Verifikasi kode yang dikirim ke email akun Anda.'
-                                            : 'Selesaikan verifikasi login untuk melanjutkan.') }}
+                                            : (($authenticatorRequired ?? false)
+                                                ? 'Verifikasi kode dari aplikasi authenticator Anda.'
+                                                : 'Selesaikan verifikasi login untuk melanjutkan.')) }}
                                 </p>
                                 @if (session('starter-auth-message'))
                                     <div class="alert alert-warning" role="alert">

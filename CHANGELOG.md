@@ -5,6 +5,23 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.3] - 2026-09-24
+
+### Added
+
+- Add a default-enabled, server-rendered five-digit human challenge to the
+  credential step, with session hashing, expiry, rotation, throttling, and
+  security audit events.
+- Add opt-in per-user TOTP authentication with QR enrollment, password and code
+  confirmation, one-time recovery codes, encrypted storage, login enforcement,
+  global environment control, and theme-parity profile/login interfaces.
+
+### Changed
+
+- Chain password, optional email OTP, and enrolled authenticator verification
+  before creating the authenticated session, preserving only safe credential
+  state when the human challenge rotates after a failed attempt.
+
 ## [1.7.2] - 2026-09-19
 
 ### Changed

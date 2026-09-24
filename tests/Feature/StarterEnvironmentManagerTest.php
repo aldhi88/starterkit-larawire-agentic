@@ -32,6 +32,8 @@ ENV);
         ->and($contents)->toContain('STARTER_THEME=tabler')
         ->and($contents)->toContain('STARTER_LAYOUT=vertical')
         ->and($contents)->toContain('STARTER_LOGIN_OTP_ENABLED=false')
+        ->and($contents)->toContain('STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED=true')
+        ->and($contents)->toContain('STARTER_LOGIN_TWO_FACTOR_ENABLED=true')
         ->and($contents)->not->toContain('STARTER_SUPERUSER')
         ->and($contents)->toEndWith("# starterkit-larawire:end\n");
 
@@ -50,6 +52,27 @@ it('writes the presentation selected by the installation wizard', function (): v
     expect($contents)->toContain('APP_DOMAIN=company.test')
         ->and($contents)->toContain('STARTER_THEME=tabler')
         ->and($contents)->toContain('STARTER_LAYOUT=horizontal');
+
+    File::deleteDirectory($directory);
+});
+
+it('preserves explicit disabled authentication switches during synchronization', function (): void {
+    $directory = sys_get_temp_dir().'/starterkit-auth-switches-'.bin2hex(random_bytes(6));
+    File::ensureDirectoryExists($directory);
+    $path = $directory.'/.env';
+    File::put($path, <<<'ENV'
+APP_URL=http://localhost
+STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED=false
+STARTER_LOGIN_OTP_ENABLED=false
+STARTER_LOGIN_TWO_FACTOR_ENABLED=false
+ENV);
+
+    (new StarterEnvironmentManager)->apply($path);
+    $contents = File::get($path);
+
+    expect($contents)->toContain('STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED=false')
+        ->and($contents)->toContain('STARTER_LOGIN_OTP_ENABLED=false')
+        ->and($contents)->toContain('STARTER_LOGIN_TWO_FACTOR_ENABLED=false');
 
     File::deleteDirectory($directory);
 });
@@ -82,7 +105,9 @@ it('keeps production domain and HTTPS cookie values derived from APP_URL in env 
         ->and($contents)->toContain('SESSION_DOMAIN=null')
         ->and($contents)->toContain('SESSION_COOKIE=larawire_session')
         ->and($contents)->toContain('SESSION_SECURE_COOKIE=null')
-        ->and($contents)->toContain('STARTER_LOGIN_OTP_ENABLED=false');
+        ->and($contents)->toContain('STARTER_LOGIN_OTP_ENABLED=false')
+        ->and($contents)->toContain('STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED=true')
+        ->and($contents)->toContain('STARTER_LOGIN_TWO_FACTOR_ENABLED=true');
 
     File::deleteDirectory($directory);
 });

@@ -18,6 +18,9 @@ use Illuminate\Support\Carbon;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string|null $password
+ * @property string|null $two_factor_secret
+ * @property list<string>|null $two_factor_recovery_codes
+ * @property Carbon|null $two_factor_confirmed_at
  * @property string|null $profile_photo
  * @property string $status
  * @property bool $must_change_password
@@ -40,6 +43,9 @@ use Illuminate\Support\Carbon;
     'email',
     'email_verified_at',
     'password',
+    'two_factor_secret',
+    'two_factor_recovery_codes',
+    'two_factor_confirmed_at',
     'profile_photo',
     'status',
     'must_change_password',
@@ -51,7 +57,7 @@ use Illuminate\Support\Carbon;
     'remember_token',
     'auth_version',
 ])]
-#[Hidden(['password', 'remember_token'])]
+#[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class ClientLogin extends Authenticatable
 {
     use Notifiable, SoftDeletes;
@@ -72,6 +78,9 @@ class ClientLogin extends Authenticatable
             'locked_until' => 'datetime',
             'must_change_password' => 'boolean',
             'password' => 'hashed',
+            'two_factor_secret' => 'encrypted',
+            'two_factor_recovery_codes' => 'encrypted:array',
+            'two_factor_confirmed_at' => 'datetime',
             'auth_version' => 'integer',
         ];
     }
@@ -79,6 +88,11 @@ class ClientLogin extends Authenticatable
     public function isActive(): bool
     {
         return $this->status === 'active' && ($this->locked_until === null || $this->locked_until->isPast());
+    }
+
+    public function hasTwoFactorAuthenticationEnabled(): bool
+    {
+        return filled($this->two_factor_secret) && $this->two_factor_confirmed_at !== null;
     }
 
     /**

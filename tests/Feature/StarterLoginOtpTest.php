@@ -12,6 +12,7 @@ use Aldhi88\StarterKit\Services\Starter\LoginOtpMailService;
 use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
 use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
 use Aldhi88\StarterKit\Services\Starter\StarterContextService;
+use Aldhi88\StarterKit\Services\Starter\TwoFactorAuthenticationService;
 use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
@@ -178,7 +179,7 @@ it('uses the shared six-slot OTP control in every login theme', function (): voi
     $control = file_get_contents(StarterPaths::path('resources/views/components/otp-code-input.blade.php'));
 
     expect($control)
-        ->toContain("\$wire.entangle('otpForm.code')")
+        ->toContain('$wire.entangle(@js($model))')
         ->toContain('autocomplete="one-time-code"')
         ->toContain("replace(/\D/g, '').slice(0, 6)")
         ->toContain('x-on:paste.prevent')
@@ -244,7 +245,15 @@ it('requires an emailed OTP before creating the authenticated session', function
 
     Auth::shouldReceive('login')->once()->with($login, false);
 
-    $service = new AuthLoginService($clientLogins, $redirects, $clients, $configs, $auditLogs, $otpMail);
+    $service = new AuthLoginService(
+        $clientLogins,
+        $redirects,
+        $clients,
+        $configs,
+        $auditLogs,
+        $otpMail,
+        new TwoFactorAuthenticationService,
+    );
 
     expect($service->attempt(' OTP-User ', 'ValidPassword123', true, '/target'))->toBeNull();
 
@@ -301,7 +310,15 @@ it('rejects an invalid OTP without authenticating the user', function (): void {
     $otpMail->shouldReceive('send')->once();
     Auth::shouldReceive('login')->never();
 
-    $service = new AuthLoginService($clientLogins, $redirects, $clients, $configs, $auditLogs, $otpMail);
+    $service = new AuthLoginService(
+        $clientLogins,
+        $redirects,
+        $clients,
+        $configs,
+        $auditLogs,
+        $otpMail,
+        new TwoFactorAuthenticationService,
+    );
     $service->attempt('wrong-otp-user', 'ValidPassword123');
 
     expect(fn (): string => $service->verifyOtp('999999'))

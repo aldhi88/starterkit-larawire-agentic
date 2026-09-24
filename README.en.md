@@ -107,6 +107,16 @@ After route, module, or menu definitions change, synchronize code metadata:
 php artisan starter:sync
 ```
 
+### Login human challenge
+
+Fresh installations enable a five-unique-digit challenge on the login form.
+The digits are rendered as a server-side image, stored as a session hash,
+expire, and rotate after a wrong answer. Configure it through the environment:
+
+```dotenv
+STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED=true
+```
+
 ### Optional login OTP
 
 Enable email OTP verification after password validation through the environment:
@@ -123,6 +133,22 @@ The `sync` queue sends inline, while a durable backend requires an active worker
 The flow also records security audit events and disables remember-me so a
 session cannot be restored without OTP proof. The default `false` value
 preserves the existing login flow.
+
+### Authenticator two-factor
+
+Enable or disable TOTP two-factor authentication globally through the
+environment:
+
+```dotenv
+STARTER_LOGIN_TWO_FACTOR_ENABLED=true
+```
+
+When enabled, users can enroll from the profile Security tab. Setup provides a
+Google Authenticator-compatible QR code, confirmation before activation, and
+one-time recovery codes. The authenticator code is then required on every login
+after the password and optional email OTP pass. Setting the value to `false`
+hides enrollment and skips the authenticator stage without deleting enrolled
+secrets, so protection resumes when the feature is enabled again.
 
 ### Themes and layouts
 

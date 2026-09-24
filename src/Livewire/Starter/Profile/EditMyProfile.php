@@ -5,10 +5,13 @@ namespace Aldhi88\StarterKit\Livewire\Starter\Profile;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Rules\Starter\StarterPasswordRules;
 use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Services\Starter\AuthLoginService;
 use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
 use Aldhi88\StarterKit\Services\Starter\ProfileService;
 use Aldhi88\StarterKit\Services\Starter\StarterContextService;
+use Aldhi88\StarterKit\Services\Starter\TwoFactorAuthenticationService;
 use Aldhi88\StarterKit\Support\Starter\StarterTheme;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -24,6 +27,8 @@ class EditMyProfile extends Component
 
     private const DEFAULT_PROFILE_PHOTO = 'assets/starter/images/avatar.png';
 
+    private const SESSION_TWO_FACTOR_SETUP_SECRET = 'starter.profile_two_factor_setup_secret';
+
     private ProfileService $profiles;
 
     private StarterContextService $context;
@@ -31,6 +36,8 @@ class EditMyProfile extends Component
     private NavigationAuthorizedRedirectService $redirects;
 
     private AuthenticatedLoginService $authenticatedLogins;
+
+    private TwoFactorAuthenticationService $twoFactor;
 
     public string $activeTab = 'account-details';
 
@@ -53,16 +60,39 @@ class EditMyProfile extends Component
         'password_confirmation' => '',
     ];
 
+    /** @var array{password: string, code: string} */
+    public array $twoFactorForm = [
+        'password' => '',
+        'code' => '',
+    ];
+
+    /** @var array{password: string, code: string} */
+    public array $twoFactorDisableForm = [
+        'password' => '',
+        'code' => '',
+    ];
+
+    public bool $twoFactorSetupActive = false;
+
+    public string $twoFactorSetupKey = '';
+
+    public string $twoFactorQrCode = '';
+
+    /** @var list<string> */
+    public array $twoFactorRecoveryCodes = [];
+
     public function boot(
         ProfileService $profiles,
         StarterContextService $context,
         NavigationAuthorizedRedirectService $redirects,
         AuthenticatedLoginService $authenticatedLogins,
+        TwoFactorAuthenticationService $twoFactor,
     ): void {
         $this->profiles = $profiles;
         $this->context = $context;
         $this->redirects = $redirects;
         $this->authenticatedLogins = $authenticatedLogins;
+        $this->twoFactor = $twoFactor;
     }
 
     public function mount(): void
@@ -72,6 +102,7 @@ class EditMyProfile extends Component
             ? 'security'
             : 'account-details';
         $this->fillFromLogin($login);
+        $this->restorePendingTwoFactorSetup($login);
     }
 
     public function saveAccount(): void
@@ -238,6 +269,144 @@ class EditMyProfile extends Component
         );
     }
 
+    public function startTwoFactorSetup(): void
+    {
+        $this->activeTab = 'security';
+        $this->assertTwoFactorFeatureEnabled('twoFactorForm.password');
+        $login = $this->login();
+
+        try {
+            $validated = $this->validate([
+                'twoFactorForm.password' => ['required', 'string', 'max:1024'],
+            ], [], [
+                'twoFactorForm.password' => 'password saat ini',
+            ]);
+
+            $this->profiles->assertCurrentPassword(
+                $login,
+                $validated['twoFactorForm']['password'],
+                'twoFactorForm.password',
+            );
+        } catch (ValidationException $exception) {
+            $this->twoFactorForm['password'] = '';
+
+            throw $exception;
+        }
+
+        $secret = $this->twoFactor->generateSecret();
+        session()->put(self::SESSION_TWO_FACTOR_SETUP_SECRET, Crypt::encryptString($secret));
+        $this->twoFactorSetupActive = true;
+        $this->twoFactorSetupKey = $this->twoFactor->formattedSecret($secret);
+        $this->twoFactorQrCode = $this->twoFactor->qrCodeDataUri($secret, $login->email);
+        $this->twoFactorRecoveryCodes = [];
+        $this->twoFactorForm = ['password' => '', 'code' => ''];
+        $this->resetValidation(['twoFactorForm.password', 'twoFactorForm.code']);
+    }
+
+    public function confirmTwoFactorSetup(): void
+    {
+        $this->activeTab = 'security';
+        $this->assertTwoFactorFeatureEnabled('twoFactorForm.code');
+        $login = $this->login();
+        $validated = $this->validate([
+            'twoFactorForm.code' => ['required', 'digits:6'],
+        ], [], [
+            'twoFactorForm.code' => 'kode authenticator',
+        ]);
+        $secret = $this->pendingTwoFactorSecret();
+
+        if ($secret === null) {
+            $this->cancelTwoFactorSetup();
+            throw ValidationException::withMessages([
+                'twoFactorForm.code' => 'Sesi aktivasi sudah berakhir. Mulai kembali aktivasi authenticator.',
+            ]);
+        }
+
+        if (! $this->twoFactor->verifyCode($secret, $validated['twoFactorForm']['code'])) {
+            $this->twoFactorForm['code'] = '';
+            $this->profiles->recordTwoFactorVerificationFailure($login, 'enable');
+
+            throw ValidationException::withMessages([
+                'twoFactorForm.code' => 'Kode authenticator tidak valid. Pastikan waktu perangkat Anda akurat.',
+            ]);
+        }
+
+        $recoveryCodes = $this->twoFactor->generateRecoveryCodes();
+        $updatedLogin = $this->profiles->enableTwoFactorAuthentication(
+            $login,
+            $secret,
+            $this->twoFactor->hashRecoveryCodes($recoveryCodes),
+        );
+
+        session()->forget(self::SESSION_TWO_FACTOR_SETUP_SECRET);
+        session()->put('starter.auth_version', $updatedLogin->auth_version);
+        session()->put(AuthLoginService::SESSION_TWO_FACTOR_VERIFIED_LOGIN_ID, (int) $updatedLogin->getKey());
+        session()->regenerate();
+        session()->passwordConfirmed();
+
+        $this->twoFactorSetupActive = false;
+        $this->twoFactorSetupKey = '';
+        $this->twoFactorQrCode = '';
+        $this->twoFactorRecoveryCodes = $recoveryCodes;
+        $this->twoFactorForm = ['password' => '', 'code' => ''];
+        $this->dispatch('starter-toast', type: 'success', message: 'Two-factor authentication berhasil diaktifkan.');
+    }
+
+    public function cancelTwoFactorSetup(): void
+    {
+        session()->forget(self::SESSION_TWO_FACTOR_SETUP_SECRET);
+        $this->twoFactorSetupActive = false;
+        $this->twoFactorSetupKey = '';
+        $this->twoFactorQrCode = '';
+        $this->twoFactorForm = ['password' => '', 'code' => ''];
+        $this->resetValidation(['twoFactorForm.password', 'twoFactorForm.code']);
+    }
+
+    public function disableTwoFactorAuthentication(): void
+    {
+        $this->activeTab = 'security';
+        $this->assertTwoFactorFeatureEnabled('twoFactorDisableForm.password');
+        $login = $this->login();
+        try {
+            $validated = $this->validate([
+                'twoFactorDisableForm.password' => ['required', 'string', 'max:1024'],
+                'twoFactorDisableForm.code' => ['required', 'digits:6'],
+            ], [], [
+                'twoFactorDisableForm.password' => 'password saat ini',
+                'twoFactorDisableForm.code' => 'kode authenticator',
+            ])['twoFactorDisableForm'];
+
+            $this->profiles->assertCurrentPassword(
+                $login,
+                $validated['password'],
+                'twoFactorDisableForm.password',
+            );
+        } catch (ValidationException $exception) {
+            $this->twoFactorDisableForm = ['password' => '', 'code' => ''];
+
+            throw $exception;
+        }
+
+        if (! $this->twoFactor->verifyCode((string) $login->two_factor_secret, $validated['code'])) {
+            $this->twoFactorDisableForm['code'] = '';
+            $this->profiles->recordTwoFactorVerificationFailure($login, 'disable');
+
+            throw ValidationException::withMessages([
+                'twoFactorDisableForm.code' => 'Kode authenticator tidak valid.',
+            ]);
+        }
+
+        $updatedLogin = $this->profiles->disableTwoFactorAuthentication($login);
+        session()->put('starter.auth_version', $updatedLogin->auth_version);
+        session()->forget(AuthLoginService::SESSION_TWO_FACTOR_VERIFIED_LOGIN_ID);
+        session()->regenerate();
+        session()->passwordConfirmed();
+
+        $this->twoFactorDisableForm = ['password' => '', 'code' => ''];
+        $this->twoFactorRecoveryCodes = [];
+        $this->dispatch('starter-toast', type: 'success', message: 'Two-factor authentication berhasil dinonaktifkan.');
+    }
+
     public function render()
     {
         $login = $this->login();
@@ -267,6 +436,60 @@ class EditMyProfile extends Component
             'name' => (string) $login->name,
             'email' => (string) $login->email,
         ];
+    }
+
+    private function restorePendingTwoFactorSetup(ClientLogin $login): void
+    {
+        if (! $this->twoFactor->enabled()) {
+            session()->forget(self::SESSION_TWO_FACTOR_SETUP_SECRET);
+
+            return;
+        }
+
+        $secret = $this->pendingTwoFactorSecret();
+
+        if ($secret === null || $login->hasTwoFactorAuthenticationEnabled()) {
+            session()->forget(self::SESSION_TWO_FACTOR_SETUP_SECRET);
+
+            return;
+        }
+
+        $this->twoFactorSetupActive = true;
+        $this->twoFactorSetupKey = $this->twoFactor->formattedSecret($secret);
+        $this->twoFactorQrCode = $this->twoFactor->qrCodeDataUri($secret, $login->email);
+    }
+
+    private function pendingTwoFactorSecret(): ?string
+    {
+        $encrypted = session()->get(self::SESSION_TWO_FACTOR_SETUP_SECRET);
+
+        if (! is_string($encrypted) || $encrypted === '') {
+            return null;
+        }
+
+        try {
+            return Crypt::decryptString($encrypted);
+        } catch (\Throwable) {
+            session()->forget(self::SESSION_TWO_FACTOR_SETUP_SECRET);
+
+            return null;
+        }
+    }
+
+    private function assertTwoFactorFeatureEnabled(string $field): void
+    {
+        if ($this->twoFactor->enabled()) {
+            return;
+        }
+
+        session()->forget(self::SESSION_TWO_FACTOR_SETUP_SECRET);
+        $this->twoFactorSetupActive = false;
+        $this->twoFactorSetupKey = '';
+        $this->twoFactorQrCode = '';
+
+        throw ValidationException::withMessages([
+            $field => 'Two-factor authentication sedang dinonaktifkan oleh administrator.',
+        ]);
     }
 
     private function profilePhotoPreviewUrl(ClientLogin $login): string

@@ -307,7 +307,10 @@
         "starter/auth/login.blade.php": [
             "otp-introduction",
             "otp-form",
+            "authenticator-introduction",
+            "authenticator-form",
             "credentials-form",
+            "human-challenge",
             "secondary-help"
         ],
         "starter/auth/confirm-password.blade.php": [

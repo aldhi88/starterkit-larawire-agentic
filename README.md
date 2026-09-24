@@ -108,6 +108,17 @@ Setelah route, module, atau menu berubah, sinkronkan metadata source code:
 php artisan starter:sync
 ```
 
+### Validasi manusia saat login
+
+Fresh install mengaktifkan tantangan lima angka unik pada form login. Angka
+dirender sebagai gambar server-side, disimpan sebagai hash di session, memiliki
+masa berlaku terbatas, dan diganti setelah jawaban salah. Pengaturan dapat
+diubah melalui environment:
+
+```dotenv
+STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED=true
+```
+
 ### OTP login opsional
 
 Aktifkan verifikasi OTP email setelah password benar melalui environment:
@@ -124,6 +135,23 @@ mengirim inline, sedangkan backend durable memerlukan worker aktif. Flow juga
 mencatat security audit event dan menonaktifkan remember-me agar sesi tidak dapat
 hidup kembali tanpa bukti OTP. Nilai default `false` mempertahankan flow login
 lama.
+
+### Authenticator two-factor
+
+Aktifkan atau nonaktifkan fitur two-factor authentication berbasis TOTP secara
+global melalui environment:
+
+```dotenv
+STARTER_LOGIN_TWO_FACTOR_ENABLED=true
+```
+
+Saat aktif, user dapat melakukan aktivasi dari tab Keamanan di halaman profil.
+Setup menyediakan QR code yang kompatibel dengan Google Authenticator,
+verifikasi sebelum aktivasi, serta kode pemulihan sekali tampil. Kode
+authenticator kemudian diminta pada setiap login setelah password dan OTP email
+opsional berhasil diverifikasi. Nilai `false` menyembunyikan panel aktivasi dan
+melewati tahap authenticator tanpa menghapus secret milik user, sehingga
+proteksi kembali berlaku saat fitur diaktifkan lagi.
 
 ### Theme dan layout
 

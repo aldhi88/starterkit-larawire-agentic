@@ -16,9 +16,17 @@
     </style>
 @endonce
 
+@php
+    $model = $model ?? 'otpForm.code';
+    $field = $field ?? $model;
+    $inputId = $inputId ?? 'login-otp';
+    $errorId = $errorId ?? $inputId.'-error';
+    $label = $label ?? 'Kode OTP 6 digit';
+@endphp
+
 <div
-    class="starter-otp-control @error('otpForm.code') has-error @enderror"
-    x-data="{ code: $wire.entangle('otpForm.code') }"
+    class="starter-otp-control @error($field) has-error @enderror"
+    x-data="{ code: $wire.entangle(@js($model)) }"
     x-init="$nextTick(() => $refs.input.focus())"
     x-on:click="$refs.input.focus()"
     data-starter-otp-control
@@ -30,13 +38,13 @@
         x-on:paste.prevent="code = $event.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6); $refs.input.value = code"
         type="text"
         class="starter-otp-control-input"
-        id="login-otp"
+        id="{{ $inputId }}"
         inputmode="numeric"
         pattern="[0-9]*"
         maxlength="6"
         autocomplete="one-time-code"
-        aria-label="Kode OTP 6 digit"
-        @error('otpForm.code') aria-invalid="true" aria-describedby="login-otp-error" @enderror
+        aria-label="{{ $label }}"
+        @error($field) aria-invalid="true" aria-describedby="{{ $errorId }}" @enderror
     >
 
     @foreach (range(0, 5) as $index)

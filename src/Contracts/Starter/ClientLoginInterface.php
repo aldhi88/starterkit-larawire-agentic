@@ -29,6 +29,8 @@ interface ClientLoginInterface
 
     public function findForAuthentication(int $id): ?ClientLogin;
 
+    public function findForAuthenticationWithLock(int $id): ?ClientLogin;
+
     public function findForManagement(int $id): ?ClientLogin;
 
     public function findWithTrashedForManagement(int $id): ?ClientLogin;

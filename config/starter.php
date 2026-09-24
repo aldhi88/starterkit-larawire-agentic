@@ -18,7 +18,9 @@ return [
     'layout' => env('STARTER_LAYOUT', 'vertical'),
 
     'auth' => [
+        'login_human_challenge_enabled' => env('STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED', true),
         'login_otp_enabled' => env('STARTER_LOGIN_OTP_ENABLED', false),
+        'login_two_factor_enabled' => env('STARTER_LOGIN_TWO_FACTOR_ENABLED', true),
         'login_otp_mail_view' => 'starter-mail::login-otp',
         'login_otp_mail_text_view' => 'starter-mail::login-otp-text',
     ],

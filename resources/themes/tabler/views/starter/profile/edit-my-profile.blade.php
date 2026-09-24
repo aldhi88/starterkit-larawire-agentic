@@ -258,6 +258,7 @@
                             </div>
                         </div>
                     </div>
+                    @include('starter-shared::components.two-factor-profile')
                     <div class="card-footer bg-transparent text-end">
                         <button type="submit" class="btn btn-primary">
                             @include('starter.templates.layouts.icon', ['name' => 'lock', 'class' => 'me-1'])

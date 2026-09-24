@@ -18,7 +18,9 @@
                 <h4 class="mb-1">{{ $title ?? 'Selamat datang!' }} 👋</h4>
                 <p class="mb-6">{{ $subtitle ?? (($otpRequired ?? false)
                     ? 'Verifikasi kode yang dikirim ke email akun Anda.'
-                    : 'Selesaikan verifikasi login untuk melanjutkan ke workspace Anda.') }}</p>
+                    : (($authenticatorRequired ?? false)
+                        ? 'Verifikasi kode dari aplikasi authenticator Anda.'
+                        : 'Selesaikan verifikasi login untuk melanjutkan ke workspace Anda.')) }}</p>
                 @if (session('starter-auth-message'))<div class="alert alert-warning" role="alert">{{ session('starter-auth-message') }}</div>@endif
                 {{ $slot }}
                 <footer class="text-center mt-6" data-starter-region="page-footer">{{ now()->year }} © {{ config('app.name') }}</footer>

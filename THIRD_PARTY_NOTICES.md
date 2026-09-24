@@ -4,6 +4,12 @@ Starterkit Larawire Agentic depends on open-source Composer packages whose
 licenses are installed with those packages under `vendor/` and declared by
 their package metadata.
 
+Authenticator enrollment QR codes use
+[BaconQrCode](https://github.com/Bacon/BaconQrCode), licensed under the
+BSD 2-Clause License, together with its transitive
+[DASPRiD Enum](https://github.com/DASPRiD/Enum) dependency under the same
+license. Their license metadata and texts are installed by Composer.
+
 The Tabler integration is derived from [Tabler](https://github.com/tabler/tabler),
 copyright the Tabler authors and licensed under the MIT License. Its license is
 retained at `docs/template/tabler/LICENSE`. Raw Tabler HTML/assets are supplied

@@ -2,20 +2,103 @@
 
 use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Livewire\Starter\Auth\Login;
 use Aldhi88\StarterKit\Models\Starter\Client;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Models\Starter\ClientRole;
 use Aldhi88\StarterKit\Services\Starter\AuditLogService;
 use Aldhi88\StarterKit\Services\Starter\AuthLoginService;
+use Aldhi88\StarterKit\Services\Starter\LoginHumanChallengeService;
 use Aldhi88\StarterKit\Services\Starter\LoginOtpMailService;
 use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
 use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
+use Aldhi88\StarterKit\Services\Starter\TwoFactorAuthenticationService;
 use Illuminate\Http\Request;
 use Illuminate\Session\ArraySessionHandler;
 use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
+
+function starterLoginFormComponent(): Login
+{
+    return new class extends Login
+    {
+        /** @return array<string, mixed> */
+        public function validate($rules = null, $messages = [], $attributes = []): array
+        {
+            return ['form' => $this->form];
+        }
+    };
+}
+
+it('preserves credentials and rotates only the human challenge after a wrong challenge answer', function (): void {
+    $component = starterLoginFormComponent();
+    $component->form = [
+        'identifier' => 'superuser',
+        'password' => 'superuser',
+        'remember' => true,
+        'human_challenge' => '12345',
+    ];
+
+    $loginService = Mockery::mock(AuthLoginService::class);
+    $loginService->shouldNotReceive('attempt');
+
+    $humanChallenge = Mockery::mock(LoginHumanChallengeService::class);
+    $humanChallenge->shouldReceive('enabled')->once()->andReturnTrue();
+    $humanChallenge->shouldReceive('verify')->once()->with('12345')->andThrow(
+        ValidationException::withMessages([
+            'form.human_challenge' => 'Angka keamanan tidak sesuai.',
+        ]),
+    );
+    $humanChallenge->shouldReceive('issue')->once()->andReturn('data:image/svg+xml;base64,new-challenge');
+
+    expect(fn () => $component->authenticate($loginService, $humanChallenge))
+        ->toThrow(ValidationException::class)
+        ->and($component->form)->toBe([
+            'identifier' => 'superuser',
+            'password' => 'superuser',
+            'remember' => true,
+            'human_challenge' => '',
+        ])
+        ->and($component->humanChallengeImage)->toBe('data:image/svg+xml;base64,new-challenge');
+});
+
+it('preserves credentials and rotates the human challenge after a wrong password', function (): void {
+    $component = starterLoginFormComponent();
+    $component->form = [
+        'identifier' => 'superuser',
+        'password' => 'wrong-password',
+        'remember' => false,
+        'human_challenge' => '54321',
+    ];
+
+    $loginService = Mockery::mock(AuthLoginService::class);
+    $loginService->shouldReceive('attempt')->once()->with(
+        'superuser',
+        'wrong-password',
+        false,
+        '',
+    )->andThrow(ValidationException::withMessages([
+        'form.identifier' => 'Kredensial tidak valid.',
+    ]));
+
+    $humanChallenge = Mockery::mock(LoginHumanChallengeService::class);
+    $humanChallenge->shouldReceive('enabled')->once()->andReturnTrue();
+    $humanChallenge->shouldReceive('verify')->once()->with('54321');
+    $humanChallenge->shouldReceive('issue')->once()->andReturn('data:image/svg+xml;base64,rotated-challenge');
+
+    expect(fn () => $component->authenticate($loginService, $humanChallenge))
+        ->toThrow(ValidationException::class)
+        ->and($component->form)->toBe([
+            'identifier' => 'superuser',
+            'password' => 'wrong-password',
+            'remember' => false,
+            'human_challenge' => '',
+        ])
+        ->and($component->humanChallengeImage)->toBe('data:image/svg+xml;base64,rotated-challenge');
+});
 
 it('redirects a user with a temporary password directly to profile security', function (): void {
     Route::get('/profile/edit', fn () => null)->name('starter.profile.edit');
@@ -91,6 +174,7 @@ it('redirects a user with a temporary password directly to profile security', fu
         $configs,
         $auditLogs,
         $otpMail,
+        new TwoFactorAuthenticationService,
     ))->attempt(' Staff-User ', 'Temporary123');
 
     expect($target)->toBe(route('starter.profile.edit', ['tab' => 'security']))
