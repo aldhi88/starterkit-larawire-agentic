@@ -5,6 +5,21 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.7] - 2026-09-24
+
+### Added
+
+- Allow a non-Superuser to change its own username once from the profile
+  account form, with matching guidance across Tabler, DashCode, and Vuexy.
+- Add an additive nullable marker that atomically records consumption of the
+  one-time self-service username change.
+
+### Changed
+
+- Keep administrator-managed username changes unlimited without resetting or
+  consuming the target account's self-service opportunity, and prohibit
+  Superuser self-service username changes.
+
 ## [1.7.6] - 2026-09-24
 
 ### Added

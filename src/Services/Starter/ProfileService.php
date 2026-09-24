@@ -6,6 +6,7 @@ use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
 use Aldhi88\StarterKit\Models\Starter\Client;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -19,17 +20,49 @@ class ProfileService
     ) {}
 
     /**
-     * @param  array{name: string, email: string, profile_photo?: ?string}  $data
+     * @param  array{name: string, username?: string, email: string, profile_photo?: ?string}  $data
      */
     public function updateProfile(ClientLogin $login, array $data): ClientLogin
     {
-        $updatedLogin = $this->clientLogins->updateUser($login, [
-            'name' => trim($data['name']),
-            'email' => str($data['email'])->lower()->trim()->toString(),
-            'profile_photo' => $this->nullableTrim($data['profile_photo'] ?? null),
-        ]);
+        return DB::transaction(function () use ($login, $data): ClientLogin {
+            $lockedLogin = $this->clientLogins->findForAuthenticationWithLock((int) $login->getKey());
+            abort_unless($lockedLogin instanceof ClientLogin, 404);
 
-        return $this->clientLogins->refreshWithRole($updatedLogin);
+            $username = str($data['username'] ?? $lockedLogin->username)->lower()->trim()->toString();
+            $oldUsername = $lockedLogin->username;
+            $usernameChanged = $username !== $lockedLogin->username;
+
+            if ($usernameChanged && ! $lockedLogin->canChangeOwnUsername()) {
+                throw ValidationException::withMessages([
+                    'accountForm.username' => $lockedLogin->role->isSuperuser()
+                        ? 'Username Superuser tidak dapat diubah dari profil.'
+                        : 'Kesempatan mengganti username sendiri sudah digunakan. Hubungi Superuser untuk perubahan berikutnya.',
+                ]);
+            }
+
+            $updatedLogin = $this->clientLogins->updateUser($lockedLogin, [
+                'name' => trim($data['name']),
+                'username' => $username,
+                'email' => str($data['email'])->lower()->trim()->toString(),
+                'profile_photo' => $this->nullableTrim($data['profile_photo'] ?? null),
+                ...($usernameChanged ? ['username_self_changed_at' => now()] : []),
+            ]);
+
+            if ($usernameChanged) {
+                $this->auditLogs->recordSecurityEvent(
+                    'auth.username_self_changed',
+                    'Username diubah sendiri oleh user',
+                    target: $updatedLogin,
+                    actor: $updatedLogin,
+                    metadata: [
+                        'old_username' => $oldUsername,
+                        'new_username' => $username,
+                    ],
+                );
+            }
+
+            return $this->clientLogins->refreshWithRole($updatedLogin);
+        });
     }
 
     /**

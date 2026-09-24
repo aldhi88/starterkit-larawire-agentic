@@ -132,7 +132,7 @@
                     <div class="card-header">
                         <div>
                             <h3 class="card-title">Detail Akun</h3>
-                            <div class="text-secondary small mt-1">Perbarui foto, nama tampilan, dan email yang digunakan untuk login.</div>
+                            <div class="text-secondary small mt-1">Perbarui foto, username, nama tampilan, dan email yang digunakan untuk login.</div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -155,6 +155,20 @@
                         </div>
 
                         <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label" for="profile-username">Username</label>
+                                <input type="text" id="profile-username" wire:key="profile-username-{{ $canChangeOwnUsername ? 'editable' : 'locked' }}" class="form-control @error('accountForm.username') is-invalid @enderror" wire:model.defer="accountForm.username" autocomplete="username" autocapitalize="none" spellcheck="false" @readonly(! $canChangeOwnUsername)>
+                                @error('accountForm.username') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="form-text">
+                                    @if ($canChangeOwnUsername)
+                                        Username hanya dapat Anda ganti satu kali. Pilih dengan teliti.
+                                    @elseif ($login->role->isSuperuser())
+                                        Username Superuser tidak dapat diubah dari profil.
+                                    @else
+                                        Kesempatan mengganti username sendiri sudah digunakan. Hubungi Superuser untuk perubahan berikutnya.
+                                    @endif
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <label class="form-label" for="profile-display-name">Nama Tampilan</label>
                                 <input type="text" id="profile-display-name" class="form-control @error('accountForm.name') is-invalid @enderror" wire:model.defer="accountForm.name" autocomplete="name">

@@ -41,11 +41,14 @@ class EditMyProfile extends Component
 
     public string $activeTab = 'account-details';
 
-    /** @var array{name: string, email: string} */
+    /** @var array{name: string, username: string, email: string} */
     public array $accountForm = [
         'name' => '',
+        'username' => '',
         'email' => '',
     ];
+
+    public bool $canChangeOwnUsername = false;
 
     public mixed $profilePhotoUpload = null;
 
@@ -112,6 +115,10 @@ class EditMyProfile extends Component
 
         $validated = $this->validate([
             'accountForm.name' => ['required', 'string', 'max:255'],
+            'accountForm.username' => [
+                'required', 'string', 'min:3', 'max:255', 'alpha_dash:ascii',
+                Rule::unique('starter_client_logins', 'username')->ignore($login->id),
+            ],
             'accountForm.email' => [
                 'required',
                 'email',
@@ -126,6 +133,7 @@ class EditMyProfile extends Component
             ],
         ], [], [
             'accountForm.name' => 'display name',
+            'accountForm.username' => 'username',
             'accountForm.email' => 'email login',
             'profilePhotoUpload' => 'profile photo upload',
         ])['accountForm'];
@@ -148,6 +156,7 @@ class EditMyProfile extends Component
 
         $this->profilePhotoUpload = null;
         $this->profilePhotoReset = false;
+        $this->authenticatedLogins->replaceCurrent($updatedLogin);
         $this->fillFromLogin($updatedLogin);
         $this->dispatch('starter-account-updated',
             avatarUrl: $this->context->avatarUrl($updatedLogin),
@@ -431,9 +440,11 @@ class EditMyProfile extends Component
     private function fillFromLogin(ClientLogin $login): void
     {
         $this->profilePhotoReset = false;
+        $this->canChangeOwnUsername = $login->canChangeOwnUsername();
 
         $this->accountForm = [
             'name' => (string) $login->name,
+            'username' => (string) $login->username,
             'email' => (string) $login->email,
         ];
     }

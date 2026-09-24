@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property int $client_role_id
  * @property string $name
  * @property string $username
+ * @property Carbon|null $username_self_changed_at
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string|null $password
@@ -40,6 +41,7 @@ use Illuminate\Support\Carbon;
     'client_role_id',
     'name',
     'username',
+    'username_self_changed_at',
     'email',
     'email_verified_at',
     'password',
@@ -73,6 +75,7 @@ class ClientLogin extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'username_self_changed_at' => 'datetime',
             'last_login_at' => 'datetime',
             'password_changed_at' => 'datetime',
             'locked_until' => 'datetime',
@@ -93,6 +96,11 @@ class ClientLogin extends Authenticatable
     public function hasTwoFactorAuthenticationEnabled(): bool
     {
         return filled($this->two_factor_secret) && $this->two_factor_confirmed_at !== null;
+    }
+
+    public function canChangeOwnUsername(): bool
+    {
+        return ! $this->role->isSuperuser() && $this->username_self_changed_at === null;
     }
 
     /**

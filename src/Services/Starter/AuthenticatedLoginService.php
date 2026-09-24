@@ -18,6 +18,11 @@ class AuthenticatedLoginService
         return $this->authenticated($this->auth->guard()->user());
     }
 
+    public function replaceCurrent(ClientLogin $login): void
+    {
+        $this->auth->guard()->setUser($login);
+    }
+
     public function authenticated(mixed $login): ClientLogin
     {
         abort_unless($login instanceof ClientLogin, 403);
