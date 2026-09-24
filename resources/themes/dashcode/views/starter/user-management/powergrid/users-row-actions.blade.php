@@ -30,6 +30,14 @@
                         <span>Reset password</span>
                     </button>
                 </li>
+                @if ($row->hasTwoFactorAuthenticationEnabled())
+                    <li>
+                        <button type="button" class="dashcode-table-dropdown-item" wire:click="$dispatch('starter-user-authenticator-reset-request', { id: {{ $row->id }} })" @click="open = false" role="menuitem">
+                            @include('starter.templates.layouts.icon', ['name' => 'shield-lock', 'class' => 'dashcode-table-dropdown-icon'])
+                            <span>Reset authenticator</span>
+                        </button>
+                    </li>
+                @endif
                 <li><hr class="dashcode-table-dropdown-divider"></li>
                 <li>
                     <button type="button" class="dashcode-table-dropdown-item" wire:click="$dispatchSelf('prepare-row-action', { action: 'archive', id: {{ $row->id }} })" @click="open = false" role="menuitem">

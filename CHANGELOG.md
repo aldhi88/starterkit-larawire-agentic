@@ -5,6 +5,19 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.5] - 2026-09-24
+
+### Added
+
+- Add a password-confirmed administrator recovery action that resets an
+  enrolled non-Superuser authenticator through a theme-consistent confirmation
+  modal in Tabler, DashCode, and Vuexy.
+
+### Changed
+
+- Revoke existing sessions when an administrator clears a user authenticator,
+  remove its recovery codes, and record actor-bound audit and security events.
+
 ## [1.7.4] - 2026-09-24
 
 ### Added

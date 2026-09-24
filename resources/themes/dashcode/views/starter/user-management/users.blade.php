@@ -31,4 +31,16 @@
         'visible' => $passwordResetModalOpen,
         'dismissOnConfirm' => false,
     ])
+
+    @include('starter.templates.components.danger-modal', [
+        'id' => 'reset-user-authenticator-modal',
+        'title' => 'Reset authenticator user?',
+        'message' => filled($authenticatorResetUserName) ? 'Authenticator dan seluruh kode pemulihan '.$authenticatorResetUserName.' akan dihapus. Seluruh sesi lamanya akan berakhir dan user harus mengaktifkan authenticator kembali.' : 'Authenticator dan seluruh kode pemulihan user akan dihapus.',
+        'confirmText' => 'Reset Authenticator',
+        'loadingText' => 'Mereset...',
+        'confirmAction' => 'resetSelectedAuthenticator',
+        'cancelAction' => 'cancelAuthenticatorReset',
+        'visible' => $authenticatorResetModalOpen,
+        'dismissOnConfirm' => false,
+    ])
 </div>

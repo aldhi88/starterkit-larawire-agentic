@@ -19,6 +19,11 @@
                 <li>
                     <button type="button" class="dropdown-item" wire:click="$dispatch('starter-user-reset-request', { id: {{ $row->id }} })">Reset password</button>
                 </li>
+                @if ($row->hasTwoFactorAuthenticationEnabled())
+                    <li>
+                        <button type="button" class="dropdown-item" wire:click="$dispatch('starter-user-authenticator-reset-request', { id: {{ $row->id }} })">Reset authenticator</button>
+                    </li>
+                @endif
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <button type="button" class="dropdown-item" wire:click="$dispatchSelf('prepare-row-action', { action: 'archive', id: {{ $row->id }} })">Arsipkan</button>

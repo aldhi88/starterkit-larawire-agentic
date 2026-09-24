@@ -243,6 +243,56 @@ class UserManagementUserService
         }
     }
 
+    public function findAuthenticatorResetTarget(ClientLogin $currentLogin, int $id): ClientLogin
+    {
+        $login = $this->findUser($currentLogin, $id);
+
+        abort_if(
+            $login->role->isSuperuser(),
+            403,
+            'Authenticator Superuser hanya dapat dikelola melalui Edit Profil Saya.',
+        );
+
+        if (! $login->hasTwoFactorAuthenticationEnabled()) {
+            throw ValidationException::withMessages([
+                'authenticatorResetUserId' => 'Authenticator user ini sudah tidak aktif.',
+            ]);
+        }
+
+        return $login;
+    }
+
+    public function resetTwoFactorAuthentication(ClientLogin $currentLogin, int $userLoginId): ClientLogin
+    {
+        $login = $this->findAuthenticatorResetTarget($currentLogin, $userLoginId);
+
+        return $this->auditLogs->withinAction(
+            'user.reset_two_factor',
+            'Mereset authenticator user '.$login->name,
+            function () use ($currentLogin, $login): ClientLogin {
+                return DB::transaction(function () use ($currentLogin, $login): ClientLogin {
+                    $updatedLogin = $this->clientLogins->updateUser($login, [
+                        'two_factor_secret' => null,
+                        'two_factor_recovery_codes' => null,
+                        'two_factor_confirmed_at' => null,
+                        'remember_token' => Str::random(60),
+                        'auth_version' => max(1, (int) $login->auth_version) + 1,
+                    ]);
+
+                    $this->auditLogs->recordSecurityEvent(
+                        'auth.two_factor_reset_by_admin',
+                        'Authenticator direset oleh administrator',
+                        target: $updatedLogin,
+                        actor: $currentLogin,
+                        metadata: ['reason' => 'account_recovery'],
+                    );
+
+                    return $updatedLogin;
+                });
+            },
+        );
+    }
+
     public function appCount(): int
     {
         return $this->appMods->accessStats()['apps'];

@@ -36,6 +36,12 @@ class Users extends Component
 
     public bool $passwordResetModalOpen = false;
 
+    public ?int $authenticatorResetUserId = null;
+
+    public string $authenticatorResetUserName = '';
+
+    public bool $authenticatorResetModalOpen = false;
+
     public function mount(bool $embedded = false): void
     {
         $this->embedded = $embedded;
@@ -88,6 +94,54 @@ class Users extends Component
             'starter-toast',
             type: 'success',
             message: 'Permintaan email password sementara baru berhasil diproses untuk '.$login->email.'.',
+        );
+    }
+
+    #[On('starter-user-authenticator-reset-request')]
+    public function prepareAuthenticatorReset(int $id): void
+    {
+        $login = $this->users()->findAuthenticatorResetTarget($this->login(), $id);
+        $this->authenticatorResetUserId = $login->id;
+        $this->authenticatorResetUserName = $login->name;
+        $this->authenticatorResetModalOpen = true;
+    }
+
+    public function cancelAuthenticatorReset(): void
+    {
+        $this->authenticatorResetUserId = null;
+        $this->authenticatorResetUserName = '';
+        $this->authenticatorResetModalOpen = false;
+        $this->resetValidation('authenticatorResetUserId');
+    }
+
+    public function resetSelectedAuthenticator(): void
+    {
+        if ($this->authenticatorResetUserId === null) {
+            return;
+        }
+
+        try {
+            $login = $this->users()->resetTwoFactorAuthentication(
+                $this->login(),
+                $this->authenticatorResetUserId,
+            );
+        } catch (ValidationException $exception) {
+            $this->dispatch(
+                'starter-toast',
+                type: 'warning',
+                message: collect($exception->errors())->flatten()->first()
+                    ?? 'Authenticator user tidak dapat direset.',
+            );
+            $this->cancelAuthenticatorReset();
+
+            return;
+        }
+
+        $this->cancelAuthenticatorReset();
+        $this->dispatch(
+            'starter-toast',
+            type: 'success',
+            message: 'Authenticator '.$login->name.' berhasil direset. User dapat login tanpa kode authenticator lalu mengaktifkannya kembali.',
         );
     }
 
