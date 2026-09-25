@@ -653,6 +653,18 @@ it('keeps the two-step login OTP flow available in every theme', function (): vo
         ->and(is_file(StarterPaths::path('resources/views/mail/login-otp-text.blade.php')))->toBeTrue();
 });
 
+it('keeps the password visibility toggle available on every login theme', function (): void {
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $login = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/auth/login.blade.php"));
+
+        expect($login)
+            ->toContain('x-bind:type="visible ? \'text\' : \'password\'"')
+            ->toContain("['name' => 'eye', 'class' => 'icon-sm']")
+            ->toContain("['name' => 'eye-off', 'class' => 'icon-sm']")
+            ->toContain("visible ? 'Sembunyikan Password' : 'Tampilkan Password'");
+    }
+});
+
 it('keeps authenticator settings inside the security panel in every theme', function (): void {
     foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
         $profile = file_get_contents(StarterPaths::path(

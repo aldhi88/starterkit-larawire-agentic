@@ -104,7 +104,7 @@ it('issues a five-digit non-repeating human challenge without exposing text digi
         ->not->toHaveKey('code');
 });
 
-it('renders the human challenge at half of its original visual size in every theme', function (): void {
+it('renders the human challenge at half size inside a full-width row in every theme', function (): void {
     foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
         $login = file_get_contents(StarterPaths::path(
             "resources/themes/{$theme}/views/starter/auth/login.blade.php",
@@ -116,6 +116,14 @@ it('renders the human challenge at half of its original visual size in every the
             ->not->toContain('src="{{ $humanChallengeImage }}" class="d-block w-100"')
             ->not->toContain('src="{{ $humanChallengeImage }}" class="block w-full"');
     }
+
+    $tabler = file_get_contents(StarterPaths::path('resources/themes/tabler/views/starter/auth/login.blade.php'));
+    $vuexy = file_get_contents(StarterPaths::path('resources/themes/vuexy/views/starter/auth/login.blade.php'));
+    $dashcode = file_get_contents(StarterPaths::path('resources/themes/dashcode/views/starter/auth/login.blade.php'));
+
+    expect($tabler)->toContain('input-group-text flex-grow-1 justify-content-center')
+        ->and($vuexy)->toContain('input-group-text flex-grow-1 justify-content-center')
+        ->and($dashcode)->toContain('form-control min-w-0 flex-1 p-1');
 });
 
 it('disables and clears the human challenge through its global switch', function (): void {

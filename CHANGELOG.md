@@ -5,6 +5,15 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.9] - 2026-09-26
+
+### Fixed
+
+- Add an accessible show-or-hide password control to the login form in Tabler,
+  DashCode, and Vuexy.
+- Let the human-challenge image area fill the available login-form width while
+  preserving its compact image dimensions and refresh action.
+
 ## [1.7.8] - 2026-09-25
 
 ### Fixed

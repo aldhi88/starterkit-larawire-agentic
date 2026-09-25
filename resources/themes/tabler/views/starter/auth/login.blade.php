@@ -81,9 +81,15 @@
 
             <div class="mb-2">
                 <label class="form-label" for="password">Password</label>
-                <input type="password" class="form-control @error('form.password') is-invalid @enderror" id="password" wire:model.defer="form.password" placeholder="Password" autocomplete="current-password">
+                <div class="input-group input-group-flat" x-data="{ visible: false }">
+                    <input x-bind:type="visible ? 'text' : 'password'" class="form-control @error('form.password') is-invalid @enderror" id="password" wire:model.defer="form.password" placeholder="Password" autocomplete="current-password">
+                    <button type="button" class="input-group-text" x-on:click="visible = ! visible" x-bind:aria-label="visible ? 'Sembunyikan Password' : 'Tampilkan Password'">
+                        <span x-show="! visible">@include('starter.templates.layouts.icon', ['name' => 'eye', 'class' => 'icon-sm'])</span>
+                        <span x-show="visible" x-cloak>@include('starter.templates.layouts.icon', ['name' => 'eye-off', 'class' => 'icon-sm'])</span>
+                    </button>
+                </div>
                 @error('form.password')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
             </div>
 
@@ -91,7 +97,7 @@
                 <div class="mb-3" data-starter-region="human-challenge">
                     <label class="form-label" for="human-challenge">Verifikasi keamanan</label>
                     <div class="input-group flex-nowrap mb-2">
-                        <span class="input-group-text justify-content-center p-1 bg-light overflow-hidden">
+                        <span class="input-group-text flex-grow-1 justify-content-center p-1 bg-light overflow-hidden">
                             <img src="{{ $humanChallengeImage }}" class="d-block" width="143" height="38" alt="Lima angka keamanan acak">
                         </span>
                         <button class="btn btn-outline-secondary" type="button" wire:click="refreshHumanChallenge" wire:loading.attr="disabled" wire:target="refreshHumanChallenge" aria-label="Tampilkan angka keamanan baru">

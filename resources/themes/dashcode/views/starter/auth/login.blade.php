@@ -81,7 +81,13 @@
 
             <div>
                 <label class="block capitalize form-label" for="password">Password</label>
-                <input type="password" class="form-control py-2 @error('form.password') is-invalid @enderror" id="password" wire:model.defer="form.password" placeholder="Masukkan password" autocomplete="current-password">
+                <div class="relative" x-data="{ visible: false }">
+                    <input x-bind:type="visible ? 'text' : 'password'" class="form-control py-2 !pr-12 @error('form.password') is-invalid @enderror" id="password" wire:model.defer="form.password" placeholder="Masukkan password" autocomplete="current-password">
+                    <button type="button" class="absolute right-0 top-1/2 h-full w-9 -translate-y-1/2 border-l border-l-slate-200 flex items-center justify-center text-slate-500" x-on:click="visible = ! visible" x-bind:aria-label="visible ? 'Sembunyikan Password' : 'Tampilkan Password'">
+                        <span x-show="! visible">@include('starter.templates.layouts.icon', ['name' => 'eye', 'class' => 'icon-sm'])</span>
+                        <span x-show="visible" x-cloak>@include('starter.templates.layouts.icon', ['name' => 'eye-off', 'class' => 'icon-sm'])</span>
+                    </button>
+                </div>
                 @error('form.password')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -90,8 +96,8 @@
             @if ($humanChallengeImage !== '')
                 <div data-starter-region="human-challenge">
                     <label class="block capitalize form-label" for="human-challenge">Verifikasi keamanan</label>
-                    <div class="flex items-stretch gap-2 mb-2">
-                        <div class="form-control w-auto p-1 flex items-center justify-center bg-slate-50">
+                    <div class="flex items-stretch gap-2 mb-2 w-full">
+                        <div class="form-control min-w-0 flex-1 p-1 flex items-center justify-center bg-slate-50">
                             <img src="{{ $humanChallengeImage }}" class="block" width="143" height="38" alt="Lima angka keamanan acak">
                         </div>
                         <button class="btn btn-outline-dark px-3" type="button" wire:click="refreshHumanChallenge" wire:loading.attr="disabled" wire:target="refreshHumanChallenge" aria-label="Tampilkan angka keamanan baru">
