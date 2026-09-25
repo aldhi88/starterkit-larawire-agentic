@@ -6,7 +6,7 @@
     <meta http-equiv="refresh" content="0;url={{ $loginUrl }}">
     <title>Sesi Berakhir | {{ config('app.name') }}</title>
 </head>
-<body>
+<body data-starter-session-expired>
     <script>
         window.location.replace(@json($loginUrl));
     </script>

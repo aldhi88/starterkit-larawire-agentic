@@ -62,7 +62,8 @@ class StarterBootstrap
     public static function configureExceptions(Exceptions $exceptions): void
     {
         $exceptions->render(function (AuthenticationException $exception, Request $request) {
-            $loginUrl = StarterNavigation::authLoginUrl($request->fullUrl());
+            $returnUrl = StarterNavigation::safeRequestReturnUrl($request);
+            $loginUrl = StarterNavigation::authLoginUrl($returnUrl);
 
             if ($request->headers->get('X-Livewire-Navigate') === '1') {
                 return response()
@@ -74,7 +75,9 @@ class StarterBootstrap
                 return response()->json([
                     'message' => $exception->getMessage(),
                     'redirect' => $loginUrl,
-                ], 401);
+                    'login_url' => $loginUrl,
+                    'return_url' => $returnUrl,
+                ], 401)->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
             }
 
             return null;

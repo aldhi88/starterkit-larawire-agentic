@@ -2,6 +2,8 @@
 
 namespace Aldhi88\StarterKit\Support\Starter;
 
+use Illuminate\Http\Request;
+
 class StarterNavigation
 {
     public static function rootHost(): string
@@ -56,7 +58,28 @@ class StarterNavigation
             return false;
         }
 
-        return $host === $domain || str_ends_with((string) $host, '.'.$domain);
+        if ($host !== $domain && ! str_ends_with((string) $host, '.'.$domain)) {
+            return false;
+        }
+
+        return ! self::isInternalEndpointPath((string) parse_url($url, PHP_URL_PATH));
+    }
+
+    public static function safeRequestReturnUrl(Request $request): ?string
+    {
+        $candidates = [
+            $request->headers->get('X-Starter-Page-Url'),
+            $request->headers->get('referer'),
+            $request->isMethod('GET') ? $request->fullUrl() : null,
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && self::isSafeRedirect($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
     }
 
     private static function hasSafePort(string $url, string $scheme): bool
@@ -74,5 +97,32 @@ class StarterNavigation
         }
 
         return $port === ($scheme === 'https' ? 443 : 80);
+    }
+
+    private static function isInternalEndpointPath(string $path): bool
+    {
+        $path = strtolower(trim(rawurldecode($path), '/'));
+
+        if ($path === '') {
+            return false;
+        }
+
+        if (preg_match('#^livewire(?:-[^/]+)?(?:/|$)#', $path) === 1) {
+            return true;
+        }
+
+        if (in_array($path, [
+            'auth',
+            'auth/login',
+            'auth/logout',
+            'confirm-password',
+            'lock-screen',
+            'session/activity',
+            'up',
+        ], true)) {
+            return true;
+        }
+
+        return preg_match('#^(?:_debugbar|_ignition|api|broadcasting/auth|horizon|sanctum/csrf-cookie|telescope)(?:/|$)#', $path) === 1;
     }
 }

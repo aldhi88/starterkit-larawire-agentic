@@ -55,15 +55,23 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         document.querySelector('[data-starter-livewire-loader]')?.setAttribute('aria-hidden', 'false');
         document.body?.classList.add('starter-livewire-is-loading');
     },
-    isSilentLivewireMessage(message) {
+    isPassiveLivewireMessage(message) {
         const root = message?.component?.el;
         const calls = Array.isArray(message?.calls) ? message.calls : [];
 
-        if (! root?.hasAttribute?.('data-starter-silent-poll') || calls.length === 0) {
+        if (calls.length === 0) {
             return false;
         }
 
-        return calls.every((call) => ['$refresh', 'refreshMonitoring'].includes(call?.method));
+        if (calls.every((call) => call?.metadata?.type === 'poll')) {
+            return true;
+        }
+
+        return root?.hasAttribute?.('data-starter-passive')
+            || root?.hasAttribute?.('data-starter-silent-poll');
+    },
+    isSilentLivewireMessage(message) {
+        return this.isPassiveLivewireMessage(message);
     },
     hideLivewireLoader() {
         this.livewireLoadingCount = Math.max((this.livewireLoadingCount || 1) - 1, 0);
@@ -103,8 +111,8 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
 
         return url.href;
     },
-    redirectToLogin(redirect = window.location.href) {
-        window.location.assign(this.authLoginUrl(redirect));
+    redirectToLogin(redirect = null) {
+        this.beginTopLevelNavigation(this.authLoginUrl(redirect || this.safeBrowserReturnUrl()));
     },
     positionNavigateLoader() {
         const slot = document.querySelector('.starter-slot-area');
@@ -128,6 +136,85 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         } catch (error) {
             return null;
         }
+    },
+    isInternalBrowserUrl(url) {
+        const path = new URL(url, window.location.href).pathname
+            .replace(/^\/+|\/+$/g, '')
+            .toLowerCase();
+
+        return /^livewire(?:-[^/]+)?(?:\/|$)/.test(path)
+            || ['auth', 'auth/login', 'auth/logout', 'confirm-password', 'lock-screen', 'session/activity', 'up'].includes(path)
+            || /^(?:_debugbar|_ignition|api|broadcasting\/auth|horizon|sanctum\/csrf-cookie|telescope)(?:\/|$)/.test(path);
+    },
+    safeBrowserReturnUrl() {
+        return this.isInternalBrowserUrl(window.location.href) ? null : window.location.href;
+    },
+    isAuthenticationHtmlResponse(response, body) {
+        const contentType = String(response?.headers?.get?.('content-type') || '').toLowerCase();
+        const html = contentType.includes('text/html') || /^\s*(?:<!doctype\s+html|<html)/i.test(String(body || ''));
+
+        if (! html) {
+            return false;
+        }
+
+        const responsePath = new URL(response?.url || window.location.href, window.location.href).pathname;
+
+        return response?.redirected
+            || /\/(?:auth\/login|lock-screen)\/?$/i.test(responsePath)
+            || String(body || '').includes('data-starter-session-expired')
+            || (
+                String(body || '').includes('meta name="starter-auth-login-url"')
+                && ! String(body || '').includes('meta name="starter-lock-screen-url"')
+            );
+    },
+    removeLivewireErrorDialog() {
+        const dialog = document.getElementById('livewire-error');
+
+        if (! dialog) {
+            return;
+        }
+
+        if (dialog.open && typeof dialog.close === 'function') {
+            dialog.close();
+        }
+
+        dialog.remove();
+        document.body.style.overflow = '';
+    },
+    prepareForTerminalNavigation(sourceRequest = null) {
+        if (this.terminalNavigationStarted) {
+            return false;
+        }
+
+        this.terminalNavigationStarted = true;
+        this.autoLocking = true;
+        clearTimeout(this.autoLockTimer);
+        this.autoLockTouchController?.abort();
+
+        (this.activeLivewireRequests || new Set()).forEach((request) => {
+            if (request !== sourceRequest) {
+                request.cancel?.();
+            }
+        });
+
+        this.removeLivewireErrorDialog();
+        this.clearLivewireLoader();
+        this.showNavigateLoader();
+
+        return true;
+    },
+    beginTopLevelNavigation(url, { replace = false, sourceRequest = null } = {}) {
+        if (! url || ! this.prepareForTerminalNavigation(sourceRequest)) {
+            return false;
+        }
+
+        if (replace) {
+            window.location.replace(url);
+        } else {
+            window.location.assign(url);
+        }
+
+        return true;
     },
     navigate(url) {
         if (! url) return;
@@ -474,7 +561,7 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
     configureAutoLock(navigationCompleted = false) {
         clearTimeout(this.autoLockTimer);
         this.autoLockConfigValue = this.autoLockConfig();
-        this.autoLocking = false;
+        this.autoLocking = Boolean(this.terminalNavigationStarted);
 
         if (! this.autoLockConfigValue) {
             return;
@@ -629,6 +716,7 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         }
 
         const controller = new AbortController();
+        this.autoLockTouchController = controller;
         const abortTimer = setTimeout(() => controller.abort(), 10000);
 
         this.autoLockTouchPromise = (async () => {
@@ -640,18 +728,28 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
                         Accept: 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                         'X-Requested-With': 'XMLHttpRequest',
+                        'X-Starter-Page-Url': this.safeBrowserReturnUrl() || '',
                     },
                     signal: controller.signal,
                 });
 
                 if (response.status === 423) {
-                    this.performAutoLock();
+                    const body = await response.text();
+                    const redirect = this.extractRedirectUrl(body) || this.autoLockConfigValue?.lockUrl;
+
+                    this.beginTopLevelNavigation(redirect, { replace: true });
 
                     return 'locked';
                 }
 
                 if ([401, 419].includes(response.status) || response.redirected) {
-                    window.location.assign(response.redirected ? response.url : this.authLoginUrl());
+                    const body = response.redirected ? '' : await response.text();
+
+                    this.beginTopLevelNavigation(
+                        response.redirected
+                            ? response.url
+                            : (this.extractRedirectUrl(body) || this.authLoginUrl(this.safeBrowserReturnUrl())),
+                    );
 
                     return 'redirected';
                 }
@@ -667,6 +765,10 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
                 return 'unavailable';
             } finally {
                 clearTimeout(abortTimer);
+
+                if (this.autoLockTouchController === controller) {
+                    this.autoLockTouchController = null;
+                }
             }
         })();
 
@@ -707,22 +809,22 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         }
     },
     performAutoLock() {
-        if (! this.autoLockConfigValue || this.autoLocking) {
+        if (! this.autoLockConfigValue || this.autoLocking || this.terminalNavigationStarted) {
             return;
         }
 
-        this.autoLocking = true;
-        clearTimeout(this.autoLockTimer);
-
         const lockUrl = new URL(this.autoLockConfigValue.lockUrl, window.location.href);
-        lockUrl.searchParams.set('redirect', window.location.href);
+        const returnUrl = this.safeBrowserReturnUrl();
+
+        if (returnUrl) {
+            lockUrl.searchParams.set('redirect', returnUrl);
+        }
+
         lockUrl.searchParams.set('reason', 'idle_timeout');
-        this.clearLivewireLoader();
-        this.hideNavigateLoader();
 
         // Locking must leave a suspended Livewire navigation behind. A full-page
         // replacement guarantees the server lock state is rendered immediately.
-        window.location.replace(lockUrl.href);
+        this.beginTopLevelNavigation(lockUrl.href, { replace: true });
     },
     bind() {
         if (this.bound) return;
@@ -730,6 +832,10 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         document.addEventListener('submit', (event) => {
             const form = event.target.closest('form[data-starter-logout-form]');
             const redirect = form?.querySelector('[data-starter-logout-redirect]');
+
+            if (form) {
+                this.prepareForTerminalNavigation();
+            }
 
             if (redirect) {
                 redirect.value = window.location.href;
@@ -824,8 +930,11 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
     bindLivewire() {
         if (this.livewireBound || ! window.Livewire?.interceptRequest) return;
 
-        window.Livewire.interceptRequest(({ request, onSend, onError, onFinish }) => {
+        this.activeLivewireRequests ||= new Set();
+
+        window.Livewire.interceptRequest(({ request, onSend, onError, onRedirect, onFinish }) => {
             const messages = Array.from(request?.messages || []);
+            const passive = messages.length > 0 && messages.every((message) => this.isPassiveLivewireMessage(message));
             const actionMessages = messages.filter((message) => (
                 Array.isArray(message.calls)
                 && message.calls.length > 0
@@ -836,7 +945,21 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
                 .filter(Boolean);
             let started = false;
 
+            request.options.headers['X-Starter-Page-Url'] = window.location.href;
+
+            if (passive) {
+                request.options.headers['X-Starter-Passive'] = '1';
+            }
+
+            if (this.terminalNavigationStarted) {
+                request.cancel();
+
+                return;
+            }
+
             onSend(() => {
+                this.activeLivewireRequests.add(request);
+
                 if (actionMessages.length === 0) {
                     return;
                 }
@@ -846,19 +969,31 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             });
 
             onError(({ response, body, preventDefault }) => {
-                if (![401, 419, 423].includes(response.status)) {
+                const authenticationHtml = this.isAuthenticationHtmlResponse(response, body);
+
+                if (![401, 419, 423].includes(response.status) && ! authenticationHtml) {
                     return;
                 }
 
                 const redirect = this.extractRedirectUrl(body)
                     || (response.status === 423 ? this.autoLockConfigValue?.lockUrl : null)
-                    || this.authLoginUrl();
+                    || this.authLoginUrl(this.safeBrowserReturnUrl());
 
                 preventDefault();
-                window.location.assign(redirect);
+                this.beginTopLevelNavigation(redirect, {
+                    replace: response.status === 423,
+                    sourceRequest: request,
+                });
+            });
+
+            onRedirect(({ url, preventDefault }) => {
+                preventDefault();
+                this.beginTopLevelNavigation(url, { sourceRequest: request });
             });
 
             onFinish(() => {
+                this.activeLivewireRequests.delete(request);
+
                 if (started) {
                     this.hideLivewireLoader();
                 }

@@ -5,6 +5,17 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.8] - 2026-09-25
+
+### Fixed
+
+- Return explicit JSON authentication and lock responses for Livewire updates,
+  preserve only safe originating-page return URLs, and exclude internal
+  Livewire/session endpoints from post-login navigation.
+- Keep passive polling from extending server activity, and serialize browser
+  heartbeat, automatic lock, logout, and Livewire failure navigation so stale
+  requests cannot open an HTML error iframe or redirect to an update endpoint.
+
 ## [1.7.7] - 2026-09-24
 
 ### Added
