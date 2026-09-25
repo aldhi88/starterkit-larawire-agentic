@@ -15,6 +15,10 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 - Keep passive polling from extending server activity, and serialize browser
   heartbeat, automatic lock, logout, and Livewire failure navigation so stale
   requests cannot open an HTML error iframe or redirect to an update endpoint.
+- Preview newly selected company logos through a browser object URL instead of
+  a host-dependent Livewire temporary URL, consistently across all themes.
+- Render the login human-challenge image at half its previous visual size in
+  Tabler, DashCode, and Vuexy.
 
 ## [1.7.7] - 2026-09-24
 

@@ -95,3 +95,37 @@ it('keeps dashcode and vuexy auth branding above the form at every breakpoint', 
             ->toBeGreaterThan(strpos($auth, 'data-starter-region="primary-content"'));
     }
 });
+
+it('previews a selected company logo from the browser without a host-dependent temporary url', function (): void {
+    $component = file_get_contents(StarterPaths::path(
+        'resources/views/components/client-logo-preview.blade.php',
+    ));
+    $livewire = file_get_contents(StarterPaths::path(
+        'src/Livewire/Starter/Settings/ClientProfile.php',
+    ));
+    $runtime = file_get_contents(StarterPaths::path(
+        'public/assets/starter/js/starter-runtime.js',
+    ));
+
+    expect($component)
+        ->toContain('x-bind:src="previewUrl || null"')
+        ->toContain('x-bind:hidden="! previewUrl"')
+        ->and($livewire)
+        ->not->toContain('$this->clientPhotoUpload->temporaryUrl()')
+        ->and($runtime)
+        ->toContain('clientLogoPreview(initialUrl = null)')
+        ->toContain('window.URL.createObjectURL(file)')
+        ->toContain('window.URL.revokeObjectURL(this.objectUrl)');
+
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $profile = file_get_contents(StarterPaths::path(
+            "resources/themes/{$theme}/views/starter/settings/client-profile.blade.php",
+        ));
+
+        expect($profile)
+            ->toContain('x-data="StarterTemplate.clientLogoPreview(@js($clientLogoPreviewUrl))"')
+            ->toContain('x-on:starter-client-branding-updated.window="replace($event.detail.logoUrl)"')
+            ->toContain("@include('starter-shared::components.client-logo-preview')")
+            ->toContain('x-on:change="select($event)"');
+    }
+});

@@ -20,6 +20,38 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
     isSameNavigationUrl(url, compareUrl = window.location.href) {
         return this.normalizeNavigationUrl(url) === this.normalizeNavigationUrl(compareUrl);
     },
+    clientLogoPreview(initialUrl = null) {
+        return {
+            previewUrl: initialUrl || '',
+            objectUrl: null,
+            releaseObjectUrl() {
+                if (! this.objectUrl) {
+                    return;
+                }
+
+                window.URL.revokeObjectURL(this.objectUrl);
+                this.objectUrl = null;
+            },
+            select(event) {
+                const file = event?.target?.files?.[0];
+
+                if (! file || ! String(file.type || '').startsWith('image/')) {
+                    return;
+                }
+
+                this.releaseObjectUrl();
+                this.objectUrl = window.URL.createObjectURL(file);
+                this.previewUrl = this.objectUrl;
+            },
+            replace(url) {
+                this.releaseObjectUrl();
+                this.previewUrl = typeof url === 'string' ? url : '';
+            },
+            destroy() {
+                this.releaseObjectUrl();
+            },
+        };
+    },
     themeAdapter() {
         return window.StarterThemeAdapter || {};
     },

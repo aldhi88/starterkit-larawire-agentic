@@ -12,6 +12,7 @@ use Aldhi88\StarterKit\Services\Starter\LoginOtpMailService;
 use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
 use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
 use Aldhi88\StarterKit\Services\Starter\TwoFactorAuthenticationService;
+use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use Illuminate\Http\Request;
 use Illuminate\Session\ArraySessionHandler;
 use Illuminate\Session\Store;
@@ -101,6 +102,20 @@ it('issues a five-digit non-repeating human challenge without exposing text digi
         ->and($challenge)->toBeArray()
         ->and($challenge)->toHaveKeys(['hash', 'expires_at'])
         ->not->toHaveKey('code');
+});
+
+it('renders the human challenge at half of its original visual size in every theme', function (): void {
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $login = file_get_contents(StarterPaths::path(
+            "resources/themes/{$theme}/views/starter/auth/login.blade.php",
+        ));
+
+        expect($login)
+            ->toContain('width="143" height="38"')
+            ->not->toContain('width="286" height="76"')
+            ->not->toContain('src="{{ $humanChallengeImage }}" class="d-block w-100"')
+            ->not->toContain('src="{{ $humanChallengeImage }}" class="block w-full"');
+    }
 });
 
 it('disables and clears the human challenge through its global switch', function (): void {

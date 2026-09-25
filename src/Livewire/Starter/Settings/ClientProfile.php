@@ -162,10 +162,6 @@ class ClientProfile extends Component
 
     private function clientLogoPreviewUrl(Client $client): ?string
     {
-        if ($this->clientPhotoUpload instanceof TemporaryUploadedFile) {
-            return $this->clientPhotoUpload->temporaryUrl();
-        }
-
         if ($this->clientPhotoReset) {
             return null;
         }

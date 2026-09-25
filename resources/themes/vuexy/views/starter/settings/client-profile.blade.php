@@ -17,25 +17,22 @@
             @endif
 
             <h3 class="card-title">Logo</h3>
-            <div class="row align-items-center" data-starter-region="logo-field">
+            <div
+                class="row align-items-center"
+                data-starter-region="logo-field"
+                x-data="StarterTemplate.clientLogoPreview(@js($clientLogoPreviewUrl))"
+                x-on:starter-client-branding-updated.window="replace($event.detail.logoUrl)"
+            >
                 <div class="col-auto">
                     <div class="starter-client-logo-preview" data-client-logo-preview>
-                        @if ($clientLogoPreviewUrl)
-                            <img
-                                src="{{ $clientLogoPreviewUrl }}"
-                                class="starter-client-logo-preview-image"
-                                alt="Pratinjau logo {{ $clientForm['name'] ?: 'perusahaan' }}"
-                            >
-                        @else
-                            <span class="starter-client-logo-placeholder">{{ $clientInitials }}</span>
-                        @endif
+                        @include('starter-shared::components.client-logo-preview')
                     </div>
                 </div>
                 <div class="col-auto">
                     <label class="btn btn-outline-primary mb-0" for="client-photo-upload">
                         Ganti Logo
                     </label>
-                    <input type="file" id="client-photo-upload" class="d-none @error('clientPhotoUpload') is-invalid @enderror" wire:model="clientPhotoUpload" accept="image/*">
+                    <input type="file" id="client-photo-upload" class="d-none @error('clientPhotoUpload') is-invalid @enderror" wire:model="clientPhotoUpload" x-on:change="select($event)" accept="image/*">
                 </div>
                 <div class="col-auto">
                     <button type="button" class="btn btn-label-secondary" data-bs-toggle="modal" data-bs-target="#delete-client-photo-modal">

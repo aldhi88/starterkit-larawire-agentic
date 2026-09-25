@@ -91,8 +91,8 @@
                 <div data-starter-region="human-challenge">
                     <label class="block capitalize form-label" for="human-challenge">Verifikasi keamanan</label>
                     <div class="flex items-stretch gap-2 mb-2">
-                        <div class="form-control p-1 flex items-center justify-center bg-slate-50">
-                            <img src="{{ $humanChallengeImage }}" class="block w-full" width="286" height="76" alt="Lima angka keamanan acak">
+                        <div class="form-control w-auto p-1 flex items-center justify-center bg-slate-50">
+                            <img src="{{ $humanChallengeImage }}" class="block" width="143" height="38" alt="Lima angka keamanan acak">
                         </div>
                         <button class="btn btn-outline-dark px-3" type="button" wire:click="refreshHumanChallenge" wire:loading.attr="disabled" wire:target="refreshHumanChallenge" aria-label="Tampilkan angka keamanan baru">
                             @include('starter.templates.layouts.icon', ['name' => 'refresh', 'class' => 'm-0'])

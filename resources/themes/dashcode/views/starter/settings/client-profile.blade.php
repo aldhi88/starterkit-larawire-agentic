@@ -16,25 +16,22 @@
 
             <section class="space-y-4" aria-labelledby="company-logo-heading">
                 <h3 id="company-logo-heading" class="card-title">Logo</h3>
-                <div class="dashcode-upload-row" data-starter-region="logo-field">
+                <div
+                    class="dashcode-upload-row"
+                    data-starter-region="logo-field"
+                    x-data="StarterTemplate.clientLogoPreview(@js($clientLogoPreviewUrl))"
+                    x-on:starter-client-branding-updated.window="replace($event.detail.logoUrl)"
+                >
                     <div>
                         <div class="starter-client-logo-preview" data-client-logo-preview>
-                            @if ($clientLogoPreviewUrl)
-                                <img
-                                    src="{{ $clientLogoPreviewUrl }}"
-                                    class="starter-client-logo-preview-image"
-                                    alt="Pratinjau logo {{ $clientForm['name'] ?: 'perusahaan' }}"
-                                >
-                            @else
-                                <span class="starter-client-logo-placeholder">{{ $clientInitials }}</span>
-                            @endif
+                            @include('starter-shared::components.client-logo-preview')
                         </div>
                     </div>
                     <div>
                         <label class="btn btn-outline-primary mb-0" for="client-photo-upload">
                             Ganti Logo
                         </label>
-                        <input type="file" id="client-photo-upload" class="dashcode-visually-hidden @error('clientPhotoUpload') is-invalid @enderror" wire:model="clientPhotoUpload" accept="image/*">
+                        <input type="file" id="client-photo-upload" class="dashcode-visually-hidden @error('clientPhotoUpload') is-invalid @enderror" wire:model="clientPhotoUpload" x-on:change="select($event)" accept="image/*">
                     </div>
                     <div>
                         <button type="button" class="btn btn-ghost-danger" data-starter-modal-open="#delete-client-photo-modal">
