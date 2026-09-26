@@ -9,7 +9,7 @@
 @if (($vuexyPage ?? 'app') === 'auth')
     <link rel="stylesheet" href="{{ asset('assets/vuexy/vendor/css/pages/page-auth.css') }}">
 @endif
-<link rel="stylesheet" href="{{ asset('assets/starter/css/starter.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/starter/css/starter.css') }}?v={{ filemtime(public_path('assets/starter/css/starter.css')) }}">
 <link rel="stylesheet" href="{{ asset('assets/vuexy/css/vuexy.css') }}?v={{ file_exists(public_path('assets/vuexy/css/vuexy.css')) ? filemtime(public_path('assets/vuexy/css/vuexy.css')) : time() }}">
 <script src="{{ asset('assets/vuexy/vendor/js/helpers.js') }}" data-navigate-once></script>
 @includeIf('extensions.starter.layout.head')

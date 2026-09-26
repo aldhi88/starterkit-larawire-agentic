@@ -147,12 +147,12 @@ class LoginHumanChallengeService
 
     private function renderSvgDataUri(string $code): string
     {
-        $width = 286;
+        $width = 336;
         $height = 76;
         $groups = '';
 
         foreach (str_split($code) as $index => $digit) {
-            $x = 18 + ($index * 52) + random_int(-2, 2);
+            $x = 23 + ($index * 58) + random_int(-2, 2);
             $y = 8 + random_int(-2, 2);
             $rotation = random_int(-7, 7);
             $segments = '';
@@ -169,11 +169,11 @@ class LoginHumanChallengeService
 
         for ($index = 0; $index < 6; $index++) {
             $noise .= '<path d="M'.random_int(0, 35).' '.random_int(8, 68)
-                .' C'.random_int(70, 110).' '.random_int(0, 76).', '.random_int(170, 220).' '.random_int(0, 76).', '.random_int(250, 286).' '.random_int(8, 68).'"/>';
+                .' C'.random_int(80, 130).' '.random_int(0, 76).', '.random_int(205, 260).' '.random_int(0, 76).', '.random_int($width - 36, $width).' '.random_int(8, 68).'"/>';
         }
 
         $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '.$width.' '.$height.'" role="img" aria-label="Angka keamanan">'
-            .'<rect width="100%" height="100%" rx="12" fill="#f8fafc"/>'
+            .'<rect width="100%" height="100%" rx="12" fill="transparent"/>'
             .'<g fill="#172033">'.$groups.'</g>'
             .'<g fill="none" stroke="#94a3b8" stroke-width="1" opacity=".35">'.$noise.'</g>'
             .'</svg>';

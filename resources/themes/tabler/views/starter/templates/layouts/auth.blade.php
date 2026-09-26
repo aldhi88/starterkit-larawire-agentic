@@ -15,6 +15,7 @@
     <title>{{ $title ?? 'Login' }} | {{ config('app.name') }}</title>
     <link rel="shortcut icon" href="{{ $brandLogoUrl }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/starter/css/starter.css') }}?v={{ filemtime(public_path('assets/starter/css/starter.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/css/tabler.css') }}?v={{ filemtime(public_path('assets/tabler/css/tabler.css')) }}">
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')

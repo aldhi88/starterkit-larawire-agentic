@@ -24,6 +24,33 @@
     margin-top: .2rem;
 }
 
+/* Keep the challenge compact while its security texture fills the available row. */
+.starter-human-challenge-visual {
+    align-items: center;
+    display: flex;
+    isolation: isolate;
+    justify-content: center;
+    position: relative;
+}
+
+.starter-human-challenge-visual::before {
+    background-image:
+        linear-gradient(166deg, transparent 44%, rgba(100, 116, 139, .18) 44.5%, rgba(100, 116, 139, .18) 45%, transparent 45.5%),
+        linear-gradient(12deg, transparent 56%, rgba(148, 163, 184, .16) 56.5%, rgba(148, 163, 184, .16) 57%, transparent 57.5%),
+        linear-gradient(177deg, transparent 67%, rgba(100, 116, 139, .12) 67.5%, rgba(100, 116, 139, .12) 68%, transparent 68.5%);
+    content: '';
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 0;
+}
+
+.starter-human-challenge-visual > img {
+    max-width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
 /* Universal page-navigation loader. It is intentionally theme-neutral. */
 .starter-navigate-loader {
     align-items: center;

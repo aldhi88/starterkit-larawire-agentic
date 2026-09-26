@@ -5,6 +5,16 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.10] - 2026-09-26
+
+### Fixed
+
+- Fill the complete human-challenge visual row with a subtle security texture,
+  while keeping five slightly spaced digits centered and compact at desktop
+  and mobile widths across every supported theme.
+- Load the shared Starter stylesheet with cache-busting on the Tabler and Vuexy
+  authentication surfaces so shared login refinements apply immediately.
+
 ## [1.7.9] - 2026-09-26
 
 ### Fixed

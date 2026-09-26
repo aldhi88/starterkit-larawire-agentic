@@ -97,6 +97,8 @@ it('issues a five-digit non-repeating human challenge without exposing text digi
 
     expect($image)->toStartWith('data:image/svg+xml;base64,')
         ->and($svg)->toBeString()
+        ->toContain('viewBox="0 0 336 76"')
+        ->toContain('fill="transparent"')
         ->toContain('<rect')
         ->not->toContain('<text')
         ->and($challenge)->toBeArray()
@@ -104,14 +106,15 @@ it('issues a five-digit non-repeating human challenge without exposing text digi
         ->not->toHaveKey('code');
 });
 
-it('renders the human challenge at half size inside a full-width row in every theme', function (): void {
+it('renders a compact human challenge over a full-width security texture in every theme', function (): void {
     foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
         $login = file_get_contents(StarterPaths::path(
             "resources/themes/{$theme}/views/starter/auth/login.blade.php",
         ));
 
         expect($login)
-            ->toContain('width="143" height="38"')
+            ->toContain('starter-human-challenge-visual')
+            ->toContain('width="168" height="38"')
             ->not->toContain('width="286" height="76"')
             ->not->toContain('src="{{ $humanChallengeImage }}" class="d-block w-100"')
             ->not->toContain('src="{{ $humanChallengeImage }}" class="block w-full"');
@@ -120,10 +123,24 @@ it('renders the human challenge at half size inside a full-width row in every th
     $tabler = file_get_contents(StarterPaths::path('resources/themes/tabler/views/starter/auth/login.blade.php'));
     $vuexy = file_get_contents(StarterPaths::path('resources/themes/vuexy/views/starter/auth/login.blade.php'));
     $dashcode = file_get_contents(StarterPaths::path('resources/themes/dashcode/views/starter/auth/login.blade.php'));
+    $starterCss = file_get_contents(StarterPaths::path('public/assets/starter/css/starter.css'));
+    $tablerAuthLayout = file_get_contents(StarterPaths::path('resources/themes/tabler/views/starter/templates/layouts/auth.blade.php'));
+    $dashcodeAuthLayout = file_get_contents(StarterPaths::path('resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php'));
+    $vuexyHead = file_get_contents(StarterPaths::path('resources/themes/vuexy/views/starter/templates/layouts/head.blade.php'));
 
-    expect($tabler)->toContain('input-group-text flex-grow-1 justify-content-center')
-        ->and($vuexy)->toContain('input-group-text flex-grow-1 justify-content-center')
-        ->and($dashcode)->toContain('form-control min-w-0 flex-1 p-1');
+    expect($tabler)->toContain('input-group-text starter-human-challenge-visual flex-grow-1 justify-content-center')
+        ->and($vuexy)->toContain('input-group-text starter-human-challenge-visual flex-grow-1 justify-content-center')
+        ->and($dashcode)->toContain('form-control starter-human-challenge-visual min-w-0 flex-1 p-1')
+        ->and($starterCss)->toContain('display: flex;')
+        ->and($starterCss)->toContain('justify-content: center;')
+        ->and($starterCss)->toContain('.starter-human-challenge-visual::before')
+        ->and($starterCss)->toContain('.starter-human-challenge-visual > img')
+        ->and($tablerAuthLayout)->toContain("asset('assets/starter/css/starter.css')")
+        ->and($dashcodeAuthLayout)->toContain("asset('assets/starter/css/starter.css')")
+        ->and($vuexyHead)->toContain("asset('assets/starter/css/starter.css')")
+        ->and($tablerAuthLayout)->toContain("filemtime(public_path('assets/starter/css/starter.css'))")
+        ->and($dashcodeAuthLayout)->toContain("filemtime(public_path('assets/starter/css/starter.css'))")
+        ->and($vuexyHead)->toContain("filemtime(public_path('assets/starter/css/starter.css'))");
 });
 
 it('disables and clears the human challenge through its global switch', function (): void {
