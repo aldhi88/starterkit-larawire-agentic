@@ -6,7 +6,7 @@ runtime Starterkit. Detail per komponen/state tersedia pada
 
 | Capability | Reference Tabler | Runtime Starterkit |
 |---|---|---|
-| Shell vertical/horizontal dan navigation | `preview/pages/layout-vertical.html`, `preview/pages/layout-horizontal.html` | `resources/themes/tabler/views/starter/templates/layouts/` |
+| Shell vertical/horizontal dan navigation | `preview/pages/layout-vertical.html`, `preview/pages/layout-horizontal.html` | `resources/themes/tabler/views/starter/templates/layouts/`; desktop horizontal navigation wraps within available width while preserving brand and account actions; mobile uses native collapse |
 | Page header, card, statistic, avatar, status | `preview/pages/cards.html`, `preview/pages/profile.html` | direct title/description headers without decorative pretitles; native page, modal, card, subsection, body, label, and help tiers across profile, settings, user-management |
 | Authentication dan lock screen | `preview/pages/sign-in.html` | `resources/themes/tabler/views/starter/auth/` |
 | HTTP error dan empty state | `preview/pages/empty.html`, `preview/pages/error-404.html` | `resources/themes/tabler/views/starter/errors/` |

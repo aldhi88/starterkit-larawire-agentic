@@ -7,7 +7,7 @@ Only theme-neutral error forwarders and the session redirect are reused.
 
 | Runtime | Native reference |
 |---|---|
-| Application shell and navigation | `html-starter/vertical-menu-template-no-customizer/index.html`, corresponding horizontal starter; account/App menus use an explicit navbar overlay layer, while the horizontal company wordmark omits duplicated brand text and preserves Vuexy's native fixed-menu content offset |
+| Application shell and navigation | `html-starter/vertical-menu-template-no-customizer/index.html`, corresponding horizontal starter; account/App menus use an explicit navbar overlay layer, while the horizontal company wordmark omits duplicated brand text. The desktop menu wraps in normal document flow with sticky positioning; below 1200px it uses the native off-canvas shell with a scrollable vertical list. |
 | Authentication | `html/vertical-menu-template-no-customizer/auth-login-cover.html` |
 | Landing | `html/front-pages-no-customizer/landing-page.html` |
 | Forms and switches | `forms-basic-inputs.html`, `forms-switches.html` |

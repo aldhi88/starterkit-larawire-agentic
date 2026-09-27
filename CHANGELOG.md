@@ -5,6 +5,16 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.12] - 2026-09-27
+
+### Fixed
+
+- Keep high-count horizontal navigation inside the available shell width across
+  Tabler, DashCode, and Vuexy, including wrapped desktop rows and native mobile
+  drawers without content overlap or horizontal page overflow.
+- Refresh the exact theme runtime archives, checksums, manifests, and immutable
+  public archive references used by local installation and synchronization.
+
 ## [1.7.11] - 2026-09-27
 
 ### Added
