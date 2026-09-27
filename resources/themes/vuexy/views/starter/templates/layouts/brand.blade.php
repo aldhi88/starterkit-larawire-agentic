@@ -1,6 +1,6 @@
 @php($showText = $showText ?? true)
 <a href="{{ $url ?? route('landing') }}" class="app-brand-link" aria-label="{{ $brandLogoAlt ?? config('app.name') }}" @if ($navigate ?? true) data-starter-navigate @endif>
-    <span class="app-brand-logo">
+    <span class="app-brand-logo {{ ! empty($clientLogoUrl) ? 'starter-company-logo-frame' : '' }}">
         <img
             src="{{ $brandLogoUrl ?? asset('assets/vuexy/img/branding/vuexy-mark.svg') }}"
             alt=""

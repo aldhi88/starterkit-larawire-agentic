@@ -1,4 +1,4 @@
-<aside id="layout-menu" class="layout-menu menu-vertical menu" data-starter-navigation data-bs-theme="dark">
+<aside id="layout-menu" class="layout-menu menu-vertical menu" data-starter-navigation data-bs-theme="dark" data-starter-brand-surface="dark">
     <div class="app-brand">
         @include('starter.templates.layouts.brand', ['url' => $currentDashboardUrl])
         <button type="button" class="layout-menu-toggle menu-link text-large ms-auto d-xl-none" data-vuexy-menu-toggle aria-label="Tutup navigasi" aria-expanded="true">

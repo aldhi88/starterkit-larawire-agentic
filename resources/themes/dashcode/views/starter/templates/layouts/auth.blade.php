@@ -33,16 +33,8 @@
 
     <main class="loginwrapper">
         <div class="lg-inner-column">
-            <section class="left-column relative z-[1]" aria-label="Identitas aplikasi" data-starter-region="identity-panel">
-                <div class="starter-auth-intro max-w-[520px] pt-20 ltr:pl-20 rtl:pr-20">
-                    <h1 class="starter-auth-heading">
-                        Akses aplikasi perusahaan<br>
-                        <span class="font-bold">dengan aman.</span>
-                    </h1>
-                </div>
-                <div class="starter-auth-illustration absolute bottom-[-130px] left-0 z-[-1] h-full w-full 2xl:bottom-[-160px]">
-                    <img src="{{ asset('assets/dashcode/images/auth/ils1.svg') }}" class="h-full w-full object-contain" alt="" aria-hidden="true">
-                </div>
+            <section class="left-column starter-auth-backdrop-panel relative z-[1]" aria-label="Identitas aplikasi" data-starter-region="identity-panel">
+                @include('starter-shared::components.auth-backdrop')
             </section>
 
             <section class="right-column relative" data-starter-region="primary-content">

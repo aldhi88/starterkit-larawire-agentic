@@ -5,6 +5,18 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.11] - 2026-09-27
+
+### Added
+
+- Add one reusable full-bleed, system-themed backdrop for login and lock-screen
+  layouts across Tabler, DashCode, and Vuexy without product-specific imagery.
+
+### Changed
+
+- Frame custom company logos only on explicitly dark dashboard navigation
+  surfaces so the same uploaded logo remains legible on light and dark themes.
+
 ## [1.7.10] - 2026-09-26
 
 ### Fixed

@@ -1,11 +1,11 @@
-<header class="navbar navbar-expand-md navbar-overlap sticky-top d-print-none starter-navbar-horizontal starter-header-overlay-owner" data-bs-theme="dark">
+<header class="navbar navbar-expand-md navbar-overlap sticky-top d-print-none starter-navbar-horizontal starter-header-overlay-owner" data-bs-theme="dark" data-starter-brand-surface="dark">
     <div class="container-fluid starter-content-container">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#starter-horizontal-menu" aria-controls="starter-horizontal-menu" aria-expanded="false" aria-label="Buka atau tutup navigasi">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="navbar-brand navbar-brand-autodark me-2 me-md-3">
-            <a href="{{ $currentDashboardUrl }}" class="starter-sidebar-brand" aria-label="{{ $brandLogoAlt }}" data-starter-navigate>
+            <a href="{{ $currentDashboardUrl }}" class="starter-sidebar-brand {{ $clientLogoUrl ? 'starter-company-logo-frame' : '' }}" aria-label="{{ $brandLogoAlt }}" data-starter-navigate>
                 <img
                     src="{{ $brandLogoUrl }}"
                     class="starter-sidebar-brand-image starter-sidebar-brand-image-horizontal"

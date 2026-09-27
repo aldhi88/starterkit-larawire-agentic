@@ -63,6 +63,74 @@ it('uses the company logo throughout app auth and landing branding in every them
         ->and($vuexyAuth)->not->toContain("'clientLogoUrl' => null");
 });
 
+it('uses one cover-ready backdrop across every authentication layout', function (): void {
+    $component = file_get_contents(StarterPaths::path(
+        'resources/views/components/auth-backdrop.blade.php',
+    ));
+    $stylesheet = file_get_contents(StarterPaths::path(
+        'public/assets/starter/css/starter.css',
+    ));
+    $imagePath = StarterPaths::path(
+        'public/assets/starter/images/auth-backdrop-enterprise.webp',
+    );
+
+    expect($component)->toContain('data-starter-auth-backdrop')
+        ->and($stylesheet)
+        ->toContain("--starter-auth-backdrop-image: url('../images/auth-backdrop-enterprise.webp?v=2')")
+        ->toContain('.starter-auth-backdrop')
+        ->toContain('background-size: cover')
+        ->and(is_file($imagePath))->toBeTrue();
+
+    $image = getimagesize($imagePath);
+
+    expect($image)->not->toBeFalse()
+        ->and($image[0])->toBe(1536)
+        ->and($image[1])->toBe(1024)
+        ->and($image['mime'])->toBe('image/webp');
+
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $auth = file_get_contents(StarterPaths::path(
+            "resources/themes/{$theme}/views/starter/templates/layouts/auth.blade.php",
+        ));
+
+        expect($auth)
+            ->toContain('starter-auth-backdrop-panel')
+            ->toContain("@include('starter-shared::components.auth-backdrop')")
+            ->not->toContain('auth-illustration-title')
+            ->not->toContain('assets/dashcode/images/auth/ils1.svg')
+            ->not->toContain('auth-login-illustration-light.png');
+    }
+});
+
+it('frames custom company logos only on marked dark navigation surfaces', function (): void {
+    $stylesheet = file_get_contents(StarterPaths::path(
+        'public/assets/starter/css/starter.css',
+    ));
+
+    foreach (['vertical', 'horizontal'] as $layout) {
+        $navigation = file_get_contents(StarterPaths::path(
+            "resources/themes/tabler/views/starter/templates/layouts/navigation/{$layout}.blade.php",
+        ));
+
+        expect($navigation)
+            ->toContain('data-starter-brand-surface="dark"')
+            ->toContain("\$clientLogoUrl ? 'starter-company-logo-frame' : ''");
+    }
+
+    $vuexyNavigation = file_get_contents(StarterPaths::path(
+        'resources/themes/vuexy/views/starter/templates/layouts/navigation/vertical.blade.php',
+    ));
+    $vuexyBrand = file_get_contents(StarterPaths::path(
+        'resources/themes/vuexy/views/starter/templates/layouts/brand.blade.php',
+    ));
+
+    expect($vuexyNavigation)->toContain('data-starter-brand-surface="dark"')
+        ->and($vuexyBrand)->toContain('starter-company-logo-frame')
+        ->and($stylesheet)
+        ->toContain('[data-starter-brand-surface="dark"] .starter-company-logo-frame')
+        ->toContain('background: rgba(255, 255, 255, .96)');
+});
+
 it('sizes auth company logos against each native theme brand footprint', function (): void {
     $expectations = [
         'tabler' => ['height: 3.25rem', 'margin-inline: auto', 'max-width: 12rem'],
