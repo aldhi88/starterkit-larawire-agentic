@@ -18,7 +18,7 @@ may share data and actions, but they must not share presentation structure.
 | Tabs and accordion | `tab-accordion.html`, `settings.html` | responsive section navigation and access accordion | settings, profile, role form | active, inactive, open, closed |
 | Alert, toast, and modal | `alert.html`, `modal.html` | semantic feedback, proportionate modal/section title tiers, overlay dialog, focus trap, recovery action | `templates/components/*`, activity detail | success, info, warning, danger, validation, long technical metadata |
 | Badge and empty state | `badges.html`, `placeholder.html`, `404.html` | soft status badge and explained empty state | tables, details, errors | semantic status, long text, safe return |
-| PowerGrid table | `advance-table.html` | DashCode header/cell density, toolbar, filters, three-dot icon-labelled action dropdown, local overflow, pagination | `powergrid/*`, all PowerGrid views | search, sort, filters, selection, bulk action, action hover/focus, overflow |
+| PowerGrid table | `advance-table.html` | DashCode header/cell density, toolbar, filters, first `Aksi` column with one vertical three-dot trigger (`aria-label="Aksi"`) per row and a labelled dropdown even for one item; no direct row button; portaled menu avoids scroll clipping | `powergrid/*`, `user-management/powergrid/*-row-actions.blade.php`, `logs/powergrid/logs-row-actions.blade.php` | search, sort, filters, selection, bulk action, action hover/focus, overflow, Livewire update |
 
 Any new runtime component must be added here before the theme is complete. Use
 `template.md` as the discovery index and inspect the cited vendor HTML before

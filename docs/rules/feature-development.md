@@ -1,16 +1,24 @@
 # Feature Development Workflow
 
-## Required gates
+## Choose the execution mode
 
-For every feature, behavioral change, bug fix, maintenance behavior change, or security patch that changes code:
+For a feature, behavioral change, bug fix, maintenance behavior change, or security patch in a derived Laravel host, use the developer's intended mode:
+
+- **Direct execution:** A request to implement, fix, add, or work now authorizes source discovery, code changes, and proportionate verification. Do not create an `issues/*.md` file or demand checklist, specification, file, or execution approval merely because code will change. Ask only for genuinely missing material decisions; do not turn that clarification into an automatic specification workflow.
+- **Technical specification:** An explicit request to prepare an issue, technical document, implementation specification, review artifact, or handoff uses the steps below. Do not implement production code until the developer later authorizes execution.
+- **Unclear mode:** If the wording and prior context genuinely leave both modes plausible, ask in the developer's language: "Do you want me to implement this now, or prepare a technical specification in `issues/` for review first?" Continue only read-only discovery while awaiting the answer. Do not infer specification mode from the existence of this rule, and do not ask when an implementation or documentation request is already clear.
+
+Read-only diagnosis/status/consultation and ordinary documentation-only work do not create an issue automatically. The chosen mode never relaxes authorization, security, architecture, data-integrity, or testing requirements.
+
+## Technical specification workflow
 
 1. Perform evidence-based read-only discovery, then give a concise chat confirmation that acts as a complete request-receipt checklist. Restate every requested outcome, user-visible behavior, constraint, explicit exclusion, affected business flow/data/role, and expected result—including small, clear, or low-risk items. Keep this at requirement level, not technical implementation-plan level. Give each independently verifiable request its own numbered checklist item; group items only when traceability is preserved. Separate source-proven current behavior from requested changes and list ambiguities/material decisions separately. End by asking the developer to confirm that the checklist covers the complete request.
 2. Do not create a planning/issue file from the initial request alone. Only after the developer explicitly confirms the chat checklist, convert every numbered item into one detailed technical specification: `issues/<YYYY_MM_DD_HHMMSS>_feature_<slug>.md` or `issues/<YYYY_MM_DD_HHMMSS>_bug_<slug>.md`. Preserve one-to-one traceability from each confirmed request item to technical requirements and acceptance criteria; do not silently omit, merge, weaken, expand, or reinterpret any item. The timestamp must be the filename prefix so lexicographic filename order is chronological, uses developer/project local time, and is never changed during the issue lifecycle. Do not overwrite an issue.
 3. Tell the developer it is ready for review and wait for explicit file approval before changing implementation code.
-4. Implement only the approved scope. If a material conflict/decision appears, stop that part, update confirmation/specification after approval, then continue.
+4. After the developer explicitly authorizes execution, implement only the approved scope. If a material conflict/decision appears, stop that part, update confirmation/specification after approval, then continue.
 5. After every criterion and verification passes, move—not copy—the same file to `issues/archives/<YYYY_MM_DD_HHMMSS>_done_feature_<slug>.md` or `issues/archives/<YYYY_MM_DD_HHMMSS>_done_bug_<slug>.md` in the implementation commit. Preserve the issue's original timestamp prefix; insert only `done_` between the timestamp and type. Never archive partial, failed, canceled, or undecided work.
 
-Read-only diagnosis/status/consultation and documentation-only work do not create an issue automatically. Do not make duplicate planning files.
+Do not make duplicate planning files. If the developer switches from specification to direct execution, follow the latest explicit instruction; do not treat an unapproved draft as an approved contract or create/archive an issue solely to permit implementation.
 
 ## Artifact language gate
 
@@ -22,7 +30,7 @@ This is a hard pre-review gate for every persisted internal plan, implementation
 - Immediately before saving or presenting the artifact for approval, inspect the entire file for language compliance. Any Indonesian or mixed-language narrative outside the allowed literals makes the artifact invalid; rewrite it before reporting that the file is ready. Never ask the developer to translate it or approve it as an exception merely because the discussion used Indonesian.
 - When materially revising an existing artifact, the complete resulting file—not only the new section—must pass this gate. English planning output optimizes tokens through compact structure and non-repetition, never through missing technical constraints.
 
-Use this confirmation shape before creating an issue; populate it with evidence, label unknowns, and do not write an issue while material answers are missing:
+In technical specification mode, use this confirmation shape before creating an issue; populate it with evidence, label unknowns, and do not write an issue while material answers are missing:
 
 ```text
 Type: Feature | Behavior change | Bug
@@ -44,11 +52,11 @@ Confirmation request: Confirm that every requested item is represented above bef
 
 The specification is a deterministic execution contract for a lower-cost coding LLM, not a human-oriented tutorial. It must be self-contained enough that the implementing model does not infer architecture, invent source facts, or choose among material alternatives. Distinguish confirmed requirements, source-proven findings, approved decisions, and explicitly rejected scope. Use direct normative statements and compact tables/lists; remove greetings, narrative repetition, teaching prose, duplicated general rules, and speculative commentary.
 
-Before approval, resolve every material open decision; no `TBD`, ambiguous option, "as appropriate", "follow best practices", or instruction to decide during implementation may remain. Bind every existing route/table/class/method/config key/view/component/icon to inspected source evidence. For each touched behavior, specify when relevant: exact owning path and symbol; files to create/modify; method signatures and layer ownership; schema types/nullability/defaults/relations/constraints/indexes/backfill/compatibility; route names/middleware/domain; authorization matrix; input normalization and validation; transactions/concurrency/idempotency/audit; exact UI labels, active-theme reference, exact approved icon key, states and responsive behavior; PowerGrid columns/filter types/full-width controls/column sizing/state persistence/actions; API request/response/error contract; query/performance limits; ordered implementation steps; focused and regression tests with exact assertions; verification commands; objective acceptance criteria; rollout/rollback; and forbidden out-of-scope changes. Include literal code only when a signature, payload, schema, or algorithm cannot otherwise be made deterministic. No production implementation appears during specification stage.
+Before approval, resolve every material open decision; no `TBD`, ambiguous option, "as appropriate", "follow best practices", or instruction to decide during implementation may remain. Bind every existing route/table/class/method/config key/view/component/icon to inspected source evidence. For each touched behavior, specify when relevant: exact owning path and symbol; files to create/modify; method signatures and layer ownership; schema types/nullability/defaults/relations/constraints/indexes/backfill/compatibility; route names/middleware/domain; authorization matrix; input normalization and validation; transactions/concurrency/idempotency/audit; exact UI labels, active-theme reference, exact approved icon key, states and responsive behavior; PowerGrid columns/filter types/full-width controls/column sizing/state persistence and the mandatory first-column `Aksi` three-dot row-action dropdown; API request/response/error contract; query/performance limits; ordered implementation steps; focused and regression tests with exact assertions; verification commands; objective acceptance criteria; rollout/rollback; and forbidden out-of-scope changes. Include literal code only when a signature, payload, schema, or algorithm cannot otherwise be made deterministic. No production implementation appears during specification stage.
 
 ## New-module boundary
 
-Before confirmation/specification/code, the developer must state: owning App/subdomain, module name/code, single vs parent/child menu structure, every menu label in order, and landing page. If API is needed, they must also state consumer, authentication, authorization, required endpoints/operations, and browser CORS need. Do not infer these. Reply briefly with the missing data and a correct prompt pattern.
+Before specifying or implementing a new module, the developer must state: owning App/subdomain, module name/code, single vs parent/child menu structure, every menu label in order, and landing page. If API is needed, they must also state consumer, authentication, authorization, required endpoints/operations, and browser CORS need. Do not infer these. Reply briefly with the missing data and a correct prompt pattern.
 
 Example single menu:
 

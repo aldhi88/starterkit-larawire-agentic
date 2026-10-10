@@ -5,6 +5,17 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.14] - 2026-10-10
+
+### Changed
+
+- Let explicit developer intent choose direct implementation or the technical
+  specification workflow for derived-host work, without weakening security,
+  architecture, authorization, or verification requirements.
+- Standardize every canonical PowerGrid row-action trigger and contract around
+  the first `Aksi` column, one accessible vertical three-dot menu per row, and
+  labelled dropdown items even when only one action is available.
+
 ## [1.7.13] - 2026-10-10
 
 ### Added

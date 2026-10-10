@@ -14,6 +14,9 @@ canonical Composer package `aldhi88/starterkit-larawire-agentic`.
   maintenance repository canonical starterkit.
 - Permintaan developer yang secara eksplisit mengubah rule starterkit sudah
   menjadi konfirmasi perubahan rule; jangan meminta konfirmasi duplikat.
+- Jika developer secara eksplisit meminta dokumen teknis core untuk ditinjau,
+  kerjakan dokumen pada lokasi yang diminta dan tunggu instruksi implementasi;
+  jangan otomatis membuat issue feature/bug milik Laravel host.
 - Tetap minta keputusan hanya jika terdapat pilihan bisnis, authorization,
   data, atau scope material yang benar-benar belum ditentukan dan tidak dapat
   dibuktikan dari source.
@@ -23,8 +26,10 @@ canonical Composer package `aldhi88/starterkit-larawire-agentic`.
 - Pengecualian ini hanya untuk perubahan core universal di repository
   canonical starterkit.
 - Ketika starterkit dipakai untuk mengembangkan feature atau memperbaiki bug
-  aplikasi Laravel turunannya, prosedur confirmation → `issues/*.md` → approval
-  → implementation pada `feature-development.md` tetap wajib.
+  aplikasi Laravel turunannya, ikuti mode yang diminta developer pada
+  `feature-development.md`: eksekusi langsung atau spesifikasi teknis untuk
+  ditinjau. Jika maksudnya benar-benar ambigu, tanyakan pilihannya sebelum
+  membuat file issue atau mengubah kode.
 - Feature project tidak boleh disamarkan sebagai core improvement untuk
   melewati prosedur aplikasi turunan.
 

@@ -30,6 +30,10 @@ offset. Native Vuexy dropdown markup is used;
 menu coordinates are measured dynamically to avoid viewport and scroll-frame
 clipping. A narrow typography bridge prevents semantic `h2`/`h3` markup from
 inheriting Vuexy display-scale headings inside application pages and modals.
+The first PowerGrid data-adjacent column is `Aksi`: each row has one native
+vertical three-dot trigger named `Aksi` and a portaled, labelled-item dropdown,
+including for a single item. Direct row buttons are not used; verify the menu
+after Livewire updates.
 Colors, spacing, surfaces, and controls remain native Vuexy. Cosmetic
 selection uses Vuexy's native label badges, line tabs, bordered controls, soft
 alerts, and three-zone pagination after comparing the nearest vendor variants.

@@ -868,7 +868,7 @@ it('contains wide PowerGrid content inside the Dashcode table frame', function (
         ->toContain('dashcode-table-dropdown dashcode-row-dropdown')
         ->toContain("['name' => 'users', 'class' => 'dashcode-table-dropdown-icon']")
         ->toContain("['name' => 'shield-lock', 'class' => 'dashcode-table-dropdown-icon']")
-        ->and(substr_count($rowActions, 'aria-label="Buka menu aksi"'))->toBe(3)
+        ->and(substr_count($rowActions, 'aria-label="Aksi"'))->toBe(3)
         ->and(substr_count($rowActions, 'aria-haspopup="menu"'))->toBe(3)
         ->and(substr_count($rowActions, 'x-ref="menu"'))->toBe(3)
         ->and($rowActions)
@@ -910,6 +910,46 @@ it('contains wide PowerGrid content inside the Dashcode table frame', function (
             ->not->toContain('.table-checkbox {')
             ->not->toContain('.form-control,');
     }
+});
+
+it('keeps every canonical PowerGrid row action behind a first-column three-dot menu', function (): void {
+    $tables = [
+        'src/Livewire/Starter/UserManagement/UsersTable.php',
+        'src/Livewire/Starter/UserManagement/RolesTable.php',
+        'src/Livewire/Starter/Logs/ActivityLogsTable.php',
+    ];
+
+    foreach ($tables as $path) {
+        $source = file_get_contents(StarterPaths::path($path));
+
+        expect($source)
+            ->toMatch('/function columns\(\): array\s*\{\s*return \[\s*Column::action\(\'Aksi\'\)/')
+            ->toContain('function actionsFromView(')
+            ->not->toContain('Button::add(');
+    }
+
+    foreach (['vuexy', 'dashcode', 'tabler'] as $theme) {
+        foreach ([
+            'user-management/powergrid/users-row-actions.blade.php',
+            'user-management/powergrid/roles-row-actions.blade.php',
+            'logs/powergrid/logs-row-actions.blade.php',
+        ] as $viewPath) {
+            $view = file_get_contents(StarterPaths::path("resources/themes/{$theme}/views/starter/{$viewPath}"));
+
+            expect(substr_count($view, 'aria-label="Aksi"'))->toBe(1)
+                ->and(substr_count($view, "'name' => 'dots-vertical'"))->toBe(1)
+                ->and(substr_count($view, '<template x-teleport="body">'))->toBe(1)
+                ->and($view)->toContain('dropdown')->not->toContain('Button::add(');
+        }
+    }
+
+    $rules = file_get_contents(StarterPaths::path('docs/rules/ui-ux.md'));
+
+    expect($rules)
+        ->toContain("Column::action('Aksi')` first in every PowerGrid")
+        ->toContain('even when the row has only one permitted item')
+        ->toContain('`Button::add()` must not produce row actions')
+        ->toContain('after Livewire morph, filtering, pagination, and navigation');
 });
 
 it('keeps Dashcode company sections and numeric suffix controls in native component structure', function (): void {
@@ -1177,6 +1217,29 @@ it('keeps issue specifications chronologically sortable throughout their lifecyc
         ->toContain('insert only `done_` between the timestamp and type')
         ->not->toContain('issues/feature_<slug>_<YYYY_MM_DD_HHMMSS>.md')
         ->not->toContain('issues/archives/done_<original-name>.md');
+});
+
+it('lets developer intent choose direct work or a technical issue before code changes', function (): void {
+    $agents = file_get_contents(StarterPaths::path('AGENTS.md'));
+    $workflow = file_get_contents(StarterPaths::path('docs/rules/feature-development.md'));
+    $maintenance = file_get_contents(StarterPaths::path('docs/rules/core-maintenance.md'));
+    $testing = file_get_contents(StarterPaths::path('docs/rules/testing.md'));
+
+    expect($agents)
+        ->toContain('An instruction to implement, fix, or work now means execute directly')
+        ->toContain('If the intended mode remains genuinely unclear')
+        ->toContain('do not assume the specification mode')
+        ->and($workflow)
+        ->toContain('## Choose the execution mode')
+        ->toContain('**Direct execution:**')
+        ->toContain('**Technical specification:**')
+        ->toContain('**Unclear mode:**')
+        ->toContain('Do you want me to implement this now, or prepare a technical specification in `issues/` for review first?')
+        ->toContain('Do not create an `issues/*.md` file or demand checklist')
+        ->and($maintenance)
+        ->toContain('eksekusi langsung atau spesifikasi teknis untuk')
+        ->and($testing)
+        ->toContain('Direct-execution work requires no issue file or archive.');
 });
 
 it('keeps planning deterministic for LLM execution and table navigation semantics explicit', function (): void {

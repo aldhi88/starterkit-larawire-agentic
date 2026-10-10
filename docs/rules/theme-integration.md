@@ -382,6 +382,13 @@ alignment, and responsive behavior remain equivalent. Unrecorded deviations fail
 - PowerGrid memakai adapter theme sendiri. Semua filter, sort, selection, bulk
   action, horizontal scroll, per-page, record count, dan pagination atas/bawah
   harus berfungsi dan menggunakan komponen native theme.
+- Pada setiap PowerGrid, `Column::action('Aksi')` berada pertama sebelum kolom
+  data. Setiap baris memakai satu pemicu ikon tiga titik vertikal bernama
+  aksesibel `Aksi` yang membuka dropdown item berlabel, termasuk bila hanya
+  ada satu item. Jangan gunakan tombol aksi baris langsung atau `Button::add()`;
+  pakai komponen theme aktif dan pastikan dropdown tidak terpotong scroll tabel
+  serta tetap berfungsi setelah Livewire morph/navigasi. Aturan bulk action
+  tidak berubah.
 - Untuk PowerGrid, jangan memakai `table-layout: fixed` atau pembagian kolom sama
   rata untuk menyembunyikan masalah ukuran. Jika kolom mempunyai filter, wrapper
   filter memberi kebutuhan lebar intrinsik/practical minimum lalu control mengisi

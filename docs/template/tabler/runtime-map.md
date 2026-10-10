@@ -14,7 +14,7 @@ runtime Starterkit. Detail per komponen/state tersedia pada
 | Tabs, accordion, dropdown | `preview/pages/tabs.html`, `preview/pages/dropdowns.html` | settings, role form, account/App menus owned by the header overlay layer |
 | Alert, toast, modal, confirmation | `preview/pages/alerts.html`, `preview/pages/modals.html` | proportionate native modal/section titles in `resources/themes/tabler/views/starter/templates/components/` and activity detail |
 | Activity log | table, form/filter, dan feedback references | `resources/themes/tabler/views/starter/logs/` |
-| PowerGrid lengkap | `preview/pages/datatables.html`, `preview/pages/pagination.html`, `preview/pages/form-elements.html` | `resources/themes/tabler/views/starter/powergrid/` dan toolbar per fitur |
+| PowerGrid lengkap | `preview/pages/datatables.html`, `preview/pages/pagination.html`, `preview/pages/form-elements.html` | `resources/themes/tabler/views/starter/powergrid/`, toolbar per fitur, dan view `*-row-actions.blade.php`; kolom `Aksi` pertama memakai satu pemicu tiga titik vertikal bernama `Aksi` per baris, dropdown berlabel tetap ada untuk satu item, menu portal tidak terpotong scroll, dan tetap berfungsi setelah Livewire update; tanpa tombol baris langsung |
 
 Kedua layout wajib tersedia. Kontrak shared boleh memakai `data-starter-*`,
 event Livewire, data PHP, dan state Alpine. Struktur visual, styling, adapter

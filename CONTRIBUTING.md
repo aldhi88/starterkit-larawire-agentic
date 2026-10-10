@@ -2,8 +2,10 @@
 
 Thank you for helping improve Starterkit Larawire Agentic.
 
-1. Open an issue for a material behavior, compatibility, security, command, or
-   architecture change before implementation.
+1. For unsolicited external contributions, open an issue for a material
+   behavior, compatibility, security, command, or architecture change before
+   implementation. Developer-directed AI work follows the execution mode in
+   `AGENTS.md`.
 2. Keep changes focused and preserve the package/host boundary. Do not commit a
    Laravel host, `.env`, credentials, databases, generated caches, premium
    template source, or unrelated assets.

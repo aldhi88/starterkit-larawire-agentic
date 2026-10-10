@@ -11,7 +11,7 @@
                     : Math.max(8, rect.top - menu.offsetHeight - 4);
             });
         }
-    " aria-label="Buka menu aksi" aria-haspopup="menu" :aria-expanded="open.toString()">
+    " aria-label="Aksi" aria-haspopup="menu" :aria-expanded="open.toString()">
         @include('starter.templates.layouts.icon', ['name' => 'dots-vertical'])
     </button>
     <template x-teleport="body">
