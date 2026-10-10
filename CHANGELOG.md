@@ -5,6 +5,21 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.15] - 2026-10-11
+
+### Changed
+
+- Map branded primary and secondary button variants, including interactive and
+  disabled states, while preserving every other semantic theme color.
+- Refresh the Vuexy runtime archive and immutable checksums for the updated
+  integration stylesheet.
+
+### Fixed
+
+- Keep the authentication loader visible through a successful Livewire login
+  redirect, clear it after failed requests, and reset stale state on browser
+  back-forward cache restoration across all supported themes.
+
 ## [1.7.14] - 2026-10-10
 
 ### Changed

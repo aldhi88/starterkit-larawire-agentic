@@ -27,6 +27,9 @@ html[data-starter-brand] .btn-primary {
     --bs-btn-active-color: var(--starter-brand-primary-contrast);
     --bs-btn-active-bg: var(--starter-brand-primary-hover);
     --bs-btn-active-border-color: var(--starter-brand-primary-hover);
+    --bs-btn-disabled-color: var(--starter-brand-primary-contrast);
+    --bs-btn-disabled-bg: var(--starter-brand-primary);
+    --bs-btn-disabled-border-color: var(--starter-brand-primary);
     --bs-btn-focus-shadow-rgb: var(--starter-brand-accent-rgb);
 }
 html[data-starter-brand] .btn-secondary {
@@ -36,6 +39,13 @@ html[data-starter-brand] .btn-secondary {
     --bs-btn-hover-color: var(--starter-brand-secondary-contrast);
     --bs-btn-hover-bg: var(--starter-brand-secondary-hover);
     --bs-btn-hover-border-color: var(--starter-brand-secondary-hover);
+    --bs-btn-active-color: var(--starter-brand-secondary-contrast);
+    --bs-btn-active-bg: var(--starter-brand-secondary-hover);
+    --bs-btn-active-border-color: var(--starter-brand-secondary-hover);
+    --bs-btn-disabled-color: var(--starter-brand-secondary-contrast);
+    --bs-btn-disabled-bg: var(--starter-brand-secondary);
+    --bs-btn-disabled-border-color: var(--starter-brand-secondary);
+    --bs-btn-focus-shadow-rgb: var(--starter-brand-accent-rgb);
 }
 html[data-starter-brand] :is(.btn-label-primary, .btn-outline-primary, .btn-text-primary) {
     --bs-btn-color: var(--starter-brand-primary-text);
@@ -51,8 +61,10 @@ html[data-starter-brand] .layout-menu { --bs-menu-active-color: var(--starter-br
 html[data-starter-brand] .menu-horizontal .menu-item.active > .menu-link:not(.menu-toggle) { color: var(--starter-brand-primary-text); }
 html[data-starter-brand] .form-check-input:checked[type="checkbox"] { --bs-form-check-bg-image: var(--starter-brand-primary-check-svg); }
 html[data-starter-brand] .form-check-input:checked[type="radio"] { --bs-form-check-bg-image: var(--starter-brand-primary-radio-svg); }
-html[data-starter-brand] :is(.btn, .form-control, .form-select):not(.is-invalid):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
-html[data-starter-brand] :is(.form-control, .form-select):not(.is-invalid):focus { border-color: var(--starter-brand-accent-text); }
+html[data-starter-brand] :is(.btn-primary, .btn-secondary, .btn-label-primary, .btn-label-secondary, .btn-outline-primary, .btn-outline-secondary, .btn-text-primary, .btn-text-secondary):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
+html[data-starter-brand] :is(.form-control, .form-select):not(.is-invalid):focus { border-color: var(--starter-brand-accent-text); box-shadow: 0 0 0 1px rgba(var(--starter-brand-accent-rgb), .12); }
+html[data-starter-brand] .input-group-flat:focus-within { box-shadow: 0 0 0 1px rgba(var(--starter-brand-accent-rgb), .12); }
+html[data-starter-brand] .input-group-flat:focus-within > :is(.form-control, .input-group-text) { border-color: var(--starter-brand-accent-text); box-shadow: none; }
 html[data-starter-brand] .vuexy-landing-page > .page { background: radial-gradient(circle at 75% 20%, rgba(var(--starter-brand-accent-rgb), .16), transparent 34%), var(--bs-body-bg) !important; }
 
 html[data-starter-brand][data-bs-theme="dark"] {

@@ -190,6 +190,10 @@ Each theme maps the palette in its own `resources/themes/<theme>/brand-palette.c
 The overlay uses the active theme's native variables and components without
 changing vendor CSS or `runtime/css/<theme>.css`. Add a file at the same path
 when integrating another theme.
+Primary buttons use the primary brand color and secondary buttons use the
+secondary brand color, including their interaction states. Danger, warning,
+default, light, dark, and other semantic variants retain the theme's native
+colors.
 
 The `starter:install` wizard asks for Tabler, DashCode, or Vuexy and a layout.
 Open-source themes use a pinned GitHub archive; the installer verifies its size

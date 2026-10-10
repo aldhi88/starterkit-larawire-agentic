@@ -23,7 +23,7 @@
     @livewireStyles
 </head>
 
-<body class="bg-body-tertiary">
+<body class="bg-body-tertiary" data-starter-auth-shell>
     <script src="{{ asset('assets/tabler/dist/js/tabler-theme.min.js') }}?v={{ filemtime(public_path('assets/tabler/dist/js/tabler-theme.min.js')) }}"></script>
     @include('starter.templates.components.toast')
 

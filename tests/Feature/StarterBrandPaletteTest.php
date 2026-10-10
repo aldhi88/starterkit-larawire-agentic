@@ -60,6 +60,31 @@ it('serves only the active template palette from a separate tracked CSS file', f
     expect(array_unique($fingerprints))->toHaveCount(3);
 });
 
+it('maps branded primary and secondary buttons without recoloring other button variants', function (): void {
+    $contract = json_decode(
+        (string) file_get_contents(StarterPaths::path('docs/rules/theme-package-contract.json')),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    )['native_css_policy'];
+
+    expect($contract['brand_palette_required_per_theme'])->toBeTrue()
+        ->and($contract['brand_primary_button_maps_to_primary'])->toBeTrue()
+        ->and($contract['brand_secondary_button_maps_to_secondary'])->toBeTrue()
+        ->and($contract['other_semantic_button_colors_remain_native'])->toBeTrue();
+
+    foreach (['vuexy', 'dashcode', 'tabler'] as $theme) {
+        $adapter = (string) file_get_contents(StarterPaths::path("resources/themes/{$theme}/brand-palette.css"));
+
+        expect($adapter)
+            ->toContain('html[data-starter-brand] .btn-primary')
+            ->toContain('html[data-starter-brand] .btn-secondary')
+            ->toContain('var(--starter-brand-primary)')
+            ->toContain('var(--starter-brand-secondary)')
+            ->not->toMatch('/\\.btn-(?:danger|warning|light|dark|success|info)\\b/')
+            ->not->toContain('html[data-starter-brand] .btn:focus-visible');
+    }
+});
+
 it('keeps pages usable and fails synchronization when brand values are incomplete or invalid', function (): void {
     $assets = Mockery::mock(StarterAssetPublisher::class);
     $validator = new StarterSecurityValidator($assets);

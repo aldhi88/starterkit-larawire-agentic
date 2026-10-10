@@ -22,7 +22,7 @@
     @livewireStyles
 </head>
 
-<body class="font-inter skin-default dashcode-auth" data-starter-theme="dashcode">
+<body class="font-inter skin-default dashcode-auth" data-starter-theme="dashcode" data-starter-auth-shell>
     @include('starter.templates.components.toast')
 
     <div class="starter-livewire-loader" data-starter-livewire-loader aria-label="Memproses permintaan" aria-hidden="true" role="status">

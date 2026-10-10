@@ -312,11 +312,24 @@ alignment, and responsive behavior remain equivalent. Unrecorded deviations fail
   idempotent. Tambahkan custom rule hanya bila struktur HTML dan class native
   yang benar telah terbukti tidak mencukupi; rule harus scoped, theme-owned,
   minimal, dan memiliki regression test.
-- Pengecualian khusus warna brand developer: sediakan
-  `resources/themes/<theme-key>/brand-palette.css` terpisah. Route stylesheet
-  brand memuat hanya adapter theme aktif setelah vendor dan CSS integrasi,
-  serta hanya ketika ketiga warna brand dikonfigurasi. Jangan masukkan rule
-  penggantian palette ke CSS vendor atau `runtime/css/<theme-key>.css`.
+- Setiap theme wajib menyediakan `resources/themes/<theme-key>/brand-palette.css`
+  terpisah. Route stylesheet brand memuat hanya adapter theme aktif setelah
+  vendor dan CSS integrasi, serta hanya ketika ketiga warna brand dikonfigurasi.
+  Jangan masukkan rule penggantian palette ke CSS vendor atau
+  `runtime/css/<theme-key>.css`.
+- Di adapter itu, petakan tombol solid `primary` ke brand primary dan tombol
+  solid `secondary` ke brand secondary memakai token/selector native theme.
+  Lengkapi background, border, teks kontras, hover, active, focus, dan disabled;
+  variant outline/ghost/label/text untuk kedua semantic color tersebut juga
+  mengikuti palette bila tersedia. Accent boleh dipakai untuk fokus dan
+  sorotan kontrol yang berwarna brand, bukan aturan fokus untuk seluruh tombol.
+  Tombol danger, warning, default, light, dark, success, info, dan semantic
+  lain mempertahankan warna serta state asli theme; jangan memetakan class
+  non-primary/non-secondary (misalnya tombol `dark` pada form login) ke brand.
+  Saat one-shot integration, bandingkan halaman dengan ketiga warna kosong dan
+  terisi, termasuk state tombol dan light/dark surface yang disediakan theme.
+  Integrasi belum selesai bila primary/secondary belum mengikuti warna brand
+  atau variant semantic lain ikut berubah.
 - Pertahankan semantic region tanpa wrapper universal. Placeholder konten App
   harus polos. Jangan menambahkan outer card putih, dashboard decoration, icon
   redundan, atau wrapper padding bila reference theme dan tujuan region tidak

@@ -22,15 +22,35 @@ html[data-starter-brand] {
     --tblr-link-color-rgb: var(--starter-brand-primary-text-rgb);
     --tblr-link-hover-color: var(--starter-brand-primary-text);
     --tblr-link-hover-color-rgb: var(--starter-brand-primary-text-rgb);
-    --tblr-focus-ring-color: rgba(var(--starter-brand-accent-rgb), .3);
 }
+html[data-starter-brand] .btn-primary {
+    --tblr-btn-color: var(--starter-brand-primary-contrast);
+    --tblr-btn-bg: var(--starter-brand-primary);
+    --tblr-btn-hover-color: var(--starter-brand-primary-contrast);
+    --tblr-btn-hover-bg: var(--starter-brand-primary-hover);
+    --tblr-btn-active-color: var(--starter-brand-primary-contrast);
+    --tblr-btn-active-bg: var(--starter-brand-primary-hover);
+    --tblr-btn-disabled-color: var(--starter-brand-primary-contrast);
+    --tblr-btn-disabled-bg: var(--starter-brand-primary);
+}
+html[data-starter-brand] .btn-secondary {
+    --tblr-btn-color: var(--starter-brand-secondary-contrast);
+    --tblr-btn-bg: var(--starter-brand-secondary);
+    --tblr-btn-hover-color: var(--starter-brand-secondary-contrast);
+    --tblr-btn-hover-bg: var(--starter-brand-secondary-hover);
+    --tblr-btn-active-color: var(--starter-brand-secondary-contrast);
+    --tblr-btn-active-bg: var(--starter-brand-secondary-hover);
+    --tblr-btn-disabled-color: var(--starter-brand-secondary-contrast);
+    --tblr-btn-disabled-bg: var(--starter-brand-secondary);
+}
+html[data-starter-brand] :is(.btn-primary, .btn-secondary, .btn-outline-primary, .btn-outline-secondary, .btn-ghost-primary, .btn-ghost-secondary):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
 html[data-starter-brand] .btn-outline-primary,
 html[data-starter-brand] .btn-ghost-primary { --tblr-btn-color: var(--starter-brand-primary-text); }
 html[data-starter-brand] .text-primary { color: var(--starter-brand-primary-text) !important; }
 html[data-starter-brand] .text-secondary { color: var(--tblr-secondary-color) !important; }
 html[data-starter-brand] .form-check-input:checked[type="checkbox"] { --tblr-form-check-bg-image: var(--starter-brand-primary-check-svg); }
 html[data-starter-brand] .form-check-input:checked[type="radio"] { --tblr-form-check-bg-image: var(--starter-brand-primary-radio-svg); }
-html[data-starter-brand] :is(.btn, .form-select, .form-control):not(.is-invalid):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
+html[data-starter-brand] :is(.form-select, .form-control):not(.is-invalid):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
 html[data-starter-brand] :is(.form-select, .form-control):not(.is-invalid):focus { border-color: var(--starter-brand-accent-text); box-shadow: 0 0 0 .25rem rgba(var(--starter-brand-accent-rgb), .25); }
 html[data-starter-brand] .starter-auth-mark { box-shadow: 0 .35rem 1rem rgba(var(--starter-brand-accent-rgb), .18); }
 

@@ -194,6 +194,9 @@ Pemetaan warna tiap template berada dalam file terpisah:
 tersebut ke variabel dan komponen asli template aktif; stylesheet bawaan vendor
 dan `runtime/css/<theme>.css` tidak perlu diedit untuk mengganti brand. Saat
 menambah template, sertakan file palette dengan nama dan lokasi yang sama.
+Tombol primary memakai brand primary, tombol secondary memakai brand secondary,
+termasuk state interaksinya. Tombol danger, warning, default, light, dark, dan
+varian semantic lain mempertahankan warna asli template.
 
 Wizard `starter:install` meminta pilihan Tabler, DashCode, atau Vuexy beserta layout.
 Vuexy memerlukan archive runtime berlisensi dari owner: verifikasi checksum

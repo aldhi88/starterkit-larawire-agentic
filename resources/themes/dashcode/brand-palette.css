@@ -4,24 +4,47 @@ html[data-starter-brand] {
     --starter-primary-soft: var(--starter-brand-primary-soft);
     --starter-primary-50: var(--starter-brand-primary-soft);
 }
-html[data-starter-brand] .btn-primary,
-html[data-starter-brand] .dashcode-auth .btn-dark {
+html[data-starter-brand] .btn-primary {
     background: var(--starter-brand-primary);
     border-color: var(--starter-brand-primary);
     color: var(--starter-brand-primary-contrast);
     --tw-ring-color: rgba(var(--starter-brand-accent-rgb), .45);
 }
-html[data-starter-brand] .btn-primary:hover,
-html[data-starter-brand] .dashcode-auth .btn-dark:hover {
+html[data-starter-brand] .btn-primary:is(:hover, :active):not(:disabled, .disabled, [aria-disabled="true"]) {
     background: var(--starter-brand-primary-hover);
     border-color: var(--starter-brand-primary-hover);
     color: var(--starter-brand-primary-contrast);
+}
+html[data-starter-brand] .btn-secondary {
+    background: var(--starter-brand-secondary);
+    border-color: var(--starter-brand-secondary);
+    color: var(--starter-brand-secondary-contrast);
+    --tw-ring-color: rgba(var(--starter-brand-accent-rgb), .45);
+}
+html[data-starter-brand] .btn-secondary:is(:hover, :active):not(:disabled, .disabled, [aria-disabled="true"]) {
+    background: var(--starter-brand-secondary-hover);
+    border-color: var(--starter-brand-secondary-hover);
+    color: var(--starter-brand-secondary-contrast);
+}
+html[data-starter-brand] :is(.btn-primary, .btn-secondary):is(:disabled, .disabled, [aria-disabled="true"]) {
+    cursor: not-allowed;
+    opacity: .6;
 }
 html[data-starter-brand] .btn-outline-primary {
     border-color: var(--starter-brand-primary-text);
     color: var(--starter-brand-primary-text);
 }
 html[data-starter-brand] .btn-outline-primary:hover { background: var(--starter-brand-primary-soft); border-color: var(--starter-brand-primary-text); }
+html[data-starter-brand] .btn-outline-secondary {
+    border-color: var(--starter-brand-secondary-text);
+    color: var(--starter-brand-secondary-text);
+}
+html[data-starter-brand] .btn-outline-secondary:is(:hover, :active),
+html[data-starter-brand] [aria-expanded="true"] > .btn-outline-secondary {
+    background: var(--starter-brand-secondary-soft);
+    border-color: var(--starter-brand-secondary-text);
+    color: var(--starter-brand-secondary-text);
+}
 html[data-starter-brand] :is(.text-primary, .text-primary-500) { color: var(--starter-brand-primary-text) !important; }
 html[data-starter-brand] .hover\:text-primary-500:hover { color: var(--starter-brand-primary-text) !important; }
 html[data-starter-brand] :is(.bg-primary-lt, .bg-primary-50, .bg-primary-100) { background: var(--starter-brand-primary-soft) !important; }
@@ -44,7 +67,6 @@ html[data-starter-brand] .dashcode-stat-card:not(.dashcode-stat-card-cyan, .dash
 html[data-starter-brand] .dashcode-welcome-card { background: linear-gradient(115deg, var(--starter-slate-900), var(--starter-brand-secondary-text)); }
 html[data-starter-brand] .dashcode-welcome-mark span:first-child { border-color: rgba(var(--starter-brand-primary-rgb), .55); }
 html[data-starter-brand] .dashcode-welcome-mark span:nth-child(2) { border-color: rgba(var(--starter-brand-accent-rgb), .48); }
-html[data-starter-brand] :is(.btn, .form-select, .form-control):not(.is-invalid):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
-html[data-starter-brand] :is(.starter-icon-button, .starter-pg-page, .starter-dropdown-item, .starter-app-option, .dashcode-table-action):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
+html[data-starter-brand] :is(.btn-primary, .btn-secondary, .btn-outline-primary, .btn-outline-secondary, .form-select, .form-control):not(.is-invalid):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
 html[data-starter-brand] :is(.form-select, .form-control):not(.is-invalid):focus { border-color: var(--starter-brand-accent-text); }
 html.dark[data-starter-brand] :is(.text-primary, .text-primary-500, .hover\:text-primary-500:hover) { color: var(--starter-brand-primary-on-dark) !important; }

@@ -106,6 +106,10 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         return this.isPassiveLivewireMessage(message);
     },
     hideLivewireLoader() {
+        if (this.keepLivewireLoaderDuringNavigation && this.terminalNavigationStarted) {
+            return;
+        }
+
         this.livewireLoadingCount = Math.max((this.livewireLoadingCount || 1) - 1, 0);
 
         if (this.livewireLoadingCount > 0) {
@@ -219,6 +223,11 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         }
 
         this.terminalNavigationStarted = true;
+        this.keepLivewireLoaderDuringNavigation = Boolean(
+            sourceRequest
+            && document.body?.hasAttribute('data-starter-auth-shell')
+            && (this.livewireLoadingCount || 0) > 0
+        );
         this.autoLocking = true;
         clearTimeout(this.autoLockTimer);
         this.autoLockTouchController?.abort();
@@ -230,8 +239,11 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         });
 
         this.removeLivewireErrorDialog();
-        this.clearLivewireLoader();
-        this.showNavigateLoader();
+
+        if (! this.keepLivewireLoaderDuringNavigation) {
+            this.clearLivewireLoader();
+            this.showNavigateLoader();
+        }
 
         return true;
     },
@@ -1056,6 +1068,12 @@ document.addEventListener('livewire:navigated', () => {
     window.StarterTemplate.init(true);
 });
 window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        window.StarterTemplate.terminalNavigationStarted = false;
+        window.StarterTemplate.keepLivewireLoaderDuringNavigation = false;
+        window.StarterTemplate.autoLocking = false;
+    }
+
     window.StarterTemplate.hideNavigateLoader();
     window.StarterTemplate.clearLivewireLoader();
     window.StarterTemplate.init(! event.persisted);

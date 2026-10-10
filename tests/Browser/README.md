@@ -1,5 +1,9 @@
 # Navigation regression checks
 
+`login-loader.cjs` checks the Livewire login redirect handoff without credentials
+or a browser dependency. Run `node tests/Browser/login-loader.cjs` after changing
+the shared runtime or an authentication layout.
+
 `navigation.cjs` renders the actual Blade shell in the three local per-theme demo
 hosts using synthetic context. It performs no authentication or database writes.
 Run `starter:sync` in each demo after extracting the current local runtime archive
