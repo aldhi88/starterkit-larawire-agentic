@@ -104,7 +104,17 @@
                             @include('starter.templates.layouts.icon', ['name' => 'refresh', 'class' => 'icon-md m-0'])
                         </button>
                     </div>
-                    <input type="text" class="form-control font-monospace @error('form.human_challenge') is-invalid @enderror" id="human-challenge" wire:model.defer="form.human_challenge" inputmode="numeric" pattern="[0-9]*" maxlength="5" autocomplete="off" placeholder="Ketik 5 angka di atas" aria-describedby="human-challenge-help @error('form.human_challenge') human-challenge-error @enderror">
+                    @include('starter-shared::components.otp-code-input', [
+                        'model' => 'form.human_challenge',
+                        'field' => 'form.human_challenge',
+                        'inputId' => 'human-challenge',
+                        'errorId' => 'human-challenge-error',
+                        'label' => 'Angka keamanan 5 digit',
+                        'length' => 5,
+                        'autoFocus' => false,
+                        'autocomplete' => 'off',
+                        'describedBy' => 'human-challenge-help',
+                    ])
                     <div class="form-text" id="human-challenge-help">Setiap angka hanya muncul satu kali. Muat ulang jika sulit dibaca.</div>
                     @error('form.human_challenge')
                         <div class="invalid-feedback" id="human-challenge-error">{{ $message }}</div>

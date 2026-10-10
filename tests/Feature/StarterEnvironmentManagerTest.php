@@ -31,11 +31,30 @@ ENV);
         ->and($contents)->toContain('QUEUE_CONNECTION=sync')
         ->and($contents)->toContain('STARTER_THEME=tabler')
         ->and($contents)->toContain('STARTER_LAYOUT=vertical')
+        ->and($contents)->toContain('STARTER_BRAND_PRIMARY=')
+        ->and($contents)->toContain('STARTER_BRAND_SECONDARY=')
+        ->and($contents)->toContain('STARTER_BRAND_ACCENT=')
         ->and($contents)->toContain('STARTER_LOGIN_OTP_ENABLED=false')
         ->and($contents)->toContain('STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED=true')
         ->and($contents)->toContain('STARTER_LOGIN_TWO_FACTOR_ENABLED=true')
         ->and($contents)->not->toContain('STARTER_SUPERUSER')
         ->and($contents)->toEndWith("# starterkit-larawire:end\n");
+
+    File::deleteDirectory($directory);
+});
+
+it('preserves configured brand colors during environment synchronization', function (): void {
+    $directory = sys_get_temp_dir().'/starterkit-brand-env-'.bin2hex(random_bytes(6));
+    File::ensureDirectoryExists($directory);
+    $path = $directory.'/.env';
+    File::put($path, "APP_URL=http://localhost\nSTARTER_BRAND_PRIMARY=\"#B4232D\"\nSTARTER_BRAND_SECONDARY=\"#702A35\"\nSTARTER_BRAND_ACCENT=\"#E7A43B\"\n");
+
+    (new StarterEnvironmentManager)->apply($path);
+    $contents = File::get($path);
+
+    expect($contents)->toContain('STARTER_BRAND_PRIMARY="#B4232D"')
+        ->and($contents)->toContain('STARTER_BRAND_SECONDARY="#702A35"')
+        ->and($contents)->toContain('STARTER_BRAND_ACCENT="#E7A43B"');
 
     File::deleteDirectory($directory);
 });

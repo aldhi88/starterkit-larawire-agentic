@@ -170,6 +170,31 @@ STARTER_THEME=tabler
 STARTER_LAYOUT=vertical
 ```
 
+Developer dapat memberi warna brand yang berlaku di landing, login, dan aplikasi
+tanpa mengubah CSS template. Isi **ketiganya** sebagai hex enam digit dalam
+tanda kutip di `.env` aplikasi Laravel:
+
+```dotenv
+STARTER_BRAND_PRIMARY="#B4232D"
+STARTER_BRAND_SECONDARY="#702A35"
+STARTER_BRAND_ACCENT="#E7A43B"
+```
+
+`PRIMARY` dipakai untuk tombol dan navigasi utama, `SECONDARY` untuk elemen
+pendukung, dan `ACCENT` untuk sorotan/fokus. Starterkit membentuk warna hover,
+teks, dan latar lembut dari ketiganya; warna status sukses, peringatan, dan
+bahaya tetap mengikuti makna template. Biarkan ketiga nilai kosong untuk warna
+asli template. Setelah mengubah `.env` pada instalasi yang memakai cache
+konfigurasi, jalankan `php artisan config:cache`.
+Jika ada nilai yang tidak lengkap atau tidak valid, halaman tetap memakai warna
+asli; `starter:sync` dan validasi deployment menolak konfigurasi tersebut.
+
+Pemetaan warna tiap template berada dalam file terpisah:
+`resources/themes/<theme>/brand-palette.css`. File ini memetakan tiga warna
+tersebut ke variabel dan komponen asli template aktif; stylesheet bawaan vendor
+dan `runtime/css/<theme>.css` tidak perlu diedit untuk mengganti brand. Saat
+menambah template, sertakan file palette dengan nama dan lokasi yang sama.
+
 Wizard `starter:install` meminta pilihan Tabler, DashCode, atau Vuexy beserta layout.
 Vuexy memerlukan archive runtime berlisensi dari owner: verifikasi checksum
 `VUEXY_SHA256SUMS`, lalu ekstrak `vuexy.zip` ke `theme-intake/vuexy/` pada host

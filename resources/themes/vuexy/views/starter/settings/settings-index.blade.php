@@ -17,14 +17,14 @@
         ],
         'security' => [
             'label' => 'Keamanan Sistem',
-            'description' => 'Atur login, lock screen, dan batas upload.',
+            'description' => 'Atur sesi, lock screen, dan batas percobaan login.',
             'icon' => 'shield-check',
         ],
     ];
     $activeSection = $sections[$section];
 @endphp
 
-<div>
+<div class="vuexy-settings-page">
     <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman" data-starter-region="page-header">
         <div class="row g-3 align-items-center">
             <div class="col">
@@ -41,7 +41,7 @@
     </div>
 
     <div class="row row-cards mb-3" data-starter-region="summary">
-        <div class="col-sm-6 col-xl-3">
+        <div class="col-6 col-xl-3">
             <div class="card card-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -56,7 +56,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-xl-3">
+        <div class="col-6 col-xl-3">
             <div class="card card-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -69,7 +69,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-xl-3">
+        <div class="col-6 col-xl-3">
             <div class="card card-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -82,7 +82,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-xl-3">
+        <div class="col-6 col-xl-3">
             <div class="card card-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -118,12 +118,12 @@
                     </ul>
                 </div>
                 <div class="card-body border-bottom" data-starter-region="section-header">
-                    <div class="d-flex align-items-start justify-content-between pb-1">
+                    <div class="d-flex flex-column flex-sm-row align-items-start justify-content-between gap-3 pb-1">
                         <div>
                             <h3 class="card-title mb-1">{{ $activeSection['label'] }}</h3>
                             <p class="text-secondary mb-0">{{ $activeSection['description'] }}</p>
                         </div>
-                        <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center gap-3 flex-shrink-0 align-self-end">
                             @if ($section === 'roles')
                                 <a href="{{ route('starter.settings.roles.create') }}" class="btn btn-primary" data-starter-navigate>
                                     @include('starter.templates.layouts.icon', ['name' => 'file-plus', 'class' => 'icon-sm me-1'])

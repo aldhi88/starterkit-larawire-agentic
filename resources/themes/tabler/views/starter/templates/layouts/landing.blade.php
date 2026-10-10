@@ -1,6 +1,6 @@
 @php($brandLogoUrl = $clientLogoUrl ?: asset('assets/tabler/static/logo-small.svg'))
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
 
 <head>
     <meta charset="utf-8">
@@ -10,6 +10,7 @@
     <link rel="shortcut icon" href="{{ $brandLogoUrl }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/css/tabler.css') }}?v={{ filemtime(public_path('assets/tabler/css/tabler.css')) }}">
+    @include('starter-shared::components.brand-stylesheet')
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')
     @livewireStyles

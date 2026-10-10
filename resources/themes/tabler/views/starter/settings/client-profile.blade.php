@@ -16,7 +16,7 @@
                 <h2 class="card-title mb-4">Pengaturan Perusahaan</h2>
             @endif
 
-            <h3 class="card-title">Logo</h3>
+            <h3 class="card-title starter-form-section-title">Logo</h3>
             <div
                 class="row align-items-center"
                 data-starter-region="logo-field"
@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <h3 class="card-title mt-4">Profil Perusahaan</h3>
+            <h3 class="card-title starter-form-section-title mt-4">Profil Perusahaan</h3>
             <div class="row g-3" data-starter-region="company-details">
                 <div class="col-md-4">
                     <label class="form-label">Nama Perusahaan</label>
@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-            <h3 class="card-title mt-4">Kontak</h3>
+            <h3 class="card-title starter-form-section-title mt-4">Kontak</h3>
             <div class="row g-3" data-starter-region="contact-details">
                 <div class="col-md-6">
                     <label class="form-label">Email Perusahaan</label>

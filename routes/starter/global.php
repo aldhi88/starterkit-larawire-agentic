@@ -1,6 +1,7 @@
 <?php
 
 use Aldhi88\StarterKit\Http\Controllers\Starter\Auth\TouchSessionActivityController;
+use Aldhi88\StarterKit\Http\Controllers\Starter\BrandStylesheetController;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\ConfirmPassword;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\LockScreen;
 use Aldhi88\StarterKit\Livewire\Starter\Logs\ActivityLogIndex;
@@ -9,6 +10,8 @@ use Aldhi88\StarterKit\Livewire\Starter\Settings\SettingsIndex;
 use Aldhi88\StarterKit\Livewire\Starter\UserManagement\RoleForm;
 use Aldhi88\StarterKit\Livewire\Starter\UserManagement\UserForm;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/starter/brand.css', BrandStylesheetController::class)->name('starter.brand.css');
 
 Route::livewire('/confirm-password', ConfirmPassword::class)
     ->middleware(['auth:web', 'starter.active', 'starter.password-change', 'starter.lock'])

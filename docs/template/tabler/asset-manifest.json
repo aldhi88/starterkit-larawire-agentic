@@ -5,7 +5,7 @@
         {
             "source": "runtime/css/tabler.css",
             "target": "css/tabler.css",
-            "sha256": "b0a5ab266cdf6c350f51ee324ddbe1f487e63d4ac03e895f8221d49995daf907",
+            "sha256": "6390a773af06ba496b5e7b7ef2d92df5ff5c545226a99577b4bbd4fea76fc5f6",
             "referenced_by": [
                 "resources/themes/tabler/views/starter/errors/layout.blade.php",
                 "resources/themes/tabler/views/starter/templates/layouts/app.blade.php",

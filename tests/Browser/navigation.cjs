@@ -67,13 +67,24 @@ const server = createServer((req, res) => {
                                     const metrics = await page.locator(selector).evaluate((menu) => {
                                         const items = [...menu.children].filter(item => getComputedStyle(item).display !== 'none');
                                         const rects = items.map(item => item.getBoundingClientRect());
+                                        const menuRect = menu.getBoundingClientRect();
+                                        const rowRects = new Map();
+                                        for (const rect of rects) {
+                                            const key = Math.round(rect.top);
+                                            const row = rowRects.get(key) || { left: rect.left, right: rect.right };
+                                            row.left = Math.min(row.left, rect.left);
+                                            row.right = Math.max(row.right, rect.right);
+                                            rowRects.set(key, row);
+                                        }
                                         return { rows: new Set(rects.map(rect => Math.round(rect.top))).size,
+                                            rowCenterOffsets: [...rowRects.values()].map(row => (row.left + row.right - menuRect.left - menuRect.right) / 2),
                                             right: Math.max(...rects.map(rect => rect.right)),
                                             menuBottom: menu.getBoundingClientRect().bottom,
                                             contentTop: document.querySelector('#content').getBoundingClientRect().top };
                                     });
                                     Object.assign(state, metrics);
                                     assert(metrics.right <= width, 'Menu item spills outside viewport');
+                                    assert(metrics.rowCenterOffsets.every(offset => Math.abs(offset) <= 4), 'Every horizontal menu row must be centered');
                                     assert(metrics.contentTop >= metrics.menuBottom - 1, 'Menu overlaps page content');
                                     if (count === 24 && width === 1280) assert(metrics.rows > 1, 'Long menu must wrap');
                                     if (count > 0) {

@@ -167,6 +167,30 @@ STARTER_THEME=tabler
 STARTER_LAYOUT=vertical
 ```
 
+Developers can set application brand colors across landing, login, and app
+pages without editing theme CSS. Set **all three** as quoted six-digit hex
+values in the Laravel application's `.env`:
+
+```dotenv
+STARTER_BRAND_PRIMARY="#B4232D"
+STARTER_BRAND_SECONDARY="#702A35"
+STARTER_BRAND_ACCENT="#E7A43B"
+```
+
+`PRIMARY` controls primary actions and navigation, `SECONDARY` supports the
+brand surfaces, and `ACCENT` highlights focus and decorative details. The kit
+derives hover, readable text, and soft background shades. Semantic success,
+warning, and danger colors retain their theme meaning. Leave all three empty
+to use the theme defaults. Run `php artisan config:cache` after changing the
+environment on installations with cached configuration.
+Incomplete or invalid values leave pages on the theme defaults; `starter:sync`
+and deployment validation reject that configuration.
+
+Each theme maps the palette in its own `resources/themes/<theme>/brand-palette.css`.
+The overlay uses the active theme's native variables and components without
+changing vendor CSS or `runtime/css/<theme>.css`. Add a file at the same path
+when integrating another theme.
+
 The `starter:install` wizard asks for Tabler, DashCode, or Vuexy and a layout.
 Open-source themes use a pinned GitHub archive; the installer verifies its size
 and checksum and publishes the minimal runtime to `public/assets/<theme>/`.

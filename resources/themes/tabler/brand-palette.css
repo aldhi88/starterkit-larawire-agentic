@@ -1,0 +1,49 @@
+/* Tabler palette adapter. Its component variables provide most color states. */
+html[data-starter-brand] {
+    --tblr-primary: var(--starter-brand-primary);
+    --tblr-primary-rgb: var(--starter-brand-primary-rgb);
+    --tblr-primary-fg: var(--starter-brand-primary-contrast);
+    --tblr-primary-darken: var(--starter-brand-primary-hover);
+    --tblr-primary-lt: var(--starter-brand-primary-soft);
+    --tblr-primary-lt-rgb: var(--starter-brand-primary-soft-rgb);
+    --tblr-primary-text-emphasis: var(--starter-brand-primary-text);
+    --tblr-primary-bg-subtle: var(--starter-brand-primary-soft);
+    --tblr-primary-border-subtle: var(--starter-brand-primary-border);
+    --tblr-secondary: var(--starter-brand-secondary);
+    --tblr-secondary-rgb: var(--starter-brand-secondary-rgb);
+    --tblr-secondary-fg: var(--starter-brand-secondary-contrast);
+    --tblr-secondary-darken: var(--starter-brand-secondary-hover);
+    --tblr-secondary-lt: var(--starter-brand-secondary-soft);
+    --tblr-secondary-lt-rgb: var(--starter-brand-secondary-soft-rgb);
+    --tblr-secondary-text-emphasis: var(--starter-brand-secondary-text);
+    --tblr-secondary-bg-subtle: var(--starter-brand-secondary-soft);
+    --tblr-secondary-border-subtle: var(--starter-brand-secondary-border);
+    --tblr-link-color: var(--starter-brand-primary-text);
+    --tblr-link-color-rgb: var(--starter-brand-primary-text-rgb);
+    --tblr-link-hover-color: var(--starter-brand-primary-text);
+    --tblr-link-hover-color-rgb: var(--starter-brand-primary-text-rgb);
+    --tblr-focus-ring-color: rgba(var(--starter-brand-accent-rgb), .3);
+}
+html[data-starter-brand] .btn-outline-primary,
+html[data-starter-brand] .btn-ghost-primary { --tblr-btn-color: var(--starter-brand-primary-text); }
+html[data-starter-brand] .text-primary { color: var(--starter-brand-primary-text) !important; }
+html[data-starter-brand] .text-secondary { color: var(--tblr-secondary-color) !important; }
+html[data-starter-brand] .form-check-input:checked[type="checkbox"] { --tblr-form-check-bg-image: var(--starter-brand-primary-check-svg); }
+html[data-starter-brand] .form-check-input:checked[type="radio"] { --tblr-form-check-bg-image: var(--starter-brand-primary-radio-svg); }
+html[data-starter-brand] :is(.btn, .form-select, .form-control):not(.is-invalid):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
+html[data-starter-brand] :is(.form-select, .form-control):not(.is-invalid):focus { border-color: var(--starter-brand-accent-text); box-shadow: 0 0 0 .25rem rgba(var(--starter-brand-accent-rgb), .25); }
+html[data-starter-brand] .starter-auth-mark { box-shadow: 0 .35rem 1rem rgba(var(--starter-brand-accent-rgb), .18); }
+
+html[data-starter-brand][data-bs-theme="dark"] {
+    --tblr-primary-text-emphasis: var(--starter-brand-primary-on-dark);
+    --tblr-primary-bg-subtle: color-mix(in srgb, var(--starter-brand-primary) 18%, var(--tblr-body-bg));
+    --tblr-primary-border-subtle: color-mix(in srgb, var(--starter-brand-primary) 38%, var(--tblr-body-bg));
+    --tblr-secondary-text-emphasis: var(--starter-brand-secondary-on-dark);
+    --tblr-secondary-bg-subtle: color-mix(in srgb, var(--starter-brand-secondary) 18%, var(--tblr-body-bg));
+    --tblr-secondary-border-subtle: color-mix(in srgb, var(--starter-brand-secondary) 38%, var(--tblr-body-bg));
+    --tblr-link-color: var(--starter-brand-primary-on-dark);
+    --tblr-link-color-rgb: var(--starter-brand-primary-on-dark-rgb);
+    --tblr-link-hover-color: var(--starter-brand-primary-on-dark);
+    --tblr-link-hover-color-rgb: var(--starter-brand-primary-on-dark-rgb);
+}
+html[data-starter-brand][data-bs-theme="dark"] :is(.text-primary, .btn-outline-primary, .btn-ghost-primary) { color: var(--starter-brand-primary-on-dark) !important; }

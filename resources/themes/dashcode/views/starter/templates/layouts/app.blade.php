@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" class="light">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" class="light" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
 
 <head>
     <meta charset="utf-8">
@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/livewire-powergrid/tailwind.css') }}?v={{ filemtime(public_path('vendor/livewire-powergrid/tailwind.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/starter/css/starter.css') }}?v={{ filemtime(public_path('assets/starter/css/starter.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/dashcode.css') }}?v={{ filemtime(public_path('assets/dashcode/css/dashcode.css')) }}">
+    @include('starter-shared::components.brand-stylesheet')
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')
     @livewireStyles

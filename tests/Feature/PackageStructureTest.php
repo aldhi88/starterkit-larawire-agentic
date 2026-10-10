@@ -37,8 +37,8 @@ it('maps generated host assets without carrying their payloads in Composer', fun
         ->and(glob(StarterPaths::path('docs/template/*/*.html')) ?: [])->toBe([]);
 
     foreach ([
-        'tabler' => '9f91d2a86f182d630166ad90c850c3ec312b941694a3efb0fa648cb1f215ce46',
-        'dashcode' => '43cd063982631ec9e6bf874b0aa77d08ea6626b61d05500fc455a4f246c1b989',
+        'tabler' => '9f6216ffab4b102a8c97db774b34a6fbe4dbf0a6196f7967bd3ed072d43c7b03',
+        'dashcode' => '9d2410c7cd8e32d08e8f268c342ffbc79076209e7e75d475da285f105893ae4d',
     ] as $theme => $checksum) {
         $source = json_decode(
             (string) file_get_contents(StarterPaths::path('docs/template/'.$theme.'/source.json')),
@@ -72,6 +72,23 @@ it('keeps one theme-named custom stylesheet and script for every theme', functio
             ->and($targets)->toContain('css/'.$theme.'.css', 'js/'.$theme.'.js')
             ->not->toContain('css/starter-theme.css', 'css/custom.css', 'js/starter-theme.js');
     }
+});
+
+it('keeps brand palette replacements outside the vendor and main theme stylesheets', function (): void {
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $adapter = StarterPaths::path("resources/themes/{$theme}/brand-palette.css");
+        $runtime = packageStructureLocalThemeCss($theme);
+
+        expect(is_file($adapter))->toBeTrue()
+            ->and(file_get_contents($adapter))->toContain('html[data-starter-brand]');
+
+        if ($runtime !== null) {
+            expect($runtime)->not->toContain('/* Optional developer palette');
+        }
+    }
+
+    $component = file_get_contents(StarterPaths::path('resources/views/components/brand-stylesheet.blade.php'));
+    expect($component)->toContain('StarterBrandStylesheet::configured()');
 });
 
 it('keeps active vertical branches open without forcing horizontal dropdowns open', function (): void {
@@ -639,7 +656,7 @@ it('keeps the two-step login OTP flow available in every theme', function (): vo
         ->and($environment)->toContain("'STARTER_LOGIN_OTP_ENABLED' => 'false'")
         ->toContain("'STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED' => 'true'")
         ->toContain("'STARTER_LOGIN_TWO_FACTOR_ENABLED' => 'true'")
-        ->and($otpControl)->toContain('autocomplete="one-time-code"')
+        ->and($otpControl)->toContain("\$autocomplete = \$autocomplete ?? 'one-time-code'")
         ->toContain('data-starter-region="otp-provider-brand"')
         ->toContain('starter-shared::components.google-authenticator-brand')
         ->and($authenticatorBrand)->toContain('data-starter-region="google-authenticator-brand"')

@@ -17,6 +17,12 @@ return [
 
     'layout' => env('STARTER_LAYOUT', 'vertical'),
 
+    'brand' => [
+        'primary' => env('STARTER_BRAND_PRIMARY'),
+        'secondary' => env('STARTER_BRAND_SECONDARY'),
+        'accent' => env('STARTER_BRAND_ACCENT'),
+    ],
+
     'auth' => [
         'login_human_challenge_enabled' => env('STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED', true),
         'login_otp_enabled' => env('STARTER_LOGIN_OTP_ENABLED', false),

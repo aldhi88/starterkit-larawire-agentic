@@ -312,6 +312,11 @@ alignment, and responsive behavior remain equivalent. Unrecorded deviations fail
   idempotent. Tambahkan custom rule hanya bila struktur HTML dan class native
   yang benar telah terbukti tidak mencukupi; rule harus scoped, theme-owned,
   minimal, dan memiliki regression test.
+- Pengecualian khusus warna brand developer: sediakan
+  `resources/themes/<theme-key>/brand-palette.css` terpisah. Route stylesheet
+  brand memuat hanya adapter theme aktif setelah vendor dan CSS integrasi,
+  serta hanya ketika ketiga warna brand dikonfigurasi. Jangan masukkan rule
+  penggantian palette ke CSS vendor atau `runtime/css/<theme-key>.css`.
 - Pertahankan semantic region tanpa wrapper universal. Placeholder konten App
   harus polos. Jangan menambahkan outer card putih, dashboard decoration, icon
   redundan, atau wrapper padding bila reference theme dan tujuan region tidak

@@ -96,6 +96,8 @@
         "inline_layout_spacing_color_style_forbidden": true,
         "page_injected_compatibility_css_forbidden": true,
         "custom_stylesheet_target_pattern": "runtime/css/<theme-key>.css",
+        "optional_brand_palette_source_pattern": "resources/themes/<theme-key>/brand-palette.css",
+        "brand_palette_delivery": "active-theme-dynamic-css-route-after-vendor-and-custom-styles",
         "custom_script_target_pattern": "runtime/js/<theme-key>.js",
         "named_custom_assets_required_per_theme": true,
         "custom_assets_loaded_after_vendor": true,

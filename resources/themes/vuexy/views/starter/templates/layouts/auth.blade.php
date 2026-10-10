@@ -4,7 +4,7 @@
     $brandLogoAlt = $clientLogoUrl ? ($clientName ?: config('app.name')) : config('app.name');
 @endphp
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" data-skin="default" data-bs-theme="light" data-template="vertical-menu-template-no-customizer">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" data-skin="default" data-bs-theme="light" data-template="vertical-menu-template-no-customizer" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
 <head>@include('starter.templates.layouts.head', ['vuexyPage' => 'auth'])</head>
 <body>
     <div class="authentication-wrapper authentication-cover">
@@ -22,6 +22,14 @@
                         : 'Selesaikan verifikasi login untuk melanjutkan ke workspace Anda.')) }}</p>
                 @if (session('starter-auth-message'))<div class="alert alert-warning" role="alert">{{ session('starter-auth-message') }}</div>@endif
                 {{ $slot }}
+                @if (($title ?? null) !== 'Layar Dikunci')
+                    <div class="text-center mt-4">
+                        <a href="{{ route('landing') }}" class="link-primary d-inline-flex align-items-center gap-1" data-starter-navigate>
+                            @include('starter.templates.layouts.icon', ['name' => 'arrow-left', 'class' => 'icon-sm'])
+                            Kembali ke landing page
+                        </a>
+                    </div>
+                @endif
                 <footer class="text-center mt-6" data-starter-region="page-footer">{{ now()->year }} © {{ config('app.name') }}</footer>
             </div></div>
         </div>

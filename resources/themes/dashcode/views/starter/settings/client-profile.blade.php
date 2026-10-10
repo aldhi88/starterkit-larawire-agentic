@@ -15,7 +15,7 @@
             @endif
 
             <section class="space-y-4" aria-labelledby="company-logo-heading">
-                <h3 id="company-logo-heading" class="card-title">Logo</h3>
+                <h3 id="company-logo-heading" class="card-title starter-form-section-title">Logo</h3>
                 <div
                     class="dashcode-upload-row"
                     data-starter-region="logo-field"
@@ -46,7 +46,7 @@
             </section>
 
             <section class="space-y-4" aria-labelledby="company-profile-heading">
-                <h3 id="company-profile-heading" class="card-title">Profil Perusahaan</h3>
+                <h3 id="company-profile-heading" class="card-title starter-form-section-title">Profil Perusahaan</h3>
                 <div class="dashcode-form-grid dashcode-form-grid-3" data-starter-region="company-details">
                     <div>
                         <label class="form-label">Nama Perusahaan</label>
@@ -69,7 +69,7 @@
             </section>
 
             <section class="space-y-4" aria-labelledby="company-contact-heading">
-                <h3 id="company-contact-heading" class="card-title">Kontak</h3>
+                <h3 id="company-contact-heading" class="card-title starter-form-section-title">Kontak</h3>
                 <div class="dashcode-form-grid dashcode-form-grid-2" data-starter-region="contact-details">
                     <div>
                         <label class="form-label">Email Perusahaan</label>

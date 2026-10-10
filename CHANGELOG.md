@@ -5,6 +5,27 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.13] - 2026-10-10
+
+### Added
+
+- Add an optional validated three-color brand palette that adapts the active
+  Tabler, DashCode, or Vuexy theme through a cache-safe dynamic stylesheet,
+  while preserving native semantic status colors and accessible contrast.
+
+### Changed
+
+- Reuse the segmented numeric-code control for the five-digit login human
+  challenge, with configurable length, autofocus, autocomplete, and accessible
+  description wiring.
+- Refresh the exact theme runtime archives, checksums, manifests, and immutable
+  public archive references for the brand-aware theme integration.
+
+### Fixed
+
+- Keep wrapped Tabler horizontal-navigation identity and menu rows centered
+  without disturbing account actions or responsive drawer behavior.
+
 ## [1.7.12] - 2026-09-27
 
 ### Fixed

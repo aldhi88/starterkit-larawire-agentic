@@ -5,7 +5,7 @@
         {
             "source": "runtime/css/vuexy.css",
             "target": "css/vuexy.css",
-            "sha256": "1458038ef69ab44acaeeecf1d1aaa6a5d6c9071659ae47de2fb4e8e7aa8cf0b3",
+            "sha256": "137dc692329389d3059151cc6f65153e8b3013d494bd3f60095a43fe8204fc8d",
             "referenced_by": [
                 "resources/themes/vuexy/views/starter/errors/layout.blade.php",
                 "resources/themes/vuexy/views/starter/templates/layouts/head.blade.php"

@@ -17,7 +17,7 @@
         ],
         'security' => [
             'label' => 'Keamanan Sistem',
-            'description' => 'Atur login, lock screen, dan batas upload.',
+            'description' => 'Atur sesi, lock screen, dan batas percobaan login.',
             'icon' => 'shield-check',
         ],
     ];
@@ -84,8 +84,8 @@
     </div>
 
     <div class="card dashcode-settings-panel">
-        <div class="card-header overflow-x-auto" data-starter-region="section-navigation">
-            <ul class="nav nav-tabs card-header-tabs flex-nowrap">
+        <div class="card-header" data-starter-region="section-navigation">
+            <ul class="nav nav-tabs card-header-tabs">
                 @foreach ($sections as $sectionKey => $sectionItem)
                     <li class="nav-item">
                         <a href="{{ route('starter.settings', ['section' => $sectionKey]) }}"

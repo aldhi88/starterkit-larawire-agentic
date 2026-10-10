@@ -180,8 +180,10 @@ it('uses the shared six-slot OTP control in every login theme', function (): voi
 
     expect($control)
         ->toContain('$wire.entangle(@js($model))')
-        ->toContain('autocomplete="one-time-code"')
-        ->toContain("replace(/\D/g, '').slice(0, 6)")
+        ->toContain("\$autocomplete = \$autocomplete ?? 'one-time-code'")
+        ->toContain('$length = $length ?? 6')
+        ->toContain('slice(0, {{ $length }})')
+        ->toContain('range(0, $length - 1)')
         ->toContain('x-on:paste.prevent')
         ->toContain("'is-active': String(code ?? '').length ===")
         ->toContain('@keyframes starter-otp-caret')

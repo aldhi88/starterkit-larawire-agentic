@@ -1,6 +1,6 @@
 @php($brandLogoUrl = $clientLogoUrl ?: asset('assets/dashcode/images/logo/favicon.svg'))
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" class="light">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" class="light" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -8,6 +8,7 @@
     <link rel="shortcut icon" href="{{ $brandLogoUrl }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/app.css') }}?v={{ filemtime(public_path('assets/dashcode/css/app.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/dashcode.css') }}?v={{ filemtime(public_path('assets/dashcode/css/dashcode.css')) }}">
+    @include('starter-shared::components.brand-stylesheet')
     @includeIf('extensions.starter.layout.head')
     @stack('page-styles')
     @livewireStyles

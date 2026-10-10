@@ -4,22 +4,24 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="navbar-brand navbar-brand-autodark me-2 me-md-3">
-            <a href="{{ $currentDashboardUrl }}" class="starter-sidebar-brand {{ $clientLogoUrl ? 'starter-company-logo-frame' : '' }}" aria-label="{{ $brandLogoAlt }}" data-starter-navigate>
-                <img
-                    src="{{ $brandLogoUrl }}"
-                    class="starter-sidebar-brand-image starter-sidebar-brand-image-horizontal"
-                    alt="{{ $brandLogoAlt }}"
-                    data-starter-brand-logo
-                    data-fallback-src="{{ $defaultBrandLogoUrl }}"
-                    @if ($clientLogoUrl) data-company-logo="true" @endif
-                >
-            </a>
-        </div>
+        <div class="starter-horizontal-identity d-flex align-items-center">
+            <div class="navbar-brand navbar-brand-autodark me-2 me-md-3">
+                <a href="{{ $currentDashboardUrl }}" class="starter-sidebar-brand {{ $clientLogoUrl ? 'starter-company-logo-frame' : '' }}" aria-label="{{ $brandLogoAlt }}" data-starter-navigate>
+                    <img
+                        src="{{ $brandLogoUrl }}"
+                        class="starter-sidebar-brand-image starter-sidebar-brand-image-horizontal"
+                        alt="{{ $brandLogoAlt }}"
+                        data-starter-brand-logo
+                        data-fallback-src="{{ $defaultBrandLogoUrl }}"
+                        @if ($clientLogoUrl) data-company-logo="true" @endif
+                    >
+                </a>
+            </div>
 
-        <div class="d-none d-md-flex flex-column lh-sm me-3" data-starter-active-app>
-            <span class="small text-secondary">App Aktif</span>
-            <span class="fw-semibold text-truncate" data-starter-current-app-name>{{ $currentAppName ?? 'App' }}</span>
+            <div class="d-none d-md-flex flex-column lh-sm me-3" data-starter-active-app>
+                <span class="small text-secondary">App Aktif</span>
+                <span class="fw-semibold text-truncate" data-starter-current-app-name>{{ $currentAppName ?? 'App' }}</span>
+            </div>
         </div>
 
         <div class="navbar-nav flex-row order-md-last ms-auto align-items-center gap-2" x-persist="{{ $accountPersistBase }}-horizontal">

@@ -1,0 +1,76 @@
+/* Vuexy palette adapter. Loaded after core.css and vuexy.css only when branded. */
+html[data-starter-brand] {
+    --bs-primary: var(--starter-brand-primary);
+    --bs-primary-rgb: var(--starter-brand-primary-rgb);
+    --bs-primary-contrast: var(--starter-brand-primary-contrast);
+    --bs-primary-text-emphasis: var(--starter-brand-primary-text);
+    --bs-primary-bg-subtle: var(--starter-brand-primary-soft);
+    --bs-primary-border-subtle: var(--starter-brand-primary-border);
+    --bs-secondary: var(--starter-brand-secondary);
+    --bs-secondary-rgb: var(--starter-brand-secondary-rgb);
+    --bs-secondary-contrast: var(--starter-brand-secondary-contrast);
+    --bs-secondary-text-emphasis: var(--starter-brand-secondary-text);
+    --bs-secondary-bg-subtle: var(--starter-brand-secondary-soft);
+    --bs-secondary-border-subtle: var(--starter-brand-secondary-border);
+    --bs-link-color: var(--starter-brand-primary-text);
+    --bs-link-color-rgb: var(--starter-brand-primary-text-rgb);
+    --bs-link-hover-color: var(--starter-brand-primary-text);
+    --bs-link-hover-color-rgb: var(--starter-brand-primary-text-rgb);
+}
+html[data-starter-brand] .btn-primary {
+    --bs-btn-color: var(--starter-brand-primary-contrast);
+    --bs-btn-bg: var(--starter-brand-primary);
+    --bs-btn-border-color: var(--starter-brand-primary);
+    --bs-btn-hover-color: var(--starter-brand-primary-contrast);
+    --bs-btn-hover-bg: var(--starter-brand-primary-hover);
+    --bs-btn-hover-border-color: var(--starter-brand-primary-hover);
+    --bs-btn-active-color: var(--starter-brand-primary-contrast);
+    --bs-btn-active-bg: var(--starter-brand-primary-hover);
+    --bs-btn-active-border-color: var(--starter-brand-primary-hover);
+    --bs-btn-focus-shadow-rgb: var(--starter-brand-accent-rgb);
+}
+html[data-starter-brand] .btn-secondary {
+    --bs-btn-color: var(--starter-brand-secondary-contrast);
+    --bs-btn-bg: var(--starter-brand-secondary);
+    --bs-btn-border-color: var(--starter-brand-secondary);
+    --bs-btn-hover-color: var(--starter-brand-secondary-contrast);
+    --bs-btn-hover-bg: var(--starter-brand-secondary-hover);
+    --bs-btn-hover-border-color: var(--starter-brand-secondary-hover);
+}
+html[data-starter-brand] :is(.btn-label-primary, .btn-outline-primary, .btn-text-primary) {
+    --bs-btn-color: var(--starter-brand-primary-text);
+    --bs-btn-hover-color: var(--starter-brand-primary-text);
+    --bs-btn-active-color: var(--starter-brand-primary-text);
+    --bs-btn-disabled-color: var(--starter-brand-primary-text);
+}
+html[data-starter-brand] :is(.text-primary, .link-primary, .bg-label-primary) { color: var(--starter-brand-primary-text) !important; }
+html[data-starter-brand] .text-secondary { color: var(--bs-secondary-color) !important; }
+html[data-starter-brand] .nav-pills { --bs-nav-pills-link-active-color: var(--starter-brand-primary-contrast); }
+html[data-starter-brand] .pagination:not([class*="pagination-outline-"]) { --bs-pagination-active-color: var(--starter-brand-primary-contrast); }
+html[data-starter-brand] .layout-menu { --bs-menu-active-color: var(--starter-brand-primary-contrast); }
+html[data-starter-brand] .menu-horizontal .menu-item.active > .menu-link:not(.menu-toggle) { color: var(--starter-brand-primary-text); }
+html[data-starter-brand] .form-check-input:checked[type="checkbox"] { --bs-form-check-bg-image: var(--starter-brand-primary-check-svg); }
+html[data-starter-brand] .form-check-input:checked[type="radio"] { --bs-form-check-bg-image: var(--starter-brand-primary-radio-svg); }
+html[data-starter-brand] :is(.btn, .form-control, .form-select):not(.is-invalid):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
+html[data-starter-brand] :is(.form-control, .form-select):not(.is-invalid):focus { border-color: var(--starter-brand-accent-text); }
+html[data-starter-brand] .vuexy-landing-page > .page { background: radial-gradient(circle at 75% 20%, rgba(var(--starter-brand-accent-rgb), .16), transparent 34%), var(--bs-body-bg) !important; }
+
+html[data-starter-brand][data-bs-theme="dark"] {
+    --bs-primary-text-emphasis: var(--starter-brand-primary-on-dark);
+    --bs-primary-bg-subtle: color-mix(in srgb, var(--starter-brand-primary) 18%, var(--bs-body-bg));
+    --bs-primary-border-subtle: color-mix(in srgb, var(--starter-brand-primary) 38%, var(--bs-body-bg));
+    --bs-secondary-text-emphasis: var(--starter-brand-secondary-on-dark);
+    --bs-secondary-bg-subtle: color-mix(in srgb, var(--starter-brand-secondary) 18%, var(--bs-body-bg));
+    --bs-secondary-border-subtle: color-mix(in srgb, var(--starter-brand-secondary) 38%, var(--bs-body-bg));
+    --bs-link-color: var(--starter-brand-primary-on-dark);
+    --bs-link-color-rgb: var(--starter-brand-primary-on-dark-rgb);
+    --bs-link-hover-color: var(--starter-brand-primary-on-dark);
+    --bs-link-hover-color-rgb: var(--starter-brand-primary-on-dark-rgb);
+}
+html[data-starter-brand][data-bs-theme="dark"] :is(.btn-label-primary, .btn-outline-primary, .btn-text-primary) {
+    --bs-btn-color: var(--starter-brand-primary-on-dark);
+    --bs-btn-hover-color: var(--starter-brand-primary-on-dark);
+    --bs-btn-active-color: var(--starter-brand-primary-on-dark);
+}
+html[data-starter-brand][data-bs-theme="dark"] :is(.text-primary, .link-primary, .bg-label-primary),
+html[data-starter-brand][data-bs-theme="dark"] .menu-horizontal .menu-item.active > .menu-link:not(.menu-toggle) { color: var(--starter-brand-primary-on-dark) !important; }

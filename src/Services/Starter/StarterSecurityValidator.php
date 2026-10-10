@@ -2,6 +2,8 @@
 
 namespace Aldhi88\StarterKit\Services\Starter;
 
+use Aldhi88\StarterKit\Support\Starter\StarterBrandPalette;
+use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
@@ -81,6 +83,16 @@ class StarterSecurityValidator
                 'Starter UI layout',
                 StarterTheme::hasLayoutView((string) config('starter.layout')),
                 'STARTER_LAYOUT harus terdaftar dan view-nya tersedia.',
+            ),
+            $this->check(
+                'Starter brand palette',
+                StarterBrandPalette::configurationValid(),
+                'Isi ketiga STARTER_BRAND_* sebagai warna hex #RRGGBB, atau kosongkan semuanya.',
+            ),
+            $this->check(
+                'Starter brand adapter',
+                is_file(StarterPaths::path('resources/themes/'.StarterTheme::key().'/brand-palette.css')),
+                'Theme aktif harus menyediakan resources/themes/<theme>/brand-palette.css.',
             ),
             $this->check(
                 'Database session driver',

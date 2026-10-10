@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" data-bs-theme="light" data-skin="default" data-template="front-pages-no-customizer" class="layout-navbar-fixed layout-wide">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" data-bs-theme="light" data-skin="default" data-template="front-pages-no-customizer" class="layout-navbar-fixed layout-wide" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
 <head>@include('starter.templates.layouts.head', ['vuexyPage' => 'landing'])</head>
 <body class="vuexy-landing-page">
     {{ $slot ?? '' }}

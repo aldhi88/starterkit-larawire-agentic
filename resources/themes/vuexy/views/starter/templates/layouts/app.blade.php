@@ -6,6 +6,7 @@
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="ltr"
     data-skin="default"
+    @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif
     data-bs-theme="light"
     data-semidark-menu="true"
     data-template="{{ $starterLayout === 'vertical' ? 'vertical-menu-template-no-customizer' : 'horizontal-menu-template-no-customizer' }}"

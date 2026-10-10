@@ -143,6 +143,31 @@ it('renders a compact human challenge over a full-width security texture in ever
         ->and($vuexyHead)->toContain("filemtime(public_path('assets/starter/css/starter.css'))");
 });
 
+it('uses five digit entry cells for the human challenge in every theme', function (): void {
+    $control = file_get_contents(StarterPaths::path('resources/views/components/otp-code-input.blade.php'));
+
+    expect($control)
+        ->toContain('repeat(var(--starter-code-length, 6), minmax(0, 1fr))')
+        ->toContain('range(0, $length - 1)')
+        ->toContain('maxlength="{{ $length }}"')
+        ->toContain('x-on:paste.prevent')
+        ->toContain('aria-describedby="{{ $ariaDescribedBy }}"');
+
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $login = file_get_contents(StarterPaths::path(
+            "resources/themes/{$theme}/views/starter/auth/login.blade.php",
+        ));
+
+        expect($login)
+            ->toContain("'model' => 'form.human_challenge'")
+            ->toContain("'length' => 5")
+            ->toContain("'autoFocus' => false")
+            ->toContain("'autocomplete' => 'off'")
+            ->toContain("'describedBy' => 'human-challenge-help'")
+            ->not->toContain('wire:model.defer="form.human_challenge"');
+    }
+});
+
 it('disables and clears the human challenge through its global switch', function (): void {
     config()->set('starter.auth.login_human_challenge_enabled', false);
     $session = starterSecurityRequest('127.0.0.35');

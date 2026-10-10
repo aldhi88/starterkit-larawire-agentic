@@ -1,6 +1,6 @@
 @once
     <style>
-        .starter-otp-control { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .625rem; width: 100%; }
+        .starter-otp-control { position: relative; display: grid; grid-template-columns: repeat(var(--starter-code-length, 6), minmax(0, 1fr)); gap: .625rem; width: 100%; }
         .starter-otp-control-input { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; opacity: 0; cursor: text; }
         .starter-otp-control-cell { position: relative; display: flex; min-width: 0; height: 3.5rem; align-items: center; justify-content: center; border: 1px solid #cbd5e1; border-radius: .75rem; background: #fff; color: #111827; cursor: text; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 1.4rem; font-weight: 700; line-height: 1; transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
         .starter-otp-control-cell.is-filled { border-color: #94a3b8; }
@@ -23,6 +23,11 @@
     $errorId = $errorId ?? $inputId.'-error';
     $label = $label ?? 'Kode OTP 6 digit';
     $brand = $brand ?? null;
+    $length = $length ?? 6;
+    $autoFocus = $autoFocus ?? true;
+    $autocomplete = $autocomplete ?? 'one-time-code';
+    $describedBy = $describedBy ?? '';
+    $ariaDescribedBy = trim($describedBy.' '.($errors->has($field) ? $errorId : ''));
     $theme = $theme ?? \Aldhi88\StarterKit\Support\Starter\StarterTheme::key();
 @endphp
 
@@ -38,27 +43,29 @@
 <div
     class="starter-otp-control @error($field) has-error @enderror"
     x-data="{ code: $wire.entangle(@js($model)) }"
-    x-init="$nextTick(() => $refs.input.focus())"
+    @if ($autoFocus) x-init="$nextTick(() => $refs.input.focus())" @endif
     x-on:click="$refs.input.focus()"
     data-starter-otp-control
+    style="--starter-code-length: {{ $length }}"
 >
     <input
         x-ref="input"
         x-model="code"
-        x-on:input="code = String(code ?? '').replace(/\D/g, '').slice(0, 6)"
-        x-on:paste.prevent="code = $event.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6); $refs.input.value = code"
+        x-on:input="code = String(code ?? '').replace(/\D/g, '').slice(0, {{ $length }})"
+        x-on:paste.prevent="code = $event.clipboardData.getData('text').replace(/\D/g, '').slice(0, {{ $length }}); $refs.input.value = code"
         type="text"
         class="starter-otp-control-input"
         id="{{ $inputId }}"
         inputmode="numeric"
         pattern="[0-9]*"
-        maxlength="6"
-        autocomplete="one-time-code"
+        maxlength="{{ $length }}"
+        autocomplete="{{ $autocomplete }}"
         aria-label="{{ $label }}"
-        @error($field) aria-invalid="true" aria-describedby="{{ $errorId }}" @enderror
+        @error($field) aria-invalid="true" @enderror
+        @if ($ariaDescribedBy !== '') aria-describedby="{{ $ariaDescribedBy }}" @endif
     >
 
-    @foreach (range(0, 5) as $index)
+    @foreach (range(0, $length - 1) as $index)
         <span
             class="starter-otp-control-cell"
             x-bind:class="{

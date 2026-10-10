@@ -17,14 +17,14 @@
         ],
         'security' => [
             'label' => 'Keamanan Sistem',
-            'description' => 'Atur login, lock screen, dan batas upload.',
+            'description' => 'Atur sesi, lock screen, dan batas percobaan login.',
             'icon' => 'shield-check',
         ],
     ];
     $activeSection = $sections[$section];
 @endphp
 
-<div>
+<div class="tabler-settings-page">
     <div class="page-header d-print-none mt-0 mb-3" aria-label="Header halaman" data-starter-region="page-header">
         <div class="row g-3 align-items-center">
             <div class="col">
@@ -41,7 +41,7 @@
     </div>
 
     <div class="row row-cards mb-3" data-starter-region="summary">
-        <div class="col-sm-6 col-xl-3">
+        <div class="col-6 col-xl-3">
             <div class="card card-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -56,7 +56,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-xl-3">
+        <div class="col-6 col-xl-3">
             <div class="card card-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -69,7 +69,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-xl-3">
+        <div class="col-6 col-xl-3">
             <div class="card card-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -82,7 +82,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-xl-3">
+        <div class="col-6 col-xl-3">
             <div class="card card-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">

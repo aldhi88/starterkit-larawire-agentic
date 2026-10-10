@@ -1,0 +1,50 @@
+/* Dashcode palette adapter. Its compiled Tailwind utilities contain static blue. */
+html[data-starter-brand] {
+    --starter-primary: var(--starter-brand-primary);
+    --starter-primary-soft: var(--starter-brand-primary-soft);
+    --starter-primary-50: var(--starter-brand-primary-soft);
+}
+html[data-starter-brand] .btn-primary,
+html[data-starter-brand] .dashcode-auth .btn-dark {
+    background: var(--starter-brand-primary);
+    border-color: var(--starter-brand-primary);
+    color: var(--starter-brand-primary-contrast);
+    --tw-ring-color: rgba(var(--starter-brand-accent-rgb), .45);
+}
+html[data-starter-brand] .btn-primary:hover,
+html[data-starter-brand] .dashcode-auth .btn-dark:hover {
+    background: var(--starter-brand-primary-hover);
+    border-color: var(--starter-brand-primary-hover);
+    color: var(--starter-brand-primary-contrast);
+}
+html[data-starter-brand] .btn-outline-primary {
+    border-color: var(--starter-brand-primary-text);
+    color: var(--starter-brand-primary-text);
+}
+html[data-starter-brand] .btn-outline-primary:hover { background: var(--starter-brand-primary-soft); border-color: var(--starter-brand-primary-text); }
+html[data-starter-brand] :is(.text-primary, .text-primary-500) { color: var(--starter-brand-primary-text) !important; }
+html[data-starter-brand] .hover\:text-primary-500:hover { color: var(--starter-brand-primary-text) !important; }
+html[data-starter-brand] :is(.bg-primary-lt, .bg-primary-50, .bg-primary-100) { background: var(--starter-brand-primary-soft) !important; }
+html[data-starter-brand] .bg-primary-500 { background: rgba(var(--starter-brand-primary-rgb), var(--tw-bg-opacity, 1)) !important; }
+html[data-starter-brand] .bg-primary-700 { background: var(--starter-brand-primary-hover) !important; color: var(--starter-brand-primary-contrast) !important; }
+html[data-starter-brand] .border-primary-500 { border-color: var(--starter-brand-primary-border) !important; }
+html[data-starter-brand] :is(.dashcode-settings-stats, .dashcode-activity-stats) > .border-primary-500 { background: var(--starter-brand-primary-soft) !important; }
+html[data-starter-brand] :is(.dashcode-landing-kicker, .dashcode-welcome-kicker, .dashcode-eyebrow,
+    .dashcode-settings-panel > .card-header .nav-link.active, .starter-horizontal-link.active,
+    .starter-horizontal-submenu-link.active, .dashcode-account-role, .dashcode-account-meta-icon-primary,
+    .dashcode-profile-nav-item.active, .dashcode-profile-form-icon, .dashcode-profile-security-guide-icon,
+    .starter-error-code) { color: var(--starter-brand-primary-text); }
+html[data-starter-brand] .dashcode-landing-features article > span,
+html[data-starter-brand] .dashcode-step-list li > span { color: var(--starter-brand-primary-text); }
+html[data-starter-brand] .starter-pg-page:is(:hover, .is-active) { color: var(--starter-brand-primary-contrast); }
+html[data-starter-brand] .dashcode-alert:not(.dashcode-alert-success, .dashcode-alert-warning, .dashcode-alert-info) { border-color: var(--starter-brand-primary-border); }
+html[data-starter-brand] .dashcode-landing-login:hover { border-color: var(--starter-brand-primary-border); color: var(--starter-brand-primary-text) !important; }
+html[data-starter-brand] .dashcode-preview-body aside span:nth-child(3) { background: var(--starter-brand-primary); }
+html[data-starter-brand] .dashcode-stat-card:not(.dashcode-stat-card-cyan, .dashcode-stat-card-green) .dashcode-stat-icon { background: var(--starter-brand-primary-soft); color: var(--starter-brand-primary-text); }
+html[data-starter-brand] .dashcode-welcome-card { background: linear-gradient(115deg, var(--starter-slate-900), var(--starter-brand-secondary-text)); }
+html[data-starter-brand] .dashcode-welcome-mark span:first-child { border-color: rgba(var(--starter-brand-primary-rgb), .55); }
+html[data-starter-brand] .dashcode-welcome-mark span:nth-child(2) { border-color: rgba(var(--starter-brand-accent-rgb), .48); }
+html[data-starter-brand] :is(.btn, .form-select, .form-control):not(.is-invalid):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
+html[data-starter-brand] :is(.starter-icon-button, .starter-pg-page, .starter-dropdown-item, .starter-app-option, .dashcode-table-action):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
+html[data-starter-brand] :is(.form-select, .form-control):not(.is-invalid):focus { border-color: var(--starter-brand-accent-text); }
+html.dark[data-starter-brand] :is(.text-primary, .text-primary-500, .hover\:text-primary-500:hover) { color: var(--starter-brand-primary-on-dark) !important; }
