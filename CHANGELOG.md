@@ -5,6 +5,20 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.17] - 2026-10-12
+
+### Fixed
+
+- Keep the configured brand palette active on standalone error and maintenance
+  pages without depending on an application stylesheet route that maintenance
+  mode may block.
+- Use one semantic page heading across authentication layouts, removing the
+  duplicate confirmation-password heading and refining lock-screen identity
+  hierarchy and spacing in every supported theme.
+- Extend authentication-loader regression coverage to lock-screen unlock,
+  retries after invalid credentials, late request cleanup, and browser Back
+  restoration.
+
 ## [1.7.16] - 2026-10-11
 
 ### Changed

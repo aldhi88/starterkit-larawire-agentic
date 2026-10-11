@@ -11,11 +11,17 @@ for (const theme of ['vuexy', 'dashcode', 'tabler']) {
     const layout = fs.readFileSync(path.join(root, `resources/themes/${theme}/views/starter/templates/layouts/auth.blade.php`), 'utf8');
     assert.match(layout, /data-starter-auth-shell/);
     assert.match(layout, /data-starter-livewire-loader/);
+    const lockScreen = fs.readFileSync(path.join(root, `resources/themes/${theme}/views/starter/auth/lock-screen.blade.php`), 'utf8');
+    assert.match(lockScreen, /wire:submit="unlock"/);
 }
 
-function fixture(authShell) {
+const lockComponent = fs.readFileSync(path.join(root, 'src/Livewire/Starter/Auth/LockScreen.php'), 'utf8');
+assert.match(lockComponent, /#\[Layout\('layouts::auth'\)\]/);
+
+function fixture(authShell, pathname = '/auth/login') {
     const attributes = new Map([['aria-hidden', 'true']]);
     const classes = new Set();
+    const componentAttributes = new Map();
     const listeners = new Map();
     const navigation = [];
     let intercept;
@@ -37,18 +43,18 @@ function fixture(authShell) {
         addEventListener: (name, callback) => listeners.set(name, callback),
     };
     const window = {
-        location: { href: 'https://example.test/auth/login', assign: (url) => navigation.push(url) },
+        location: { href: `https://example.test${pathname}`, assign: (url) => navigation.push(url) },
         Livewire: { interceptRequest: (callback) => { intercept = callback; } },
         addEventListener: (name, callback) => listeners.set(name, callback),
     };
     vm.runInNewContext(runtime, { window, document, URL, Set, clearTimeout, setTimeout });
     window.StarterTemplate.bindLivewire();
 
-    function request() {
+    function request(method = 'authenticate') {
         const hooks = {};
-        const rootElement = { setAttribute() {}, removeAttribute() {} };
+        const rootElement = { setAttribute: (name, value) => componentAttributes.set(name, value), removeAttribute: (name) => componentAttributes.delete(name) };
         const livewireRequest = {
-            messages: [{ calls: [{ method: 'authenticate' }], component: { el: rootElement } }],
+            messages: [{ calls: [{ method }], component: { el: rootElement } }],
             options: { headers: {} },
             cancel() {},
         };
@@ -62,29 +68,42 @@ function fixture(authShell) {
         return hooks;
     }
 
-    return { window, attributes, classes, listeners, navigation, request };
+    return { window, attributes, componentAttributes, classes, listeners, navigation, request };
 }
 
-const successful = fixture(true);
-const login = successful.request();
-login.send();
-assert.equal(successful.attributes.get('aria-hidden'), 'false');
-login.redirect({ url: 'https://example.test/dashboard', preventDefault() {} });
-login.finish();
-assert.deepEqual(successful.navigation, ['https://example.test/dashboard']);
-assert.equal(successful.attributes.get('aria-hidden'), 'false', 'Successful login keeps its loader until navigation');
-assert(successful.classes.has('starter-livewire-is-loading'));
+for (const [action, pathname] of [['authenticate', '/auth/login'], ['unlock', '/lock-screen']]) {
+    const successful = fixture(true, pathname);
+    const request = successful.request(action);
+    request.send();
+    assert.equal(successful.attributes.get('aria-hidden'), 'false');
+    request.redirect({ url: 'https://example.test/dashboard', preventDefault() {} });
+    request.finish();
+    assert.deepEqual(successful.navigation, ['https://example.test/dashboard']);
+    assert.equal(successful.attributes.get('aria-hidden'), 'false', `${action}: loader stays visible while the destination has not loaded`);
+    assert(successful.classes.has('starter-livewire-is-loading'));
+    assert.equal(successful.componentAttributes.get('aria-busy'), 'true');
+    successful.window.StarterTemplate.hideLivewireLoader();
+    assert.equal(successful.attributes.get('aria-hidden'), 'false', `${action}: late request cleanup cannot reveal the form`);
 
-successful.listeners.get('pageshow')({ persisted: true });
-assert.equal(successful.attributes.get('aria-hidden'), 'true', 'Back navigation clears the stale loader');
-assert.equal(successful.window.StarterTemplate.terminalNavigationStarted, false);
+    successful.listeners.get('pageshow')({ persisted: true });
+    assert.equal(successful.attributes.get('aria-hidden'), 'true', `${action}: Back navigation clears the stale loader`);
+    assert.equal(successful.window.StarterTemplate.terminalNavigationStarted, false);
+    assert.equal(successful.componentAttributes.has('aria-busy'), false);
 
-const failed = fixture(true);
-const retry = failed.request();
-retry.send();
-retry.finish();
-assert.equal(failed.attributes.get('aria-hidden'), 'true', 'Failed login reveals the form for correction');
-assert.equal(failed.navigation.length, 0);
+    const failed = fixture(true, pathname);
+    const retry = failed.request(action);
+    retry.send();
+    retry.finish();
+    assert.equal(failed.attributes.get('aria-hidden'), 'true', `${action}: invalid password reveals the form for correction`);
+    assert.equal(failed.componentAttributes.has('aria-busy'), false);
+    assert.equal(failed.navigation.length, 0);
+    const corrected = failed.request(action);
+    corrected.send();
+    corrected.redirect({ url: 'https://example.test/dashboard', preventDefault() {} });
+    corrected.finish();
+    assert.equal(failed.attributes.get('aria-hidden'), 'false', `${action}: retry retains the loader through successful navigation`);
+    assert.deepEqual(failed.navigation, ['https://example.test/dashboard']);
+}
 
 const app = fixture(false);
 const appAction = app.request();
@@ -94,4 +113,4 @@ appAction.finish();
 assert.equal(app.attributes.get('aria-hidden'), 'true', 'Other pages retain the navigation loader handoff');
 assert(app.classes.has('starter-is-navigating'));
 
-console.log('Login loader handoff passed for all auth layouts.');
+console.log('Login and lock-screen loader handoff passed for all auth layouts.');

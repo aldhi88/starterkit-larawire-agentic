@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" class="light">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" class="light" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -8,6 +8,7 @@
     <link rel="shortcut icon" href="{{ asset('assets/dashcode/images/logo/favicon.svg') }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/dashcode.css') }}">
+    @include('starter-shared::components.brand-stylesheet', ['standalone' => true])
 </head>
 <body class="font-inter bg-slate-100" data-starter-theme="dashcode">
     @php($errorCode = trim($__env->yieldContent('code')))
@@ -24,7 +25,7 @@
                 <h1 id="error-title">@yield('title')</h1>
                 <p>@yield('message')</p>
             </div>
-            <a href="{{ rtrim((string) config('app.url'), '/') ?: '/' }}" class="btn btn-dark" data-starter-region="primary-action">
+            <a href="{{ rtrim((string) config('app.url'), '/') ?: '/' }}" class="btn {{ \Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured() ? 'btn-primary' : 'btn-dark' }}" data-starter-region="primary-action">
                 @include('starter.templates.layouts.icon', ['name' => 'home'])
                 Kembali ke Beranda
             </a>
@@ -33,6 +34,6 @@
             </div>
         </div>
     </main>
-    <script src="{{ asset('assets/dashcode/js/dashcode.js') }}?v={{ filemtime(public_path('assets/dashcode/js/dashcode.js')) }}" defer></script>
+    <script src="{{ asset('assets/dashcode/js/dashcode.js') }}?v={{ (file_exists(public_path('assets/dashcode/js/dashcode.js')) ? filemtime(public_path('assets/dashcode/js/dashcode.js')) : 0) }}" defer></script>
 </body>
 </html>

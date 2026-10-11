@@ -2,6 +2,13 @@
     $defaultBrandLogoUrl = asset('assets/vuexy/img/branding/vuexy-mark.svg');
     $brandLogoUrl = $clientLogoUrl ?: $defaultBrandLogoUrl;
     $brandLogoAlt = $clientLogoUrl ? ($clientName ?: config('app.name')) : config('app.name');
+    $authSubtitle = $subtitle ?? match (true) {
+        ($title ?? null) === 'Layar Dikunci' => 'Aplikasi dikunci untuk melindungi sesi Anda.',
+        ($title ?? null) === 'Konfirmasi Password' => 'Verifikasi diperlukan sebelum membuka pengaturan sensitif.',
+        ($otpRequired ?? false) => 'Verifikasi kode yang dikirim ke email akun Anda.',
+        ($authenticatorRequired ?? false) => 'Verifikasi kode dari aplikasi authenticator Anda.',
+        default => 'Selesaikan verifikasi login untuk melanjutkan.',
+    };
 @endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" data-skin="default" data-bs-theme="light" data-template="vertical-menu-template-no-customizer" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
@@ -17,12 +24,8 @@
             </div>
             <div class="d-flex col-12 col-xl-4 align-items-center authentication-bg p-sm-12 p-6" data-starter-region="primary-content"><div class="w-px-400 mx-auto mt-12 pt-5">
                 <div class="app-brand starter-auth-form-brand justify-content-center mb-6">@include('starter.templates.layouts.brand', ['url' => route('landing'), 'navigate' => false, 'clientLogoUrl' => $clientLogoUrl, 'brandLogoUrl' => $brandLogoUrl, 'brandLogoAlt' => $brandLogoAlt, 'brandText' => config('app.name'), 'markClass' => $clientLogoUrl ? 'starter-auth-company-logo' : '', 'showText' => ! $clientLogoUrl])</div>
-                <h4 class="mb-1">{{ $title ?? 'Selamat datang!' }} 👋</h4>
-                <p class="mb-6">{{ $subtitle ?? (($otpRequired ?? false)
-                    ? 'Verifikasi kode yang dikirim ke email akun Anda.'
-                    : (($authenticatorRequired ?? false)
-                        ? 'Verifikasi kode dari aplikasi authenticator Anda.'
-                        : 'Selesaikan verifikasi login untuk melanjutkan ke workspace Anda.')) }}</p>
+                <h1 class="h4 mb-1">{{ $title ?? 'Login' }}@if (($title ?? 'Login') === 'Login') 👋@endif</h1>
+                <p class="mb-6">{{ $authSubtitle }}</p>
                 @if (session('starter-auth-message'))<div class="alert alert-warning" role="alert">{{ session('starter-auth-message') }}</div>@endif
                 {{ $slot }}
                 @if (($title ?? null) !== 'Layar Dikunci')

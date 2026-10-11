@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
 
 <head>
     <meta charset="utf-8">
@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('assets/vuexy/vendor/css/core.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vuexy/vendor/fonts/iconify-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vuexy/css/vuexy.css') }}?v={{ file_exists(public_path('assets/vuexy/css/vuexy.css')) ? filemtime(public_path('assets/vuexy/css/vuexy.css')) : time() }}">
+    @include('starter-shared::components.brand-stylesheet', ['standalone' => true])
 </head>
 
 <body class="border-top-wide border-primary bg-body-tertiary">

@@ -2,6 +2,13 @@
     $defaultBrandLogoUrl = asset('assets/tabler/static/logo-small.svg');
     $brandLogoUrl = $clientLogoUrl ?: $defaultBrandLogoUrl;
     $brandLogoAlt = $clientLogoUrl ? ($clientName ?: config('app.name')) : config('app.name');
+    $authSubtitle = $subtitle ?? match (true) {
+        ($title ?? null) === 'Layar Dikunci' => 'Aplikasi dikunci untuk melindungi sesi Anda.',
+        ($title ?? null) === 'Konfirmasi Password' => 'Verifikasi diperlukan sebelum membuka pengaturan sensitif.',
+        ($otpRequired ?? false) => 'Verifikasi kode yang dikirim ke email akun Anda.',
+        ($authenticatorRequired ?? false) => 'Verifikasi kode dari aplikasi authenticator Anda.',
+        default => 'Selesaikan verifikasi login untuk melanjutkan.',
+    };
 @endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
@@ -70,15 +77,9 @@
 
                 <div class="card card-md">
                     <div class="card-body">
-                        <h2 class="h2 text-center mb-2">{{ $title ?? 'Login' }}</h2>
+                        <h1 class="h2 text-center mb-2">{{ $title ?? 'Login' }}</h1>
                         <p class="text-secondary text-center mb-4">
-                            {{ ($title ?? null) === 'Layar Dikunci'
-                                ? 'Aplikasi dikunci untuk melindungi sesi Anda.'
-                                : (($otpRequired ?? false)
-                                    ? 'Verifikasi kode yang dikirim ke email akun Anda.'
-                                    : (($authenticatorRequired ?? false)
-                                        ? 'Verifikasi kode dari aplikasi authenticator Anda.'
-                                        : 'Selesaikan verifikasi login untuk melanjutkan.')) }}
+                            {{ $authSubtitle }}
                         </p>
                         @if (session('starter-auth-message'))
                             <div class="alert alert-warning" role="alert">

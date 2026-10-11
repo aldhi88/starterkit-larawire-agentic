@@ -326,6 +326,14 @@ alignment, and responsive behavior remain equivalent. Unrecorded deviations fail
   vendor dan CSS integrasi, serta hanya ketika ketiga warna brand dikonfigurasi.
   Jangan masukkan rule penggantian palette ke CSS vendor atau
   `runtime/css/<theme-key>.css`.
+  Halaman error termasuk 503 maintenance wajib memasang `data-starter-brand`
+  dan memakai komponen brand stylesheet dengan `standalone: true`: komponen
+  bersama menyematkan token tervalidasi dan adapter CSS yang sama setelah CSS
+  theme, tanpa bergantung pada route aplikasi yang diblokir maintenance. Ini
+  pengecualian pengiriman CSS terpusat, bukan CSS palette buatan per halaman.
+  Uji semua error dengan palette aktif/nonaktif serta middleware maintenance;
+  template hasil `artisan down --render` perlu dirender ulang setelah perubahan
+  palette karena merupakan snapshot HTML.
 - Di adapter itu, petakan tombol solid `primary` ke brand primary dan tombol
   solid `secondary` ke brand secondary memakai token/selector native theme.
   Lengkapi background, border, teks kontras, hover, active, focus, dan disabled;

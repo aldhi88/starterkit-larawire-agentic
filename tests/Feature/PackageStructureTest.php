@@ -352,9 +352,13 @@ it('removes decorative page pretitles and preserves proportional text tiers in e
             ->toContain('.alert-title { font-size:1rem;font-weight:600;line-height:1.4;margin:0; }');
     }
 
-    expect(file_get_contents(StarterPaths::path(
-        'resources/themes/vuexy/views/starter/auth/confirm-password.blade.php',
-    )))->toContain('<h2 class="h4 mt-3 mb-1">Konfirmasi Password</h2>');
+    foreach (['dashcode', 'tabler', 'vuexy'] as $theme) {
+        $base = StarterPaths::path('resources/themes/'.$theme.'/views/starter/');
+        expect(file_get_contents($base.'auth/confirm-password.blade.php'))
+            ->not->toMatch('/<h[1-6]\b/')
+            ->and(file_get_contents($base.'templates/layouts/auth.blade.php'))
+            ->toContain('<h1 class=', '$authSubtitle', 'Verifikasi diperlukan sebelum membuka pengaturan sensitif.');
+    }
 });
 
 it('keeps Vuexy shells on their native layout hierarchy', function (): void {

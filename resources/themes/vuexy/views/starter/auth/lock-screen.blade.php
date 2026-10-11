@@ -1,7 +1,7 @@
 <div>
     <div class="text-center mb-4" data-starter-region="identity-summary">
         <span class="avatar avatar-xl rounded-circle" style="background-image: url({{ app(\Aldhi88\StarterKit\Services\Starter\StarterContextService::class)->avatarUrl($login) }})"></span>
-        <div class="mt-3 h3 mb-1">{{ $login->name }}</div>
+        <div class="mt-3 h5 mb-1">{{ $login->name }}</div>
         <div class="text-secondary">{{ $login->role?->name ?? 'User' }}</div>
     </div>
 

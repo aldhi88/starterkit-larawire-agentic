@@ -1,12 +1,4 @@
 <div>
-    <div class="text-center mb-4" data-starter-region="identity-summary">
-        <div class="starter-auth-mark mx-auto">
-            @include('starter.templates.layouts.icon', ['name' => 'shield-lock', 'class' => 'icon'])
-        </div>
-        <h2 class="mt-3 mb-1">Konfirmasi Password</h2>
-        <div class="text-secondary">Verifikasi diperlukan sebelum membuka pengaturan sensitif.</div>
-    </div>
-
     <div class="alert alert-info" role="status" data-starter-region="context-notice">
         <div class="d-flex gap-2">
             @include('starter.templates.layouts.icon', ['name' => 'info-circle', 'class' => 'icon-sm flex-shrink-0 mt-1'])

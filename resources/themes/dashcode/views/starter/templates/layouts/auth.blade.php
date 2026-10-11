@@ -2,6 +2,13 @@
     $defaultBrandLogoUrl = asset('assets/dashcode/images/logo/logo.svg');
     $brandLogoUrl = $clientLogoUrl ?: $defaultBrandLogoUrl;
     $brandLogoAlt = $clientLogoUrl ? ($clientName ?: config('app.name')) : config('app.name');
+    $authSubtitle = $subtitle ?? match (true) {
+        ($title ?? null) === 'Layar Dikunci' => 'Aplikasi dikunci untuk melindungi sesi Anda.',
+        ($title ?? null) === 'Konfirmasi Password' => 'Verifikasi diperlukan sebelum membuka pengaturan sensitif.',
+        ($otpRequired ?? false) => 'Verifikasi kode yang dikirim ke email akun Anda.',
+        ($authenticatorRequired ?? false) => 'Verifikasi kode dari aplikasi authenticator Anda.',
+        default => 'Selesaikan verifikasi login untuk melanjutkan.',
+    };
 @endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" class="light" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
@@ -49,13 +56,7 @@
                         <div class="mb-6 text-center">
                             <h1 class="text-2xl font-semibold text-slate-800">{{ $title ?? 'Login' }}</h1>
                             <p class="mt-2 text-base text-slate-500">
-                                {{ ($title ?? null) === 'Layar Dikunci'
-                                    ? 'Aplikasi dikunci untuk melindungi sesi Anda.'
-                                    : (($otpRequired ?? false)
-                                        ? 'Verifikasi kode yang dikirim ke email akun Anda.'
-                                        : (($authenticatorRequired ?? false)
-                                            ? 'Verifikasi kode dari aplikasi authenticator Anda.'
-                                            : 'Selesaikan verifikasi login untuk melanjutkan.')) }}
+                                {{ $authSubtitle }}
                             </p>
                         </div>
 

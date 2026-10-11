@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @if (\Aldhi88\StarterKit\Support\Starter\StarterBrandPalette::configured()) data-starter-brand @endif>
 
 <head>
     <meta charset="utf-8">
@@ -7,12 +7,13 @@
     <meta name="robots" content="noindex, nofollow">
     <title>@yield('code') · @yield('title') | {{ config('app.name') }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/tabler/static/logo-small.svg') }}">
-    <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) }}">
-    <link rel="stylesheet" href="{{ asset('assets/tabler/css/tabler.css') }}?v={{ filemtime(public_path('assets/tabler/css/tabler.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ (file_exists(public_path('assets/tabler/dist/css/tabler.min.css')) ? filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) : 0) }}">
+    <link rel="stylesheet" href="{{ asset('assets/tabler/css/tabler.css') }}?v={{ (file_exists(public_path('assets/tabler/css/tabler.css')) ? filemtime(public_path('assets/tabler/css/tabler.css')) : 0) }}">
+    @include('starter-shared::components.brand-stylesheet', ['standalone' => true])
 </head>
 
 <body class="border-top-wide border-primary bg-body-tertiary">
-    <script src="{{ asset('assets/tabler/dist/js/tabler-theme.min.js') }}?v={{ filemtime(public_path('assets/tabler/dist/js/tabler-theme.min.js')) }}"></script>
+    <script src="{{ asset('assets/tabler/dist/js/tabler-theme.min.js') }}?v={{ (file_exists(public_path('assets/tabler/dist/js/tabler-theme.min.js')) ? filemtime(public_path('assets/tabler/dist/js/tabler-theme.min.js')) : 0) }}"></script>
 
     <main class="page page-center" aria-labelledby="error-title">
         <div class="container-tight py-4">
@@ -41,8 +42,8 @@
         </div>
     </main>
 
-    <script src="{{ asset('assets/tabler/dist/js/tabler.min.js') }}?v={{ filemtime(public_path('assets/tabler/dist/js/tabler.min.js')) }}" defer></script>
-    <script src="{{ asset('assets/tabler/js/tabler.js') }}?v={{ filemtime(public_path('assets/tabler/js/tabler.js')) }}" defer></script>
+    <script src="{{ asset('assets/tabler/dist/js/tabler.min.js') }}?v={{ (file_exists(public_path('assets/tabler/dist/js/tabler.min.js')) ? filemtime(public_path('assets/tabler/dist/js/tabler.min.js')) : 0) }}" defer></script>
+    <script src="{{ asset('assets/tabler/js/tabler.js') }}?v={{ (file_exists(public_path('assets/tabler/js/tabler.js')) ? filemtime(public_path('assets/tabler/js/tabler.js')) : 0) }}" defer></script>
 </body>
 
 </html>

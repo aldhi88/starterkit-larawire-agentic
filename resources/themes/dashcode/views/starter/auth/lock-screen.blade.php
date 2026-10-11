@@ -1,11 +1,11 @@
 <div class="dashcode-auth-form">
     <div class="text-center mb-4" data-starter-region="identity-summary">
         <span class="avatar avatar-xl rounded-circle" style="background-image: url({{ app(\Aldhi88\StarterKit\Services\Starter\StarterContextService::class)->avatarUrl($login) }})"></span>
-        <div class="mt-3 h3 mb-1">{{ $login->name }}</div>
+        <div class="mt-3 text-base font-medium text-slate-900 mb-1">{{ $login->name }}</div>
         <div class="text-secondary">{{ $login->role?->name ?? 'User' }}</div>
     </div>
 
-    <div class="dashcode-alert dashcode-alert-info" role="status" data-starter-region="context-notice">
+    <div class="dashcode-alert dashcode-alert-info mb-4" role="status" data-starter-region="context-notice">
         <div class="flex gap-2">
             @include('starter.templates.layouts.icon', ['name' => 'lock', 'class' => 'icon-sm flex-shrink-0 mt-1'])
             <div>

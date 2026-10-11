@@ -324,7 +324,6 @@
             "secondary-help"
         ],
         "starter/auth/confirm-password.blade.php": [
-            "identity-summary",
             "context-notice",
             "credentials-form",
             "secondary-action"
