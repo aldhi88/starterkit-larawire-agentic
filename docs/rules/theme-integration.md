@@ -119,10 +119,12 @@ Before changing Blade, CSS, JavaScript, registry, manifest, or archive files:
    new-theme host, and baseline host by absolute path. Record Git status for each
    repository and do not overwrite unrelated changes.
 3. Create
-   `theme-intake/<theme-key>/.starter-theme-run/verification-evidence.json`
+   `<workspace-root>/.agent-tmp/<task-id>/theme-<theme-key>/verification-evidence.json`
    conforming to `docs/rules/theme-verification-evidence.schema.json`. Initialize
    every gate and matrix row as `not_run`; never prefill `pass` from a previous
-   run, an earlier model, a screenshot, or an expectation.
+   run, an earlier model, a screenshot, or an expectation. Resolve the workspace
+   root and Git ignore requirement using `testing.md`; this minimal resumable
+   ledger is temporary tool input, not a permanent report or screenshot bundle.
 4. Fingerprint the intake inventory, `theme-package-contract.json`, baseline
    structural views, target runtime Blade/CSS/JS, asset manifest, and runtime ZIP.
    Store the exact SHA-256 values in the ledger.
@@ -140,7 +142,7 @@ any earlier exit condition is `not_run`, `fail`, `blocked`, stale, or skipped.
 | `1-source` | Inventory and classify vendor source only | License decision, exact HTML count, complete source index, component atlas, design grammar, dependency closure |
 | `2-structure` | Implement semantic Blade and behavior without cosmetic tuning | Every required view exists; normalized region/component/order/action/state parity passes against the locked baseline |
 | `3-cosmetics` | Apply only active-vendor markup/classes and narrowly scoped theme CSS/JS | Vendor references and compiled-class proof per component; color, contrast, spacing, proportion, and residue audits pass |
-| `4-browser` | Exercise the complete route/state/layout/viewport matrix | Screenshot plus DOM/computed metrics for every row; console/network/overflow/interaction checks pass with no skipped row |
+| `4-browser` | Exercise the complete route/state/layout/viewport matrix | Direct visual/interactive browser observation plus DOM/computed metrics for every row; console/network/overflow/interaction checks pass with no skipped row |
 | `5-package-docs` | Build archive and update manifests, checksums, notices, package docs, docs site, and template repo | Atomic hash equality, archive integrity, documentation search audit, fresh-host sync and zero-change dry-run |
 | `6-final` | Re-run all automated checks from final bytes | Package/host tests, analysis, formatting, residue scan, fresh-runtime browser smoke, empty known-defect and skipped-check lists |
 
@@ -162,9 +164,11 @@ For every required page, execute this exact loop:
    affected pages, and regression test. Unscoped compatibility skins and page
    injected CSS/JS are forbidden. `!important` requires proof of a scoped vendor
    `!important` collision and a computed-style regression test.
-6. Render baseline and target with identical inputs. Capture the screenshot and
-   record bounding rectangles/computed values; do not declare visual parity by
-   reading classes or by inspecting only one screenshot.
+6. Render baseline and target with identical inputs. Inspect them directly in the
+   browser and record the visual/interaction result and bounding rectangles/computed
+   values in the ledger. Screenshots are not required; capture only for a concrete
+   diagnostic need or explicit user request under `testing.md`. Source inspection
+   alone does not prove rendered visual parity.
 7. Exercise all applicable normal, empty, one-record, page-full, overflow,
    loading, validation-error, disabled, checked/unchecked, focus, open/closed,
    destructive-confirmation, and long-content states. Record `not_applicable`
@@ -221,8 +225,10 @@ alignment, and responsive behavior remain equivalent. Unrecorded deviations fail
   theme host is provisional. After packaging, install the exact archive, clear
   view/runtime/opcode caches when stale output is detected, run sync and a
   zero-change dry-run, then repeat browser smoke for both layouts and viewports.
-- A source assertion, unit test, screenshot, DOM metric, and interactive check
-  prove different things; none may substitute for another required evidence type.
+- Source assertions, unit tests, DOM metrics, and direct visual/interactive checks
+  prove different things; none replaces another required check. Saved screenshots
+  are optional diagnostics and are never required to pass a gate. Record concise
+  browser observations in `browser_observation`, not invented screenshot paths.
 - Sampling is forbidden. `All`, `complete`, `ready`, `done`, `accurate`, and
   equivalent completion language may appear in the handoff only when every
   required ledger gate is `pass`, `known_defects` and `skipped_checks` are empty,
@@ -233,10 +239,13 @@ alignment, and responsive behavior remain equivalent. Unrecorded deviations fail
 - After context compaction or model handoff, reread the ledger and rules, verify
   fingerprints, and resume from the first non-passing gate. Do not restart finished
   work and do not trust conversational memory over the ledger.
-- The last local command before a completion handoff is
-  `php tools/validate-theme-evidence.php <theme-key>`. Exit code zero is mandatory.
+- The final verification command before a completion handoff is
+  `php tools/validate-theme-evidence.php <theme-key> <ledger-path>`. Exit code zero is mandatory.
   Never weaken the validator, schema, contract, or evidence merely to make the
   command green; fix the product or execute the missing verification instead.
+  Pass the resolved scratch ledger path explicitly, or `-` for JSON on stdin.
+  After validation and any active handoff have consumed it, remove the task scratch
+  files under `testing.md`; report results in chat without saving a proof bundle.
 
 ## Pipeline deterministik wajib
 

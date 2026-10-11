@@ -18,7 +18,7 @@
     ],
     "properties": {
         "schema_version": {
-            "const": 1
+            "const": 2
         },
         "theme": {
             "type": "string",
@@ -105,8 +105,7 @@
                     "layout",
                     "viewport",
                     "state",
-                    "baseline_screenshot",
-                    "target_screenshot",
+                    "browser_observation",
                     "vendor_references",
                     "computed_metrics",
                     "console_errors",
@@ -132,6 +131,7 @@
                     "layout": { "enum": ["vertical", "horizontal", "standalone"] },
                     "viewport": { "enum": ["1280x768", "390x844"] },
                     "state": { "type": "string", "minLength": 1 },
+                    "browser_observation": { "type": "string", "minLength": 1 },
                     "baseline_screenshot": { "type": "string", "minLength": 1 },
                     "target_screenshot": { "type": "string", "minLength": 1 },
                     "vendor_references": {

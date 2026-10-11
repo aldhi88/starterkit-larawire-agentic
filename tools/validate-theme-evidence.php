@@ -5,16 +5,17 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__);
 $theme = $argv[1] ?? '';
+$ledgerInput = $argv[2] ?? '';
 
-if (! preg_match('/^[a-z0-9][a-z0-9-]*$/', $theme)) {
-    fwrite(STDERR, "Usage: php tools/validate-theme-evidence.php <theme-key>\n");
+if (! preg_match('/^[a-z0-9][a-z0-9-]*$/', $theme) || $ledgerInput === '') {
+    fwrite(STDERR, "Usage: php tools/validate-theme-evidence.php <theme-key> <ledger-path|->\n");
     exit(2);
 }
 
-$ledgerPath = $root.'/theme-intake/'.$theme.'/.starter-theme-run/verification-evidence.json';
+$ledgerPath = $ledgerInput === '-' ? 'php://stdin' : $ledgerInput;
 $contractPath = $root.'/docs/rules/theme-package-contract.json';
 
-if (! is_file($ledgerPath)) {
+if ($ledgerInput !== '-' && (! is_file($ledgerPath) || ! is_readable($ledgerPath))) {
     fwrite(STDERR, "Missing verification ledger: {$ledgerPath}\n");
     exit(1);
 }
@@ -36,7 +37,7 @@ $require = static function (bool $condition, string $message) use (&$errors): vo
 $nonEmptyString = static fn (mixed $value): bool => is_string($value) && trim($value) !== '';
 $sha256 = static fn (mixed $value): bool => is_string($value) && preg_match('/^[a-f0-9]{64}$/', $value) === 1;
 
-$require(($ledger['schema_version'] ?? null) === 1, 'Ledger schema_version must be 1.');
+$require(($ledger['schema_version'] ?? null) === 2, 'Ledger schema_version must be 2.');
 $require(($ledger['theme'] ?? null) === $theme, 'Ledger theme must match the requested theme key.');
 $require($nonEmptyString($ledger['baseline_theme'] ?? null), 'baseline_theme is required.');
 $require($nonEmptyString($ledger['run_id'] ?? null), 'run_id is required.');
@@ -83,7 +84,7 @@ foreach (is_array($rows) ? $rows : [] as $index => $row) {
         $require($nonEmptyString($row['not_applicable_reason'] ?? null), "{$prefix} requires a not_applicable_reason.");
     }
 
-    foreach (['page_id', 'page_group', 'route', 'layout', 'viewport', 'state', 'baseline_screenshot', 'target_screenshot'] as $key) {
+    foreach (['page_id', 'page_group', 'route', 'layout', 'viewport', 'state', 'browser_observation'] as $key) {
         $require($nonEmptyString($row[$key] ?? null), "{$prefix}.{$key} is required.");
     }
 

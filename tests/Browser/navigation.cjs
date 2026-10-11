@@ -9,8 +9,6 @@ const assert = require('node:assert/strict');
 const packageRoot = path.resolve(__dirname, '../..');
 const hosts = Object.fromEntries(['dashcode', 'tabler', 'vuexy'].map(theme => [theme,
     path.resolve(packageRoot, '../starterkit-larawire-laravel-' + (theme === 'dashcode' ? 'dashbcode' : theme))]));
-const evidence = process.env.NAVIGATION_EVIDENCE_DIR || '/tmp/larawire-navigation-evidence';
-fs.mkdirSync(evidence, { recursive: true });
 const cache = new Map();
 let origin;
 const server = createServer((req, res) => {
@@ -122,9 +120,6 @@ const server = createServer((req, res) => {
                                         const childBox = await submenu.boundingBox();
                                         assert(childBox.x >= 0 && childBox.x + childBox.width <= width + 1, 'Mobile submenu spills horizontally');
                                     }
-                                    if (layout === 'horizontal' && count === 24 && length === 'long' && width === 390) {
-                                        await page.screenshot({ path: path.join(evidence, `${theme}-390-drawer.png`) });
-                                    }
                                     await page.keyboard.press('Escape');
                                     if (theme === 'vuexy') {
                                         const closed = await page.locator('#layout-menu').boundingBox();
@@ -135,9 +130,6 @@ const server = createServer((req, res) => {
                                 state.overflow = overflow;
                                 assert.equal(overflow, 0, 'Root page overflows horizontally');
                                 assert.deepEqual(errors, [], 'Browser asset or JavaScript errors');
-                                if (layout === 'horizontal' && count === 24 && length === 'long' && [1280, 390].includes(width)) {
-                                    await page.screenshot({ path: path.join(evidence, `${theme}-${width}.png`) });
-                                }
                                 if (length === 'long' && desktopMenu) {
                                     await page.evaluate(() => scrollTo(0, 500));
                                     const navTop = await page.locator(theme === 'vuexy' ? '.menu-horizontal' : theme === 'tabler' ? '.starter-navbar-horizontal' : '#app_header').evaluate(el => el.getBoundingClientRect().top);
@@ -154,11 +146,10 @@ const server = createServer((req, res) => {
             }
         }
     } finally {
-        fs.writeFileSync(path.join(evidence, 'results.json'), JSON.stringify({ results, failures }, null, 2));
         await browser.close();
         server.close();
     }
-    console.log(`${results.length} navigation cases passed; ${failures.length} failed. Evidence: ${evidence}`);
+    console.log(`${results.length} navigation cases passed; ${failures.length} failed.`);
     for (const failure of failures) console.log(JSON.stringify(failure));
     if (failures.length) process.exitCode = 1;
 })().catch(error => { console.error(error); server.close(); process.exitCode = 1; });

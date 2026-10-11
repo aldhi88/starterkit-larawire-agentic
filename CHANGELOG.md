@@ -5,6 +5,20 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.16] - 2026-10-11
+
+### Changed
+
+- Keep ordinary verification output in commands and direct browser inspection
+  instead of automatically generating screenshot, trace, report, dump, or
+  helper-script evidence artifacts.
+- Move the temporary one-shot theme verification ledger into the workspace
+  `.agent-tmp` scratch area and require its explicit path, or standard input,
+  when running the fail-closed evidence validator.
+- Make screenshots optional for theme verification while retaining mandatory
+  direct browser observations, computed metrics, interaction checks, and all
+  existing failure gates.
+
 ## [1.7.15] - 2026-10-11
 
 ### Changed

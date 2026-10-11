@@ -1423,11 +1423,11 @@ it('defines a complete theme from one intake instruction without vendor visual l
     expect($agents)
         ->toContain('## One-shot theme integration contract')
         ->toContain('fail-closed state machine')
-        ->toContain('.starter-theme-run/verification-evidence.json')
+        ->toContain('.agent-tmp/<task-id>/theme-<theme-key>/verification-evidence.json')
         ->toContain('A phase may become `pass` only from current-run command or browser evidence')
         ->toContain('Any change to source intake, baseline structure, contract, runtime Blade/CSS/JS, manifest, or ZIP invalidates')
-        ->toContain('php tools/validate-theme-evidence.php <theme-key>')
-        ->toContain('both a screenshot and recorded DOM/computed metrics at `1280x768` and `390x844`')
+        ->toContain('php tools/validate-theme-evidence.php <theme-key> <ledger-path>')
+        ->toContain('direct visual/interactive inspection and recorded DOM/computed metrics at `1280x768` and `390x844`')
         ->toContain('theme-intake/<theme-key>-lama')
         ->toContain('PowerGrid width is content-driven')
         ->toContain('runtime/css/<theme-key>.css')
@@ -1463,7 +1463,7 @@ it('defines a complete theme from one intake instruction without vendor visual l
         ->and($integration)->toContain('document root horizontal overflow is exactly `0px`')
         ->and($integration)->toContain('tabs have at least `16px` clear separation')
         ->and($integration)->toContain('Any edit to intake, baseline structural views, contract, target')
-        ->and($integration)->toContain('The last local command before a completion handoff')
+        ->and($integration)->toContain('The final verification command before a completion handoff')
         ->and($integration)->toContain('1280x768')
         ->and($ignore)->toContain('/theme-intake')
         ->and($ui)->toContain('practical intrinsic-width filter wrapper')
@@ -1496,9 +1496,9 @@ it('defines a complete theme from one intake instruction without vendor visual l
         ->and($contract['deterministic_execution'])->toMatchArray([
             'mode' => 'fail-closed',
             'rules_must_be_read_in_full_before_editing' => true,
-            'run_ledger_path' => 'theme-intake/<theme-key>/.starter-theme-run/verification-evidence.json',
+            'run_ledger_path' => '<workspace-root>/.agent-tmp/<task-id>/theme-<theme-key>/verification-evidence.json',
             'run_ledger_schema' => 'docs/rules/theme-verification-evidence.schema.json',
-            'completion_validator' => 'php tools/validate-theme-evidence.php <theme-key>',
+            'completion_validator' => 'php tools/validate-theme-evidence.php <theme-key> <ledger-path>',
             'pass_requires_current_run_evidence' => true,
             'sampling_forbidden' => true,
             'phase_order_enforced' => true,
@@ -1528,7 +1528,7 @@ it('defines a complete theme from one intake instruction without vendor visual l
         ->and($contract['browser_matrix']['desktop_safe_area'])->toBe('1280x768')
         ->and($contract['browser_matrix']['mobile_safe_area'])->toBe('390x844')
         ->and($contract['browser_matrix']['required_viewports'])->toBe(['1280x768', '390x844'])
-        ->and($contract['browser_matrix']['screenshot_and_computed_metrics_required_per_row'])->toBeTrue()
+        ->and($contract['browser_matrix']['direct_browser_observation_and_computed_metrics_required_per_row'])->toBeTrue()
         ->and($contract['browser_matrix']['computed_layout_inspection_always_required'])->toBeTrue()
         ->and($contract['browser_matrix']['css_source_inspection_cannot_replace_rendered_mobile_evidence'])->toBeTrue()
         ->and($contract['geometry_acceptance'])->toMatchArray([
@@ -1554,7 +1554,7 @@ it('defines a complete theme from one intake instruction without vendor visual l
             'current-input-fingerprints',
             'side-by-side-structural-parity',
             'full-page-state-matrix-without-sampling-or-skips',
-            'screenshot-and-computed-metrics-per-browser-row',
+            'direct-browser-observation-and-computed-metrics-per-browser-row',
             'objective-geometry-tolerances',
             'archive-manifest-checksum-consistency',
             'fresh-runtime-post-package-browser-smoke',
@@ -1564,13 +1564,14 @@ it('defines a complete theme from one intake instruction without vendor visual l
         ->and($evidenceSchema['required'])->toContain('fingerprints', 'stages', 'page_matrix', 'automated_checks', 'completion')
         ->and($evidenceSchema['properties']['page_matrix']['items']['required'])->toContain(
             'page_group',
-            'baseline_screenshot',
-            'target_screenshot',
+            'browser_observation',
             'vendor_references',
             'computed_metrics',
             'console_errors',
             'network_errors',
         )
+        ->and($contract['browser_matrix']['screenshots_required'])->toBeFalse()
+        ->and($evidenceSchema['properties']['page_matrix']['items']['required'])->not->toContain('baseline_screenshot', 'target_screenshot')
         ->and($evidenceSchema['allOf'])->not->toBeEmpty()
         ->and(is_file(StarterPaths::path('tools/validate-theme-evidence.php')))->toBeTrue();
 });
