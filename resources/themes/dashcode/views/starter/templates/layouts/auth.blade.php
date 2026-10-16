@@ -1,5 +1,5 @@
 @php
-    $defaultBrandLogoUrl = asset('assets/dashcode/images/logo/logo.svg');
+    $defaultBrandLogoUrl = asset('assets/starter/images/application-logo.svg');
     $brandLogoUrl = $clientLogoUrl ?: $defaultBrandLogoUrl;
     $brandLogoAlt = $clientLogoUrl ? ($clientName ?: config('app.name')) : config('app.name');
     $authSubtitle = $subtitle ?? match (true) {
@@ -19,7 +19,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="starter-auth-login-url" content="{{ \Aldhi88\StarterKit\Support\Starter\StarterNavigation::authLoginUrl() }}">
     <title>{{ $title ?? 'Login' }} | {{ config('app.name') }}</title>
-    <link rel="shortcut icon" href="{{ $brandLogoUrl }}">
+    @include('starter-shared::components.favicon')
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/app.css') }}?v={{ filemtime(public_path('assets/dashcode/css/app.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/starter/css/starter.css') }}?v={{ filemtime(public_path('assets/starter/css/starter.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/dashcode.css') }}?v={{ filemtime(public_path('assets/dashcode/css/dashcode.css')) }}">

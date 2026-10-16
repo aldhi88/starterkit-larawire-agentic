@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $phone
  * @property string|null $pic_name
  * @property string|null $logo
+ * @property string|null $favicon
  * @property string $account_status
  * @property Carbon|null $approved_at
  * @property Carbon|null $created_at
@@ -26,6 +27,7 @@ use Illuminate\Support\Carbon;
     'phone',
     'pic_name',
     'logo',
+    'favicon',
     'account_status',
     'approved_at',
 ])]

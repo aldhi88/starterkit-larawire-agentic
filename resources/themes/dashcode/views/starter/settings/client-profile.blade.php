@@ -3,7 +3,7 @@
         <div class="dashcode-page-heading mb-5" aria-label="Header halaman" data-starter-region="page-header">
             <div>
                 <h2 class="page-title">Profil Perusahaan</h2>
-                <div class="text-secondary">Perbarui identitas, kontak, dan logo perusahaan.</div>
+                <div class="text-secondary">Perbarui profil perusahaan, logo aplikasi, dan favicon.</div>
             </div>
         </div>
     @endunless
@@ -15,7 +15,7 @@
             @endif
 
             <section class="space-y-4" aria-labelledby="company-logo-heading">
-                <h3 id="company-logo-heading" class="card-title starter-form-section-title">Logo</h3>
+                <h3 id="company-logo-heading" class="card-title starter-form-section-title">Logo Aplikasi</h3>
                 <div
                     class="dashcode-upload-row"
                     data-starter-region="logo-field"
@@ -31,7 +31,7 @@
                         <label class="btn btn-outline-primary mb-0" for="client-photo-upload">
                             Ganti Logo
                         </label>
-                        <input type="file" id="client-photo-upload" class="dashcode-visually-hidden @error('clientPhotoUpload') is-invalid @enderror" wire:model="clientPhotoUpload" x-on:change="select($event)" accept="image/*">
+                        <input type="file" id="client-photo-upload" class="dashcode-visually-hidden @error('clientPhotoUpload') is-invalid @enderror" wire:model="clientPhotoUpload" x-on:change="select($event)" accept="image/png,image/jpeg,image/webp">
                     </div>
                     <div>
                         <button type="button" class="btn btn-ghost-danger" data-starter-modal-open="#delete-client-photo-modal">
@@ -43,6 +43,39 @@
                         <div class="text-secondary small mt-2" wire:loading wire:target="clientPhotoUpload">Mengunggah...</div>
                     </div>
                 </div>
+                <p class="text-secondary small">Logo horizontal, tanpa teks tambahan. PNG, JPG, atau WebP; maksimal 2 MB.</p>
+            </section>
+
+            <section class="space-y-4" aria-labelledby="application-favicon-heading">
+                <h3 id="application-favicon-heading" class="card-title starter-form-section-title">Favicon</h3>
+                <div
+                    class="dashcode-upload-row"
+                    data-starter-region="favicon-field"
+                    x-data="StarterTemplate.clientLogoPreview(@js($clientFaviconPreviewUrl))"
+                    x-on:starter-client-branding-updated.window="replace($event.detail.faviconUrl)"
+                >
+                    <div>
+                        <div class="starter-client-logo-preview starter-favicon-preview" data-client-logo-preview>
+                            @include('starter-shared::components.client-logo-preview', ['clientLogoPreviewUrl' => $clientFaviconPreviewUrl, 'previewLabel' => 'Pratinjau favicon'])
+                        </div>
+                    </div>
+                    <div>
+                        <label class="btn btn-outline-primary mb-0" for="client-favicon-upload">
+                            Ganti Favicon
+                        </label>
+                        <input type="file" id="client-favicon-upload" class="dashcode-visually-hidden @error('clientFaviconUpload') is-invalid @enderror" wire:model="clientFaviconUpload" x-on:change="select($event)" accept="image/png">
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-ghost-danger" data-starter-modal-open="#delete-client-favicon-modal">
+                            Hapus Favicon
+                        </button>
+                    </div>
+                    <div class="dashcode-upload-feedback">
+                        @error('clientFaviconUpload') <div class="text-danger small mt-2">{{ $message }}</div> @enderror
+                        <div class="text-secondary small mt-2" wire:loading wire:target="clientFaviconUpload">Mengunggah...</div>
+                    </div>
+                </div>
+                <p class="text-secondary small">Ikon tab browser. PNG persegi 32–512 px; maksimal 512 KB.</p>
             </section>
 
             <section class="space-y-4" aria-labelledby="company-profile-heading">
@@ -96,6 +129,14 @@
         'message' => 'Logo saat ini akan diganti dengan logo default.',
         'confirmText' => 'Hapus Logo',
         'confirmAction' => 'resetClientPhoto',
+        'dismissOnConfirm' => true,
+    ])
+    @include('starter.templates.components.danger-modal', [
+        'id' => 'delete-client-favicon-modal',
+        'title' => 'Hapus favicon?',
+        'message' => 'Favicon akan kembali ke ikon default. Logo aplikasi tetap tersimpan.',
+        'confirmText' => 'Hapus Favicon',
+        'confirmAction' => 'resetClientFavicon',
         'dismissOnConfirm' => true,
     ])
 </div>

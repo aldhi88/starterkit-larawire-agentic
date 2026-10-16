@@ -1,7 +1,7 @@
 <nav class="layout-navbar navbar navbar-expand-xl align-items-center starter-header-overlay-owner {{ $starterLayout === 'vertical' ? 'container-xxl navbar-detached bg-navbar-theme' : '' }}" id="layout-navbar" aria-label="Navigasi akun">
     @if ($starterLayout === 'horizontal')
         <div class="container-xxl">
-            <div class="navbar-brand app-brand d-none d-xl-flex py-0 me-6 ms-0">
+            <div class="navbar-brand app-brand d-flex py-0 me-3 ms-0">
                 @include('starter.templates.layouts.brand', [
                     'url' => $currentDashboardUrl,
                     'showText' => false,
@@ -16,7 +16,7 @@
         </button>
     </div>
     <div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
-        <div class="navbar-nav align-items-center me-auto">
+        <div class="navbar-nav align-items-center me-auto {{ $starterLayout === 'horizontal' ? 'd-none d-md-flex' : '' }}">
             <div class="nav-item d-flex align-items-center gap-3" data-starter-active-app>
                 <span class="avatar avatar-sm d-none d-sm-inline-flex"><span class="avatar-initial rounded bg-label-primary">@include('starter.templates.layouts.icon', ['name' => 'layout-dashboard', 'class' => 'icon-sm'])</span></span>
                 <div class="lh-sm">

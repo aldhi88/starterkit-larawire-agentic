@@ -23,7 +23,7 @@
 </head>
 <body data-starter-app-shell data-starter-theme="vuexy" data-starter-layout="{{ $starterLayout }}">
     @php
-        $defaultBrandLogoUrl = asset('assets/vuexy/img/branding/vuexy-mark.svg');
+        $defaultBrandLogoUrl = asset('assets/starter/images/application-logo.svg');
         $brandLogoUrl = $clientLogoUrl ?: $defaultBrandLogoUrl;
         $brandLogoAlt = $clientLogoUrl ? ($clientName ?: config('app.name')) : config('app.name');
     @endphp

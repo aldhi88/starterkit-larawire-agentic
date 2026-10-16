@@ -12,7 +12,7 @@
         ],
         'company' => [
             'label' => 'Profil Perusahaan',
-            'description' => 'Perbarui identitas dan kontak perusahaan.',
+            'description' => 'Perbarui identitas, kontak, logo aplikasi, dan favicon.',
             'icon' => 'building',
         ],
         'security' => [

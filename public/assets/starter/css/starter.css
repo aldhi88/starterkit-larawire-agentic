@@ -7,6 +7,20 @@
     display: none !important;
 }
 
+/* Brand images retain their supplied aspect ratio in either navigation layout. */
+[data-starter-app-shell] [data-starter-brand-logo] {
+    block-size: 2.5rem;
+    inline-size: auto;
+    max-inline-size: 11.5rem;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.starter-client-logo-preview.starter-favicon-preview {
+    block-size: 5rem;
+    inline-size: 5rem;
+}
+
 :root {
     --starter-auth-backdrop-image: url('../images/auth-backdrop-enterprise.webp?v=2');
 }

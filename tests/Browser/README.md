@@ -30,3 +30,11 @@ items, and viewport widths 1920/1280/1024/390. Assertions cover wrapping, docume
 overflow, menu/content separation, dropdown bounds, mobile menu access, sticky
 navigation, and asset/JavaScript errors. The PHP fixture uses the current demo's
 view overrides, so it also verifies the shell actually selected by the host.
+
+## Application branding runtime
+
+Run `node tests/Browser/application-branding.cjs` to verify that saved logo/favicon
+events update their separate DOM targets and resetting either preserves the other.
+Livewire upload validation, persistence, authorization, rollback cleanup, and native
+form rendering are covered by `StarterApplicationBrandingTest.php`; inspect the
+Settings company section in both layouts at desktop and mobile sizes.

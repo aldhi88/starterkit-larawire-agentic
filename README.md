@@ -95,6 +95,14 @@ atribut tersebut tetap diperlakukan sebagai `visible => true`.
 
 Parent yang disembunyikan juga menyembunyikan seluruh turunannya dari navigasi.
 
+### Logo aplikasi dan favicon
+
+Di **Pengaturan → Profil Perusahaan**, manager pengaturan dapat mengganti
+**Logo Aplikasi** horizontal dan **Favicon** secara terpisah. Logo ditampilkan
+tanpa teks tambahan pada navigasi vertikal/horizontal, login, dan landing.
+Favicon memakai PNG persegi 32–512 px (maksimal 512 KB); logo memakai PNG/JPG/WebP
+(maksimal 2 MB). Logo instalasi lama tetap dipakai setelah update.
+
 ### Mengatur akses role secara dinamis
 
 Administrator memberikan module kepada role melalui halaman Pengaturan. Satu

@@ -66,19 +66,20 @@ class ProfileService
     }
 
     /**
-     * @param  array{name: string, email?: ?string, phone?: ?string, pic_name?: ?string, logo?: ?string}  $data
+     * @param  array{name: string, email?: ?string, phone?: ?string, pic_name?: ?string, logo?: ?string, favicon?: ?string}  $data
      */
     public function updateClientProfile(ClientLogin $login, array $data): Client
     {
         $this->ensureAdmin($login);
 
-        return $this->clients->updateProfile($this->clients->current(), [
+        return DB::transaction(fn (): Client => $this->clients->updateProfile($this->clients->current(), [
             'name' => trim($data['name']),
             'email' => $this->nullableTrim($data['email'] ?? null),
             'phone' => $this->nullableTrim($data['phone'] ?? null),
             'pic_name' => $this->nullableTrim($data['pic_name'] ?? null),
             'logo' => $this->nullableTrim($data['logo'] ?? null),
-        ]);
+            ...(array_key_exists('favicon', $data) ? ['favicon' => $this->nullableTrim($data['favicon'])] : []),
+        ]));
     }
 
     public function changePassword(ClientLogin $login, string $currentPassword, string $password): ClientLogin

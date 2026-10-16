@@ -194,8 +194,7 @@ it('keeps horizontal company wordmarks legible without duplicated Vuexy brand te
     $vuexyCss = packageStructureLocalThemeCss('vuexy');
 
     expect($vuexyBrand)
-        ->toContain('@php($showText = $showText ?? true)')
-        ->toContain('@if ($showText)')
+        ->not->toContain('app-brand-text')
         ->toContain("{{ \$markClass ?? '' }}")
         ->and($vuexyNavbar)
         ->toContain("'showText' => false")
@@ -308,7 +307,7 @@ it('removes decorative page pretitles and preserves proportional text tiers in e
             ->and(substr_count($activity, 'starter-modal-section-title'))->toBe(1)
             ->and($profile)->toContain('Perbarui identitas akun, foto profil, dan keamanan kredensial Anda.')
             ->and($clientProfile)
-            ->toContain('Perbarui identitas, kontak, dan logo perusahaan.')
+            ->toContain('Perbarui profil perusahaan, logo aplikasi, dan favicon.')
             ->toContain('<h2 class="card-title mb-4">Pengaturan Perusahaan</h2>')
             ->and($security)
             ->toContain('<h2 class="card-title mb-4">Keamanan Sistem</h2>')
@@ -406,6 +405,8 @@ it('keeps Vuexy page composition identical to the verified Tabler baseline', fun
         'logs/powergrid/activity-logs-toolbar.blade.php',
     ];
     $normalize = static function (string $contents): string {
+        // Both themes open the same modal; Vuexy uses its own runtime adapter.
+        $contents = preg_replace('/data-bs-toggle="modal" data-bs-target="([^"]+)"/', 'data-starter-modal-open="$1"', $contents) ?? $contents;
         $contents = preg_replace('/<style>.*?<\/style>/s', '', $contents) ?? $contents;
         $contents = preg_replace('/\s+(?:class|style)="[^"]*"/', '', $contents) ?? $contents;
         $contents = preg_replace("/'class'\s*=>\s*'[^']*'/", "'class' => 'theme-cosmetic'", $contents) ?? $contents;
@@ -967,7 +968,7 @@ it('keeps Dashcode company sections and numeric suffix controls in native compon
 
     expect($company)
         ->toContain('class="card-body space-y-6"')
-        ->and(substr_count($company, '<section class="space-y-4"'))->toBe(3)
+        ->and(substr_count($company, '<section class="space-y-4"'))->toBe(4)
         ->and($company)->not->toContain('starter-form-section-title mt-4')
         ->and(substr_count($security, 'form-control appearance-none !pr-14'))->toBe(3)
         ->and(substr_count($security, 'border-none px-3 flex items-center justify-center'))->toBe(3)

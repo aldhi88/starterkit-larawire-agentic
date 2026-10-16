@@ -350,6 +350,7 @@
         "starter/settings/client-profile.blade.php": [
             "page-header",
             "logo-field",
+            "favicon-field",
             "company-details",
             "contact-details",
             "page-actions"

@@ -59,7 +59,7 @@ it('uses the company logo throughout app auth and landing branding in every them
         'resources/themes/vuexy/views/starter/templates/layouts/auth.blade.php',
     ));
 
-    expect($vuexyHead)->toContain('$clientLogoUrl ?:')
+    expect($vuexyHead)->toContain("@include('starter-shared::components.favicon')")
         ->and($vuexyAuth)->not->toContain("'clientLogoUrl' => null");
 });
 

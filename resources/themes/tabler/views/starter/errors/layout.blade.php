@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="robots" content="noindex, nofollow">
     <title>@yield('code') · @yield('title') | {{ config('app.name') }}</title>
-    <link rel="shortcut icon" href="{{ asset('assets/tabler/static/logo-small.svg') }}">
+    @include('starter-shared::components.favicon')
     <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ (file_exists(public_path('assets/tabler/dist/css/tabler.min.css')) ? filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) : 0) }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/css/tabler.css') }}?v={{ (file_exists(public_path('assets/tabler/css/tabler.css')) ? filemtime(public_path('assets/tabler/css/tabler.css')) : 0) }}">
     @include('starter-shared::components.brand-stylesheet', ['standalone' => true])

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="robots" content="noindex, nofollow">
     <title>@yield('code') · @yield('title') | {{ config('app.name') }}</title>
-    <link rel="shortcut icon" href="{{ asset('assets/dashcode/images/logo/favicon.svg') }}">
+    @include('starter-shared::components.favicon')
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/dashcode.css') }}">
     @include('starter-shared::components.brand-stylesheet', ['standalone' => true])

@@ -13,7 +13,7 @@
     <meta name="starter-session-activity-url" content="{{ $sessionActivityUrl }}">
     <meta name="starter-session-activity-scope" content="{{ $sessionActivityScope }}">
     <title>{{ $title ?? ($currentAppName ?? config('app.name')) }} | {{ config('app.name') }}</title>
-    <link rel="shortcut icon" href="{{ $clientLogoUrl ?: asset('assets/tabler/static/logo-small.svg') }}">
+    @include('starter-shared::components.favicon')
     <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler.min.css') }}?v={{ filemtime(public_path('assets/tabler/dist/css/tabler.min.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/tabler/dist/css/tabler-vendors.min.css') }}?v={{ filemtime(public_path('assets/tabler/dist/css/tabler-vendors.min.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/starter/vendor/flatpickr/flatpickr.min.css') }}?v={{ filemtime(public_path('assets/starter/vendor/flatpickr/flatpickr.min.css')) }}">
@@ -37,7 +37,7 @@
 
     @php
         $accountPersistBase = 'starter-account-'.($login?->getKey() ?? 'guest');
-        $defaultBrandLogoUrl = asset('assets/tabler/static/logo-white.svg');
+        $defaultBrandLogoUrl = asset('assets/starter/images/application-logo.svg');
         $brandLogoUrl = $clientLogoUrl ?: $defaultBrandLogoUrl;
         $brandLogoAlt = $clientLogoUrl ? ($clientName ?: config('app.name')) : config('app.name');
     @endphp

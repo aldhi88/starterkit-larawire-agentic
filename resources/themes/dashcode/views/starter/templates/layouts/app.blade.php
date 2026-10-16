@@ -13,7 +13,7 @@
     <meta name="starter-session-activity-url" content="{{ $sessionActivityUrl }}">
     <meta name="starter-session-activity-scope" content="{{ $sessionActivityScope }}">
     <title>{{ $title ?? ($currentAppName ?? config('app.name')) }} | {{ config('app.name') }}</title>
-    <link rel="shortcut icon" href="{{ $clientLogoUrl ?: asset('assets/dashcode/images/logo/favicon.svg') }}">
+    @include('starter-shared::components.favicon')
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/app.css') }}?v={{ filemtime(public_path('assets/dashcode/css/app.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/starter/vendor/flatpickr/flatpickr.min.css') }}?v={{ filemtime(public_path('assets/starter/vendor/flatpickr/flatpickr.min.css')) }}">
     <link rel="stylesheet" href="{{ asset('vendor/livewire-powergrid/tailwind.css') }}?v={{ filemtime(public_path('vendor/livewire-powergrid/tailwind.css')) }}">
@@ -30,8 +30,8 @@
     $starterLayout = \Aldhi88\StarterKit\Support\Starter\StarterTheme::layout();
     $starterLayoutView = \Aldhi88\StarterKit\Support\Starter\StarterTheme::layoutView();
     $accountPersistBase = 'starter-account-'.($login?->getKey() ?? 'guest');
-    $defaultBrandLogoUrl = asset('assets/dashcode/images/logo/logo-white.svg');
-    $defaultBrandLogoDarkUrl = asset('assets/dashcode/images/logo/logo.svg');
+    $defaultBrandLogoUrl = asset('assets/starter/images/application-logo.svg');
+    $defaultBrandLogoDarkUrl = asset('assets/starter/images/application-logo.svg');
     $brandLogoUrl = $clientLogoUrl ?: $defaultBrandLogoUrl;
     $brandLogoDarkUrl = $clientLogoUrl ?: $defaultBrandLogoDarkUrl;
     $brandLogoAlt = $clientLogoUrl ? ($clientName ?: config('app.name')) : config('app.name');

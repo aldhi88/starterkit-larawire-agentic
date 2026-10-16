@@ -95,6 +95,14 @@ remains compatible and is treated as `visible => true`.
 
 Hiding a parent also hides its complete navigation subtree.
 
+### Application logo and favicon
+
+In **Settings → Company Profile**, Settings managers can independently replace
+the horizontal **Application Logo** and square **Favicon**. Navigation in both
+layouts, login, and landing show the logo without adjacent brand text. Favicons
+accept square PNG images at 32–512 px (up to 512 KB); logos accept PNG/JPG/WebP
+(up to 2 MB). Updates preserve an existing installation's logo.
+
 ### Dynamic role access
 
 Administrators assign modules to a role from the Settings page. A role may open

@@ -5,6 +5,24 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-10-16
+
+### Added
+
+- Add independently managed horizontal application-logo and square favicon
+  uploads to Company Profile settings across DashCode, Tabler, and Vuexy.
+- Add an idempotent nullable `starter_clients.favicon` migration, shared
+  favicon rendering, live browser branding updates, and default application
+  logo/icon assets.
+
+### Changed
+
+- Render navigation, authentication, landing, and error branding as an image
+  without adjacent brand text while preserving existing installation logos.
+- Validate and store logo and favicon uploads in separate owned directories,
+  keep their reset flows independent, and clean newly stored files when
+  persistence fails.
+
 ## [1.7.19] - 2026-10-16
 
 ### Security

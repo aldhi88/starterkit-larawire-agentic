@@ -4,7 +4,7 @@
             <div class="row g-2 align-items-center">
                 <div class="col">
                     <h2 class="page-title">Profil Perusahaan</h2>
-                    <div class="text-secondary">Perbarui identitas, kontak, dan logo perusahaan.</div>
+                    <div class="text-secondary">Perbarui profil perusahaan, logo aplikasi, dan favicon.</div>
                 </div>
             </div>
         </div>
@@ -16,7 +16,7 @@
                 <h2 class="card-title mb-4">Pengaturan Perusahaan</h2>
             @endif
 
-            <h3 class="card-title starter-form-section-title">Logo</h3>
+            <h3 class="card-title starter-form-section-title">Logo Aplikasi</h3>
             <div
                 class="row align-items-center"
                 data-starter-region="logo-field"
@@ -32,7 +32,7 @@
                     <label class="btn btn-outline-primary mb-0" for="client-photo-upload">
                         Ganti Logo
                     </label>
-                    <input type="file" id="client-photo-upload" class="d-none @error('clientPhotoUpload') is-invalid @enderror" wire:model="clientPhotoUpload" x-on:change="select($event)" accept="image/*">
+                    <input type="file" id="client-photo-upload" class="d-none @error('clientPhotoUpload') is-invalid @enderror" wire:model="clientPhotoUpload" x-on:change="select($event)" accept="image/png,image/jpeg,image/webp">
                 </div>
                 <div class="col-auto">
                     <button type="button" class="btn btn-ghost-danger" data-bs-toggle="modal" data-bs-target="#delete-client-photo-modal">
@@ -44,6 +44,39 @@
                     <div class="text-secondary small mt-2" wire:loading wire:target="clientPhotoUpload">Mengunggah...</div>
                 </div>
             </div>
+
+            <p class="text-secondary small mt-2">Logo horizontal, tanpa teks tambahan. PNG, JPG, atau WebP; maksimal 2 MB.</p>
+
+            <h3 class="card-title starter-form-section-title mt-4">Favicon</h3>
+            <div
+                class="row align-items-center"
+                data-starter-region="favicon-field"
+                x-data="StarterTemplate.clientLogoPreview(@js($clientFaviconPreviewUrl))"
+                x-on:starter-client-branding-updated.window="replace($event.detail.faviconUrl)"
+            >
+                <div class="col-auto">
+                    <div class="starter-client-logo-preview starter-favicon-preview" data-client-logo-preview>
+                        @include('starter-shared::components.client-logo-preview', ['clientLogoPreviewUrl' => $clientFaviconPreviewUrl, 'previewLabel' => 'Pratinjau favicon'])
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <label class="btn btn-outline-primary mb-0" for="client-favicon-upload">
+                        Ganti Favicon
+                    </label>
+                    <input type="file" id="client-favicon-upload" class="d-none @error('clientFaviconUpload') is-invalid @enderror" wire:model="clientFaviconUpload" x-on:change="select($event)" accept="image/png">
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-ghost-danger" data-bs-toggle="modal" data-bs-target="#delete-client-favicon-modal">
+                        Hapus Favicon
+                    </button>
+                </div>
+                <div class="col-12">
+                    @error('clientFaviconUpload') <div class="text-danger small mt-2">{{ $message }}</div> @enderror
+                    <div class="text-secondary small mt-2" wire:loading wire:target="clientFaviconUpload">Mengunggah...</div>
+                </div>
+            </div>
+
+            <p class="text-secondary small mt-2">Ikon tab browser. PNG persegi 32–512 px; maksimal 512 KB.</p>
 
             <h3 class="card-title starter-form-section-title mt-4">Profil Perusahaan</h3>
             <div class="row g-3" data-starter-region="company-details">
@@ -92,6 +125,14 @@
         'message' => 'Logo saat ini akan diganti dengan logo default.',
         'confirmText' => 'Hapus Logo',
         'confirmAction' => 'resetClientPhoto',
+        'dismissOnConfirm' => true,
+    ])
+    @include('starter.templates.components.danger-modal', [
+        'id' => 'delete-client-favicon-modal',
+        'title' => 'Hapus favicon?',
+        'message' => 'Favicon akan kembali ke ikon default. Logo aplikasi tetap tersimpan.',
+        'confirmText' => 'Hapus Favicon',
+        'confirmAction' => 'resetClientFavicon',
         'dismissOnConfirm' => true,
     ])
 </div>

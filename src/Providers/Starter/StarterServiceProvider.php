@@ -182,6 +182,15 @@ class StarterServiceProvider extends ServiceProvider
             $view->with(app(StarterContextService::class)->brandData());
         });
 
+        // Error pages must still render when the branding database is unavailable.
+        View::composer(['errors::layout', 'starter.errors.layout'], function ($view): void {
+            try {
+                $view->with(app(StarterContextService::class)->brandData());
+            } catch (\Throwable) {
+                $view->with('clientFaviconUrl', null);
+            }
+        });
+
         Livewire::addPersistentMiddleware([
             StarterEnsureActiveUser::class,
             StarterForcePasswordChange::class,

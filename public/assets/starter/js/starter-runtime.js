@@ -430,6 +430,9 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         });
     },
     updateClientBranding(detail = {}) {
+        document.querySelectorAll('[data-starter-favicon]').forEach((icon) => {
+            icon.href = detail.faviconUrl || icon.dataset.fallbackSrc;
+        });
         document.querySelectorAll('[data-starter-brand-logo]').forEach((image) => {
             const fallbackUrl = image.dataset.fallbackSrc;
             const logoUrl = detail.logoUrl || fallbackUrl;

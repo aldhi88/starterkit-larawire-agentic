@@ -45,7 +45,7 @@ class StarterContextService
     }
 
     /**
-     * @return array{clientName: ?string, clientLogoUrl: ?string}
+     * @return array{clientName: ?string, clientLogoUrl: ?string, clientFaviconUrl: ?string}
      */
     public function brandData(): array
     {
@@ -59,6 +59,7 @@ class StarterContextService
         $data = [
             'clientName' => $client->name,
             'clientLogoUrl' => $this->clientLogoUrl($client),
+            'clientFaviconUrl' => $this->clientFaviconUrl($client),
         ];
 
         request()->attributes->set($attribute, $data);
@@ -98,6 +99,7 @@ class StarterContextService
             'loginRoleName' => $login?->role?->name,
             'clientName' => $brand['clientName'],
             'clientLogoUrl' => $brand['clientLogoUrl'],
+            'clientFaviconUrl' => $brand['clientFaviconUrl'],
             'currentApp' => $currentApp,
             'currentAppKey' => $currentAppKey,
             'currentAppName' => $currentApp?->name,
@@ -364,12 +366,21 @@ class StarterContextService
         return asset(ltrim($photo, '/'));
     }
 
+    private function clientFaviconUrl(Client $client): ?string
+    {
+        $favicon = trim((string) $client->favicon);
+
+        return str_starts_with($favicon, "storage/starter/client-favicons/{$client->id}/")
+            && ! str_contains($favicon, '..')
+            ? asset($favicon) : null;
+    }
+
     private function clientLogoUrl(?Client $client): ?string
     {
         $logo = trim((string) $client?->logo);
         $ownedPrefix = $client ? "storage/starter/client-photos/{$client->id}/" : null;
 
-        if ($logo === '' || ! $ownedPrefix || ! str_starts_with($logo, $ownedPrefix)) {
+        if ($logo === '' || str_contains($logo, '..') || ! $ownedPrefix || ! str_starts_with($logo, $ownedPrefix)) {
             return null;
         }
 
