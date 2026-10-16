@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="Larawire">
-  <rect width="240" height="64" rx="10" fill="#fff"/>
   <path d="M16 18h10v28h25v10H16z" fill="#2563eb"/>
   <path d="m32 8 27 27-7 7-27-27z" fill="#38bdf8"/>
-  <text x="68" y="43" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#0f172a">Larawire</text>
+  <text x="68" y="43" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#64748b">Larawire</text>
 </svg>

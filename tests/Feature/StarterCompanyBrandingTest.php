@@ -102,33 +102,17 @@ it('uses one cover-ready backdrop across every authentication layout', function 
     }
 });
 
-it('frames custom company logos only on marked dark navigation surfaces', function (): void {
-    $stylesheet = file_get_contents(StarterPaths::path(
-        'public/assets/starter/css/starter.css',
-    ));
-
-    foreach (['vertical', 'horizontal'] as $layout) {
-        $navigation = file_get_contents(StarterPaths::path(
-            "resources/themes/tabler/views/starter/templates/layouts/navigation/{$layout}.blade.php",
-        ));
-
-        expect($navigation)
-            ->toContain('data-starter-brand-surface="dark"')
-            ->toContain("\$clientLogoUrl ? 'starter-company-logo-frame' : ''");
+it('renders navigation logos without a decorative frame', function (): void {
+    foreach (['tabler', 'dashcode', 'vuexy'] as $theme) {
+        $root = StarterPaths::path("resources/themes/{$theme}/views/starter/templates/layouts");
+        foreach (['vertical', 'horizontal'] as $layout) {
+            expect(file_get_contents($root."/navigation/{$layout}.blade.php"))->not->toContain('starter-company-logo-frame');
+        }
     }
-
-    $vuexyNavigation = file_get_contents(StarterPaths::path(
-        'resources/themes/vuexy/views/starter/templates/layouts/navigation/vertical.blade.php',
-    ));
-    $vuexyBrand = file_get_contents(StarterPaths::path(
-        'resources/themes/vuexy/views/starter/templates/layouts/brand.blade.php',
-    ));
-
-    expect($vuexyNavigation)->toContain('data-starter-brand-surface="dark"')
-        ->and($vuexyBrand)->toContain('starter-company-logo-frame')
-        ->and($stylesheet)
-        ->toContain('[data-starter-brand-surface="dark"] .starter-company-logo-frame')
-        ->toContain('background: rgba(255, 255, 255, .96)');
+    expect(file_get_contents(StarterPaths::path('resources/themes/vuexy/views/starter/templates/layouts/brand.blade.php')))
+        ->not->toContain('starter-company-logo-frame');
+    expect(file_get_contents(StarterPaths::path('public/assets/starter/css/starter.css')))
+        ->not->toContain('.starter-company-logo-frame');
 });
 
 it('sizes auth company logos against each native theme brand footprint', function (): void {
@@ -191,7 +175,7 @@ it('previews a selected company logo from the browser without a host-dependent t
         ));
 
         expect($profile)
-            ->toContain('x-data="StarterTemplate.clientLogoPreview(@js($clientLogoPreviewUrl))"')
+            ->toContain("StarterTemplate.brandImageCrop(@js(\$clientLogoPreviewUrl), 'logo', 'clientPhotoUpload')")
             ->toContain('x-on:starter-client-branding-updated.window="replace($event.detail.logoUrl)"')
             ->toContain("@include('starter-shared::components.client-logo-preview')")
             ->toContain('x-on:change="select($event)"');

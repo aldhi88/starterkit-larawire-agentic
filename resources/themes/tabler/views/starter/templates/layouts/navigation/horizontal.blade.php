@@ -6,7 +6,7 @@
 
         <div class="starter-horizontal-identity d-flex align-items-center">
             <div class="navbar-brand navbar-brand-autodark me-2 me-md-3">
-                <a href="{{ $currentDashboardUrl }}" class="starter-sidebar-brand {{ $clientLogoUrl ? 'starter-company-logo-frame' : '' }}" aria-label="{{ $brandLogoAlt }}" data-starter-navigate>
+                <a href="{{ $currentDashboardUrl }}" class="starter-sidebar-brand" aria-label="{{ $brandLogoAlt }}" data-starter-navigate>
                     <img
                         src="{{ $brandLogoUrl }}"
                         class="starter-sidebar-brand-image starter-sidebar-brand-image-horizontal"

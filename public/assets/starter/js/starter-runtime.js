@@ -52,6 +52,175 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             },
         };
     },
+    brandImageCrop(initialUrl, kind, field) {
+        return {
+            ...this.clientLogoPreview(initialUrl),
+            kind, field, cropOpen: false, decoding: false, uploading: false, image: null,
+            sourceUrl: null, error: '', zoom: 1, panX: 0, panY: 0,
+            baseScale: 1, progress: 0, dragPoint: null, selection: 0,
+            returnFocus: null, previousOverflow: '', backgroundState: [], disposed: false,
+            async select(event) {
+                const file = event?.target?.files?.[0];
+                if (event?.target) event.target.value = '';
+                if (! file || this.uploading) return;
+                const selected = ++this.selection;
+                this.decoding = false;
+                this.$dispatch('starter-brand-crop-busy', false);
+                this.error = '';
+                if (! ['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 10 * 1024 * 1024) {
+                    this.error = 'Pilih PNG, JPG, atau WebP maksimal 10 MB.';
+                    return;
+                }
+                this.decoding = true;
+                this.$dispatch('starter-brand-crop-busy', true);
+                const url = window.URL.createObjectURL(file);
+                const image = new Image();
+                try {
+                    image.src = url;
+                    await image.decode();
+                    if (this.disposed || selected !== this.selection) return;
+                    if (image.naturalWidth > 8192 || image.naturalHeight > 8192 || image.naturalWidth * image.naturalHeight > 32000000) {
+                        this.error = 'Gambar maksimal 8192 px per sisi dan 32 megapiksel.';
+                        return;
+                    }
+                    this.releaseSource();
+                    this.sourceUrl = url;
+                    this.image = image;
+                    this.returnFocus = document.activeElement;
+                    this.previousOverflow = document.body.style.overflow;
+                    document.body.style.overflow = 'hidden';
+                    this.cropOpen = true;
+                    this.$nextTick(() => {
+                        this.fit(this.kind === 'favicon');
+                        const modal = this.$refs.cropCanvas.closest('.starter-brand-crop-modal');
+                        this.backgroundState = [...document.body.children].filter((el) => el !== modal)
+                            .map((el) => ({ el, inert: el.inert }));
+                        this.backgroundState.forEach(({ el }) => { el.inert = true; });
+                        window.requestAnimationFrame(() => { if (this.cropOpen) this.$refs.cropCanvas.focus(); });
+                    });
+                } catch (_) {
+                    if (selected === this.selection && ! this.disposed) this.error = 'Gambar tidak dapat dibaca. Pilih gambar lain.';
+                } finally {
+                    if (this.sourceUrl !== url) window.URL.revokeObjectURL(url);
+                    if (selected === this.selection && ! this.disposed) {
+                        this.decoding = false;
+                        if (! this.cropOpen) this.$dispatch('starter-brand-crop-busy', false);
+                    }
+                }
+            },
+            fit(cover) {
+                if (! this.image || this.uploading) return;
+                const canvas = this.$refs.cropCanvas;
+                canvas.width = this.kind === 'favicon' ? 256 : 800;
+                canvas.height = this.kind === 'favicon' ? 256 : 200;
+                const scale = [canvas.width / this.image.naturalWidth, canvas.height / this.image.naturalHeight];
+                this.baseScale = cover ? Math.max(...scale) : Math.min(...scale);
+                this.zoom = 1;
+                this.panX = this.panY = 0;
+                this.draw();
+            },
+            cropGeometry() {
+                const canvas = this.$refs.cropCanvas;
+                const width = this.image.naturalWidth * this.baseScale * this.zoom;
+                const height = this.image.naturalHeight * this.baseScale * this.zoom;
+                const limitX = Math.max(0, (width - canvas.width) / 2);
+                const limitY = Math.max(0, (height - canvas.height) / 2);
+                return { width, height, limitX, limitY,
+                    x: (canvas.width - width) / 2 + limitX * this.panX / 100,
+                    y: (canvas.height - height) / 2 + limitY * this.panY / 100 };
+            },
+            draw() {
+                if (! this.image || this.uploading) return;
+                const canvas = this.$refs.cropCanvas;
+                const context = canvas.getContext('2d');
+                const area = this.cropGeometry();
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.imageSmoothingEnabled = true;
+                context.imageSmoothingQuality = 'high';
+                context.drawImage(this.image, area.x, area.y, area.width, area.height);
+            },
+            startDrag(event) {
+                if (this.uploading) return;
+                event.preventDefault();
+                event.target.setPointerCapture(event.pointerId);
+                this.dragPoint = { x: event.clientX, y: event.clientY };
+            },
+            drag(event) {
+                if (! this.dragPoint || this.uploading) return;
+                const canvas = this.$refs.cropCanvas;
+                const ratio = canvas.width / canvas.getBoundingClientRect().width;
+                this.move((event.clientX - this.dragPoint.x) * ratio, (event.clientY - this.dragPoint.y) * ratio);
+                this.dragPoint = { x: event.clientX, y: event.clientY };
+            },
+            move(x, y) {
+                if (! this.image || this.uploading) return;
+                const area = this.cropGeometry();
+                this.panX = area.limitX ? Math.max(-100, Math.min(100, this.panX + x / area.limitX * 100)) : 0;
+                this.panY = area.limitY ? Math.max(-100, Math.min(100, this.panY + y / area.limitY * 100)) : 0;
+                this.draw();
+            },
+            async applyCrop() {
+                if (this.uploading || ! this.image) return;
+                this.error = '';
+                this.uploading = true;
+                this.progress = 0;
+                try {
+                    const blob = await new Promise((resolve) => this.$refs.cropCanvas.toBlob(resolve, 'image/png'));
+                    if (this.disposed) return;
+                    if (! blob || blob.size > (this.kind === 'favicon' ? 512 : 2048) * 1024) throw new Error('size');
+                    const file = new File([blob], `${this.kind}.png`, { type: 'image/png' });
+                    this.$wire.upload(this.field, file, () => {
+                        if (this.disposed) return;
+                        this.releaseObjectUrl();
+                        this.objectUrl = window.URL.createObjectURL(file);
+                        this.previewUrl = this.objectUrl;
+                        this.uploading = false;
+                        this.closeCrop();
+                    }, () => {
+                        if (this.disposed) return;
+                        this.uploading = false;
+                        this.error = 'Unggahan gagal. Coba lagi; gambar tersimpan belum berubah.';
+                    }, (event) => { if (! this.disposed) this.progress = event.detail.progress; });
+                } catch (_) {
+                    this.uploading = false;
+                    this.error = 'Hasil crop tidak dapat diproses. Coba gambar lain.';
+                }
+            },
+            trapFocus(event) {
+                const controls = [...event.currentTarget.querySelectorAll('button:not(:disabled), input:not(:disabled), canvas')];
+                const first = controls[0], last = controls[controls.length - 1];
+                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+                if (! event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+            },
+            releaseSource() {
+                if (this.sourceUrl) window.URL.revokeObjectURL(this.sourceUrl);
+                this.sourceUrl = null;
+                this.image = null;
+            },
+            closeCrop() {
+                if (this.uploading || ! this.cropOpen) return;
+                this.cropOpen = false;
+                this.selection++;
+                this.releaseSource();
+                this.dragPoint = null;
+                this.restoreBackground();
+                this.$dispatch('starter-brand-crop-busy', false);
+                this.returnFocus?.focus();
+            },
+            restoreBackground() {
+                document.body.style.overflow = this.previousOverflow;
+                this.backgroundState.forEach(({ el, inert }) => { el.inert = inert; });
+                this.backgroundState = [];
+            },
+            destroy() {
+                this.disposed = true;
+                this.selection++;
+                if (this.cropOpen) this.restoreBackground();
+                this.releaseSource();
+                this.releaseObjectUrl();
+            },
+        };
+    },
     themeAdapter() {
         return window.StarterThemeAdapter || {};
     },

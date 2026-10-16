@@ -5,6 +5,23 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-10-16
+
+### Added
+
+- Add a dependency-free, shared Canvas crop flow for application logos and
+  favicons across DashCode, Tabler, and Vuexy, with theme-native modals,
+  keyboard/pointer positioning, zoom, and contain/cover controls.
+- Export only approved transparent PNG crops at 800×200 for logos and 256×256
+  for favicons while retaining authoritative server-side upload validation.
+
+### Changed
+
+- Remove decorative backgrounds, borders, and shadows from navigation logos so
+  uploaded transparency and asset-authored contrast render unchanged.
+- Guard profile submission during image decoding, cropping, and upload; preserve
+  saved or pending assets on cancel and allow failed uploads to be retried.
+
 ## [1.8.0] - 2026-10-16
 
 ### Added

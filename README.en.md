@@ -100,8 +100,11 @@ Hiding a parent also hides its complete navigation subtree.
 In **Settings → Company Profile**, Settings managers can independently replace
 the horizontal **Application Logo** and square **Favicon**. Navigation in both
 layouts, login, and landing show the logo without adjacent brand text. Favicons
-accept square PNG images at 32–512 px (up to 512 KB); logos accept PNG/JPG/WebP
-(up to 2 MB). Updates preserve an existing installation's logo.
+use the shared crop flow: select a PNG/JPG/WebP source up to 10 MB, position/zoom,
+choose contain or cover, and accept before uploading. Transparent PNG output is
+800×200 px (4:1) for logos and 256×256 px (1:1) for favicons. Cancel preserves the
+previous asset. Logos have no added background or frame; asset authors provide
+appropriate contrast. Updates preserve an existing installation's logo.
 
 ### Dynamic role access
 

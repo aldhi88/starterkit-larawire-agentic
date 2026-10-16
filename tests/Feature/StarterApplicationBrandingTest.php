@@ -48,8 +48,8 @@ function brandingSettings(string $theme = 'tabler')
 it('saves independent logo and favicon uploads and resets each without affecting the other', function (string $theme): void {
     Storage::disk('public')->put('starter/client-photos/1/legacy.png', 'legacy');
     $test = brandingSettings($theme)->assertSee('Logo Aplikasi')->assertSee('Favicon')
-        ->set('clientPhotoUpload', UploadedFile::fake()->image('logo.png', 480, 120))
-        ->set('clientFaviconUpload', UploadedFile::fake()->image('icon.png', 64, 64))
+        ->set('clientPhotoUpload', UploadedFile::fake()->image('logo.png', 800, 200))
+        ->set('clientFaviconUpload', UploadedFile::fake()->image('icon.png', 256, 256))
         ->call('save')->assertHasNoErrors()->assertDispatched('starter-client-branding-updated');
     if ($theme === 'vuexy') {
         $test->assertSee('data-starter-modal-open="#delete-client-favicon-modal"', false)
@@ -63,6 +63,8 @@ it('saves independent logo and favicon uploads and resets each without affecting
         ->and($logo)->not->toBe($favicon);
     Storage::disk('public')->assertExists(substr($logo, 8));
     Storage::disk('public')->assertExists(substr($favicon, 8));
+    expect(array_slice(getimagesize(Storage::disk('public')->path(substr($logo, 8))), 0, 2))->toBe([800, 200])
+        ->and(array_slice(getimagesize(Storage::disk('public')->path(substr($favicon, 8))), 0, 2))->toBe([256, 256]);
     Storage::disk('public')->assertMissing('starter/client-photos/1/legacy.png');
 
     $test->call('resetClientPhoto')->assertHasNoErrors();
@@ -74,7 +76,7 @@ it('saves independent logo and favicon uploads and resets each without affecting
 })->with(['tabler', 'dashcode', 'vuexy']);
 
 it('preserves the legacy logo when updating only the favicon and preserves the icon when updating profile text', function (): void {
-    $test = brandingSettings()->set('clientFaviconUpload', UploadedFile::fake()->image('icon.png', 64, 64))
+    $test = brandingSettings()->set('clientFaviconUpload', UploadedFile::fake()->image('icon.png', 256, 256))
         ->call('save')->assertHasNoErrors();
     $client = Client::firstOrFail();
     expect($client->logo)->toBe('storage/starter/client-photos/1/legacy.png');
@@ -91,7 +93,7 @@ it('rejects invalid favicon dimensions format and size before persistence', func
         'small' => UploadedFile::fake()->image('icon.png', 16, 16),
         'large' => UploadedFile::fake()->image('icon.png', 600, 600),
         'format' => UploadedFile::fake()->image('icon.jpg', 64, 64),
-        default => UploadedFile::fake()->image('icon.png', 64, 64)->size(513),
+        default => UploadedFile::fake()->image('icon.png', 256, 256)->size(513),
     };
     brandingSettings()->set('clientFaviconUpload', $file)->call('save')->assertHasErrors('clientFaviconUpload');
     expect(Client::firstOrFail()->favicon)->toBeNull()
@@ -111,8 +113,8 @@ it('removes newly stored uploads when profile persistence fails', function (): v
     $profiles->shouldReceive('updateClientProfile')->andThrow(new RuntimeException('Persistence failed'));
     app()->instance(ProfileService::class, $profiles);
     $test = brandingSettings()
-        ->set('clientPhotoUpload', UploadedFile::fake()->image('logo.png', 480, 120))
-        ->set('clientFaviconUpload', UploadedFile::fake()->image('icon.png', 64, 64));
+        ->set('clientPhotoUpload', UploadedFile::fake()->image('logo.png', 800, 200))
+        ->set('clientFaviconUpload', UploadedFile::fake()->image('icon.png', 256, 256));
     expect(fn () => $test->call('save'))->toThrow(RuntimeException::class, 'Persistence failed');
     expect(Storage::disk('public')->allFiles())->toBe([])
         ->and(Client::firstOrFail()->logo)->toBe('storage/starter/client-photos/1/legacy.png')

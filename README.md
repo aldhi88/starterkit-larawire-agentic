@@ -100,8 +100,11 @@ Parent yang disembunyikan juga menyembunyikan seluruh turunannya dari navigasi.
 Di **Pengaturan → Profil Perusahaan**, manager pengaturan dapat mengganti
 **Logo Aplikasi** horizontal dan **Favicon** secara terpisah. Logo ditampilkan
 tanpa teks tambahan pada navigasi vertikal/horizontal, login, dan landing.
-Favicon memakai PNG persegi 32–512 px (maksimal 512 KB); logo memakai PNG/JPG/WebP
-(maksimal 2 MB). Logo instalasi lama tetap dipakai setelah update.
+Unggah sumber PNG/JPG/WebP hingga 10 MB, lalu geser/zoom dan pilih tampil utuh atau
+penuhi bingkai sebelum menyetujui crop. Hasil berupa PNG transparan: logo
+800×200 px (4:1), favicon 256×256 px (1:1). Batal mempertahankan aset sebelumnya.
+Logo tampil tanpa latar atau bingkai tambahan; kontras disiapkan pada file logo.
+Logo instalasi lama tetap dipakai setelah update.
 
 ### Mengatur akses role secara dinamis
 

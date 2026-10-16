@@ -10,7 +10,12 @@
         </div>
     @endunless
 
-    <form class="{{ $embedded ? '' : 'card' }}" wire:submit="save">
+    <form class="{{ $embedded ? '' : 'card' }}" wire:submit="save"
+        x-data="{ brandingBusy: false }"
+        x-bind:aria-busy="brandingBusy"
+        x-on:starter-brand-crop-busy.window="brandingBusy = $event.detail"
+        x-on:submit.capture="if (brandingBusy) { $event.preventDefault(); $event.stopImmediatePropagation() }"
+    >
         <div class="card-body">
             @if(! $embedded)
                 <h2 class="card-title mb-4">Pengaturan Perusahaan</h2>
@@ -20,7 +25,7 @@
             <div
                 class="row align-items-center"
                 data-starter-region="logo-field"
-                x-data="StarterTemplate.clientLogoPreview(@js($clientLogoPreviewUrl))"
+                x-data="StarterTemplate.brandImageCrop(@js($clientLogoPreviewUrl), 'logo', 'clientPhotoUpload')"
                 x-on:starter-client-branding-updated.window="replace($event.detail.logoUrl)"
             >
                 <div class="col-auto">
@@ -29,10 +34,10 @@
                     </div>
                 </div>
                 <div class="col-auto">
-                    <label class="btn btn-outline-primary mb-0" for="client-photo-upload">
+                    <button type="button" class="btn btn-outline-primary mb-0" x-on:click="$refs.fileInput.click()">
                         Ganti Logo
-                    </label>
-                    <input type="file" id="client-photo-upload" class="d-none @error('clientPhotoUpload') is-invalid @enderror" wire:model="clientPhotoUpload" x-on:change="select($event)" accept="image/png,image/jpeg,image/webp">
+                    </button>
+                    <input type="file" x-ref="fileInput" id="client-photo-upload" class="d-none @error('clientPhotoUpload') is-invalid @enderror" x-on:change="select($event)" accept="image/png,image/jpeg,image/webp">
                 </div>
                 <div class="col-auto">
                     <button type="button" class="btn btn-ghost-danger" data-bs-toggle="modal" data-bs-target="#delete-client-photo-modal">
@@ -42,16 +47,19 @@
                 <div class="col-12">
                     @error('clientPhotoUpload') <div class="text-danger small mt-2">{{ $message }}</div> @enderror
                     <div class="text-secondary small mt-2" wire:loading wire:target="clientPhotoUpload">Mengunggah...</div>
+                    <div class="text-secondary small mt-2" x-show="decoding" role="status">Mempersiapkan gambar…</div>
+                    <div class="text-danger small mt-2" x-show="error" x-text="error" role="alert"></div>
+                    @include('starter.templates.components.brand-crop-modal')
                 </div>
             </div>
 
-            <p class="text-secondary small mt-2">Logo horizontal, tanpa teks tambahan. PNG, JPG, atau WebP; maksimal 2 MB.</p>
+            <p class="text-secondary small mt-2">PNG, JPG, atau WebP hingga 10 MB. Atur crop logo 4:1; hasil PNG 800 × 200 px tanpa latar tambahan.</p>
 
             <h3 class="card-title starter-form-section-title mt-4">Favicon</h3>
             <div
                 class="row align-items-center"
                 data-starter-region="favicon-field"
-                x-data="StarterTemplate.clientLogoPreview(@js($clientFaviconPreviewUrl))"
+                x-data="StarterTemplate.brandImageCrop(@js($clientFaviconPreviewUrl), 'favicon', 'clientFaviconUpload')"
                 x-on:starter-client-branding-updated.window="replace($event.detail.faviconUrl)"
             >
                 <div class="col-auto">
@@ -60,10 +68,10 @@
                     </div>
                 </div>
                 <div class="col-auto">
-                    <label class="btn btn-outline-primary mb-0" for="client-favicon-upload">
+                    <button type="button" class="btn btn-outline-primary mb-0" x-on:click="$refs.fileInput.click()">
                         Ganti Favicon
-                    </label>
-                    <input type="file" id="client-favicon-upload" class="d-none @error('clientFaviconUpload') is-invalid @enderror" wire:model="clientFaviconUpload" x-on:change="select($event)" accept="image/png">
+                    </button>
+                    <input type="file" x-ref="fileInput" id="client-favicon-upload" class="d-none @error('clientFaviconUpload') is-invalid @enderror" x-on:change="select($event)" accept="image/png,image/jpeg,image/webp">
                 </div>
                 <div class="col-auto">
                     <button type="button" class="btn btn-ghost-danger" data-bs-toggle="modal" data-bs-target="#delete-client-favicon-modal">
@@ -73,10 +81,13 @@
                 <div class="col-12">
                     @error('clientFaviconUpload') <div class="text-danger small mt-2">{{ $message }}</div> @enderror
                     <div class="text-secondary small mt-2" wire:loading wire:target="clientFaviconUpload">Mengunggah...</div>
+                    <div class="text-secondary small mt-2" x-show="decoding" role="status">Mempersiapkan gambar…</div>
+                    <div class="text-danger small mt-2" x-show="error" x-text="error" role="alert"></div>
+                    @include('starter.templates.components.brand-crop-modal')
                 </div>
             </div>
 
-            <p class="text-secondary small mt-2">Ikon tab browser. PNG persegi 32–512 px; maksimal 512 KB.</p>
+            <p class="text-secondary small mt-2">PNG, JPG, atau WebP hingga 10 MB. Crop persegi menghasilkan PNG 256 × 256 px untuk tab browser.</p>
 
             <h3 class="card-title starter-form-section-title mt-4">Profil Perusahaan</h3>
             <div class="row g-3" data-starter-region="company-details">
@@ -111,7 +122,7 @@
 
         <div class="{{ $embedded ? 'card-body border-top bg-transparent' : 'card-footer bg-transparent mt-auto' }}" data-starter-region="page-actions">
             <div class="btn-list justify-content-end">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" x-bind:disabled="brandingBusy" wire:loading.attr="disabled" wire:target="save">
                     @include('starter.templates.layouts.icon', ['name' => 'check', 'class' => 'me-1'])
                     Simpan Profil Perusahaan
                 </button>

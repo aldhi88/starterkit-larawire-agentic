@@ -529,3 +529,13 @@ completion gate belum mempunyai bukti current-run, jangan menyatakan theme siap.
 Temuan UI yang masih memerlukan owner menunjuk screenshot berikutnya berarti
 audit one-shot belum lengkap; agent wajib melanjutkan audit menyeluruh sampai
 tidak ada defect core yang diketahui.
+
+### Application branding crop parity
+
+Every theme provides `starter/templates/components/brand-crop-modal.blade.php`
+with its native modal, title, button, and form styling, consuming the shared crop
+controls/runtime. Follow `security-and-config.md` for source limits, transparent
+PNG output (4:1 logo, 1:1 favicon), cancel/retry behavior, and independent assets.
+Verify keyboard focus, drag/zoom, contained/filled previews, Livewire upload and
+subsequent reopening at desktop/mobile widths in both navigation layouts. Never
+add a decorative background, border, or shadow around navigation logo images.

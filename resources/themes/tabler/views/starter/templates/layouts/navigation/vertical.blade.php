@@ -5,7 +5,7 @@
         </button>
 
         <div class="navbar-brand navbar-brand-autodark">
-            <a href="{{ $currentDashboardUrl }}" class="starter-sidebar-brand {{ $clientLogoUrl ? 'starter-company-logo-frame' : '' }}" aria-label="{{ $brandLogoAlt }}" data-starter-navigate>
+            <a href="{{ $currentDashboardUrl }}" class="starter-sidebar-brand" aria-label="{{ $brandLogoAlt }}" data-starter-navigate>
                 <img
                     src="{{ $brandLogoUrl }}"
                     class="starter-sidebar-brand-image"

@@ -61,16 +61,6 @@
     padding: 2rem;
 }
 
-[data-starter-brand-surface="dark"] .starter-company-logo-frame {
-    align-items: center;
-    background: rgba(255, 255, 255, .96);
-    border: 1px solid rgba(255, 255, 255, .7);
-    border-radius: .625rem;
-    box-shadow: 0 .25rem .875rem rgba(2, 6, 23, .16);
-    display: inline-flex;
-    justify-content: center;
-    padding: .3rem .55rem;
-}
 
 @media (min-width: 1024px) {
     .dashcode-auth .loginwrapper .lg-inner-column {
@@ -233,3 +223,32 @@ body.starter-is-navigating .starter-slot-area > [wire\:id] {
     .starter-navigate-spinner,
     .starter-navigate-progress > span { animation: none; }
 }
+
+/* Shared crop geometry; modal surfaces and controls retain the active theme. */
+.starter-brand-crop-modal.modal {
+    align-items: center;
+    background: rgba(15, 23, 42, .5);
+    display: flex;
+    inset: 0;
+    overflow: auto;
+    padding: 1rem;
+    position: fixed;
+    z-index: 2100;
+}
+.starter-brand-crop-modal .modal-dialog { margin: auto; max-inline-size: 32rem; inline-size: 100%; }
+.starter-brand-crop-modal .modal-content { max-block-size: calc(100dvh - 2rem); overflow: auto; }
+.starter-brand-crop-body { display: grid; gap: .5rem; min-inline-size: 0; }
+.starter-brand-crop-body p { margin: 0 0 .25rem; }
+.starter-brand-crop-body .form-label { margin: 0; }
+.starter-brand-crop-body input[type="range"] { inline-size: 100%; accent-color: var(--starter-brand-primary, var(--tblr-primary, var(--bs-primary, var(--starter-primary, auto)))); }
+.starter-brand-crop-canvas {
+    background: repeating-conic-gradient(#e2e8f0 0% 25%, #fff 0% 50%) 50% / 16px 16px;
+    display: block;
+    inline-size: 100%;
+    max-block-size: 15rem;
+    object-fit: contain;
+    touch-action: none;
+    cursor: grab;
+}
+.starter-brand-crop-canvas[width="256"] { inline-size: min(100%, 15rem); justify-self: center; }
+.starter-brand-crop-fit { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .25rem; }

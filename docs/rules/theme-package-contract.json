@@ -435,6 +435,7 @@
         "starter/settings/settings-index.blade.php",
         "starter/templates/components/alert-modal.blade.php",
         "starter/templates/components/alert.blade.php",
+        "starter/templates/components/brand-crop-modal.blade.php",
         "starter/templates/components/danger-modal.blade.php",
         "starter/templates/components/danger-password-modal.blade.php",
         "starter/templates/components/success-modal.blade.php",

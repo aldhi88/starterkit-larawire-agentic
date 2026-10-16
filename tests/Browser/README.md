@@ -38,3 +38,13 @@ events update their separate DOM targets and resetting either preserves the othe
 Livewire upload validation, persistence, authorization, rollback cleanup, and native
 form rendering are covered by `StarterApplicationBrandingTest.php`; inspect the
 Settings company section in both layouts at desktop and mobile sizes.
+
+Run `node tests/Browser/brand-image-crop.cjs` for crop geometry, transparent
+contain/cover behavior, output PNG, bounds, cancellation, upload failure/retry,
+and object URL/inert-background cleanup. This deterministic runtime test uses
+browser API doubles; real Canvas output and Livewire upload require direct
+browser testing in each demo. Select a large raster image, test both crops,
+position/zoom and keyboard/drag controls, cancel and reopen after upload, then
+verify native modal/control proportions and no overflow in both layouts at
+1280×768 and 390×844. Output dimensions are 800×200 (logo) and 256×256 (favicon);
+PNG alpha must survive, and cancel must preserve the saved and pending assets.
