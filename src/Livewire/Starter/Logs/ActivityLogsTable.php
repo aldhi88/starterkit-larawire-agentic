@@ -22,6 +22,10 @@ class ActivityLogsTable extends PowerGridComponent
 
     public string $primaryKey = 'action_id';
 
+    public string $sortField = 'created_at';
+
+    public string $sortDirection = 'desc';
+
     public bool $showFilters = true;
 
     private ActivityLogInterface $activityLogs;
@@ -32,6 +36,18 @@ class ActivityLogsTable extends PowerGridComponent
     {
         $this->activityLogs = $activityLogs;
         $this->authenticatedLogins = $authenticatedLogins;
+    }
+
+    public function mount(): void
+    {
+        parent::mount();
+
+        // Older persisted filters can carry PowerGrid's implicit, non-column ID sort.
+        if ($this->sortField === 'id') {
+            $this->sortField = 'created_at';
+            $this->sortDirection = 'desc';
+            $this->persistState('sorting');
+        }
     }
 
     public function setUp(): array

@@ -5,6 +5,16 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.18] - 2026-10-16
+
+### Fixed
+
+- Order grouped Activity Log rows by their latest activity timestamp descending
+  before pagination instead of inheriting PowerGrid's implicit ascending ID
+  sort.
+- Migrate persisted implicit ID sorting to `created_at DESC` while preserving
+  filters and explicit user-selected column sorting across reloads.
+
 ## [1.7.17] - 2026-10-12
 
 ### Fixed
