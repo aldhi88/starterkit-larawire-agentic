@@ -15,6 +15,11 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 - Migrate persisted implicit ID sorting to `created_at DESC` while preserving
   filters and explicit user-selected column sorting across reloads.
 
+### Security
+
+- Update the locked development dependency `symfony/yaml` from 7.4.15 to
+  7.4.21 to resolve `CVE-2026-109413` before publication.
+
 ## [1.7.17] - 2026-10-12
 
 ### Fixed
