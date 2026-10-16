@@ -2,6 +2,11 @@
 
 `starter_logs` records every meaningful server-side application action initiated by an authenticated login, including reads and mutations. A single multi-table business action uses one `action_id` with ordered sequences.
 
+## Viewer visibility
+
+- Only a Superuser may read activity performed by a Superuser or targeting a Superuser account/system role. For every other log viewer, exclude the complete protected action in the repository before grouping, filtering, sorting, pagination, counts, filter options, or detail lookup; do not replace the actor with a visible system placeholder. Direct action-ID requests must return 404.
+- Use the immutable `actor_is_superuser` snapshot as well as protected actor/target IDs, including archived accounts and roles. Historical Superuser activity remains hidden even when its actor no longer exists. Apply the same scope to every theme and invalidate cached filter options when the visibility policy changes.
+
 ## Row ownership
 
 - Every application-owned database table must physically define both `created_by` and `updated_by`, including starter core, App business, pivot, configuration, registry, append-only, and audit tables. Both columns use nullable foreign keys to `starter_client_logins.id` with `nullOnDelete()` so historical rows remain valid after an actor is permanently removed.

@@ -44,7 +44,7 @@ use Illuminate\Support\Carbon;
  */
 class ActivityLog extends Model
 {
-    public const FILTER_OPTIONS_CACHE_KEY = 'starter.activity-log.filter-options';
+    public const FILTER_OPTIONS_CACHE_KEY = 'starter.activity-log.filter-options.v2';
 
     public $timestamps = false;
 

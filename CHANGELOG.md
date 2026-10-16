@@ -5,6 +5,17 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.7.19] - 2026-10-16
+
+### Security
+
+- Hide complete Activity Log actions performed by or targeting Superuser
+  accounts and system roles from every non-Superuser read path, including
+  grids, metrics, filter options, grouped entries, and detail lookup.
+- Preserve Superuser audit history and full Superuser access while protecting
+  archived or deleted actor snapshots and invalidating filter-option caches
+  from the prior visibility policy.
+
 ## [1.7.18] - 2026-10-16
 
 ### Fixed

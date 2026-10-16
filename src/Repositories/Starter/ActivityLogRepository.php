@@ -225,40 +225,41 @@ class ActivityLogRepository implements ActivityLogInterface
             return $query;
         }
 
-        $protectedRoleIds = $this->protectedRoleIds ??= ClientRole::query()
+        $protectedRoleIds = $this->protectedRoleIds ??= ClientRole::withTrashed()
             ->where(function (Builder $roleQuery): void {
                 $roleQuery->where('is_system', true)->orWhere('code', 'superuser');
             })
             ->pluck('id')
             ->map(fn (int|string $id): string => (string) $id)
             ->all();
-        $protectedUserIds = $this->protectedUserIds ??= ClientLogin::query()
+        $protectedUserIds = $this->protectedUserIds ??= ClientLogin::withTrashed()
             ->whereIn('client_role_id', $protectedRoleIds)
             ->pluck('id')
             ->map(fn (int|string $id): string => (string) $id)
             ->all();
 
-        if ($protectedRoleIds === [] && $protectedUserIds === []) {
-            return $query;
-        }
+        // Exclude the complete action so sibling entries cannot expose protected context.
+        $protectedActions = ActivityLog::query()->select('action_id')
+            ->where(function (Builder $protectedQuery) use ($protectedRoleIds, $protectedUserIds): void {
+                $protectedQuery->where('actor_is_superuser', true)
+                    ->when($protectedUserIds !== [], fn (Builder $actorQuery): Builder => $actorQuery
+                        ->orWhereIn('client_login_id', $protectedUserIds))
+                    ->when($protectedRoleIds !== [], function (Builder $roleQuery) use ($protectedRoleIds): void {
+                        $roleQuery->orWhere(function (Builder $targetQuery) use ($protectedRoleIds): void {
+                            $targetQuery
+                                ->where('auditable_type', ClientRole::class)
+                                ->whereIn('auditable_id', $protectedRoleIds);
+                        });
+                    })
+                    ->when($protectedUserIds !== [], function (Builder $userQuery) use ($protectedUserIds): void {
+                        $userQuery->orWhere(function (Builder $targetQuery) use ($protectedUserIds): void {
+                            $targetQuery
+                                ->where('auditable_type', ClientLogin::class)
+                                ->whereIn('auditable_id', $protectedUserIds);
+                        });
+                    });
+            });
 
-        return $query->whereNot(function (Builder $protectedQuery) use ($protectedRoleIds, $protectedUserIds): void {
-            $protectedQuery
-                ->when($protectedRoleIds !== [], function (Builder $roleQuery) use ($protectedRoleIds): void {
-                    $roleQuery->where(function (Builder $targetQuery) use ($protectedRoleIds): void {
-                        $targetQuery
-                            ->where('auditable_type', ClientRole::class)
-                            ->whereIn('auditable_id', $protectedRoleIds);
-                    });
-                })
-                ->when($protectedUserIds !== [], function (Builder $userQuery) use ($protectedRoleIds, $protectedUserIds): void {
-                    $method = $protectedRoleIds === [] ? 'where' : 'orWhere';
-                    $userQuery->{$method}(function (Builder $targetQuery) use ($protectedUserIds): void {
-                        $targetQuery
-                            ->where('auditable_type', ClientLogin::class)
-                            ->whereIn('auditable_id', $protectedUserIds);
-                    });
-                });
-        });
+        return $query->whereNotIn('action_id', $protectedActions);
     }
 }
