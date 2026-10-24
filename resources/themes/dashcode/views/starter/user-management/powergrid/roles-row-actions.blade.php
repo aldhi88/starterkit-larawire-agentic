@@ -29,6 +29,7 @@
                     <span>Akses</span>
                 </button>
             </li>
+            @if ($canManage ?? false)
             <li>
                 <a class="dashcode-table-dropdown-item" href="{{ route('starter.settings.roles.edit', ['roleId' => $row->id]) }}" @click="open = false" role="menuitem">
                     @include('starter.templates.layouts.icon', ['name' => 'edit', 'class' => 'dashcode-table-dropdown-icon'])

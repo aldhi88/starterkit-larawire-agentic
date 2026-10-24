@@ -108,8 +108,10 @@ appropriate contrast. Updates preserve an existing installation's logo.
 
 ### Personal notification audio
 
-**Settings → Notifications** offers a default soft chime, short bell, and gentle
-tone per account. Preview, choose/reset, then save. Ordinary users can open
+**Settings → Notifications** offers three built-in tones: a clear default chime,
+a short bell, and a gentle tone. Each user can also upload a private MP3 or WAV
+up to 5 MB; a new upload replaces their previous file. Preview, choose/reset,
+then save. Ordinary users can open
 **Notifikasi** from their account menu without gaining administrative Settings
 or Activity Log access. Loading a page or saving preferences never plays sound.
 Host features choose notification triggers and can call
@@ -521,6 +523,6 @@ their respective licenses; see
 
 Minimum Livewire version: **4.4.8**, including the authorization fix for GHSA-mhf7-xp6r-6qrc.
 
-The default personal sound is a local two-note **Ting tung lembut** chime lasting
-approximately 2.4 seconds including decay. Users may preview, select another sound,
+The default personal sound is a local two-note **Ting tung jelas** chime lasting
+approximately 2.2 seconds including decay. Users may preview, select another sound,
 save, or restore default. Loading a page or saving a preference never plays audio.

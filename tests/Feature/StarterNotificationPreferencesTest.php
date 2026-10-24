@@ -2,6 +2,7 @@
 
 use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Http\Controllers\Starter\NotificationSoundController;
 use Aldhi88\StarterKit\Livewire\Starter\Settings\NotificationSettings;
 use Aldhi88\StarterKit\Models\Starter\ActivityLog;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
@@ -12,8 +13,11 @@ use Aldhi88\StarterKit\Services\Starter\AuditLogService;
 use Aldhi88\StarterKit\Services\Starter\ProfileService;
 use Aldhi88\StarterKit\Support\Starter\StarterNotificationSound;
 use Aldhi88\StarterKit\Support\Starter\StarterPaths;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
 use Livewire\LivewireServiceProvider;
@@ -21,7 +25,7 @@ use Livewire\LivewireServiceProvider;
 beforeEach(function (): void {
     config(['app.key' => 'base64:'.base64_encode(str_repeat('n', 32))]);
     app()->register(LivewireServiceProvider::class);
-    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185235_create_starter_logs_table.php', '2026_10_24_000000_add_notification_sound_to_starter_client_logins.php'] as $name) {
+    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185235_create_starter_logs_table.php', '2026_10_24_000000_add_notification_sound_to_starter_client_logins.php', '2026_10_24_000001_add_notification_sound_path_to_starter_client_logins.php'] as $name) {
         (require StarterPaths::path('database/migrations/starter/'.$name))->up();
     }
     app()->bind(ClientLoginInterface::class, ClientLoginRepository::class);
@@ -34,8 +38,19 @@ beforeEach(function (): void {
     $this->second = ClientLogin::create(['client_role_id' => $role->id, 'name' => 'Second', 'username' => 'second', 'email' => 'second@example.test']);
     $this->actingAs($this->first);
     Route::get('/settings', fn () => 'settings')->name('starter.settings');
+    Route::get('/settings/roles/{roleId}/edit', fn () => 'edit')->name('starter.settings.roles.edit');
+    Route::middleware('auth:web')->get('/settings/notifications/audio', NotificationSoundController::class)
+        ->name('starter.notifications.audio');
     View::addNamespace('starter-shared', StarterPaths::path('resources/views'));
+    Storage::fake('local');
 });
+
+function notificationWav(): UploadedFile
+{
+    $content = 'RIFF'.pack('V', 36).'WAVEfmt '.pack('VvvVVvv', 16, 1, 1, 22050, 44100, 2, 16).'data'.pack('V', 0);
+
+    return UploadedFile::fake()->createWithContent('suara.wav', $content);
+}
 
 function notificationSettingsFor(string $theme)
 {
@@ -89,3 +104,60 @@ it('provides a short two-note default for every new or unset user', function ():
         ->and($duration)->toBeGreaterThanOrEqual(2)->toBeLessThanOrEqual(3)
         ->and(StarterNotificationSound::normalize(null))->toBe(StarterNotificationSound::DEFAULT);
 });
+
+it('lets each user upload, play and replace only their own WAV sound', function (string $theme): void {
+    notificationSettingsFor($theme)->set('soundUpload', notificationWav())->call('saveCustomSound')->assertHasNoErrors()
+        ->assertSet('sound', 'custom')->assertSee('Audio unggahan saya');
+    $firstPath = $this->first->fresh()->notification_sound_path;
+    expect($this->first->fresh()->notification_sound)->toBe('custom')
+        ->and($this->second->fresh()->notification_sound_path)->toBeNull();
+    Storage::disk('local')->assertExists($firstPath);
+    $this->get('/settings/notifications/audio')->assertOk()->assertHeader('content-type', 'audio/wav');
+
+    notificationSettingsFor($theme)->set('sound', 'bell')->call('save')->assertHasNoErrors();
+    notificationSettingsFor($theme)->set('sound', 'custom')->call('save')->assertHasNoErrors();
+    notificationSettingsFor($theme)->set('soundUpload', notificationWav())->call('saveCustomSound')->assertHasNoErrors();
+    Storage::disk('local')->assertMissing($firstPath);
+    Storage::disk('local')->assertExists($this->first->fresh()->notification_sound_path);
+
+    $this->actingAs($this->second)->get('/settings/notifications/audio')->assertNotFound();
+    notificationSettingsFor($theme)->set('sound', 'custom')->call('save')->assertHasErrors('sound');
+})->with(['tabler', 'vuexy', 'dashcode']);
+
+it('rejects invalid upload types and removes a newly stored file when persistence fails', function (): void {
+    notificationSettingsFor('tabler')->set('soundUpload', UploadedFile::fake()->createWithContent('bad.mp3', 'not audio'))
+        ->call('saveCustomSound')->assertHasErrors('soundUpload');
+    expect(Storage::disk('local')->allFiles())->toBe([]);
+
+    Event::listen('eloquent.updated: '.ClientLogin::class, fn () => throw new RuntimeException('Failed persistence'));
+    expect(fn () => app(ProfileService::class)->uploadNotificationSound($this->first, notificationWav()))
+        ->toThrow(RuntimeException::class);
+    expect(Storage::disk('local')->allFiles())->toBe([])
+        ->and($this->first->fresh()->notification_sound_path)->toBeNull();
+});
+
+it('uses a readable field name when audio upload is missing', function (string $theme): void {
+    notificationSettingsFor($theme)->call('saveCustomSound')
+        ->assertHasErrors(['soundUpload' => 'required'])
+        ->assertSee('audio pribadi');
+})->with(['tabler', 'vuexy', 'dashcode']);
+
+it('renders role row actions and a real notification bell in every theme', function (string $theme): void {
+    View::addLocation(StarterPaths::path("resources/themes/{$theme}/views"));
+    $role = $this->first->role;
+    $actions = file_get_contents(StarterPaths::path(
+        "resources/themes/{$theme}/views/starter/user-management/powergrid/roles-row-actions.blade.php",
+    ));
+    $html = Blade::render($actions, ['row' => $role, 'canManage' => true]);
+    expect($html)->toContain('Aksi')->toContain('Edit')->toContain('Arsipkan');
+    $role->delete();
+    $archivedHtml = Blade::render($actions, ['row' => $role, 'canManage' => true]);
+    expect($archivedHtml)->toContain('Pulihkan')->toContain('Hapus permanen');
+
+    $bell = View::make('starter.templates.layouts.icon', ['name' => 'bell'])->render();
+    expect($bell)->toContain(match ($theme) {
+        'vuexy' => 'tabler-bell',
+        'dashcode' => 'starter-icon-bell',
+        default => 'icon-tabler-bell',
+    });
+})->with(['tabler', 'vuexy', 'dashcode']);

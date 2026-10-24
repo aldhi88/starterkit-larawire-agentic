@@ -108,9 +108,11 @@ Logo instalasi lama tetap dipakai setelah update.
 
 ### Preferensi audio notifikasi
 
-**Pengaturan → Notifikasi** menyediakan pilihan lonceng lembut (default), bel
-singkat, dan nada tenang untuk setiap akun. Dengarkan pratinjau, pilih default
-bila perlu, lalu simpan. User biasa dapat membuka preferensinya lewat menu akun
+**Pengaturan → Notifikasi** menyediakan tiga pilihan suara bawaan: ting tung
+yang jelas (default), bel singkat, dan nada tenang. Setiap user juga dapat
+mengunggah MP3 atau WAV pribadi hingga 5 MB; unggahan baru menggantikan file
+pribadi sebelumnya. Dengarkan pratinjau, pilih default bila perlu, lalu simpan.
+User biasa dapat membuka preferensinya lewat menu akun
 **Notifikasi** tanpa mendapat hak pengaturan administratif atau Log Aktivitas.
 Suara tidak otomatis diputar saat halaman dibuka atau preferensi disimpan.
 Aplikasi menentukan pemicu notifikasinya dan dapat memanggil
@@ -529,6 +531,6 @@ mengikuti lisensinya masing-masing; lihat
 
 Livewire minimum: **4.4.8** (perbaikan authorization advisory GHSA-mhf7-xp6r-6qrc).
 
-Suara notifikasi default adalah **Ting tung lembut** dua nada, sekitar 2,4 detik
+Suara notifikasi default adalah **Ting tung jelas** dua nada, sekitar 2,2 detik
 termasuk peluruhan. Pilihan pengguna tetap tersimpan per akun dan dapat dipulihkan
 ke default. Tidak ada audio otomatis ketika membuka halaman atau menyimpan pilihan.

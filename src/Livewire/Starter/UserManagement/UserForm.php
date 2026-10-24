@@ -93,6 +93,12 @@ class UserForm extends Component
         }
 
         $validated = $this->validate($rules, [], [
+            'userForm.name' => 'nama tampilan',
+            'userForm.username' => 'username',
+            'userForm.email' => 'email',
+            'userForm.role_id' => 'role',
+            'userForm.status' => 'status',
+            'userForm.use_manual_password' => 'pengaturan password sementara',
             'userForm.password' => 'password sementara',
             'userForm.password_confirmation' => 'konfirmasi password sementara',
         ])['userForm'];

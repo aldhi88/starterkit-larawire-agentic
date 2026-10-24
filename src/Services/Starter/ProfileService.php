@@ -7,8 +7,10 @@ use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
 use Aldhi88\StarterKit\Models\Starter\Client;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Support\Starter\StarterNotificationSound;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -85,7 +87,7 @@ class ProfileService
 
     public function updateNotificationSound(ClientLogin $actor, string $sound): ClientLogin
     {
-        if (! array_key_exists($sound, StarterNotificationSound::catalog())) {
+        if (! array_key_exists($sound, StarterNotificationSound::catalog()) && $sound !== 'custom') {
             throw ValidationException::withMessages(['sound' => 'Pilih suara notifikasi yang tersedia.']);
         }
 
@@ -94,11 +96,60 @@ class ProfileService
                 return DB::transaction(function () use ($actor, $sound): ClientLogin {
                     $login = $this->clientLogins->findForAuthenticationWithLock($actor->id);
                     abort_unless($login instanceof ClientLogin, 404);
+                    if ($sound === 'custom' && (! StarterNotificationSound::isOwnedPath($login->id, $login->notification_sound_path)
+                        || ! Storage::disk('local')->exists($login->notification_sound_path))) {
+                        throw ValidationException::withMessages(['sound' => 'Unggah audio terlebih dahulu.']);
+                    }
                     $updated = $this->clientLogins->updateUser($login, ['notification_sound' => $sound]);
 
                     return $this->clientLogins->refreshWithRole($updated);
                 });
             });
+    }
+
+    public function uploadNotificationSound(ClientLogin $actor, UploadedFile $file): ClientLogin
+    {
+        $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($file->getRealPath());
+        $extension = match ($mime) {
+            'audio/mpeg', 'audio/mp3' => 'mp3',
+            'audio/wav', 'audio/x-wav', 'audio/wave', 'audio/vnd.wave' => 'wav',
+            default => null,
+        };
+        if ($extension === null || strtolower($file->getClientOriginalExtension()) !== $extension
+            || $file->getSize() < 1 || $file->getSize() > 5 * 1024 * 1024) {
+            throw ValidationException::withMessages(['soundUpload' => 'Pilih file MP3 atau WAV yang valid.']);
+        }
+
+        $path = $file->storeAs("starter/notification-sounds/{$actor->id}", Str::uuid().'.'.$extension, 'local');
+        if (! is_string($path)) {
+            throw ValidationException::withMessages(['soundUpload' => 'File audio gagal disimpan. Coba lagi.']);
+        }
+
+        $oldPath = null;
+        try {
+            $updated = $this->auditLogs->withinAction('profile.notification_sound.upload', 'Mengunggah audio notifikasi',
+                function () use ($actor, $path, &$oldPath): ClientLogin {
+                    return DB::transaction(function () use ($actor, $path, &$oldPath): ClientLogin {
+                        $login = $this->clientLogins->findForAuthenticationWithLock($actor->id);
+                        abort_unless($login instanceof ClientLogin, 404);
+                        $oldPath = $login->notification_sound_path;
+
+                        return $this->clientLogins->refreshWithRole($this->clientLogins->updateUser($login, [
+                            'notification_sound' => 'custom',
+                            'notification_sound_path' => $path,
+                        ]));
+                    });
+                });
+        } catch (\Throwable $exception) {
+            Storage::disk('local')->delete($path);
+            throw $exception;
+        }
+
+        if (StarterNotificationSound::isOwnedPath($actor->id, $oldPath) && $oldPath !== $path) {
+            Storage::disk('local')->delete($oldPath);
+        }
+
+        return $updated;
     }
 
     public function changePassword(ClientLogin $login, string $currentPassword, string $password): ClientLogin

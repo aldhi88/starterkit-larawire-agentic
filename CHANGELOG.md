@@ -5,6 +5,31 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-10-24
+
+### Added
+
+- Add one private per-user MP3 or WAV notification sound upload up to 5 MB,
+  stored under a generated owned path and served only through an authenticated
+  same-user, no-store route.
+- Add an idempotent nullable `starter_client_logins.notification_sound_path`
+  migration and independent upload, preview, replace, and selection flows for
+  DashCode, Tabler, and Vuexy.
+
+### Changed
+
+- Make the built-in two-note default chime clearer and louder while keeping its
+  duration near 2.2 seconds and retaining browser-initiated playback rules.
+- Improve notification upload proportions, Indonesian validation labels, native
+  account-menu classes, and real bell icons across all supported themes.
+
+### Fixed
+
+- Close the missing DashCode role-action Blade conditional that caused the
+  Settings Roles view to fail compilation.
+- Clean up replaced or rollback-failed private audio files and keep saved sound
+  selection isolated to the authenticated account.
+
 ## [1.10.0] - 2026-10-24
 
 ### Added

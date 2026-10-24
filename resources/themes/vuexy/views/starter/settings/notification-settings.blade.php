@@ -9,8 +9,8 @@
     @endunless
 
     <form class="{{ $embedded ? '' : 'card' }}" wire:submit="save"
-        x-data="StarterTemplate.notificationPreferences(@js($sound))"
-        x-on:starter-notification-sound-updated.window="sound = $event.detail.sound">
+        x-data="StarterTemplate.notificationPreferences(@js($sound), @js($customAudioUrl))"
+        x-on:starter-notification-sound-updated.window="sound = $event.detail.sound; customUrl = $event.detail.customUrl || ''">
         <div class="card-body">
             <h3 class="card-title starter-form-section-title">Suara Notifikasi</h3>
             <div class="row g-3" data-starter-region="notification-audio">
@@ -21,9 +21,26 @@
                         @foreach ($sounds as $key => $option)
                             <option value="{{ $key }}">{{ $option['label'] }}</option>
                         @endforeach
+                        @if ($hasCustomSound)
+                            <option value="custom">Audio unggahan saya</option>
+                        @endif
                     </select>
                     @error('sound') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    <p class="text-secondary small mt-2 mb-0">Pilihan hanya berlaku untuk akun Anda. Simpan untuk menerapkannya.</p>
+                    <p class="text-secondary small mt-2 mb-0">Pilihan berlaku untuk akun Anda. Simpan untuk menerapkannya.</p>
+                </div>
+            </div>
+            <div class="row g-3 mt-3" data-starter-region="notification-upload">
+                <div class="col-md-6">
+                    <label class="form-label" for="notification-sound-upload">Unggah audio pribadi</label>
+                    <input id="notification-sound-upload" type="file" accept=".mp3,.wav,audio/mpeg,audio/wav,audio/x-wav"
+                        class="form-control @error('soundUpload') is-invalid @enderror" wire:model="soundUpload">
+                    @error('soundUpload') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    <p class="text-secondary small mt-2 mb-2">MP3 atau WAV, maksimal 5 MB. File baru menggantikan audio pribadi sebelumnya.</p>
+                    <button type="button" class="btn btn-outline-primary" wire:click="saveCustomSound"
+                        wire:loading.attr="disabled" wire:target="soundUpload,saveCustomSound">
+                        <span wire:loading.remove wire:target="soundUpload,saveCustomSound">Unggah dan Gunakan</span>
+                        <span wire:loading wire:target="soundUpload,saveCustomSound">Mengunggah…</span>
+                    </button>
                 </div>
             </div>
             <div class="d-flex flex-wrap gap-2 mt-3">

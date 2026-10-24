@@ -553,8 +553,10 @@ desktop/mobile bounds, contrast, assets and actual maintenance responses.
 
 Every theme provides `starter/settings/notification-settings.blade.php`, a
 Notifikasi Settings section and a personal account-menu link. Keep sound
-selection, preview, deferred default reset, validation, save/loading/success and
-reload behavior equivalent. Include the shared notification-audio configuration
+selection, private MP3/WAV upload (5 MB), preview, deferred default reset,
+validation, save/loading/success and reload behavior equivalent. Every new theme
+must provide a real notification bell icon; never rely on the icon fallback.
+Include the shared notification-audio configuration
 once in the authenticated shell; native theme form/button styling stays intact.
 
 ### Universal brand and feedback contract
@@ -595,6 +597,7 @@ once in the authenticated shell; native theme form/button styling stays intact.
   assertion does not replace direct browser inspection.
 - The shared default personal notification sound is a two-note local chime of
   2–3 seconds including decay; it is selected for new/unset preferences. A user
-  may select another catalog entry, preview, save or restore default. Playback
+  may select another catalog entry, upload one personal MP3/WAV, preview, save
+  or restore default. Playback
   remains host-triggered and subject to browser audio permissions. Do not play
   automatically on page load or add theme-specific defaults.

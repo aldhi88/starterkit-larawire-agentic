@@ -6,6 +6,7 @@ use Aldhi88\StarterKit\Contracts\Starter\ClientRoleInterface;
 use Aldhi88\StarterKit\Http\Middleware\Starter\StarterAdmin;
 use Aldhi88\StarterKit\Http\Middleware\Starter\StarterLogAccess;
 use Aldhi88\StarterKit\Livewire\Starter\UserManagement\RoleForm;
+use Aldhi88\StarterKit\Livewire\Starter\UserManagement\UserForm;
 use Aldhi88\StarterKit\Models\Starter\ActivityLog;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Models\Starter\ClientRole;
@@ -83,6 +84,18 @@ it('rejects a forged Livewire grant even when its checkbox is disabled', functio
         ->set('roleForm.can_manage_settings', true)->set('roleForm.can_view_logs', true)
         ->call('save')->assertForbidden();
     expect(ClientRole::where('code', 'forged')->exists())->toBeFalse();
+})->with(['tabler', 'vuexy', 'dashcode']);
+
+it('shows user-facing validation labels instead of Livewire property names', function (string $theme): void {
+    config(['starter.theme' => $theme]);
+    View::addLocation(StarterPaths::path("resources/themes/{$theme}/views"));
+    View::addNamespace('starter-shared', StarterPaths::path('resources/views'));
+    require StarterPaths::path('routes/starter/global.php');
+
+    Livewire::test(UserForm::class)
+        ->call('save')
+        ->assertHasErrors(['userForm.name' => 'required', 'userForm.username' => 'required', 'userForm.role_id' => 'required'])
+        ->assertSee('nama tampilan');
 })->with(['tabler', 'vuexy', 'dashcode']);
 
 it('blocks indirect elevation by role assignment and by taking over a privileged account', function (string $operation): void {

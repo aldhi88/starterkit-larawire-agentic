@@ -11,8 +11,8 @@
             @include('starter.templates.layouts.icon', ['name' => 'user-circle'])
             Edit Profil Saya
         </a>
-        <a href="{{ route('starter.notifications') }}" class="dropdown-item" data-starter-navigate>
-            @include('starter.templates.layouts.icon', ['name' => 'bell', 'class' => 'icon dropdown-item-icon me-2'])
+        <a href="{{ route('starter.notifications') }}" class="starter-dropdown-item" data-starter-navigate>
+            @include('starter.templates.layouts.icon', ['name' => 'bell'])
             Notifikasi
         </a>
         @if ($login?->role?->canManageSettings())

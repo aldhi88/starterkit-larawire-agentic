@@ -132,10 +132,10 @@ class EditMyProfile extends Component
                 'max:2048',
             ],
         ], [], [
-            'accountForm.name' => 'display name',
+            'accountForm.name' => 'nama tampilan',
             'accountForm.username' => 'username',
             'accountForm.email' => 'email login',
-            'profilePhotoUpload' => 'profile photo upload',
+            'profilePhotoUpload' => 'foto profil',
         ])['accountForm'];
 
         $oldProfilePhoto = (string) $login->profile_photo;

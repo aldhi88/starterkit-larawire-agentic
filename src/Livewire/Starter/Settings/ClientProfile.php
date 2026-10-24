@@ -78,11 +78,11 @@ class ClientProfile extends Component
             ],
             'clientFaviconUpload' => ['nullable', 'image', 'mimes:png', 'dimensions:ratio=1,min_width=32,min_height=32,max_width=512,max_height=512', 'max:512'],
         ], [], [
-            'clientForm.name' => 'client name',
-            'clientForm.email' => 'client email',
-            'clientForm.phone' => 'phone',
-            'clientForm.pic_name' => 'PIC name',
-            'clientPhotoUpload' => 'logo upload',
+            'clientForm.name' => 'nama perusahaan',
+            'clientForm.email' => 'email perusahaan',
+            'clientForm.phone' => 'telepon',
+            'clientForm.pic_name' => 'nama PIC',
+            'clientPhotoUpload' => 'logo aplikasi',
             'clientFaviconUpload' => 'favicon',
         ])['clientForm'];
 

@@ -221,9 +221,9 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             },
         };
     },
-    notificationPreferences(initialSound = 'chime') {
+    notificationPreferences(initialSound = 'chime', customUrl = '') {
         return {
-            sound: initialSound, previewStatus: '',
+            sound: initialSound, customUrl, previewStatus: '',
             async preview() {
                 const played = await window.StarterTemplate.playNotificationSound(this.sound);
                 this.previewStatus = played ? 'Pratinjau diputar.' : 'Audio belum dapat diputar. Periksa izin suara browser lalu coba lagi.';
@@ -236,6 +236,12 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         };
     },
     stopNotificationSound() {
+        if (this.notificationAudioElement) {
+            this.notificationAudioElement.pause();
+            this.notificationAudioElement.removeAttribute('src');
+            this.notificationAudioElement.load();
+            this.notificationAudioElement = null;
+        }
         (this.notificationAudioNodes || []).forEach((node) => {
             try { node.stop(); } catch (_) { /* An ended source is already silent. */ }
             node.disconnect();
@@ -247,7 +253,17 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         if (! config) return false;
         try {
             const catalog = JSON.parse(config.dataset.sounds || '{}');
-            const selected = catalog[sound || config.dataset.sound] || catalog.chime;
+            const selectedKey = sound || config.dataset.sound;
+            if (selectedKey === 'custom') {
+                const url = config.dataset.customUrl;
+                if (! url || ! url.startsWith('/') || url.startsWith('//') || ! window.Audio) return false;
+                this.stopNotificationSound();
+                const audio = new window.Audio(url);
+                this.notificationAudioElement = audio;
+                try { await audio.play(); return true; }
+                catch (_) { this.stopNotificationSound(); return false; }
+            }
+            const selected = catalog[selectedKey] || catalog.chime;
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             if (! selected || ! AudioContext) return false;
             if (! this.notificationAudioContext && window.navigator?.userActivation && ! window.navigator.userActivation.hasBeenActive) return false;
@@ -266,10 +282,10 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             for (const [frequency, duration] of selected.notes) {
                 const node = context.createOscillator();
                 const gain = context.createGain();
-                node.type = 'sine';
+                node.type = 'triangle';
                 node.frequency.setValueAtTime(frequency, start);
                 gain.gain.setValueAtTime(0, start);
-                gain.gain.linearRampToValueAtTime(.09, start + .01);
+                gain.gain.linearRampToValueAtTime(.25, start + .008);
                 gain.gain.exponentialRampToValueAtTime(.001, start + duration);
                 node.connect(gain);
                 gain.connect(context.destination);
@@ -1175,7 +1191,12 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             if (! target) return;
             try {
                 const catalog = JSON.parse(target.dataset.sounds || '{}');
-                if (Object.prototype.hasOwnProperty.call(catalog, event.detail?.sound)) target.dataset.sound = event.detail.sound;
+                if (event.detail?.sound === 'custom' && event.detail?.customUrl?.startsWith('/') && ! event.detail.customUrl.startsWith('//')) {
+                    target.dataset.sound = 'custom';
+                    target.dataset.customUrl = event.detail.customUrl;
+                } else if (Object.prototype.hasOwnProperty.call(catalog, event.detail?.sound)) {
+                    target.dataset.sound = event.detail.sound;
+                }
             } catch (_) { /* The next page supplies fresh configuration. */ }
         });
         document.addEventListener('livewire:navigating', () => this.stopNotificationSound());

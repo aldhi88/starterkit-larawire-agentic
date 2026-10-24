@@ -2,6 +2,7 @@
 
 use Aldhi88\StarterKit\Http\Controllers\Starter\Auth\TouchSessionActivityController;
 use Aldhi88\StarterKit\Http\Controllers\Starter\BrandStylesheetController;
+use Aldhi88\StarterKit\Http\Controllers\Starter\NotificationSoundController;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\ConfirmPassword;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\LockScreen;
 use Aldhi88\StarterKit\Livewire\Starter\Logs\ActivityLogIndex;
@@ -31,6 +32,7 @@ Route::name('starter.')
     ->group(function (): void {
         Route::livewire('/profile/edit', EditMyProfile::class)->name('profile.edit');
         Route::livewire('/settings/notifications', NotificationSettings::class)->name('notifications');
+        Route::get('/settings/notifications/audio', NotificationSoundController::class)->name('notifications.audio');
 
         Route::livewire('/activity-logs', ActivityLogIndex::class)
             ->middleware('starter.logs')

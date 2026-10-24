@@ -12,6 +12,7 @@
     $allowedIcons = [
         'apps',
         'alert-triangle',
+        'bell',
         'arrow-left',
         'activity',
         'building',
@@ -74,6 +75,11 @@
             <path d="M12 9v4" />
             <path d="M12 17h.01" />
             <path d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z" />
+            @break
+
+        @case('bell')
+            <path d="M18 8a6 6 0 0 0 -12 0c0 7 -3 7 -3 9h18c0 -2 -3 -2 -3 -9" />
+            <path d="M10 21h4" />
             @break
 
         @case('arrow-left')

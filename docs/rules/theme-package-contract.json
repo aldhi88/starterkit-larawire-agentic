@@ -433,6 +433,7 @@
         "starter/settings/notification-settings.blade.php": [
             "page-header",
             "notification-audio",
+            "notification-upload",
             "page-actions"
         ]
     },

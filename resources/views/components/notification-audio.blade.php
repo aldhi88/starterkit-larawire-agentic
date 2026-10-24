@@ -1,3 +1,4 @@
 <div hidden data-starter-notification-audio
-    data-sound="{{ \Aldhi88\StarterKit\Support\Starter\StarterNotificationSound::normalize($login?->notification_sound) }}"
+    data-sound="{{ \Aldhi88\StarterKit\Support\Starter\StarterNotificationSound::normalize($login?->notification_sound, $login && \Aldhi88\StarterKit\Support\Starter\StarterNotificationSound::isOwnedPath($login->id, $login->notification_sound_path) && \Illuminate\Support\Facades\Storage::disk('local')->exists($login->notification_sound_path)) }}"
+    data-custom-url="{{ $login && \Aldhi88\StarterKit\Support\Starter\StarterNotificationSound::isOwnedPath($login->id, $login->notification_sound_path) && \Illuminate\Support\Facades\Storage::disk('local')->exists($login->notification_sound_path) ? route('starter.notifications.audio', absolute: false) : '' }}"
     data-sounds="{{ json_encode(\Aldhi88\StarterKit\Support\Starter\StarterNotificationSound::catalog()) }}"></div>
