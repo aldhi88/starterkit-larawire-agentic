@@ -111,9 +111,10 @@ appropriate contrast. Updates preserve an existing installation's logo.
 **Settings → Notifications** offers three built-in tones: a clear default chime,
 a short bell, and a gentle tone. Each user can also upload a private MP3 or WAV
 up to 5 MB; a new upload replaces their previous file. Preview, choose/reset,
-then save. Ordinary users can open
-**Notifikasi** from their account menu without gaining administrative Settings
-or Activity Log access. Loading a page or saving preferences never plays sound.
+then save. The account menu has one **Pengaturan** (Settings) entry, with no
+separate Notifications shortcut. For ordinary users, it opens personal
+notification settings without granting administrative Settings or Activity Log
+access. Loading a page or saving preferences never plays sound.
 Host features choose notification triggers and can call
 `await window.StarterTemplate.playNotificationSound()` to play the current
 account selection; `false` means browser audio is unavailable or blocked.

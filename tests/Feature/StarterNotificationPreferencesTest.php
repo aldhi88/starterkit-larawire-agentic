@@ -60,6 +60,38 @@ function notificationSettingsFor(string $theme)
     return Livewire::test(NotificationSettings::class);
 }
 
+it('provides one settings menu entry with an authorized destination in every theme', function (string $theme, bool $manager, bool $logs): void {
+    $this->first->role->update(['can_manage_settings' => $manager, 'can_view_logs' => $logs]);
+    $this->first->unsetRelation('role');
+    View::addLocation(StarterPaths::path("resources/themes/{$theme}/views"));
+    Route::get('/settings/notifications', fn () => 'notifications')->name('starter.notifications');
+    Route::get('/activity-logs', fn () => 'logs')->name('starter.logs.index');
+    Route::post('/logout', fn () => 'logout')->name('auth.logout');
+
+    $html = View::make('starter.templates.layouts.account-menu', [
+        'login' => $this->first,
+        'loginName' => $this->first->name,
+        'loginAvatarUrl' => '/avatar.png',
+        'currentProfileUrl' => '/profile/edit',
+    ])->render();
+    $document = new DOMDocument;
+    @$document->loadHTML($html);
+    $links = (new DOMXPath($document))->query('//a');
+    $settings = [];
+    $labels = [];
+    foreach ($links as $link) {
+        $label = trim($link->textContent);
+        $labels[] = $label;
+        if ($label === 'Pengaturan') {
+            $settings[] = $link->getAttribute('href');
+        }
+    }
+
+    expect($settings)->toBe([route($manager ? 'starter.settings' : 'starter.notifications')])
+        ->and($labels)->not->toContain('Notifikasi')
+        ->and(in_array('Log Aktivitas', $labels, true))->toBe($logs);
+})->with(['tabler', 'vuexy', 'dashcode'])->with([[false, false], [false, true], [true, false], [true, true]]);
+
 it('lets an ordinary user save only their own sound and restores the selection on reload', function (string $theme): void {
     notificationSettingsFor($theme)->assertSet('sound', 'chime')->assertSee('Dengarkan Pratinjau')
         ->set('sound', 'bell')->call('save')->assertHasNoErrors()

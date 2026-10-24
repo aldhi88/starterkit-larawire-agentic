@@ -552,7 +552,10 @@ status buttons, or edit vendor CSS/artwork. Verify both layouts where applicable
 desktop/mobile bounds, contrast, assets and actual maintenance responses.
 
 Every theme provides `starter/settings/notification-settings.blade.php`, a
-Notifikasi Settings section and a personal account-menu link. Keep sound
+Notifikasi Settings section and exactly one Pengaturan account-menu link; never
+add a separate Notifikasi account-menu shortcut. Route Settings managers to
+`starter.settings` and ordinary users to `starter.notifications`, preserving
+administrative authorization. Keep sound
 selection, private MP3/WAV upload (5 MB), preview, deferred default reset,
 validation, save/loading/success and reload behavior equivalent. Every new theme
 must provide a real notification bell icon; never rely on the icon fallback.

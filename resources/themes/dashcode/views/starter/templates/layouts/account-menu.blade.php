@@ -11,16 +11,10 @@
             @include('starter.templates.layouts.icon', ['name' => 'user-circle'])
             Edit Profil Saya
         </a>
-        <a href="{{ route('starter.notifications') }}" class="starter-dropdown-item" data-starter-navigate>
-            @include('starter.templates.layouts.icon', ['name' => 'bell'])
-            Notifikasi
+        <a href="{{ route($login?->role?->canManageSettings() ? 'starter.settings' : 'starter.notifications') }}" class="starter-dropdown-item" data-starter-navigate>
+            @include('starter.templates.layouts.icon', ['name' => 'settings'])
+            Pengaturan
         </a>
-        @if ($login?->role?->canManageSettings())
-            <a href="{{ route('starter.settings') }}" class="starter-dropdown-item" data-starter-navigate>
-                @include('starter.templates.layouts.icon', ['name' => 'settings'])
-                Pengaturan
-            </a>
-        @endif
         @if ($login?->role?->canViewLogs())
             <a href="{{ route('starter.logs.index') }}" class="starter-dropdown-item" data-starter-navigate>
                 @include('starter.templates.layouts.icon', ['name' => 'history'])

@@ -5,6 +5,24 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.11.1] - 2026-10-24
+
+### Changed
+
+- Replace the duplicate account-menu notification shortcut with one Pengaturan
+  entry across DashCode, Tabler, and Vuexy. Settings managers continue to the
+  full Settings area, while ordinary users reach only their personal notification
+  preferences.
+- Document the single-entry account-menu contract without changing routes,
+  authorization, middleware, schema, migrations, dependencies, or environment
+  configuration.
+
+### Fixed
+
+- Preserve independent Settings and Activity Log capabilities when rendering
+  each theme's account menu, including users who may view logs but cannot manage
+  Settings.
+
 ## [1.11.0] - 2026-10-24
 
 ### Added

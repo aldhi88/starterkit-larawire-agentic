@@ -112,8 +112,9 @@ Logo instalasi lama tetap dipakai setelah update.
 yang jelas (default), bel singkat, dan nada tenang. Setiap user juga dapat
 mengunggah MP3 atau WAV pribadi hingga 5 MB; unggahan baru menggantikan file
 pribadi sebelumnya. Dengarkan pratinjau, pilih default bila perlu, lalu simpan.
-User biasa dapat membuka preferensinya lewat menu akun
-**Notifikasi** tanpa mendapat hak pengaturan administratif atau Log Aktivitas.
+Menu akun hanya menyediakan **Pengaturan**, tanpa pintasan Notifikasi terpisah.
+Untuk user biasa, Pengaturan membuka preferensi notifikasi pribadi tanpa
+memberikan hak pengaturan administratif atau Log Aktivitas.
 Suara tidak otomatis diputar saat halaman dibuka atau preferensi disimpan.
 Aplikasi menentukan pemicu notifikasinya dan dapat memanggil
 `await window.StarterTemplate.playNotificationSound()` untuk memakai pilihan
