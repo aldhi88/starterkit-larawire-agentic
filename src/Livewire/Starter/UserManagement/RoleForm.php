@@ -57,7 +57,7 @@ class RoleForm extends Component
             return;
         }
 
-        $role = $this->roles()->findRole($this->login(), $roleId);
+        $role = $this->roles()->findEditableRole($this->login(), $roleId);
         $this->roleForm = [
             'code' => $role->code,
             'name' => $role->name,
@@ -148,7 +148,7 @@ class RoleForm extends Component
             return;
         }
 
-        $role = $this->roles()->findRole($this->login(), $this->roleId);
+        $role = $this->roles()->findEditableRole($this->login(), $this->roleId);
         $this->deleteRoleId = $role->id;
         $this->deleteRoleName = $role->name;
         $this->deleteRoleModalOpen = true;
@@ -190,12 +190,13 @@ class RoleForm extends Component
     {
         $selectedRole = $this->roleId === null
             ? null
-            : $this->roles()->findRole($this->login(), $this->roleId);
+            : $this->roles()->findEditableRole($this->login(), $this->roleId);
         $modules = $this->roles()->availableModules()
             ->groupBy(fn (AppMod $mod): string => $mod->app->name);
 
         return view(StarterTheme::viewName('starter.user-management.role-form'), [
             'selectedRole' => $selectedRole,
+            'canGrantLogAccess' => $this->login()->role->canViewLogs(),
             'modules' => $modules,
         ])->title($this->roleId === null ? 'Tambah Role' : 'Edit Role');
     }

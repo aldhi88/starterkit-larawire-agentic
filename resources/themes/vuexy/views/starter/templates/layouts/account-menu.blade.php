@@ -11,6 +11,10 @@
         <div class="dropdown-item-text py-3"><div class="d-flex align-items-center gap-3"><span class="avatar"><img class="rounded-circle" src="{{ $loginAvatarUrl }}" alt=""></span><div class="lh-sm"><div class="fw-semibold text-heading">{{ $loginName }}</div><small class="text-body-secondary">{{ $login?->role?->name ?? 'User' }}</small></div></div></div>
         <div class="dropdown-divider"></div>
         <a href="{{ $currentProfileUrl }}" class="dropdown-item" data-starter-navigate>@include('starter.templates.layouts.icon', ['name' => 'user', 'class' => 'me-3']) Edit Profil Saya</a>
+        <a href="{{ route('starter.notifications') }}" class="dropdown-item" data-starter-navigate>
+            @include('starter.templates.layouts.icon', ['name' => 'bell', 'class' => 'icon dropdown-item-icon me-2'])
+            Notifikasi
+        </a>
         @if ($login?->role?->canManageSettings())
             <a href="{{ route('starter.settings') }}" class="dropdown-item" data-starter-navigate>@include('starter.templates.layouts.icon', ['name' => 'settings', 'class' => 'me-3']) Pengaturan</a>
         @endif

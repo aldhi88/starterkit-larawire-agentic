@@ -160,7 +160,8 @@
         {
             "id": "error.http",
             "references": [
-                "404.html"
+                "404.html",
+                "under-maintanance.html"
             ],
             "runtime": [
                 "resources/themes/dashcode/views/starter/errors/layout.blade.php"
@@ -169,6 +170,9 @@
                 "4xx",
                 "5xx",
                 "safe-return"
+            ],
+            "assets": [
+                "images/svg/img-2.svg"
             ]
         },
         {
@@ -262,7 +266,8 @@
                 "buttons.html"
             ],
             "runtime": [
-                "resources/themes/dashcode/views/starter/user-management/role-form.blade.php"
+                "resources/themes/dashcode/views/starter/user-management/role-form.blade.php",
+                "resources/themes/dashcode/views/starter/settings/notification-settings.blade.php"
             ],
             "states": [
                 "primary",
@@ -307,7 +312,8 @@
                 "select.html"
             ],
             "runtime": [
-                "resources/themes/dashcode/views/starter/user-management/user-form.blade.php"
+                "resources/themes/dashcode/views/starter/user-management/user-form.blade.php",
+                "resources/themes/dashcode/views/starter/settings/notification-settings.blade.php"
             ],
             "states": [
                 "default",
@@ -439,7 +445,13 @@
             "states": [
                 "success",
                 "warning",
-                "danger"
+                "danger",
+                "primary",
+                "secondary",
+                "info",
+                "branded-light",
+                "branded-dark",
+                "unbranded"
             ]
         },
         {
@@ -453,7 +465,10 @@
             "states": [
                 "success",
                 "error",
-                "dismissed"
+                "dismissed",
+                "branded-light",
+                "branded-dark",
+                "unbranded"
             ]
         },
         {

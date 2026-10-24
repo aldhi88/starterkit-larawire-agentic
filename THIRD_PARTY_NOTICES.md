@@ -24,3 +24,10 @@ use. Its runtime is supplied through the owner-managed private local archive;
 there is no public redistribution permission or public download URL. The
 canonical package contains only the theme-owned integration, source atlas, and
 manifest metadata, never the vendor HTML or runtime ZIP.
+
+## Oklab conversion matrices
+
+The small Oklab conversion implementation in `StarterBrandColor` uses the
+public-domain conversion matrices published by Björn Ottosson at
+https://bottosson.github.io/posts/oklab/ (2021 matrix revision). No external
+color library or runtime dependency is included.

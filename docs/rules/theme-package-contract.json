@@ -101,14 +101,51 @@
         "brand_palette_required_per_theme": true,
         "brand_primary_button_maps_to_primary": true,
         "brand_secondary_button_maps_to_secondary": true,
-        "brand_button_states_required": ["normal", "hover", "active", "focus", "disabled"],
+        "brand_button_states_required": [
+            "normal",
+            "hover",
+            "active",
+            "focus",
+            "disabled"
+        ],
         "other_semantic_button_colors_remain_native": true,
         "brand_accent_focus_scoped_to_branded_controls": true,
-        "brand_button_verification_modes": ["unbranded", "branded", "light", "dark-if-supported"],
+        "brand_button_verification_modes": [
+            "unbranded",
+            "branded",
+            "light",
+            "dark-if-supported"
+        ],
         "custom_script_target_pattern": "runtime/js/<theme-key>.js",
         "named_custom_assets_required_per_theme": true,
         "custom_assets_loaded_after_vendor": true,
-        "custom_rule_requires_proven_native_gap": true
+        "custom_rule_requires_proven_native_gap": true,
+        "brand_palette_tone_space": "Oklab with hue-preserving sRGB chroma reduction",
+        "brand_palette_shared_feedback_css": "resources/css/brand-feedback.css",
+        "brand_palette_native_status_seeds": [
+            "success",
+            "info",
+            "warning",
+            "danger"
+        ],
+        "brand_palette_feedback_roles": [
+            "primary",
+            "secondary",
+            "success",
+            "info",
+            "warning",
+            "danger"
+        ],
+        "brand_palette_feedback_text_minimum_contrast": 4.5,
+        "brand_palette_feedback_modes": [
+            "light",
+            "dark"
+        ],
+        "brand_palette_environment_inputs": [
+            "primary",
+            "secondary",
+            "accent"
+        ]
     },
     "cosmetic_selection_policy": {
         "indexed_variant_shortlist_minimum": 3,
@@ -392,6 +429,11 @@
         "starter/user-management/powergrid/users-toolbar.blade.php": [
             "bulk-actions",
             "filters"
+        ],
+        "starter/settings/notification-settings.blade.php": [
+            "page-header",
+            "notification-audio",
+            "page-actions"
         ]
     },
     "required_runtime_groups": [
@@ -431,6 +473,7 @@
         "starter/powergrid/table-base.blade.php",
         "starter/profile/edit-my-profile.blade.php",
         "starter/settings/client-profile.blade.php",
+        "starter/settings/notification-settings.blade.php",
         "starter/settings/security-settings.blade.php",
         "starter/settings/settings-index.blade.php",
         "starter/templates/components/alert-modal.blade.php",
@@ -476,7 +519,7 @@
             "duplicate minified and unminified assets"
         ]
     },
-        "completion_gates": [
+    "completion_gates": [
         "valid-current-run-verification-ledger",
         "verification-ledger-validator-passes",
         "current-input-fingerprints",

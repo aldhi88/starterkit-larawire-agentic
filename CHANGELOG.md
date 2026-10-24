@@ -5,6 +5,45 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-10-24
+
+### Added
+
+- Add personal notification audio preferences, three local sound choices,
+  preview/save/reset controls, and a two-note default chime lasting 2.4 seconds.
+- Add an idempotent nullable `starter_client_logins.notification_sound` migration.
+- Add shared Oklab brand-tone generation and feedback tokens, with per-theme
+  native status seeds and a mandatory contract for future theme adapters.
+
+### Fixed
+
+- Separate Settings and Activity Log authority at routes, Livewire updates and
+  user/role mutations; prevent actors from granting or taking over log access
+  beyond their own authority, including forged and mixed bulk requests.
+- Balance alert, soft badge and toast surfaces/ink in branded light/dark modes;
+  support primary/secondary alerts and readable button hover/outline states
+  across white, black, pale and saturated brand colors. Preserve native semantic
+  button colors and exact primary/secondary solid fills.
+- Use native error illustrations on Vuexy/DashCode and brand-aware standalone
+  error/maintenance styles across all themes; correct Tabler recovery icon and
+  DashCode unbranded secondary/danger alert styling.
+
+### Security
+
+- Require Laravel 13.30 or later in the 13.x series, excluding the known
+  TokenGuard, relationship-inclusion and debug-page advisories on older releases.
+- Require Livewire 4.4.8 or later in the 4.x series to include the fix for
+  authorization advisory GHSA-mhf7-xp6r-6qrc.
+
+### Upgrade notes
+
+- No new environment settings. Continue using the same three `STARTER_BRAND_*`
+  values. Update the package, run `starter:sync` locally, review preserved view
+  overrides, and commit generated runtime assets before production deployment.
+- Refresh DashCode's runtime archive and Vuexy's owner-managed private archive
+  to the matching manifests. Production uses `starter:deploy`; it never downloads
+  theme sources. Notification preferences require the additive migration.
+
 ## [1.9.0] - 2026-10-16
 
 ### Added

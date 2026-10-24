@@ -16,6 +16,9 @@
     </button>
     <template x-teleport="body">
         <ul x-ref="menu" class="dashcode-table-dropdown dashcode-row-dropdown" :class="{ 'show': open }" x-show="open" x-cloak :style="`position: fixed; top: ${top}px; left: ${left}px; z-index: 1060;`" @click.outside="open = false" role="menu">
+        @if (! ($canManage ?? false))
+            <li><span class="dropdown-item disabled" aria-disabled="true">Akses pengelolaan terbatas</span></li>
+        @else
         @if (! $row->trashed())
             <li>
                 <a class="dashcode-table-dropdown-item" href="{{ route('starter.user-management.users.edit', ['userLoginId' => $row->id]) }}" @click="open = false" role="menuitem">
@@ -59,6 +62,7 @@
                     <span>Hapus permanen</span>
                 </button>
             </li>
+        @endif
         @endif
     </ul>
     </template>

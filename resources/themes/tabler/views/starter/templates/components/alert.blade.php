@@ -1,6 +1,6 @@
 @php
     $type = (string) ($type ?? 'info');
-    $type = in_array($type, ['success', 'info', 'warning', 'danger'], true) ? $type : 'info';
+    $type = in_array($type, ['primary', 'secondary', 'success', 'info', 'warning', 'danger'], true) ? $type : 'info';
     $dismissible = $dismissible ?? true;
     $message = $message ?? '';
     $extraClass = trim((string) ($class ?? ''));
@@ -12,7 +12,7 @@
     };
 @endphp
 
-<div class="alert alert-{{ $type }} d-flex align-items-center gap-3 {{ $extraClass }}" role="alert" data-starter-alert>
+<div class="alert alert-{{ $type }} d-flex align-items-center gap-3 {{ $extraClass }}" role="alert" data-starter-alert data-starter-feedback="{{ $type }}">
     <span class="alert-icon flex-shrink-0">
         @include('starter.templates.layouts.icon', ['name' => $icon, 'class' => 'm-0'])
     </span>

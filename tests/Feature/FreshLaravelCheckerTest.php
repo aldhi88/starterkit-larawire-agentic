@@ -102,7 +102,7 @@ it('accepts the current fresh Laravel JSON exception callback', function (): voi
         (string) File::get($path),
     ));
 
-    expect((new FreshLaravelChecker($this->fixture, '13.25.0'))->sourceFindings())->toBe([]);
+    expect((new FreshLaravelChecker($this->fixture, '13.30.0'))->sourceFindings())->toBe([]);
 });
 
 it('checks only the selected mysql database for existing tables', function (): void {
@@ -127,10 +127,10 @@ it('checks only the selected mysql database for existing tables', function (): v
 });
 
 it('rejects Laravel versions below the documented minimum', function (): void {
-    $findings = (new FreshLaravelChecker($this->fixture, '13.7.9'))->sourceFindings();
+    $findings = (new FreshLaravelChecker($this->fixture, '13.29.9'))->sourceFindings();
 
     expect($findings)->toContain(
-        'Versi Laravel 13.7.9 belum memenuhi versi minimum 13.8.0.',
+        'Versi Laravel 13.29.9 belum memenuhi versi minimum 13.30.0.',
     );
 });
 

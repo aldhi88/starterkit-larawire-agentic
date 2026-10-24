@@ -115,7 +115,17 @@ class UserManagementRoleService
      */
     public function saveRole(ClientLogin $login, ?int $roleId, array $data, array $moduleIds, array $landingMenuIds = []): ClientRole
     {
+        $this->assertAuthority($login);
         $code = $this->normalizeCode($data['code']);
+        if ($code === 'superuser') {
+            throw ValidationException::withMessages(['roleForm.code' => 'Kode role Superuser tidak dapat digunakan.']);
+        }
+        if ((bool) ($data['can_view_logs'] ?? false) && ! $login->role->canViewLogs()) {
+            $this->denyAuthority($login, $roleId);
+        }
+        if ($roleId !== null) {
+            $this->assertAuthority($login, $this->findRole($login, $roleId));
+        }
         $moduleIds = $this->moduleIds($moduleIds);
         $landings = $this->landingMenuIds($moduleIds, $landingMenuIds);
 
@@ -205,6 +215,28 @@ class UserManagementRoleService
         $this->archiveRoles($login, [$role->id]);
     }
 
+    public function findEditableRole(ClientLogin $login, int $id): ClientRole
+    {
+        $role = $this->findRole($login, $id);
+        $this->assertAuthority($login, $role);
+
+        return $role;
+    }
+
+    private function assertAuthority(ClientLogin $login, ?ClientRole $role = null): void
+    {
+        if (! $login->role->canManageSettings() || ($role && ! $role->canBeManagedBy($login->role))) {
+            $this->denyAuthority($login, $role?->id);
+        }
+    }
+
+    private function denyAuthority(ClientLogin $login, ?int $roleId): never
+    {
+        $this->auditLogs->recordSecurityEvent('authorization.role_access_denied', 'Perubahan akses role ditolak',
+            actor: $login, metadata: ['role_id' => $roleId, 'reason' => 'insufficient_authority']);
+        abort(403, 'Anda tidak dapat mengelola atau memberikan akses yang tidak Anda miliki.');
+    }
+
     private function normalizeCode(string $code): string
     {
         return Str::of($code)->lower()->slug('_')->toString();
@@ -280,9 +312,15 @@ class UserManagementRoleService
     {
         $ids = collect($ids)->map(fn ($id): int => (int) $id)->filter()->unique()->values();
         $changed = 0;
+        $this->assertAuthority($login);
+        $targets = $ids->map(fn (int $id) => $this->clientRoles->findWithTrashedForManagement($id));
+        foreach ($targets as $role) {
+            if ($role instanceof ClientRole && ! $role->isSuperuser()) {
+                $this->assertAuthority($login, $role);
+            }
+        }
 
-        foreach ($ids as $id) {
-            $role = $this->clientRoles->findWithTrashedForManagement($id);
+        foreach ($targets as $role) {
 
             if (! $role instanceof ClientRole || $role->isSuperuser()) {
                 continue;

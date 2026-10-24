@@ -35,7 +35,8 @@
                     <span>Edit</span>
                 </a>
             </li>
-            @if (! $row->isSuperuser())
+            @endif
+            @if (! $row->isSuperuser() && ($canManage ?? false))
                 <li><hr class="dashcode-table-dropdown-divider"></li>
                 <li>
                     <button type="button" class="dashcode-table-dropdown-item" wire:click="$dispatchSelf('prepare-row-action', { action: 'archive', id: {{ $row->id }} })" @click="open = false" role="menuitem">
@@ -44,7 +45,7 @@
                     </button>
                 </li>
             @endif
-        @else
+        @elseif ($canManage ?? false)
             <li>
                 <button type="button" class="dashcode-table-dropdown-item" wire:click="$dispatchSelf('prepare-row-action', { action: 'restore', id: {{ $row->id }} })" @click="open = false" role="menuitem">
                     @include('starter.templates.layouts.icon', ['name' => 'history', 'class' => 'dashcode-table-dropdown-icon'])

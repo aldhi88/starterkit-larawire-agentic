@@ -98,6 +98,14 @@ class ClientRole extends Model
         return $this->isSuperuser() || $this->can_manage_settings;
     }
 
+    /** Settings authority never implies activity-log authority. */
+    public function canBeManagedBy(self $actor): bool
+    {
+        return $actor->canManageSettings()
+            && ($actor->isSuperuser() || (! $this->isSuperuser()
+                && (! $this->canViewLogs() || $actor->canViewLogs())));
+    }
+
     public function canViewLogs(): bool
     {
         return $this->isSuperuser() || $this->can_view_logs;

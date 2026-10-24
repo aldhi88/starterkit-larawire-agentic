@@ -31,7 +31,7 @@
                 </div>
                 <div class="empty-action" data-starter-region="primary-action">
                     <a href="{{ rtrim((string) config('app.url'), '/') ?: '/' }}" class="btn btn-primary">
-                        @include('starter.templates.layouts.icon', ['name' => 'home', 'class' => 'icon'])
+                        @include('starter.templates.layouts.icon', ['name' => 'arrow-left', 'class' => 'icon'])
                         Kembali ke Beranda
                     </a>
                 </div>

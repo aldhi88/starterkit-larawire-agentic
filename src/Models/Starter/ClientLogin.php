@@ -22,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $two_factor_secret
  * @property list<string>|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
+ * @property string|null $notification_sound
  * @property string|null $profile_photo
  * @property string $status
  * @property bool $must_change_password
@@ -49,6 +50,7 @@ use Illuminate\Support\Carbon;
     'two_factor_recovery_codes',
     'two_factor_confirmed_at',
     'profile_photo',
+    'notification_sound',
     'status',
     'must_change_password',
     'password_changed_at',

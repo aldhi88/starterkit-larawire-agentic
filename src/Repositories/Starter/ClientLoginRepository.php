@@ -13,6 +13,7 @@ class ClientLoginRepository implements ClientLoginInterface
     public function tableQueryForViewer(ClientLogin $viewer, string $archiveStatus = 'active'): Builder
     {
         $query = ClientLogin::query()
+            ->with('role')
             ->select([
                 'starter_client_logins.*',
                 'list_role.name as role_name',

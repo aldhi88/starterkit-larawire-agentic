@@ -259,7 +259,9 @@
         {
             "id": "error.http",
             "references": [
-                "html/vertical-menu-template-no-customizer/pages-misc-error.html"
+                "html/vertical-menu-template-no-customizer/pages-misc-error.html",
+                "html/vertical-menu-template-no-customizer/pages-misc-not-authorized.html",
+                "html/vertical-menu-template-no-customizer/pages-misc-under-maintenance.html"
             ],
             "runtime": [
                 "resources/themes/vuexy/views/starter/errors/layout.blade.php"
@@ -267,7 +269,6 @@
             "native_structure": "centered status copy, action, and illustration",
             "classes": [
                 "misc-wrapper",
-                "misc-bg-wrapper",
                 "btn-primary"
             ],
             "states": [
@@ -279,9 +280,12 @@
                 "vendor/css/core.css",
                 "vendor/fonts/iconify-icons.css",
                 "css/vuexy.css",
-                "js/vuexy.js"
+                "js/vuexy.js",
+                "img/illustrations/page-misc-error.png",
+                "img/illustrations/page-misc-you-are-not-authorized.png",
+                "img/illustrations/page-misc-under-maintenance.png"
             ],
-            "selection_reason": "Native miscellaneous error composition keeps status and recovery action prominent."
+            "selection_reason": "Native miscellaneous error artwork, number, typography and recovery action adapted to the shared status-region order; branded artwork preserves alpha and luminance while following the primary palette."
         },
         {
             "id": "page.header",
@@ -466,7 +470,8 @@
                 "html/vertical-menu-template-no-customizer/ui-buttons.html"
             ],
             "runtime": [
-                "resources/themes/vuexy/views/starter/auth/login.blade.php"
+                "resources/themes/vuexy/views/starter/auth/login.blade.php",
+                "resources/themes/vuexy/views/starter/settings/notification-settings.blade.php"
             ],
             "native_structure": "icon-capable primary or secondary action button",
             "classes": [
@@ -563,7 +568,8 @@
                 "html/vertical-menu-template-no-customizer/forms-basic-inputs.html"
             ],
             "runtime": [
-                "resources/themes/vuexy/views/starter/user-management/user-form.blade.php"
+                "resources/themes/vuexy/views/starter/user-management/user-form.blade.php",
+                "resources/themes/vuexy/views/starter/settings/notification-settings.blade.php"
             ],
             "native_structure": "label, native select, help, and validation message",
             "classes": [
@@ -860,7 +866,13 @@
                 "info",
                 "dismissed",
                 "responsive",
-                "keyboard"
+                "keyboard",
+                "primary",
+                "secondary",
+                "danger",
+                "branded-light",
+                "branded-dark",
+                "unbranded"
             ],
             "assets": [
                 "vendor/css/core.css",
@@ -892,7 +904,10 @@
                 "info",
                 "dismissed",
                 "responsive",
-                "keyboard"
+                "keyboard",
+                "branded-light",
+                "branded-dark",
+                "unbranded"
             ],
             "assets": [
                 "vendor/css/core.css",

@@ -10,16 +10,17 @@
     <link rel="stylesheet" href="{{ asset('assets/dashcode/css/dashcode.css') }}">
     @include('starter-shared::components.brand-stylesheet', ['standalone' => true])
 </head>
-<body class="font-inter bg-slate-100" data-starter-theme="dashcode">
+<body class="font-inter bg-white" data-starter-theme="dashcode">
     @php($errorCode = trim($__env->yieldContent('code')))
     <main class="starter-error-page" aria-labelledby="error-title">
         <div class="starter-error-content">
             <div data-starter-region="status-visual">
-                @if ($errorCode === '404')
-                    <img src="{{ asset('assets/dashcode/images/all-img/404.svg') }}" class="starter-error-image" alt="" aria-hidden="true">
-                @else
-                    <div class="starter-error-code">{{ $errorCode }}</div>
-                @endif
+                @include('starter-shared::components.error-illustration', [
+                    'illustrationUrl' => asset($errorCode === '404' ? 'assets/dashcode/images/all-img/404.svg' : 'assets/dashcode/images/svg/img-2.svg'),
+                    'illustrationWidth' => $errorCode === '404' ? 515 : 500,
+                    'illustrationHeight' => $errorCode === '404' ? 406 : 378,
+                    'illustrationClass' => 'starter-error-image',
+                ])
             </div>
             <div data-starter-region="primary-content">
                 <h1 id="error-title">@yield('title')</h1>

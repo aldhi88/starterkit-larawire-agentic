@@ -16,7 +16,7 @@
         {
             "source": "runtime/css/dashcode.css",
             "target": "css/dashcode.css",
-            "sha256": "ae446821d605ad7884e319af35de568f01d8e4c1690551906ab6dee220eacdda",
+            "sha256": "c923d32782b3916a131cb9ba9f538c04bfee331848ef640eed8196cc4c3ba14d",
             "referenced_by": [
                 "resources/themes/dashcode/views/starter/errors/layout.blade.php",
                 "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
@@ -89,6 +89,14 @@
             "referenced_by": [
                 "resources/themes/dashcode/views/starter/templates/layouts/app.blade.php",
                 "resources/themes/dashcode/views/starter/templates/layouts/auth.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/images/svg/img-2.svg",
+            "target": "images/svg/img-2.svg",
+            "sha256": "e44a2ba9c9f87306c9800be81f26a588b30b019be47e867307bf84da016babc2",
+            "referenced_by": [
+                "resources/themes/dashcode/views/starter/errors/layout.blade.php"
             ]
         },
         {

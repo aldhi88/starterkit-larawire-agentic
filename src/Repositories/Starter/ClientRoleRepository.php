@@ -40,6 +40,7 @@ class ClientRoleRepository implements ClientRoleInterface
             ->when(! $viewer->role->isSuperuser(), fn (Builder $query): Builder => $query
                 ->where('is_system', false)
                 ->where('code', '!=', 'superuser'))
+            ->when(! $viewer->role->canViewLogs(), fn (Builder $query): Builder => $query->where('can_view_logs', false))
             ->orderBy('name')
             ->get();
     }

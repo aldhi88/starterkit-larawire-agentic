@@ -17,10 +17,12 @@ use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientRoleInterface;
 use Aldhi88\StarterKit\Contracts\Starter\StarterConfigInterface;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterAdmin;
 use Aldhi88\StarterKit\Http\Middleware\Starter\StarterAuthorize;
 use Aldhi88\StarterKit\Http\Middleware\Starter\StarterEnsureActiveUser;
 use Aldhi88\StarterKit\Http\Middleware\Starter\StarterForcePasswordChange;
 use Aldhi88\StarterKit\Http\Middleware\Starter\StarterLockScreen;
+use Aldhi88\StarterKit\Http\Middleware\Starter\StarterLogAccess;
 use Aldhi88\StarterKit\Installation\StarterInstallState;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\ConfirmPassword;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\LockScreen as LockScreenComponent;
@@ -29,6 +31,7 @@ use Aldhi88\StarterKit\Livewire\Starter\Logs\ActivityLogIndex;
 use Aldhi88\StarterKit\Livewire\Starter\Logs\ActivityLogsTable;
 use Aldhi88\StarterKit\Livewire\Starter\Profile\EditMyProfile;
 use Aldhi88\StarterKit\Livewire\Starter\Settings\ClientProfile;
+use Aldhi88\StarterKit\Livewire\Starter\Settings\NotificationSettings;
 use Aldhi88\StarterKit\Livewire\Starter\Settings\SecuritySettings;
 use Aldhi88\StarterKit\Livewire\Starter\Settings\SettingsIndex;
 use Aldhi88\StarterKit\Livewire\Starter\UserManagement\RoleForm;
@@ -192,6 +195,8 @@ class StarterServiceProvider extends ServiceProvider
         });
 
         Livewire::addPersistentMiddleware([
+            StarterAdmin::class,
+            StarterLogAccess::class,
             StarterEnsureActiveUser::class,
             StarterForcePasswordChange::class,
             StarterLockScreen::class,
@@ -212,6 +217,7 @@ class StarterServiceProvider extends ServiceProvider
             'starter.settings.client-profile' => ClientProfile::class,
             'starter.settings.security-settings' => SecuritySettings::class,
             'starter.settings.settings-index' => SettingsIndex::class,
+            'starter.settings.notification-settings' => NotificationSettings::class,
             'starter.user-management.role-form' => RoleForm::class,
             'starter.user-management.roles' => Roles::class,
             'starter.user-management.roles-table' => RolesTable::class,

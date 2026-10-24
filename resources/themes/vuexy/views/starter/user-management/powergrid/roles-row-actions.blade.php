@@ -18,16 +18,18 @@
             <li>
                 <button type="button" class="dropdown-item" wire:click="$dispatch('starter-role-access-request', { id: {{ $row->id }} })">Akses</button>
             </li>
+            @if ($canManage ?? false)
             <li>
                 <a class="dropdown-item" href="{{ route('starter.settings.roles.edit', ['roleId' => $row->id]) }}">Edit</a>
             </li>
-            @if (! $row->isSuperuser())
+            @endif
+            @if (! $row->isSuperuser() && ($canManage ?? false))
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <button type="button" class="dropdown-item" wire:click="$dispatchSelf('prepare-row-action', { action: 'archive', id: {{ $row->id }} })">Arsipkan</button>
                 </li>
             @endif
-        @else
+        @elseif ($canManage ?? false)
             <li>
                 <button type="button" class="dropdown-item" wire:click="$dispatchSelf('prepare-row-action', { action: 'restore', id: {{ $row->id }} })">Pulihkan</button>
             </li>

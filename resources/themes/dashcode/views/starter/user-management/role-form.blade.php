@@ -203,7 +203,7 @@
                                             type="checkbox"
                                             class="starter-switch-input"
                                             wire:model.defer="roleForm.can_view_logs"
-                                            @disabled($isSuperuserRole)
+                                            @disabled($isSuperuserRole || ! $canGrantLogAccess)
                                         >
                                         <span class="starter-switch-track" aria-hidden="true"></span>
                                     </span>
@@ -213,7 +213,7 @@
                                             Lihat Log Aktivitas
                                         </span>
                                         <span class="dashcode-help-text">
-                                            Izinkan melihat riwayat perubahan data pada seluruh app perusahaan.
+                                            Akses ini terpisah dari Pengaturan. Hanya pengelola yang memiliki akses log dapat memberikannya.
                                         </span>
                                         @if ($isSuperuserRole)
                                             <span class="dashcode-help-text text-danger">Selalu aktif untuk role sistem.</span>

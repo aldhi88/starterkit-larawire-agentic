@@ -5,7 +5,7 @@
         {
             "source": "runtime/css/vuexy.css",
             "target": "css/vuexy.css",
-            "sha256": "0623c3fc0e6f657542ce662fd25ab2c783bd6fc206ba98934d7d9ebd42cab498",
+            "sha256": "97894816d410d6aa2f88d65f530ef1afe9ffcdf5e0984735b6ab7867c4102b02",
             "referenced_by": [
                 "resources/themes/vuexy/views/starter/errors/layout.blade.php",
                 "resources/themes/vuexy/views/starter/templates/layouts/head.blade.php"
@@ -48,11 +48,34 @@
             ]
         },
         {
+            "source": "runtime/img/illustrations/page-misc-error.png",
+            "target": "img/illustrations/page-misc-error.png",
+            "sha256": "2f291f8c276eb144b8457457abaeb8c2d2239e0489fa83066656c1fb9bbec0be",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/errors/layout.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/img/illustrations/page-misc-under-maintenance.png",
+            "target": "img/illustrations/page-misc-under-maintenance.png",
+            "sha256": "b8c97d48a66d000d9f90eaedcd3d444f88273dd3557651642bd281d77e8a42ed",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/errors/layout.blade.php"
+            ]
+        },
+        {
+            "source": "runtime/img/illustrations/page-misc-you-are-not-authorized.png",
+            "target": "img/illustrations/page-misc-you-are-not-authorized.png",
+            "sha256": "aed885e305575a1fee378f766d111a0aae154d2d65545da273bb80b4729f6560",
+            "referenced_by": [
+                "resources/themes/vuexy/views/starter/errors/layout.blade.php"
+            ]
+        },
+        {
             "source": "runtime/js/vuexy.js",
             "target": "js/vuexy.js",
             "sha256": "5c4e3ab7bf1baae45a85c174075afe98c963aae2f69e12ed3f85730a110019eb",
             "referenced_by": [
-                "resources/themes/vuexy/views/starter/errors/layout.blade.php",
                 "resources/themes/vuexy/views/starter/templates/layouts/scripts.blade.php"
             ]
         },

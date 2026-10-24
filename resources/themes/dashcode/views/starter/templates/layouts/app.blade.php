@@ -79,6 +79,7 @@
     @livewireScripts
     @stack('page-scripts')
     @includeIf('extensions.starter.layout.body-end')
+    @include('starter-shared::components.notification-audio')
 </body>
 
 </html>

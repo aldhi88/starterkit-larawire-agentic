@@ -32,84 +32,41 @@ final class StarterBrandPalette
         return substr(hash('sha256', implode('|', $this->colors)), 0, 12);
     }
 
-    public function css(): string
+    /** @param array<string, string> $statusSeeds Native status hues supplied by the active adapter. */
+    public function css(array $statusSeeds = []): string
     {
         $variables = [];
-
-        foreach ($this->colors as $name => $color) {
-            $rgb = self::channels($color);
-            $onColor = self::contrast($color, '#FFFFFF') >= self::contrast($color, '#111111')
-                ? '#FFFFFF'
-                : '#111111';
-            $hover = self::mix($color, self::luminance($color) < .08 ? '#FFFFFF' : '#000000', .12);
-            $text = $color;
-            $onDark = $color;
-
-            for ($step = 0; $step < 8 && self::contrast($text, '#FFFFFF') < 4.5; $step++) {
-                $text = self::mix($text, '#000000', .15);
+        foreach ([...$this->colors, ...$statusSeeds] as $name => $color) {
+            $lightness = StarterBrandColor::lightness($color);
+            $hover = StarterBrandColor::tone($color, $lightness < .3 ? $lightness + .08 : $lightness - .06);
+            $onColor = StarterBrandColor::ink($color);
+            $tokens = [
+                '' => $color,
+                '-rgb' => implode(',', StarterBrandColor::rgb($color)),
+                '-contrast' => $onColor,
+                '-hover' => $hover,
+                '-hover-contrast' => StarterBrandColor::ink($hover),
+                '-soft' => StarterBrandColor::tone($color, .97, .025),
+                '-soft-dark' => StarterBrandColor::tone($color, .26, .035),
+                '-border' => StarterBrandColor::tone($color, .84, .055),
+                '-border-dark' => StarterBrandColor::tone($color, .48, .065),
+                '-text' => StarterBrandColor::tone($color, .4, .12),
+                '-on-dark' => StarterBrandColor::tone($color, .85, .09),
+            ];
+            foreach (['soft', 'text', 'on-dark'] as $variant) {
+                $tokens["-{$variant}-rgb"] = implode(',', StarterBrandColor::rgb($tokens["-{$variant}"]));
             }
-
-            for ($step = 0; $step < 8 && self::contrast($onDark, '#1F2937') < 4.5; $step++) {
-                $onDark = self::mix($onDark, '#FFFFFF', .18);
+            foreach ($tokens as $suffix => $value) {
+                $variables[] = "--starter-brand-{$name}{$suffix}:{$value}";
             }
-
-            $soft = self::mix($color, '#FFFFFF', .88);
             $checkInk = str_replace('#', '%23', $onColor);
-
-            $variables[] = "--starter-brand-{$name}:{$color}";
-            $variables[] = "--starter-brand-{$name}-rgb:".implode(',', $rgb);
-            $variables[] = "--starter-brand-{$name}-contrast:{$onColor}";
-            $variables[] = "--starter-brand-{$name}-hover:{$hover}";
-            $variables[] = "--starter-brand-{$name}-soft:{$soft}";
-            $variables[] = "--starter-brand-{$name}-soft-rgb:".implode(',', self::channels($soft));
-            $variables[] = "--starter-brand-{$name}-border:".self::mix($color, '#FFFFFF', .65);
-            $variables[] = "--starter-brand-{$name}-text:{$text}";
-            $variables[] = "--starter-brand-{$name}-text-rgb:".implode(',', self::channels($text));
-            $variables[] = "--starter-brand-{$name}-on-dark:{$onDark}";
-            $variables[] = "--starter-brand-{$name}-on-dark-rgb:".implode(',', self::channels($onDark));
             $variables[] = "--starter-brand-{$name}-check-svg:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='{$checkInk}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M3 8l3 3 7-7'/%3E%3C/svg%3E\")";
             $variables[] = "--starter-brand-{$name}-radio-svg:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='3' fill='{$checkInk}'/%3E%3C/svg%3E\")";
         }
+        $variables[] = '--starter-feedback-body:'.StarterBrandColor::tone($this->colors['primary'], .3, .012);
+        $variables[] = '--starter-feedback-body-dark:'.StarterBrandColor::tone($this->colors['primary'], .94, .012);
 
         return ':root{'.implode(';', $variables).";}\n";
-    }
-
-    /** @return array{int, int, int} */
-    private static function channels(string $color): array
-    {
-        return [hexdec(substr($color, 1, 2)), hexdec(substr($color, 3, 2)), hexdec(substr($color, 5, 2))];
-    }
-
-    private static function mix(string $first, string $second, float $secondShare): string
-    {
-        $a = self::channels($first);
-        $b = self::channels($second);
-
-        return sprintf('#%02X%02X%02X',
-            (int) round($a[0] * (1 - $secondShare) + $b[0] * $secondShare),
-            (int) round($a[1] * (1 - $secondShare) + $b[1] * $secondShare),
-            (int) round($a[2] * (1 - $secondShare) + $b[2] * $secondShare),
-        );
-    }
-
-    private static function luminance(string $color): float
-    {
-        $channels = array_map(static function (int $channel): float {
-            $value = $channel / 255;
-
-            return $value <= .04045 ? $value / 12.92 : (($value + .055) / 1.055) ** 2.4;
-        }, self::channels($color));
-
-        return .2126 * $channels[0] + .7152 * $channels[1] + .0722 * $channels[2];
-    }
-
-    private static function contrast(string $first, string $second): float
-    {
-        $firstLuminance = self::luminance($first);
-        $secondLuminance = self::luminance($second);
-
-        return (max($firstLuminance, $secondLuminance) + .05)
-            / (min($firstLuminance, $secondLuminance) + .05);
     }
 
     /** @return array{primary: string, secondary: string, accent: string} */

@@ -13,7 +13,7 @@ Starterkit Larawire is built with and appreciates the work of
 [Laravel Lang](https://laravel-lang.com/),
 [Scramble](https://scramble.dedoc.co/), and [Pest](https://pestphp.com/).
 
-> Minimum Laravel version: **13.8**. Each release's Composer constraint defines
+> Minimum Laravel version: **13.30**. Each release's Composer constraint defines
 > the versions already tested; support for a new Laravel major is added only
 > after compatibility testing passes.
 
@@ -106,7 +106,23 @@ choose contain or cover, and accept before uploading. Transparent PNG output is
 previous asset. Logos have no added background or frame; asset authors provide
 appropriate contrast. Updates preserve an existing installation's logo.
 
+### Personal notification audio
+
+**Settings → Notifications** offers a default soft chime, short bell, and gentle
+tone per account. Preview, choose/reset, then save. Ordinary users can open
+**Notifikasi** from their account menu without gaining administrative Settings
+or Activity Log access. Loading a page or saving preferences never plays sound.
+Host features choose notification triggers and can call
+`await window.StarterTemplate.playNotificationSound()` to play the current
+account selection; `false` means browser audio is unavailable or blocked.
+See [browser autoplay guidance](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Best_practices#autoplay_policy).
+
 ### Dynamic role access
+
+**Settings** and **Activity Log** are independent capabilities. A manager without
+log access cannot grant it, assign a higher-privilege role, or manage accounts
+with log authority beyond their own. Enforce the boundary for direct requests,
+password/authenticator resets, and bulk actions as well as visible controls.
 
 Administrators assign modules to a role from the Settings page. A role may open
 one or many Apps, and each allowed App has a selected landing page. Superuser
@@ -205,6 +221,17 @@ Primary buttons use the primary brand color and secondary buttons use the
 secondary brand color, including their interaction states. Danger, warning,
 default, light, dark, and other semantic variants retain the theme's native
 colors.
+
+A shared Oklab engine generates perceptually balanced soft surfaces, borders,
+readable ink, hover states, and light/dark feedback tokens from the same three
+brand seeds. Solid primary/secondary buttons preserve the exact configured HEX.
+Primary/secondary alerts and soft badges follow brand roles; native status hues
+retain their success/info/warning/danger meaning at a matching tonal intensity.
+Semantic buttons and neutral controls keep native colors. New theme adapters
+provide four native status HEX seeds in `brand-palette.css` and map their native
+components to `resources/css/brand-feedback.css`; no new environment inputs or
+duplicated color math are needed. See the theme integration contract.
+
 
 The `starter:install` wizard asks for Tabler, DashCode, or Vuexy and a layout.
 Open-source themes use a pinned GitHub archive; the installer verifies its size
@@ -491,3 +518,9 @@ under [LICENSE](LICENSE). Selling, sublicensing, or republishing this package or
 a competing starter is not permitted. Third-party components remain under
 their respective licenses; see
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+Minimum Livewire version: **4.4.8**, including the authorization fix for GHSA-mhf7-xp6r-6qrc.
+
+The default personal sound is a local two-note **Ting tung lembut** chime lasting
+approximately 2.4 seconds including decay. Users may preview, select another sound,
+save, or restore default. Loading a page or saving a preference never plays audio.

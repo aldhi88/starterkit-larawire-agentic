@@ -48,3 +48,12 @@ position/zoom and keyboard/drag controls, cancel and reopen after upload, then
 verify native modal/control proportions and no overflow in both layouts at
 1280×768 and 390×844. Output dimensions are 800×200 (logo) and 256×256 (favicon);
 PNG alpha must survive, and cancel must preserve the saved and pending assets.
+
+## Personal notification audio
+
+Run `node tests/Browser/notification-audio.cjs` for the shared runtime contract:
+per-account keys, deferred defaults, no automatic playback, local tone generation,
+context reuse, navigation cleanup, invalid keys, and browser restrictions. Direct
+browser verification in each theme covers preview, save, reload and independent
+accounts in both layouts at 1280×768 and 390×844. Ordinary users must still receive
+403 from administrative Settings while their own `/settings/notifications` works.

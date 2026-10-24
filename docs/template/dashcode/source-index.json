@@ -11,7 +11,7 @@
                 "button-action",
                 "empty-error"
             ],
-            "decision": "indexed-only"
+            "decision": "runtime-source"
         },
         {
             "path": "advance-table.html",
@@ -1195,7 +1195,7 @@
             "signals": [
                 "button-action"
             ],
-            "decision": "indexed-only"
+            "decision": "runtime-source"
         },
         {
             "path": "video.html",

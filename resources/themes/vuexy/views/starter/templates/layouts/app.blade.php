@@ -65,5 +65,6 @@
     <script src="{{ asset('assets/starter/vendor/flatpickr/flatpickr.min.js') }}" data-navigate-once defer></script>
     <script src="{{ asset('vendor/livewire-powergrid/powergrid.js') }}" data-navigate-once defer></script>
     @include('starter.templates.layouts.scripts')
+    @include('starter-shared::components.notification-audio')
 </body>
 </html>

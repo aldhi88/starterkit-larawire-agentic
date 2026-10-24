@@ -3,7 +3,7 @@
     "theme": "vuexy",
     "provider": "local",
     "url": null,
-    "archive_sha256": "5b560a8e663be943e99d5a5e1a199581a8a77c560adcb42c10ec3fd9cc2e8724",
+    "archive_sha256": "df3dab63cd1270646cbad5ac36c4e9791caf1f977b7b4f12b2181fb76ab26300",
     "archive_max_bytes": 1048576,
     "required_local_path": "theme-intake/vuexy",
     "license": "Commercial; owner confirmed personal/internal use on 2026-09-05. Public redistribution is not authorized.",

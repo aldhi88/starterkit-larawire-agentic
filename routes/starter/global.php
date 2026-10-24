@@ -6,6 +6,7 @@ use Aldhi88\StarterKit\Livewire\Starter\Auth\ConfirmPassword;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\LockScreen;
 use Aldhi88\StarterKit\Livewire\Starter\Logs\ActivityLogIndex;
 use Aldhi88\StarterKit\Livewire\Starter\Profile\EditMyProfile;
+use Aldhi88\StarterKit\Livewire\Starter\Settings\NotificationSettings;
 use Aldhi88\StarterKit\Livewire\Starter\Settings\SettingsIndex;
 use Aldhi88\StarterKit\Livewire\Starter\UserManagement\RoleForm;
 use Aldhi88\StarterKit\Livewire\Starter\UserManagement\UserForm;
@@ -29,6 +30,7 @@ Route::name('starter.')
     ->middleware(['auth:web', 'starter.active', 'starter.password-change', 'starter.lock'])
     ->group(function (): void {
         Route::livewire('/profile/edit', EditMyProfile::class)->name('profile.edit');
+        Route::livewire('/settings/notifications', NotificationSettings::class)->name('notifications');
 
         Route::livewire('/activity-logs', ActivityLogIndex::class)
             ->middleware('starter.logs')

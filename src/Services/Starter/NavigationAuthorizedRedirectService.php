@@ -96,7 +96,7 @@ class NavigationAuthorizedRedirectService
             return false;
         }
 
-        if ($routeName === 'starter.profile.edit') {
+        if (in_array($routeName, ['starter.profile.edit', 'starter.notifications'], true)) {
             return true;
         }
 

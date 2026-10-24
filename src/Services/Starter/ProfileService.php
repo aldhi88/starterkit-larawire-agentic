@@ -6,6 +6,7 @@ use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
 use Aldhi88\StarterKit\Models\Starter\Client;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Support\Starter\StarterNotificationSound;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -80,6 +81,24 @@ class ProfileService
             'logo' => $this->nullableTrim($data['logo'] ?? null),
             ...(array_key_exists('favicon', $data) ? ['favicon' => $this->nullableTrim($data['favicon'])] : []),
         ]));
+    }
+
+    public function updateNotificationSound(ClientLogin $actor, string $sound): ClientLogin
+    {
+        if (! array_key_exists($sound, StarterNotificationSound::catalog())) {
+            throw ValidationException::withMessages(['sound' => 'Pilih suara notifikasi yang tersedia.']);
+        }
+
+        return $this->auditLogs->withinAction('profile.notification_sound.update', 'Mengubah preferensi audio notifikasi',
+            function () use ($actor, $sound): ClientLogin {
+                return DB::transaction(function () use ($actor, $sound): ClientLogin {
+                    $login = $this->clientLogins->findForAuthenticationWithLock($actor->id);
+                    abort_unless($login instanceof ClientLogin, 404);
+                    $updated = $this->clientLogins->updateUser($login, ['notification_sound' => $sound]);
+
+                    return $this->clientLogins->refreshWithRole($updated);
+                });
+            });
     }
 
     public function changePassword(ClientLogin $login, string $currentPassword, string $password): ClientLogin

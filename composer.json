@@ -32,8 +32,8 @@
         "bacon/bacon-qr-code": "^3.1",
         "dedoc/scramble": "^0.13.36",
         "laravel-lang/common": "^6.8",
-        "laravel/framework": ">=13.8 <14.0",
-        "livewire/livewire": "^4.3",
+        "laravel/framework": ">=13.30 <14.0",
+        "livewire/livewire": "^4.4.8",
         "power-components/livewire-powergrid": "^6.10"
     },
     "require-dev": {

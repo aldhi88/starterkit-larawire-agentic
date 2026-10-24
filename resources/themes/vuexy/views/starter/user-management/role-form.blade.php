@@ -198,7 +198,7 @@
                                         type="checkbox"
                                         class="form-check-input"
                                         wire:model.defer="roleForm.can_view_logs"
-                                        @disabled($isSuperuserRole)
+                                        @disabled($isSuperuserRole || ! $canGrantLogAccess)
                                     >
                                     <span class="form-check-label">
                                         <span class="d-flex align-items-center gap-2 fw-semibold mb-1">
@@ -206,7 +206,7 @@
                                             Lihat Log Aktivitas
                                         </span>
                                         <span class="d-block small text-secondary">
-                                            Izinkan melihat riwayat perubahan data pada seluruh app perusahaan.
+                                            Akses ini terpisah dari Pengaturan. Hanya pengelola yang memiliki akses log dapat memberikannya.
                                         </span>
                                         @if ($isSuperuserRole)
                                             <span class="d-block small text-danger mt-1">Selalu aktif untuk role sistem.</span>

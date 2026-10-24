@@ -38,7 +38,7 @@ it('maps generated host assets without carrying their payloads in Composer', fun
 
     foreach ([
         'tabler' => '9f6216ffab4b102a8c97db774b34a6fbe4dbf0a6196f7967bd3ed072d43c7b03',
-        'dashcode' => '9d2410c7cd8e32d08e8f268c342ffbc79076209e7e75d475da285f105893ae4d',
+        'dashcode' => '5e56a4590cbac3030450faeec66e8864ba460c7e9a39c7b259f7ad60c327145c',
     ] as $theme => $checksum) {
         $source = json_decode(
             (string) file_get_contents(StarterPaths::path('docs/template/'.$theme.'/source.json')),

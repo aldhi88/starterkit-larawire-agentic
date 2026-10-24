@@ -30,7 +30,7 @@ class SettingsIndex extends Component
     public function mount(): void
     {
         $section = (string) request()->query('section', 'roles');
-        $this->section = in_array($section, ['roles', 'users', 'company', 'security'], true) ? $section : 'roles';
+        $this->section = in_array($section, ['roles', 'users', 'company', 'security', 'notifications'], true) ? $section : 'roles';
     }
 
     public function render()

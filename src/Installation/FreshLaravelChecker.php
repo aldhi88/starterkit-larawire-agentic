@@ -9,7 +9,7 @@ use RuntimeException;
 
 class FreshLaravelChecker
 {
-    public const MINIMUM_LARAVEL = '13.8.0';
+    public const MINIMUM_LARAVEL = '13.30.0';
 
     public function __construct(
         private readonly ?string $root = null,

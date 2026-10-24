@@ -109,7 +109,7 @@ class UsersTable extends PowerGridComponent
 
     public function actionsFromView(ClientLogin $row): View
     {
-        return view(StarterTheme::viewName('starter.user-management.powergrid.users-row-actions'), ['row' => $row]);
+        return view(StarterTheme::viewName('starter.user-management.powergrid.users-row-actions'), ['row' => $row, 'canManage' => $row->role->canBeManagedBy($this->login()->role)]);
     }
 
     public function prepareBulkAction(string $action): void

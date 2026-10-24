@@ -15,6 +15,11 @@
             'description' => 'Perbarui identitas, kontak, logo aplikasi, dan favicon.',
             'icon' => 'building',
         ],
+        'notifications' => [
+            'label' => 'Notifikasi',
+            'description' => 'Pilih suara notifikasi untuk akun Anda sendiri.',
+            'icon' => 'bell',
+        ],
         'security' => [
             'label' => 'Keamanan Sistem',
             'description' => 'Atur sesi, lock screen, dan batas percobaan login.',
@@ -146,6 +151,8 @@
                         <livewire:starter.user-management.users :embedded="true" key="settings-users" />
                     @elseif ($section === 'company')
                         <livewire:starter.settings.client-profile :embedded="true" key="settings-company" />
+                    @elseif ($section === 'notifications')
+                        <livewire:starter.settings.notification-settings :embedded="true" key="settings-notifications" />
                     @else
                         <livewire:starter.settings.security-settings :embedded="true" key="settings-security" />
                     @endif

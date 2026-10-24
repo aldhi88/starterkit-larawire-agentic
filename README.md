@@ -13,7 +13,7 @@ Starterkit Larawire dibangun menggunakan dan mengapresiasi karya
 [Laravel Lang](https://laravel-lang.com/),
 [Scramble](https://scramble.dedoc.co/), dan [Pest](https://pestphp.com/).
 
-> Versi minimum Laravel: **13.8**. Constraint Composer pada setiap release
+> Versi minimum Laravel: **13.30**. Constraint Composer pada setiap release
 > menentukan versi yang sudah diuji; dukungan major Laravel baru ditambahkan
 > setelah lolos compatibility test.
 
@@ -106,7 +106,23 @@ penuhi bingkai sebelum menyetujui crop. Hasil berupa PNG transparan: logo
 Logo tampil tanpa latar atau bingkai tambahan; kontras disiapkan pada file logo.
 Logo instalasi lama tetap dipakai setelah update.
 
+### Preferensi audio notifikasi
+
+**Pengaturan → Notifikasi** menyediakan pilihan lonceng lembut (default), bel
+singkat, dan nada tenang untuk setiap akun. Dengarkan pratinjau, pilih default
+bila perlu, lalu simpan. User biasa dapat membuka preferensinya lewat menu akun
+**Notifikasi** tanpa mendapat hak pengaturan administratif atau Log Aktivitas.
+Suara tidak otomatis diputar saat halaman dibuka atau preferensi disimpan.
+Aplikasi menentukan pemicu notifikasinya dan dapat memanggil
+`await window.StarterTemplate.playNotificationSound()` untuk memakai pilihan
+akun saat ini; hasil `false` berarti browser belum mengizinkan audio.
+
 ### Mengatur akses role secara dinamis
+
+Akses **Pengaturan** dan **Log Aktivitas** berdiri sendiri. Pengelola tanpa akses
+log tidak dapat memberikannya, memilih role yang lebih tinggi, atau mengelola
+akun dengan kewenangan log yang tidak dimilikinya. Batas ini berlaku juga untuk
+request langsung, reset password/authenticator, dan aksi massal.
 
 Administrator memberikan module kepada role melalui halaman Pengaturan. Satu
 role dapat membuka satu atau beberapa App, dan setiap App mempunyai halaman
@@ -208,6 +224,16 @@ menambah template, sertakan file palette dengan nama dan lokasi yang sama.
 Tombol primary memakai brand primary, tombol secondary memakai brand secondary,
 termasuk state interaksinya. Tombol danger, warning, default, light, dark, dan
 varian semantic lain mempertahankan warna asli template.
+
+Turunan warna memakai satu engine Oklab untuk ketiga template: latar lembut,
+border, warna teks, hover, serta pasangan light/dark dibuat otomatis dari tiga
+warna yang sama. Warna asli primary/secondary tetap dipakai pada tombol solid.
+Alert primary/secondary dan badge lembut mengikuti brand; success/info/warning/
+danger mempertahankan hue status native dengan intensitas tonal yang seimbang.
+Teks pesan tetap netral, ikon dan tautan memakai warna status yang terbaca.
+Tidak ada tambahan warna environment. Adapter template baru mendeklarasikan empat
+seed status native di `brand-palette.css`, lalu memetakan komponennya ke kontrak
+bersama `resources/css/brand-feedback.css`; lihat aturan integrasi theme.
 
 Wizard `starter:install` meminta pilihan Tabler, DashCode, atau Vuexy beserta layout.
 Vuexy memerlukan archive runtime berlisensi dari owner: verifikasi checksum
@@ -500,3 +526,9 @@ sesuai [LICENSE](LICENSE). Menjual, melisensikan ulang, atau mempublikasikan
 ulang package/starter yang bersaing tidak diizinkan. Komponen pihak ketiga tetap
 mengikuti lisensinya masing-masing; lihat
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+Livewire minimum: **4.4.8** (perbaikan authorization advisory GHSA-mhf7-xp6r-6qrc).
+
+Suara notifikasi default adalah **Ting tung lembut** dua nada, sekitar 2,4 detik
+termasuk peluruhan. Pilihan pengguna tetap tersimpan per akun dan dapat dipulihkan
+ke default. Tidak ada audio otomatis ketika membuka halaman atau menyimpan pilihan.

@@ -13,35 +13,35 @@
     @include('starter-shared::components.brand-stylesheet', ['standalone' => true])
 </head>
 
-<body class="border-top-wide border-primary bg-body-tertiary">
-    <main class="page page-center" aria-labelledby="error-title">
-        <div class="container-tight py-4">
-            <div class="empty">
-                <div class="empty-img" data-starter-region="status-visual">
-                    <span class="avatar avatar-xl bg-label-primary rounded-circle">
-                        @include('starter.templates.layouts.icon', ['name' => 'alert-triangle', 'size' => 42])
-                    </span>
-                </div>
-                <div data-starter-region="primary-content">
-                    <h1 class="empty-title" id="error-title">@yield('title')</h1>
-                    <p class="empty-subtitle text-secondary">
-                        @yield('message')
-                    </p>
-                </div>
-                <div class="empty-action" data-starter-region="primary-action">
-                    <a href="{{ rtrim((string) config('app.url'), '/') ?: '/' }}" class="btn btn-primary">
-                        @include('starter.templates.layouts.icon', ['name' => 'home', 'class' => 'icon'])
-                        Kembali ke Beranda
-                    </a>
-                </div>
-                <div class="text-secondary small mt-4" data-starter-region="status-metadata">
-                    Kode error: <span class="font-monospace">@yield('code')</span>
-                </div>
+<body class="starter-error-page">
+    @php
+        $errorCode = trim($__env->yieldContent('code'));
+        $maintenance = $errorCode === '503';
+        $unauthorized = in_array($errorCode, ['401', '403'], true);
+        $illustrationUrl = $maintenance ? asset('assets/vuexy/img/illustrations/page-misc-under-maintenance.png')
+            : ($unauthorized ? asset('assets/vuexy/img/illustrations/page-misc-you-are-not-authorized.png')
+                : asset('assets/vuexy/img/illustrations/page-misc-error.png'));
+    @endphp
+    <main class="container-xxl container-p-y" aria-labelledby="error-title">
+        <div class="misc-wrapper">
+            <div data-starter-region="status-visual">
+                <div class="starter-error-number mb-2">{{ $errorCode }}</div>
+                @include('starter-shared::components.error-illustration', [
+                    'illustrationUrl' => $illustrationUrl,
+                    'illustrationWidth' => $maintenance ? 933 : ($unauthorized ? 257 : 339),
+                    'illustrationHeight' => 751,
+                    'illustrationClass' => 'starter-error-image',
+                ])
             </div>
+            <div data-starter-region="primary-content">
+                <h1 class="h4 mb-2" id="error-title">@yield('title')</h1>
+                <p class="mb-6 text-body-secondary">@yield('message')</p>
+            </div>
+            <div data-starter-region="primary-action">
+                <a href="{{ rtrim((string) config('app.url'), '/') ?: '/' }}" class="btn btn-primary">Kembali ke Beranda</a>
+            </div>
+            <div class="text-body-secondary small mt-4" data-starter-region="status-metadata">Kode error: {{ $errorCode }}</div>
         </div>
     </main>
-
-    <script src="{{ asset('assets/vuexy/js/vuexy.js') }}?v={{ file_exists(public_path('assets/vuexy/js/vuexy.js')) ? filemtime(public_path('assets/vuexy/js/vuexy.js')) : time() }}" defer></script>
 </body>
-
 </html>

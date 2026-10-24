@@ -10,6 +10,9 @@ final class StarterBrandStylesheet
         private readonly StarterBrandPalette $palette,
         private readonly string $theme,
         private readonly string $adapter,
+        private readonly string $feedback,
+        /** @var array<string, string> */
+        private readonly array $statusSeeds,
     ) {}
 
     public static function configured(): ?self
@@ -33,16 +36,28 @@ final class StarterBrandStylesheet
             throw new RuntimeException("Brand palette CSS is empty for theme [{$theme}].");
         }
 
-        return new self($palette, $theme, $adapter);
+        $seeds = [];
+        foreach (['success', 'warning', 'info', 'danger'] as $status) {
+            if (preg_match('/--starter-native-'.$status.'\s*:\s*(#[0-9a-fA-F]{6})\s*;/', $adapter, $match) !== 1) {
+                throw new RuntimeException("Brand palette CSS must declare native [{$status}] HEX seed for theme [{$theme}].");
+            }
+            $seeds[$status] = strtoupper($match[1]);
+        }
+        $feedback = file_get_contents(StarterPaths::path('resources/css/brand-feedback.css'));
+        if ($feedback === false || trim($feedback) === '') {
+            throw new RuntimeException('Shared brand feedback CSS is missing or empty.');
+        }
+
+        return new self($palette, $theme, $adapter, $feedback, $seeds);
     }
 
     public function fingerprint(): string
     {
-        return substr(hash('sha256', $this->theme.'|'.$this->palette->fingerprint().'|'.$this->adapter), 0, 12);
+        return substr(hash('sha256', $this->theme.'|'.$this->palette->css($this->statusSeeds).'|'.$this->feedback.'|'.$this->adapter), 0, 12);
     }
 
     public function css(): string
     {
-        return $this->palette->css()."\n".$this->adapter;
+        return $this->palette->css($this->statusSeeds)."\n".$this->feedback."\n".$this->adapter;
     }
 }

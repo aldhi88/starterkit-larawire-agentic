@@ -11,6 +11,9 @@
     </button>
     <template x-teleport="body">
         <ul class="dropdown-menu" :class="{ 'show': open }" x-show="open" :style="`position: fixed; top: ${top}px; left: ${left}px; z-index: 1060; margin: 0; min-width: 140px;`" @click.outside="open = false">
+        @if (! ($canManage ?? false))
+            <li><span class="dropdown-item disabled" aria-disabled="true">Akses pengelolaan terbatas</span></li>
+        @else
         @if (! $row->trashed())
             <li>
                 <a class="dropdown-item" href="{{ route('starter.user-management.users.edit', ['userLoginId' => $row->id]) }}">Edit</a>
@@ -36,6 +39,7 @@
             <li>
                 <button type="button" class="dropdown-item" wire:click="$dispatchSelf('prepare-row-action', { action: 'forceDelete', id: {{ $row->id }} })">Hapus permanen</button>
             </li>
+        @endif
         @endif
     </ul>
     </template>

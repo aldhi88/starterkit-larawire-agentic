@@ -221,6 +221,70 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             },
         };
     },
+    notificationPreferences(initialSound = 'chime') {
+        return {
+            sound: initialSound, previewStatus: '',
+            async preview() {
+                const played = await window.StarterTemplate.playNotificationSound(this.sound);
+                this.previewStatus = played ? 'Pratinjau diputar.' : 'Audio belum dapat diputar. Periksa izin suara browser lalu coba lagi.';
+            },
+            useDefault() {
+                this.sound = 'chime';
+                this.$wire.$set('sound', 'chime', false);
+                this.previewStatus = 'Suara default dipilih. Simpan untuk menerapkannya.';
+            },
+        };
+    },
+    stopNotificationSound() {
+        (this.notificationAudioNodes || []).forEach((node) => {
+            try { node.stop(); } catch (_) { /* An ended source is already silent. */ }
+            node.disconnect();
+        });
+        this.notificationAudioNodes = [];
+    },
+    async playNotificationSound(sound = null) {
+        const config = document.querySelector('[data-starter-notification-audio]');
+        if (! config) return false;
+        try {
+            const catalog = JSON.parse(config.dataset.sounds || '{}');
+            const selected = catalog[sound || config.dataset.sound] || catalog.chime;
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (! selected || ! AudioContext) return false;
+            if (! this.notificationAudioContext && window.navigator?.userActivation && ! window.navigator.userActivation.hasBeenActive) return false;
+            const context = this.notificationAudioContext?.state !== 'closed' && this.notificationAudioContext
+                ? this.notificationAudioContext : new AudioContext();
+            this.notificationAudioContext = context;
+            if (context.state === 'suspended') {
+                let timer;
+                try {
+                    await Promise.race([context.resume(), new Promise((resolve) => { timer = setTimeout(resolve, 1000); })]);
+                } finally { clearTimeout(timer); }
+            }
+            if (context.state !== 'running') return false;
+            this.stopNotificationSound();
+            let start = context.currentTime;
+            for (const [frequency, duration] of selected.notes) {
+                const node = context.createOscillator();
+                const gain = context.createGain();
+                node.type = 'sine';
+                node.frequency.setValueAtTime(frequency, start);
+                gain.gain.setValueAtTime(0, start);
+                gain.gain.linearRampToValueAtTime(.09, start + .01);
+                gain.gain.exponentialRampToValueAtTime(.001, start + duration);
+                node.connect(gain);
+                gain.connect(context.destination);
+                this.notificationAudioNodes.push(node);
+                node.onended = () => {
+                    node.disconnect(); gain.disconnect();
+                    this.notificationAudioNodes = (this.notificationAudioNodes || []).filter((item) => item !== node);
+                };
+                node.start(start);
+                node.stop(start + duration);
+                start += duration + .04;
+            }
+            return true;
+        } catch (_) { return false; }
+    },
     themeAdapter() {
         return window.StarterThemeAdapter || {};
     },
@@ -1106,6 +1170,15 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             this.updateAccountSummary(event.detail || {});
         });
 
+        document.addEventListener('starter-notification-sound-updated', (event) => {
+            const target = document.querySelector('[data-starter-notification-audio]');
+            if (! target) return;
+            try {
+                const catalog = JSON.parse(target.dataset.sounds || '{}');
+                if (Object.prototype.hasOwnProperty.call(catalog, event.detail?.sound)) target.dataset.sound = event.detail.sound;
+            } catch (_) { /* The next page supplies fresh configuration. */ }
+        });
+        document.addEventListener('livewire:navigating', () => this.stopNotificationSound());
         document.addEventListener('starter-client-branding-updated', (event) => {
             this.updateClientBranding(event.detail || {});
         });

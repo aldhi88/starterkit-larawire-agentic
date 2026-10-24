@@ -98,7 +98,7 @@ class RolesTable extends PowerGridComponent
 
     public function actionsFromView(ClientRole $row): View
     {
-        return view(StarterTheme::viewName('starter.user-management.powergrid.roles-row-actions'), ['row' => $row]);
+        return view(StarterTheme::viewName('starter.user-management.powergrid.roles-row-actions'), ['row' => $row, 'canManage' => $row->canBeManagedBy($this->login()->role)]);
     }
 
     public function prepareBulkAction(string $action): void

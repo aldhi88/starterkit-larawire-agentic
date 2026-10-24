@@ -11,7 +11,7 @@
 ## Mandatory protection
 
 - Every App route uses `auth:web`, `starter.active`, `starter.password-change`, and `starter.lock`; module pages also use `starter.authorize`.
-- Every Livewire action validates and authorizes the manipulated data. Hidden menus/buttons are not security.
+- Every Livewire action validates and authorizes the manipulated data. Hidden menus/buttons are not security. Keep Settings and Activity Log capabilities independent: Settings never implies log visibility. A Settings manager may grant log access only when they already have it; reject forged grants in the service. Non-Superusers cannot manage roles or accounts with global capabilities beyond their own, including role assignment, password/authenticator reset, archive, restore, and permanent deletion. Preauthorize bulk targets before mutations, filter assignable roles, reflect the boundary in controls, audit denials, and persist both capability middleware checks across Livewire updates. Personal notification preferences require only the authenticated account and never grant administrative Settings access.
 - Non-superusers cannot see, edit, move, or delete the Superuser role/user. Superuser password cannot be reset through User Management—even by Superuser—and can be changed only through My Profile. Enforce system-account restrictions in both UI and server/service code.
 
 ## Synchronization

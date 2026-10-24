@@ -86,6 +86,7 @@ class UserManagementUserService
 
         abort_unless($login instanceof ClientLogin, 404);
         abort_if($login->role->isSuperuser() && ! $currentLogin->role->isSuperuser(), 404);
+        $this->assertAuthority($currentLogin, $login->role, $login);
 
         return $login;
     }
@@ -112,6 +113,7 @@ class UserManagementUserService
         array $data,
         ?string $manualTemporaryPassword = null,
     ): ClientLogin {
+        $this->assertAuthority($currentLogin);
         $role = $this->clientRoles->findBasicById((int) $data['client_role_id']);
 
         if (! $role instanceof ClientRole) {
@@ -134,6 +136,11 @@ class UserManagementUserService
             (int) $data['client_role_id'] !== $login->client_role_id || $data['status'] !== 'active'
         )) {
             throw ValidationException::withMessages(['userForm.status' => 'Akun Superuser harus tetap aktif dengan role sistem.']);
+        }
+
+        $this->assertAuthority($currentLogin, $role, $login);
+        if ($login instanceof ClientLogin) {
+            $this->assertAuthority($currentLogin, $login->role, $login);
         }
 
         $payload = [
@@ -304,6 +311,15 @@ class UserManagementUserService
         return $this->availableModulesCache ??= $this->appMods->allForUserAccessPreview();
     }
 
+    private function assertAuthority(ClientLogin $actor, ?ClientRole $role = null, ?ClientLogin $target = null): void
+    {
+        if (! $actor->role->canManageSettings() || ($role && ! $role->canBeManagedBy($actor->role))) {
+            $this->auditLogs->recordSecurityEvent('authorization.user_access_denied', 'Pengelolaan user ditolak',
+                target: $target, actor: $actor, metadata: ['role_id' => $role?->id, 'reason' => 'insufficient_authority']);
+            abort(403, 'Anda tidak dapat mengelola akun atau memberikan role dengan akses yang tidak Anda miliki.');
+        }
+    }
+
     private function recordTemporaryPasswordDeliveryFailure(
         ClientLogin $currentLogin,
         ?ClientLogin $target,
@@ -326,9 +342,15 @@ class UserManagementUserService
     {
         $ids = collect($ids)->map(fn ($id): int => (int) $id)->filter()->unique()->values();
         $changed = 0;
+        $this->assertAuthority($currentLogin);
+        $targets = $ids->map(fn (int $id) => $this->clientLogins->findWithTrashedForManagement($id));
+        foreach ($targets as $login) {
+            if ($login instanceof ClientLogin && ! $login->role->isSuperuser()) {
+                $this->assertAuthority($currentLogin, $login->role, $login);
+            }
+        }
 
-        foreach ($ids as $id) {
-            $login = $this->clientLogins->findWithTrashedForManagement($id);
+        foreach ($targets as $login) {
 
             if (! $login instanceof ClientLogin || $login->id === $currentLogin->id || $login->role->isSuperuser()) {
                 continue;

@@ -539,3 +539,62 @@ PNG output (4:1 logo, 1:1 favicon), cancel/retry behavior, and independent asset
 Verify keyboard focus, drag/zoom, contained/filled previews, Livewire upload and
 subsequent reopening at desktop/mobile widths in both navigation layouts. Never
 add a decorative background, border, or shadow around navigation logo images.
+
+### Error palette and personal notification parity
+
+Audit every supported HTTP error and maintenance view with branded and native
+colors. Standalone pages embed the active palette after native CSS so they work
+while maintenance blocks the stylesheet route. Use the active theme's native
+error references, artwork, typography and controls within the shared status
+regions. Branded artwork uses the shared error-illustration tint; do not leave
+fixed purple/blue brand decoration in a configured palette, tint semantic
+status buttons, or edit vendor CSS/artwork. Verify both layouts where applicable,
+desktop/mobile bounds, contrast, assets and actual maintenance responses.
+
+Every theme provides `starter/settings/notification-settings.blade.php`, a
+Notifikasi Settings section and a personal account-menu link. Keep sound
+selection, preview, deferred default reset, validation, save/loading/success and
+reload behavior equivalent. Include the shared notification-audio configuration
+once in the authenticated shell; native theme form/button styling stays intact.
+
+### Universal brand and feedback contract
+
+- Keep exactly three environment seeds: `STARTER_BRAND_PRIMARY`,
+  `STARTER_BRAND_SECONDARY`, `STARTER_BRAND_ACCENT`. Preserve their exact values
+  on solid primary/secondary buttons. Derive hover ink independently from hover
+  fill; never assume the normal foreground remains readable after hover.
+- `StarterBrandPalette` and `StarterBrandColor` own perceptual Oklab tone
+  generation with hue-preserving sRGB chroma reduction. All themes consume the
+  same light/dark surface, border, readable ink, contrast, and interaction tokens.
+  Do not duplicate color math or add theme-specific environment color inputs.
+- Each `resources/themes/<theme>/brand-palette.css` must declare the four native
+  six-digit HEX seeds `--starter-native-success`, `--starter-native-info`,
+  `--starter-native-warning`, and `--starter-native-danger`, including semicolons.
+  Read these from the actual vendor CSS. `StarterBrandStylesheet` validates this
+  contract, generates status tones through the same engine, and delivers
+  `resources/css/brand-feedback.css` before the active adapter. Missing seeds
+  fail closed; no theme-name switch or silent fallback is allowed.
+- Status hues preserve their success/info/warning/danger meaning; semantic
+  buttons remain native. Harmonize feedback intensity through tonal surfaces,
+  borders, and readable icons rather than replacing status hues with brand hues.
+  Keep normal text neutral and use role ink for icons and links. Preserve native
+  component geometry, fonts, radii and spacing. Primary/secondary alerts and soft
+  badges consume their corresponding brand roles; toast status variants consume
+  the corresponding native status tone. Neutral/default/light/dark controls stay
+  native. Accent is a restrained focus/decorative role, not a status substitute.
+- Every theme alert accepts primary, secondary, success, info, warning, danger,
+  escapes ordinary messages, and exposes `data-starter-feedback="<role>"`.
+  Native alert classes and badge conventions map to the same effective tokens
+  in that adapter, including raw native alerts without package data attributes.
+- Verify saturated, pale, dark, white, black, yellow, and neutral seeds on all
+  three roles; preserve original HEX seeds and ensure normal/hover button text,
+  alert/badge/toast text and functional icons are readable against their actual
+  rendered surfaces. Minimum normal text contrast is 4.5:1. Check light/dark
+  feedback surfaces, both layouts, desktop/mobile, native unbranded fallback,
+  alert dismissal, toast dismissal, focus, and no root overflow. A static token
+  assertion does not replace direct browser inspection.
+- The shared default personal notification sound is a two-note local chime of
+  2–3 seconds including decay; it is selected for new/unset preferences. A user
+  may select another catalog entry, preview, save or restore default. Playback
+  remains host-triggered and subject to browser audio permissions. Do not play
+  automatically on page load or add theme-specific defaults.

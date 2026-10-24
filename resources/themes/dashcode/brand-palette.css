@@ -60,7 +60,6 @@ html[data-starter-brand] :is(.dashcode-landing-kicker, .dashcode-welcome-kicker,
 html[data-starter-brand] .dashcode-landing-features article > span,
 html[data-starter-brand] .dashcode-step-list li > span { color: var(--starter-brand-primary-text); }
 html[data-starter-brand] .starter-pg-page:is(:hover, .is-active) { color: var(--starter-brand-primary-contrast); }
-html[data-starter-brand] .dashcode-alert:not(.dashcode-alert-success, .dashcode-alert-warning, .dashcode-alert-info) { border-color: var(--starter-brand-primary-border); }
 html[data-starter-brand] .dashcode-landing-login:hover { border-color: var(--starter-brand-primary-border); color: var(--starter-brand-primary-text) !important; }
 html[data-starter-brand] .dashcode-preview-body aside span:nth-child(3) { background: var(--starter-brand-primary); }
 html[data-starter-brand] .dashcode-stat-card:not(.dashcode-stat-card-cyan, .dashcode-stat-card-green) .dashcode-stat-icon { background: var(--starter-brand-primary-soft); color: var(--starter-brand-primary-text); }
@@ -70,3 +69,65 @@ html[data-starter-brand] .dashcode-welcome-mark span:nth-child(2) { border-color
 html[data-starter-brand] :is(.btn-primary, .btn-secondary, .btn-outline-primary, .btn-outline-secondary, .form-select, .form-control):not(.is-invalid):focus-visible { outline: 3px solid var(--starter-brand-accent-text); outline-offset: 2px; }
 html[data-starter-brand] :is(.form-select, .form-control):not(.is-invalid):focus { border-color: var(--starter-brand-accent-text); }
 html.dark[data-starter-brand] :is(.text-primary, .text-primary-500, .hover\:text-primary-500:hover) { color: var(--starter-brand-primary-on-dark) !important; }
+
+/* Standalone errors use the same brand tokens while maintenance blocks routes. */
+html[data-starter-brand] .starter-error-code { background:var(--starter-brand-primary-soft);color:var(--starter-brand-primary-text); }
+
+/* Native status seeds: never remap these to brand primary/secondary/accent. */
+html[data-starter-brand] {
+    --starter-native-success:#50C793;
+    --starter-native-info:#0CE7FA;
+    --starter-native-warning:#FA916B;
+    --starter-native-danger:#F1595C;
+}
+html[data-starter-brand] :is(.dashcode-alert-primary, .alert-primary) {
+    --starter-feedback-bg:var(--starter-feedback-primary-bg);
+    --starter-feedback-border:var(--starter-feedback-primary-border);
+    --starter-feedback-ink:var(--starter-feedback-primary-ink);
+    background-color:var(--starter-feedback-bg);border-color:var(--starter-feedback-border);color:var(--starter-feedback-content);
+}
+html[data-starter-brand] :is(.badge.bg-primary-lt) { background-color:var(--starter-feedback-primary-bg)!important;color:var(--starter-feedback-primary-ink)!important; }
+html[data-starter-brand] :is(.dashcode-alert-secondary, .alert-secondary) {
+    --starter-feedback-bg:var(--starter-feedback-secondary-bg);
+    --starter-feedback-border:var(--starter-feedback-secondary-border);
+    --starter-feedback-ink:var(--starter-feedback-secondary-ink);
+    background-color:var(--starter-feedback-bg);border-color:var(--starter-feedback-border);color:var(--starter-feedback-content);
+}
+html[data-starter-brand] :is(.badge.bg-secondary-lt) { background-color:var(--starter-feedback-secondary-bg)!important;color:var(--starter-feedback-secondary-ink)!important; }
+html[data-starter-brand] :is(.dashcode-alert-success, .alert-success) {
+    --starter-feedback-bg:var(--starter-feedback-success-bg);
+    --starter-feedback-border:var(--starter-feedback-success-border);
+    --starter-feedback-ink:var(--starter-feedback-success-ink);
+    background-color:var(--starter-feedback-bg);border-color:var(--starter-feedback-border);color:var(--starter-feedback-content);
+}
+html[data-starter-brand] :is(.badge.bg-success-lt) { background-color:var(--starter-feedback-success-bg)!important;color:var(--starter-feedback-success-ink)!important; }
+html[data-starter-brand] :is(.dashcode-alert-info, .alert-info) {
+    --starter-feedback-bg:var(--starter-feedback-info-bg);
+    --starter-feedback-border:var(--starter-feedback-info-border);
+    --starter-feedback-ink:var(--starter-feedback-info-ink);
+    background-color:var(--starter-feedback-bg);border-color:var(--starter-feedback-border);color:var(--starter-feedback-content);
+}
+html[data-starter-brand] :is(.badge.bg-info-lt) { background-color:var(--starter-feedback-info-bg)!important;color:var(--starter-feedback-info-ink)!important; }
+html[data-starter-brand] :is(.dashcode-alert-warning, .alert-warning) {
+    --starter-feedback-bg:var(--starter-feedback-warning-bg);
+    --starter-feedback-border:var(--starter-feedback-warning-border);
+    --starter-feedback-ink:var(--starter-feedback-warning-ink);
+    background-color:var(--starter-feedback-bg);border-color:var(--starter-feedback-border);color:var(--starter-feedback-content);
+}
+html[data-starter-brand] :is(.badge.bg-warning-lt) { background-color:var(--starter-feedback-warning-bg)!important;color:var(--starter-feedback-warning-ink)!important; }
+html[data-starter-brand] :is(.dashcode-alert-danger, .alert-danger) {
+    --starter-feedback-bg:var(--starter-feedback-danger-bg);
+    --starter-feedback-border:var(--starter-feedback-danger-border);
+    --starter-feedback-ink:var(--starter-feedback-danger-ink);
+    background-color:var(--starter-feedback-bg);border-color:var(--starter-feedback-border);color:var(--starter-feedback-content);
+}
+html[data-starter-brand] :is(.badge.bg-danger-lt) { background-color:var(--starter-feedback-danger-bg)!important;color:var(--starter-feedback-danger-ink)!important; }
+html[data-starter-brand] .dashcode-alert-danger { background-color:var(--starter-feedback-danger-bg);border-color:var(--starter-feedback-danger-border);color:var(--starter-feedback-content); }
+html[data-starter-brand] .btn-primary:is(:hover, :active):not(:disabled, .disabled, [aria-disabled="true"]) { color:var(--starter-brand-primary-hover-contrast); }
+html[data-starter-brand] .btn-secondary:is(:hover, :active):not(:disabled, .disabled, [aria-disabled="true"]) { color:var(--starter-brand-secondary-hover-contrast); }
+html[data-starter-brand]:is(.dark, [data-bs-theme="dark"]) :is(.form-control, .form-select):not(.is-invalid):focus { border-color:var(--starter-brand-accent-on-dark);outline-color:var(--starter-brand-accent-on-dark); }
+html[data-starter-brand]:is(.dark, [data-bs-theme="dark"]) .btn-outline-primary { color:var(--starter-brand-primary-on-dark);border-color:var(--starter-brand-primary-on-dark); }
+html[data-starter-brand]:is(.dark, [data-bs-theme="dark"]) .btn-outline-primary:is(:hover, :active) { background:var(--starter-brand-primary-soft-dark);color:var(--starter-brand-primary-on-dark);border-color:var(--starter-brand-primary-on-dark); }
+html[data-starter-brand]:is(.dark, [data-bs-theme="dark"]) .btn-outline-secondary { color:var(--starter-brand-secondary-on-dark);border-color:var(--starter-brand-secondary-on-dark); }
+html[data-starter-brand]:is(.dark, [data-bs-theme="dark"]) .btn-outline-secondary:is(:hover, :active) { background:var(--starter-brand-secondary-soft-dark);color:var(--starter-brand-secondary-on-dark);border-color:var(--starter-brand-secondary-on-dark); }
+html[data-starter-brand]:is(.dark, [data-bs-theme="dark"]) :is(.btn-primary, .btn-secondary, .btn-outline-primary, .btn-outline-secondary, .btn-label-primary, .btn-label-secondary, .btn-ghost-primary, .btn-ghost-secondary, .btn-text-primary, .btn-text-secondary):focus-visible { outline-color:var(--starter-brand-accent-on-dark); }

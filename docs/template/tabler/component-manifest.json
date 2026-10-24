@@ -232,7 +232,8 @@
                 "preview/pages/buttons.html"
             ],
             "runtime": [
-                "resources/themes/tabler/views/starter/user-management/role-form.blade.php"
+                "resources/themes/tabler/views/starter/user-management/role-form.blade.php",
+                "resources/themes/tabler/views/starter/settings/notification-settings.blade.php"
             ],
             "states": [
                 "primary",
@@ -277,7 +278,8 @@
                 "preview/pages/form-elements.html"
             ],
             "runtime": [
-                "resources/themes/tabler/views/starter/user-management/user-form.blade.php"
+                "resources/themes/tabler/views/starter/user-management/user-form.blade.php",
+                "resources/themes/tabler/views/starter/settings/notification-settings.blade.php"
             ],
             "states": [
                 "default",
@@ -411,7 +413,13 @@
             "states": [
                 "success",
                 "warning",
-                "danger"
+                "danger",
+                "primary",
+                "secondary",
+                "info",
+                "branded-light",
+                "branded-dark",
+                "unbranded"
             ]
         },
         {
@@ -425,7 +433,10 @@
             "states": [
                 "success",
                 "error",
-                "dismissed"
+                "dismissed",
+                "branded-light",
+                "branded-dark",
+                "unbranded"
             ]
         },
         {

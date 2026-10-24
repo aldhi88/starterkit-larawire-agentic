@@ -7982,7 +7982,7 @@
                 "button-action",
                 "layout-navigation"
             ],
-            "decision": "indexed-only"
+            "decision": "runtime-source"
         },
         {
             "path": "html/vertical-menu-template-no-customizer/pages-misc-under-maintenance.html",
@@ -7991,7 +7991,7 @@
                 "button-action",
                 "layout-navigation"
             ],
-            "decision": "indexed-only"
+            "decision": "runtime-source"
         },
         {
             "path": "html/vertical-menu-template-no-customizer/pages-pricing.html",
