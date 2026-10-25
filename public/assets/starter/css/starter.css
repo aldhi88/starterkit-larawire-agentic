@@ -237,6 +237,12 @@ body.starter-is-navigating .starter-slot-area > [wire\:id] {
 }
 .starter-brand-crop-modal .modal-dialog { margin: auto; max-inline-size: 32rem; inline-size: 100%; }
 .starter-brand-crop-modal .modal-content { max-block-size: calc(100dvh - 2rem); overflow: auto; }
+.starter-brand-crop-modal.modal.starter-native-backdrop { background: transparent; }
+.starter-brand-crop-modal.modal.dashcode-crop-modal { background: rgba(15, 23, 42, .46); }
+.starter-notification-choice { align-items: stretch; display: flex; flex-wrap: wrap; gap: .5rem; }
+.starter-notification-choice > .form-control { flex: 1 1 12rem; min-width: 0; width: auto; }
+.starter-notification-choice > .btn { flex: none; }
+.starter-notification-choice + .invalid-feedback { display: block; }
 .starter-brand-crop-body { display: grid; gap: .5rem; min-inline-size: 0; }
 .starter-brand-crop-body p { margin: 0 0 .25rem; }
 .starter-brand-crop-body .form-label { margin: 0; }

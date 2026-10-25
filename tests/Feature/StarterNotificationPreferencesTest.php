@@ -93,7 +93,8 @@ it('provides one settings menu entry with an authorized destination in every the
 })->with(['tabler', 'vuexy', 'dashcode'])->with([[false, false], [false, true], [true, false], [true, true]]);
 
 it('lets an ordinary user save only their own sound and restores the selection on reload', function (string $theme): void {
-    notificationSettingsFor($theme)->assertSet('sound', 'chime')->assertSee($theme === 'tabler' ? 'Dengarkan' : 'Dengarkan Pratinjau')
+    notificationSettingsFor($theme)->assertSet('sound', 'chime')->assertSee('Dengarkan')
+        ->assertSee('Unggah audio pribadi')->assertDontSee('Unggah dan Gunakan')->assertDontSee('Gunakan Default')
         ->set('sound', 'bell')->call('save')->assertHasNoErrors()
         ->assertDispatched('starter-notification-sound-updated', sound: 'bell');
     expect($this->first->fresh()->notification_sound)->toBe('bell')
@@ -194,10 +195,10 @@ it('renders role row actions and a real notification bell in every theme', funct
     });
 })->with(['tabler', 'vuexy', 'dashcode']);
 
-it('saves a new personal sound through the same preference submit action', function (): void {
-    notificationSettingsFor('tabler')->set('sound', 'upload')->call('save')
+it('saves a new personal sound through the same preference submit action in every theme', function (string $theme): void {
+    notificationSettingsFor($theme)->set('sound', 'upload')->call('save')
         ->assertHasErrors(['soundUpload' => 'required']);
-    notificationSettingsFor('tabler')->set('sound', 'upload')->set('soundUpload', notificationWav())->call('save')
+    notificationSettingsFor($theme)->set('sound', 'upload')->set('soundUpload', notificationWav())->call('save')
         ->assertHasNoErrors()->assertSet('sound', 'custom')->assertSet('soundUpload', null);
     expect($this->first->fresh()->notification_sound)->toBe('custom');
-});
+})->with(['tabler', 'vuexy', 'dashcode']);

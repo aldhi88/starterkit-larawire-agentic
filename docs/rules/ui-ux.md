@@ -220,3 +220,7 @@ separate interaction and may follow the active theme.
 
 - Tabler dialogs use the native `modal-blur` and `modal-backdrop fade show` pair. Bootstrap-managed dialogs let Bootstrap create the backdrop; Livewire/Alpine-managed dialogs render one while open and remove it on close. Use the same treatment for role/access dialogs, activity logs, settings confirmations, and image cropping.
 - A modal header with title plus supporting text uses native `py-3` spacing. Keep close controls, body scrolling, focus containment, and Escape/return-focus behavior usable at small viewport sizes.
+
+### Cross-theme notification preferences
+
+- Tabler, Vuexy, and DashCode share one interaction: select a built-in sound, preview beside the selector, or select an audio upload and submit it with the same save action. Preserve each theme's native controls and modal backdrop treatment. Keep upload validation on the server and show its error beside the file input.

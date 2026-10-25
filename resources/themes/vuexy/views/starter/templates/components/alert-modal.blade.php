@@ -33,7 +33,7 @@
 @endphp
 
 <div class="modal modal-blur fade {{ $visible ? 'show d-block' : '' }} {{ $modalClass }}" id="{{ $id }}" tabindex="-1" role="dialog" aria-hidden="{{ $visible ? 'false' : 'true' }}" @if ($cancelAction) wire:click.self="{{ $cancelAction }}" @else data-bs-dismiss="modal" @endif>
-    <div class="modal-dialog modal-{{ $size }}" role="document">
+    <div class="modal-dialog modal-{{ $size }} modal-dialog-centered" role="document">
         <div class="modal-content">
             @if ($closeButton)
                 <button type="button" class="btn-close" @if ($cancelAction) wire:click="{{ $cancelAction }}" @else data-bs-dismiss="modal" @endif @if ($loadingTarget !== '') wire:loading.attr="disabled" wire:target="{{ $loadingTarget }}" @endif aria-label="Tutup"></button>

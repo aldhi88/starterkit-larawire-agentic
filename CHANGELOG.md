@@ -5,6 +5,24 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.11.3] - 2026-10-26
+
+### Fixed
+
+- Give DashCode and Vuexy the same compact notification sound workflow already
+  available in Tabler: choose a built-in tone, preview it beside the selector,
+  or choose a private audio upload and save through one action. Each view keeps
+  its own theme controls and responsive layout.
+- Center Vuexy role and confirmation dialogs and use its native backdrop for
+  image cropping. Match the image-crop backdrop to DashCode's own modal style.
+
+### Upgrade notes
+
+- No new migrations, environment values, or dependencies. Update the package,
+  run `php artisan starter:sync` locally to publish the revised assets,
+  then use `php artisan starter:deploy` in production. CMS work remains outside
+  this release.
+
 ## [1.11.2] - 2026-10-26
 
 ### Changed
