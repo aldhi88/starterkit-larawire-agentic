@@ -5,6 +5,29 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.11.2] - 2026-10-26
+
+### Changed
+
+- Make all three built-in notification tones clearer and more prominent. Saved
+  sound choices keep their existing keys; the default uses a distinct three-note
+  pattern. The Tabler notification setting now keeps preview and upload beside
+  the sound selector and saves through one action.
+- Center Tabler account, role, activity, and image-crop dialogs with consistent
+  modal spacing and backdrop. Requests made inside a dialog show its local busy
+  state without covering the page.
+- Keep the Tabler runtime script loaded once during Livewire navigation.
+
+### Security
+
+- Record denied module-route access in the security audit log.
+
+### Upgrade notes
+
+- No new migrations, environment values, or dependencies. Update the package
+  and run `php artisan starter:sync`. Production continues with
+  `php artisan starter:deploy`.
+
 ## [1.11.1] - 2026-10-24
 
 ### Changed

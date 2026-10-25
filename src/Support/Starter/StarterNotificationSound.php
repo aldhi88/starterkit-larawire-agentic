@@ -10,9 +10,9 @@ final class StarterNotificationSound
     public static function catalog(): array
     {
         return [
-            'chime' => ['label' => 'Ting tung jelas · 2,2 detik (default)', 'notes' => [[880, .55], [659, 1.6]]],
-            'bell' => ['label' => 'Bel singkat', 'notes' => [[1047, .35]]],
-            'gentle' => ['label' => 'Nada tenang', 'notes' => [[440, .18], [554, .25]]],
+            'chime' => ['label' => 'Ting tung tegas (default)', 'notes' => [[988, .38], [784, .52], [988, .72]]],
+            'bell' => ['label' => 'Bel ganda', 'notes' => [[1175, .28], [1175, .42]]],
+            'gentle' => ['label' => 'Nada naik', 'notes' => [[698, .24], [880, .24], [1175, .52]]],
         ];
     }
 

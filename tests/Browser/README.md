@@ -31,6 +31,10 @@ overflow, menu/content separation, dropdown bounds, mobile menu access, sticky
 navigation, and asset/JavaScript errors. The PHP fixture uses the current demo's
 view overrides, so it also verifies the shell actually selected by the host.
 
+Run `livewire-dialog-loader.cjs` with the same `NODE_PATH` to check that modal
+requests show busy state inside the dialog while ordinary page requests retain
+the shared loader.
+
 ## Application branding runtime
 
 Run `node tests/Browser/application-branding.cjs` to verify that saved logo/favicon

@@ -285,7 +285,8 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
                 node.type = 'triangle';
                 node.frequency.setValueAtTime(frequency, start);
                 gain.gain.setValueAtTime(0, start);
-                gain.gain.linearRampToValueAtTime(.25, start + .008);
+                gain.gain.linearRampToValueAtTime(.55, start + .012);
+                gain.gain.setValueAtTime(.55, start + duration * .68);
                 gain.gain.exponentialRampToValueAtTime(.001, start + duration);
                 node.connect(gain);
                 gain.connect(context.destination);
@@ -352,7 +353,32 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             || root?.hasAttribute?.('data-starter-silent-poll');
     },
     isSilentLivewireMessage(message) {
-        return this.isPassiveLivewireMessage(message);
+        return this.isPassiveLivewireMessage(message) || Boolean(this.dialogForLivewireMessage(message));
+    },
+    dialogForLivewireMessage(message) {
+        const root = message?.component?.el;
+        const actions = Array.from(message?.actions || []);
+        for (const action of actions) {
+            const origin = action?.origin?.targetEl || action?.origin?.el;
+            const dialog = origin?.closest?.('[role="dialog"][aria-modal="true"]');
+            if (dialog?.getClientRects?.().length) return dialog;
+        }
+        if (root?.hasAttribute?.('data-starter-dialog-component')) {
+            return root.querySelector?.('[role="dialog"][aria-modal="true"]') || root;
+        }
+        const focusedDialog = document.activeElement?.closest?.('[role="dialog"][aria-modal="true"]');
+        return focusedDialog?.getClientRects?.().length && root?.contains?.(focusedDialog) ? focusedDialog : null;
+    },
+    setDialogBusy(dialog, busy) {
+        this.dialogRequestCounts ||= new Map();
+        const count = Math.max((this.dialogRequestCounts.get(dialog) || 0) + (busy ? 1 : -1), 0);
+        if (count > 0) {
+            this.dialogRequestCounts.set(dialog, count);
+            dialog.setAttribute('aria-busy', 'true');
+        } else {
+            this.dialogRequestCounts.delete(dialog);
+            dialog.removeAttribute('aria-busy');
+        }
     },
     hideLivewireLoader() {
         if (this.keepLivewireLoaderDuringNavigation && this.terminalNavigationStarted) {
@@ -1253,7 +1279,9 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             const components = actionMessages
                 .map((message) => message.component)
                 .filter(Boolean);
+            const dialogs = [...new Set(messages.map((message) => this.dialogForLivewireMessage(message)).filter(Boolean))];
             let started = false;
+            let dialogsStarted = false;
 
             request.options.headers['X-Starter-Page-Url'] = window.location.href;
 
@@ -1269,6 +1297,8 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
 
             onSend(() => {
                 this.activeLivewireRequests.add(request);
+                dialogs.forEach((dialog) => this.setDialogBusy(dialog, true));
+                dialogsStarted = true;
 
                 if (actionMessages.length === 0) {
                     return;
@@ -1303,6 +1333,7 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
 
             onFinish(() => {
                 this.activeLivewireRequests.delete(request);
+                if (dialogsStarted) dialogs.forEach((dialog) => this.setDialogBusy(dialog, false));
 
                 if (started) {
                     this.hideLivewireLoader();

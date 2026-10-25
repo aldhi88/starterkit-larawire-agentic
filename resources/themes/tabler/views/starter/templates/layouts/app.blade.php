@@ -82,7 +82,7 @@
         </div>
     </div>
 
-    <script src="{{ asset('assets/tabler/dist/js/tabler.min.js') }}?v={{ filemtime(public_path('assets/tabler/dist/js/tabler.min.js')) }}" defer></script>
+    <script src="{{ asset('assets/tabler/dist/js/tabler.min.js') }}?v={{ filemtime(public_path('assets/tabler/dist/js/tabler.min.js')) }}" data-navigate-once defer></script>
     <script src="{{ asset('assets/tabler/js/tabler.js') }}?v={{ filemtime(public_path('assets/tabler/js/tabler.js')) }}" data-navigate-once defer></script>
     <script src="{{ asset('assets/starter/js/starter-runtime.js') }}?v={{ filemtime(public_path('assets/starter/js/starter-runtime.js')) }}" data-navigate-once defer></script>
     <script src="{{ asset('assets/starter/vendor/flatpickr/flatpickr.min.js') }}?v={{ filemtime(public_path('assets/starter/vendor/flatpickr/flatpickr.min.js')) }}" data-navigate-once defer></script>

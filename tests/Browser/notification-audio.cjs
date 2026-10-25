@@ -8,7 +8,7 @@ const path = require('node:path');
     const listeners = {}, frequencies = [], nodes = [], stops = [], peakGains = [];
     let contexts = 0;
     const config = { dataset: { sound: 'bell', customUrl: '', sounds: JSON.stringify({
-        chime: { notes: [[880, .55], [659, 1.6]] }, bell: { notes: [[1047, .35]] }, gentle: { notes: [[440, .18], [554, .25]] },
+        chime: { notes: [[988, .38], [784, .52], [988, .72]] }, bell: { notes: [[1175, .28], [1175, .42]] }, gentle: { notes: [[698, .24], [880, .24], [1175, .52]] },
     }) } };
     const document = { addEventListener: (name, callback) => { (listeners[name] ||= []).push(callback); }, querySelector: () => config };
     class AudioContext {
@@ -30,9 +30,9 @@ const path = require('node:path');
     runtime.bind(); runtime.bind();
     assert.equal(contexts, 0); // Loading the runtime never plays a sound.
     assert.equal(await runtime.playNotificationSound(), true);
-    assert.deepEqual(frequencies, [1047]);
+    assert.deepEqual(frequencies, [1175, 1175]);
     assert.equal(await runtime.playNotificationSound('gentle'), true);
-    assert.deepEqual(frequencies.slice(-2), [440, 554]);
+    assert.deepEqual(frequencies.slice(-3), [698, 880, 1175]);
     assert.equal(contexts, 1);
     listeners['starter-notification-sound-updated'][0]({ detail: { sound: 'chime' } });
     assert.equal(config.dataset.sound, 'chime');
@@ -40,10 +40,10 @@ const path = require('node:path');
     listeners['starter-notification-sound-updated'][0]({ detail: { sound: 'https://external.test/audio' } });
     assert.equal(config.dataset.sound, 'chime');
     assert.equal(await runtime.playNotificationSound('unknown'), true);
-    assert.deepEqual(frequencies.slice(-2), [880, 659]);
+    assert.deepEqual(frequencies.slice(-3), [988, 784, 988]);
     assert.equal(nodes.at(-1).type, 'triangle');
-    assert.ok(peakGains.every((gain) => gain >= .25));
-    assert.ok(stops.at(-1) >= 2 && stops.at(-1) <= 3); // Full default chime includes its decay tail.
+    assert.ok(peakGains.every((gain) => gain >= .5 && gain <= .6));
+    assert.ok(stops.at(-1) >= 1.5 && stops.at(-1) <= 2); // Full default chime includes its decay tail.
     runtime.stopNotificationSound();
     assert.equal(runtime.notificationAudioNodes.length, 0);
     window.AudioContext = null;

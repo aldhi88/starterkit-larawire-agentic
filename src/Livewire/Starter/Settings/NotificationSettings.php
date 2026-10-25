@@ -45,6 +45,12 @@ class NotificationSettings extends Component
 
     public function save(): void
     {
+        if ($this->sound === 'upload') {
+            $this->saveCustomSound();
+
+            return;
+        }
+
         $login = $this->logins->current();
         $this->validate(['sound' => ['required', 'string', Rule::in([...array_keys(StarterNotificationSound::catalog()), 'custom'])]], [], [
             'sound' => 'jenis suara',

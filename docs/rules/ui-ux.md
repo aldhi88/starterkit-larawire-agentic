@@ -190,6 +190,7 @@ separate interaction and may follow the active theme.
 - Every modal must be closable by clicking anywhere on the backdrop (outside the modal dialog). For a modal managed manually by Livewire, apply `wire:click.self` to that theme's outer backdrop owner—not to an assumed vendor class—so only outside clicks close it.
 - For long forms that require vertical scrolling (exceeding one viewport), the primary action button (Submit/Save) must be easily accessible without scrolling to the bottom. Use either a sticky/floating action bar at the bottom or dual submit buttons (one in the Page Header and one at the bottom of the form).
 - Modal state must resolve before a global loader takes focus. Show validation next to the field and preserve submitted state on validation failures.
+- Requests originating within an open modal use that dialog's busy state without activating the page-wide action mask.
 - Use the existing runtime loader for explicit user actions. Do not add duplicate loaders, global DOM manipulation, or `wire:ignore` except for an isolated third-party widget controlled outside Livewire.
 - Livewire navigation is only for guaranteed same-origin URLs. Root/auth/App-subdomain navigation must use normal browser navigation; do not solve cross-origin navigation with CORS.
 - Error pages for `400`, `401`, `403`, `404`, `405`, `408`, `419`, `422`, `429`, `500`, `503`, and fallback `4xx`/`5xx` use `resources/themes/<theme>/views/starter/errors/layout.blade.php`, Indonesian text, safe return action, `noindex`, and no internal exception/path/query/credential disclosure.
@@ -214,3 +215,8 @@ separate interaction and may follow the active theme.
 ## Safe Area Resolution
 
 - Use **1280x768** as the desktop safe-area reference when arranging UI components so proportions remain coherent and content is not clipped on common screens.
+
+### Tabler modal consistency
+
+- Tabler dialogs use the native `modal-blur` and `modal-backdrop fade show` pair. Bootstrap-managed dialogs let Bootstrap create the backdrop; Livewire/Alpine-managed dialogs render one while open and remove it on close. Use the same treatment for role/access dialogs, activity logs, settings confirmations, and image cropping.
+- A modal header with title plus supporting text uses native `py-3` spacing. Keep close controls, body scrolling, focus containment, and Escape/return-focus behavior usable at small viewport sizes.

@@ -352,7 +352,7 @@
         <div class="modal modal-blur fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="activity-log-detail-title" wire:click.self="closeActionDetail" data-starter-region="detail-dialog">
             <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header py-3">
                         <div>
                             <h3 class="modal-title" id="activity-log-detail-title">Detail Aktivitas</h3>
                             <div class="text-secondary small">Informasi pelaku, sumber akses, dan perubahan data.</div>

@@ -93,7 +93,7 @@ it('provides one settings menu entry with an authorized destination in every the
 })->with(['tabler', 'vuexy', 'dashcode'])->with([[false, false], [false, true], [true, false], [true, true]]);
 
 it('lets an ordinary user save only their own sound and restores the selection on reload', function (string $theme): void {
-    notificationSettingsFor($theme)->assertSet('sound', 'chime')->assertSee('Dengarkan Pratinjau')
+    notificationSettingsFor($theme)->assertSet('sound', 'chime')->assertSee($theme === 'tabler' ? 'Dengarkan' : 'Dengarkan Pratinjau')
         ->set('sound', 'bell')->call('save')->assertHasNoErrors()
         ->assertDispatched('starter-notification-sound-updated', sound: 'bell');
     expect($this->first->fresh()->notification_sound)->toBe('bell')
@@ -129,11 +129,11 @@ it('has stable defaults and an idempotent additive migration', function (): void
     expect($this->first->fresh()->notification_sound)->toBe('bell');
 });
 
-it('provides a short two-note default for every new or unset user', function (): void {
+it('provides a clear three-note default for every new or unset user', function (): void {
     $default = StarterNotificationSound::catalog()[StarterNotificationSound::DEFAULT];
     $duration = array_sum(array_column($default['notes'], 1)) + .04 * (count($default['notes']) - 1);
-    expect($default['notes'])->toHaveCount(2)
-        ->and($duration)->toBeGreaterThanOrEqual(2)->toBeLessThanOrEqual(3)
+    expect($default['notes'])->toHaveCount(3)
+        ->and($duration)->toBeGreaterThanOrEqual(1.5)->toBeLessThanOrEqual(2)
         ->and(StarterNotificationSound::normalize(null))->toBe(StarterNotificationSound::DEFAULT);
 });
 
@@ -193,3 +193,11 @@ it('renders role row actions and a real notification bell in every theme', funct
         default => 'icon-tabler-bell',
     });
 })->with(['tabler', 'vuexy', 'dashcode']);
+
+it('saves a new personal sound through the same preference submit action', function (): void {
+    notificationSettingsFor('tabler')->set('sound', 'upload')->call('save')
+        ->assertHasErrors(['soundUpload' => 'required']);
+    notificationSettingsFor('tabler')->set('sound', 'upload')->set('soundUpload', notificationWav())->call('save')
+        ->assertHasNoErrors()->assertSet('sound', 'custom')->assertSet('soundUpload', null);
+    expect($this->first->fresh()->notification_sound)->toBe('custom');
+});

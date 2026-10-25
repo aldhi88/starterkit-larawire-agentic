@@ -199,9 +199,9 @@
 
     @if ($roleUsersModalOpen)
         <div class="modal modal-blur fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="role-users-modal-title" wire:click.self="closeRoleUsersModal">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header py-3">
                         <div>
                             <h3 class="modal-title" id="role-users-modal-title">User dalam Role</h3>
                             <div class="text-secondary small">{{ $roleUsersRoleName }} · {{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal(count($roleUsers)) }} user</div>
@@ -239,9 +239,9 @@
 
     @if ($roleAccessModalOpen)
         <div class="modal modal-blur fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="role-access-modal-title" wire:click.self="closeRoleAccessModal">
-            <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header py-3">
                         <div>
                             <h3 class="modal-title" id="role-access-modal-title">Detail Akses Role</h3>
                             <div class="text-secondary small">

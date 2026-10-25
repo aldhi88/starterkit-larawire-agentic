@@ -8,54 +8,50 @@
         </div>
     @endunless
 
-    <form class="{{ $embedded ? '' : 'card' }}" wire:submit="save"
+    <form class="{{ $embedded ? '' : 'card' }}" wire:submit="save" novalidate
         x-data="StarterTemplate.notificationPreferences(@js($sound), @js($customAudioUrl))"
         x-on:starter-notification-sound-updated.window="sound = $event.detail.sound; customUrl = $event.detail.customUrl || ''">
         <div class="card-body">
-            <h3 class="card-title starter-form-section-title">Suara Notifikasi</h3>
             <div class="row g-3" data-starter-region="notification-audio">
                 <div class="col-md-6">
-                    <label class="form-label" for="notification-sound">Jenis suara</label>
-                    <select id="notification-sound" class="form-select @error('sound') is-invalid @enderror"
-                        wire:model.defer="sound" x-model="sound" x-on:change="previewStatus = ''">
-                        @foreach ($sounds as $key => $option)
-                            <option value="{{ $key }}">{{ $option['label'] }}</option>
-                        @endforeach
-                        @if ($hasCustomSound)
-                            <option value="custom">Audio unggahan saya</option>
-                        @endif
-                    </select>
-                    @error('sound') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    <p class="text-secondary small mt-2 mb-0">Pilihan berlaku untuk akun Anda. Simpan untuk menerapkannya.</p>
+                    <label class="form-label" for="notification-sound">Suara notifikasi</label>
+                    <div class="input-group">
+                            <select id="notification-sound" class="form-select @error('sound') is-invalid @enderror"
+                                wire:model.defer="sound" x-model="sound" x-on:change="previewStatus = ''">
+                                @foreach ($sounds as $key => $option)
+                                    <option value="{{ $key }}">{{ $option['label'] }}</option>
+                                @endforeach
+                                @if ($hasCustomSound)
+                                    <option value="custom">Audio unggahan saya</option>
+                                @endif
+                                <option value="upload">Unggah audio pribadi…</option>
+                            </select>
+                        <button type="button" class="btn bg-light" x-bind:disabled="sound === 'upload'" x-on:click="preview()" aria-label="Dengarkan pratinjau suara">
+                            @include('starter.templates.layouts.icon', ['name' => 'player-play', 'class' => 'icon-sm me-1'])
+                            Dengarkan
+                        </button>
+                        @error('sound') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <p class="text-secondary small mt-2 mb-0">Dengarkan contoh suara sebelum menyimpan pilihan Anda.</p>
+                    <p role="status" x-bind:class="previewStatus === 'Pratinjau diputar.' ? 'visually-hidden' : 'text-danger small mt-2 mb-0'" x-show="previewStatus" x-text="previewStatus" x-cloak></p>
+                    <div class="mt-3" data-starter-region="notification-upload" x-show="sound === 'upload'" x-cloak>
+                        <label class="form-label" for="notification-sound-upload">File audio</label>
+                        <input id="notification-sound-upload" type="file" accept=".mp3,.wav,audio/mpeg,audio/wav,audio/x-wav"
+                            class="form-control @error('soundUpload') is-invalid @enderror" wire:model="soundUpload">
+                        @error('soundUpload') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <p class="text-secondary small mt-2 mb-0">MP3 atau WAV, maksimal 5 MB. Audio diterapkan saat disimpan dan menggantikan unggahan sebelumnya.</p>
+                        <span class="text-secondary small" wire:loading wire:target="soundUpload" role="status">Menyiapkan audio…</span>
+                    </div>
                 </div>
             </div>
-            <div class="row g-3 mt-3" data-starter-region="notification-upload">
-                <div class="col-md-6">
-                    <label class="form-label" for="notification-sound-upload">Unggah audio pribadi</label>
-                    <input id="notification-sound-upload" type="file" accept=".mp3,.wav,audio/mpeg,audio/wav,audio/x-wav"
-                        class="form-control @error('soundUpload') is-invalid @enderror" wire:model="soundUpload">
-                    @error('soundUpload') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    <p class="text-secondary small mt-2 mb-2">MP3 atau WAV, maksimal 5 MB. File baru menggantikan audio pribadi sebelumnya.</p>
-                    <button type="button" class="btn btn-outline-primary" wire:click="saveCustomSound"
-                        wire:loading.attr="disabled" wire:target="soundUpload,saveCustomSound">
-                        <span wire:loading.remove wire:target="soundUpload,saveCustomSound">Unggah dan Gunakan</span>
-                        <span wire:loading wire:target="soundUpload,saveCustomSound">Mengunggah…</span>
-                    </button>
-                </div>
-            </div>
-            <div class="d-flex flex-wrap gap-2 mt-3">
-                <button type="button" class="btn btn-outline-primary" x-on:click="preview()">Dengarkan Pratinjau</button>
-                <button type="button" class="btn btn-outline-secondary" x-on:click="useDefault()">Gunakan Default</button>
-            </div>
-            <p class="text-secondary small mt-2 mb-0" role="status" x-text="previewStatus"></p>
         </div>
         <div class="card-body border-top" data-starter-region="page-actions">
             <div class="d-flex justify-content-end gap-2">
                 @if (! $embedded && $canManageSettings)
                     <a href="{{ route('starter.settings', ['section' => 'notifications']) }}" class="btn btn-outline-secondary" data-starter-navigate>Pengaturan</a>
                 @endif
-                <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="save">
-                    <span wire:loading.remove wire:target="save">Simpan Preferensi</span>
+                <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="save,soundUpload">
+                    <span wire:loading.remove wire:target="save">Simpan perubahan</span>
                     <span wire:loading wire:target="save">Menyimpan…</span>
                 </button>
             </div>
