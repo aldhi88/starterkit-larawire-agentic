@@ -326,6 +326,34 @@ lima identitas berikut:
 | Email Superuser | Tidak | `admin@company.test` |
 | Password Superuser | Tidak | dimasukkan melalui prompt tersembunyi |
 
+Setelah App pertama ditentukan, wizard menawarkan **CMS opsional**. Pilihan
+**Tidak** mempertahankan landing page di domain utama dan satu App dashboard.
+Pilihan **Ya** menambahkan App kedua bernama CMS pada `cms.<domain-utama>`;
+App pertama tetap menggunakan nama dan subdomain yang dipilih pengguna.
+Subdomain `cms` disediakan khusus untuk CMS dan tidak dapat dipakai sebagai App
+dashboard pertama.
+
+CMS menyediakan pengelolaan postingan, halaman, Card universal beserta masing-masing
+kategorinya, pustaka media, galeri, susunan menu, kategori menu, dan moderasi
+komentar. Seluruh tabelnya memakai prefix `cms_`. Tampilan website publik
+dikembangkan sendiri oleh programmer; CMS menyediakan data kontennya.
+
+Untuk menambahkan CMS pada instalasi lokal yang sudah ada tanpa menghapus data:
+
+```bash
+php artisan starter:cms --dry-run
+php artisan starter:cms
+```
+
+Perintah ini memeriksa benturan source, menyiapkan migration tambahan, menampilkan
+rencana sinkronisasi registry, dan menambahkan CMS ke daftar App. Instalasi ulang
+tidak diperlukan. Commit source host yang dihasilkan bersama App lalu gunakan
+`starter:deploy` untuk production. Tanpa pilihan CMS, source dan migration CMS
+tidak dipublikasikan. Landing bawaan menampilkan tautan dokumentasi penggunaan CMS
+di `/cms/documentation` hanya ketika CMS terpasang.
+Lihat [panduan mapping dan penggunaan data CMS](docs/cms.md) untuk kontrak reader,
+Card, media, galeri, dan menu.
+
 Untuk domain App, masukkan hanya bagian subdomain tanpa titik dan tanpa domain
 utama. Contoh `hr` akan menjadi `hr.company.test` jika `APP_URL` menggunakan
 `company.test`.
@@ -490,6 +518,7 @@ Sebelum instalasi tersedia `starter:install`. Setelah instalasi berhasil:
 | `starter:reset` | Menghapus instalasi lama dan mengulang wizard; hanya local |
 | `starter:sync` | Menyelaraskan source developer ke database local |
 | `starter:app` | Membuat App/subdomain baru melalui wizard |
+| `starter:cms` | Menambahkan CMS opsional di local tanpa menghapus data aplikasi |
 | `starter:views-publish` | Menyalin view theme aktif ke area override project |
 | `starter:views-status` | Membandingkan override project dengan package aktif |
 | `starter:views-replace` | Mengembalikan override terpilih ke default dengan backup |

@@ -7,8 +7,10 @@ use Aldhi88\StarterKit\Installation\StarterDatabaseProvisioning;
 use Aldhi88\StarterKit\Installation\StarterEnvironmentManager;
 use Aldhi88\StarterKit\Installation\StarterInstallState;
 use Aldhi88\StarterKit\Rules\Starter\StarterPasswordRules;
+use Aldhi88\StarterKit\Services\Cms\CmsManager;
 use Aldhi88\StarterKit\Services\Starter\StarterAppScaffolder;
 use Aldhi88\StarterKit\Services\Starter\StarterAssetPublisher;
+use Aldhi88\StarterKit\Services\Starter\StarterCmsInstaller;
 use Aldhi88\StarterKit\Services\Starter\StarterDeploymentService;
 use Aldhi88\StarterKit\Services\Starter\StarterIdentityService;
 use Aldhi88\StarterKit\Services\Starter\StarterSecurityValidator;
@@ -44,6 +46,8 @@ class DeployCommand extends Command
         StarterDatabaseProvisioner $databases,
         StarterEnvironmentManager $environment,
         StarterInternalRunContext $internal,
+        StarterCmsInstaller $cmsInstaller,
+        CmsManager $cms,
     ): int {
         if ($this->option('installing')) {
             if (app()->isProduction() || StarterInstallState::status() !== 'installing') {
@@ -53,7 +57,7 @@ class DeployCommand extends Command
             }
 
             try {
-                return $this->install($appScaffolder, $assets, $identities, $security, $internal);
+                return $this->install($appScaffolder, $assets, $identities, $security, $internal, $cmsInstaller, $cms);
             } finally {
                 $this->installation['password'] = '';
             }
@@ -65,7 +69,7 @@ class DeployCommand extends Command
             return $restarted;
         }
 
-        return $this->deploy($deployment, $identities, $security, $databases, $internal);
+        return $this->deploy($deployment, $identities, $security, $databases, $internal, $cms);
     }
 
     private function restartAfterPreparingEnvironment(StarterEnvironmentManager $environment): ?int
@@ -138,6 +142,7 @@ class DeployCommand extends Command
         StarterSecurityValidator $security,
         StarterDatabaseProvisioner $databases,
         StarterInternalRunContext $internal,
+        CmsManager $cms,
     ): int {
         $this->newLine();
         $this->components->info('DEPLOYMENT PRODUCTION STARTERKIT LARAWIRE');
@@ -181,6 +186,10 @@ class DeployCommand extends Command
 
             if ($deployment->prepare($this, production: true) !== self::SUCCESS) {
                 throw new \RuntimeException('Persiapan deployment gagal.');
+            }
+
+            if (StarterCmsInstaller::enabled()) {
+                $cms->installDefaults();
             }
 
             if ($credentials !== null && ! $identities->initialized()) {
@@ -324,6 +333,7 @@ class DeployCommand extends Command
             'password' => (string) $payload['password'],
             'theme' => strtolower(trim((string) $payload['theme'])),
             'layout' => strtolower(trim((string) $payload['layout'])),
+            'cms' => ($payload['cms'] ?? false) === true,
         ];
 
         return $this->installation['company'] !== ''
@@ -337,6 +347,8 @@ class DeployCommand extends Command
         StarterIdentityService $identities,
         StarterSecurityValidator $security,
         StarterInternalRunContext $internal,
+        StarterCmsInstaller $cmsInstaller,
+        CmsManager $cms,
     ): int {
         if (! $this->readInstallationPayload()) {
             return self::FAILURE;
@@ -354,6 +366,17 @@ class DeployCommand extends Command
             || $this->installLanding() !== self::SUCCESS
             || $this->installDefaultApp($appScaffolder) !== self::SUCCESS) {
             return self::FAILURE;
+        }
+
+        if ($this->installation['cms']) {
+            try {
+                $cmsInstaller->prepare();
+                StarterRouteRegistrar::register('cms');
+            } catch (Throwable $exception) {
+                $this->components->error('CMS tidak dapat disiapkan: '.$exception->getMessage());
+
+                return self::FAILURE;
+            }
         }
 
         $this->components->info('Memverifikasi keamanan dan menjalankan seluruh test aplikasi.');
@@ -386,6 +409,10 @@ class DeployCommand extends Command
         }
 
         $this->installation['password'] = '';
+
+        if ($this->installation['cms']) {
+            $cms->installDefaults();
+        }
 
         $syncResult = $internal->run('install', fn (): int => $this->call('starter:sync', [
             '--force' => true,
@@ -612,8 +639,8 @@ PHP.PHP_EOL);
             return self::FAILURE;
         }
 
-        if ($app === 'api') {
-            $this->components->error('First app code [api] is reserved for the shared API gateway.');
+        if (in_array($app, ['api', 'cms'], true)) {
+            $this->components->error('First app code [api/cms] is reserved for the API gateway and optional CMS.');
 
             return self::FAILURE;
         }

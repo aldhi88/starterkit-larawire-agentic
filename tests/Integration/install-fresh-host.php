@@ -7,6 +7,7 @@ use Illuminate\Contracts\Console\Kernel;
 use Symfony\Component\Console\Tester\CommandTester;
 
 $host = $argv[1] ?? '';
+$withCms = in_array('--cms', $argv, true);
 
 if ($host === '' || ! is_file($host.'/artisan')) {
     fwrite(STDERR, "Usage: php install-fresh-host.php /absolute/path/to/laravel\n");
@@ -38,6 +39,7 @@ $tester->setInputs([
     'local-password',
     'Human Resources',
     'hr',
+    $withCms ? 'yes' : 'no',
     'yes',
     'yes',
 ]);

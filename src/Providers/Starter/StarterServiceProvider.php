@@ -3,12 +3,15 @@
 namespace Aldhi88\StarterKit\Providers\Starter;
 
 use Aldhi88\StarterKit\Console\Commands\Starter\AppCommand;
+use Aldhi88\StarterKit\Console\Commands\Starter\CmsCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\DeployCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\ResetCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\SyncCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\ViewsPublishCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\ViewsReplaceCommand;
 use Aldhi88\StarterKit\Console\Commands\Starter\ViewsStatusCommand;
+use Aldhi88\StarterKit\Contracts\Cms\CmsReadRepositoryInterface;
+use Aldhi88\StarterKit\Contracts\Cms\CmsRepositoryInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ActivityLogInterface;
 use Aldhi88\StarterKit\Contracts\Starter\AppInterface;
 use Aldhi88\StarterKit\Contracts\Starter\AppModInterface;
@@ -24,6 +27,14 @@ use Aldhi88\StarterKit\Http\Middleware\Starter\StarterForcePasswordChange;
 use Aldhi88\StarterKit\Http\Middleware\Starter\StarterLockScreen;
 use Aldhi88\StarterKit\Http\Middleware\Starter\StarterLogAccess;
 use Aldhi88\StarterKit\Installation\StarterInstallState;
+use Aldhi88\StarterKit\Livewire\Cms\Categories as CmsCategories;
+use Aldhi88\StarterKit\Livewire\Cms\ContentForm as CmsContentForm;
+use Aldhi88\StarterKit\Livewire\Cms\ContentIndex as CmsContentIndex;
+use Aldhi88\StarterKit\Livewire\Cms\ContentTable as CmsContentTable;
+use Aldhi88\StarterKit\Livewire\Cms\Dashboard as CmsDashboard;
+use Aldhi88\StarterKit\Livewire\Cms\Documentation as CmsDocumentation;
+use Aldhi88\StarterKit\Livewire\Cms\MediaLibrary as CmsMediaLibrary;
+use Aldhi88\StarterKit\Livewire\Cms\MediaPicker as CmsMediaPicker;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\ConfirmPassword;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\LockScreen as LockScreenComponent;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\Login;
@@ -41,6 +52,8 @@ use Aldhi88\StarterKit\Livewire\Starter\UserManagement\UserForm;
 use Aldhi88\StarterKit\Livewire\Starter\UserManagement\Users;
 use Aldhi88\StarterKit\Livewire\Starter\UserManagement\UsersTable;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Repositories\Cms\CmsReadRepository;
+use Aldhi88\StarterKit\Repositories\Cms\CmsRepository;
 use Aldhi88\StarterKit\Repositories\Starter\ActivityLogRepository;
 use Aldhi88\StarterKit\Repositories\Starter\AppModRepository;
 use Aldhi88\StarterKit\Repositories\Starter\AppRepository;
@@ -49,12 +62,15 @@ use Aldhi88\StarterKit\Repositories\Starter\ClientLoginRepository;
 use Aldhi88\StarterKit\Repositories\Starter\ClientRepository;
 use Aldhi88\StarterKit\Repositories\Starter\ClientRoleRepository;
 use Aldhi88\StarterKit\Repositories\Starter\StarterConfigRepository;
+use Aldhi88\StarterKit\Services\Cms\CmsManager;
+use Aldhi88\StarterKit\Services\Cms\CmsReader;
 use Aldhi88\StarterKit\Services\Starter\AuditLogService;
 use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
 use Aldhi88\StarterKit\Services\Starter\LoginHumanChallengeService;
 use Aldhi88\StarterKit\Services\Starter\LoginOtpMailService;
 use Aldhi88\StarterKit\Services\Starter\SecuritySettingsService;
 use Aldhi88\StarterKit\Services\Starter\SettingsOverviewService;
+use Aldhi88\StarterKit\Services\Starter\StarterCmsInstaller;
 use Aldhi88\StarterKit\Services\Starter\StarterConfigService;
 use Aldhi88\StarterKit\Services\Starter\StarterContextService;
 use Aldhi88\StarterKit\Services\Starter\StarterViewOverrideService;
@@ -115,10 +131,15 @@ class StarterServiceProvider extends ServiceProvider
         $this->app->scoped(TwoFactorAuthenticationService::class);
         $this->app->scoped(UserManagementRoleService::class);
         $this->app->scoped(UserManagementUserService::class);
+        $this->app->bind(CmsRepositoryInterface::class, CmsRepository::class);
+        $this->app->bind(CmsReadRepositoryInterface::class, CmsReadRepository::class);
+        $this->app->scoped(CmsManager::class);
+        $this->app->scoped(CmsReader::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
                 AppCommand::class,
+                CmsCommand::class,
                 DeployCommand::class,
                 ResetCommand::class,
                 SyncCommand::class,
@@ -181,6 +202,7 @@ class StarterServiceProvider extends ServiceProvider
             'starter.templates.layouts.auth',
             'starter.templates.layouts.landing',
             'starter.templates.landing',
+            'starter.cms.documentation',
         ], function ($view): void {
             $view->with(app(StarterContextService::class)->brandData());
         });
@@ -225,6 +247,20 @@ class StarterServiceProvider extends ServiceProvider
             'starter.user-management.users' => Users::class,
             'starter.user-management.users-table' => UsersTable::class,
         ];
+
+        if (StarterCmsInstaller::enabled()) {
+            $components = [
+                ...$components,
+                'cms.dashboard' => CmsDashboard::class,
+                'cms.documentation' => CmsDocumentation::class,
+                'cms.index' => CmsContentIndex::class,
+                'cms.form' => CmsContentForm::class,
+                'cms.table' => CmsContentTable::class,
+                'cms.categories' => CmsCategories::class,
+                'cms.media-library' => CmsMediaLibrary::class,
+                'cms.media-picker' => CmsMediaPicker::class,
+            ];
+        }
 
         foreach ($components as $name => $component) {
             Livewire::component($name, $component);

@@ -13,6 +13,9 @@
             <p>{{ $hasStarterApps ? 'Masuk untuk melanjutkan ke App yang tersedia.' : 'Buat App pertama untuk memulai struktur module dan menu.' }}</p>
             <div class="dashcode-landing-actions">
                 <a href="{{ \Aldhi88\StarterKit\Support\Starter\StarterNavigation::authLoginUrl() }}" class="btn btn-primary">Masuk ke aplikasi</a>
+                @if (\Aldhi88\StarterKit\Services\Starter\StarterCmsInstaller::enabled() && \Illuminate\Support\Facades\Route::has('starter.cms.documentation'))
+                    <a href="{{ route('starter.cms.documentation') }}" class="btn btn-secondary">Panduan Penggunaan CMS</a>
+                @endif
             </div>
         </div>
     </section>

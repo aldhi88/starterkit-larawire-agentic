@@ -35,6 +35,14 @@ Run `livewire-dialog-loader.cjs` with the same `NODE_PATH` to check that modal
 requests show busy state inside the dialog while ordinary page requests retain
 the shared loader.
 
+## CMS editor and modal requests
+
+Run `cms-editor.cjs` with the same `NODE_PATH` to check the pinned Quill editor in
+all three themes at desktop and phone widths. It covers image resizing, undo,
+saved HTML dimensions, slug/date helpers, picker focus, and navigation cleanup.
+Tabler also checks editor expansion, text wrapping, and external scrollbars (drag/keyboard/bounds), plus calendar/time
+selection and WIB consistency in Jakarta and Los Angeles browser timezones.
+
 ## Application branding runtime
 
 Run `node tests/Browser/application-branding.cjs` to verify that saved logo/favicon
@@ -61,3 +69,15 @@ context reuse, navigation cleanup, invalid keys, and browser restrictions. Direc
 browser verification in each theme covers preview, save, reload and independent
 accounts in both layouts at 1280×768 and 390×844. Ordinary users must still receive
 403 from administrative Settings while their own `/settings/notifications` works.
+
+## Post category ordering
+
+`cms-category-order.cjs` checks direct PowerGrid-style row dragging at 1280px
+and 390px: drop/autosave, parent/subtree movement, Alt+Up/Down controls,
+Livewire row replacement, network/validation retry, cross-parent guards,
+and navigation cleanup. Run it with the same `NODE_PATH` and optional
+`CHROME_PATH` as the editor checks. Host events, authorization, ordering
+persistence, unseen siblings, stale snapshots, and audit are covered by
+`CmsCategoryMediaTest.php` and direct browser checks.
+
+`cms-post-actions.cjs` checks keyboard focus, busy-state dismissal, cleanup, and repeated opening of Tabler post quick-action dialogs. Run with the same `NODE_PATH` and `CHROME_PATH` options as the other CMS browser regressions. Persistence, filters, stale selections, rollback, and permissions are covered in `CmsWorkspaceTest.php`.

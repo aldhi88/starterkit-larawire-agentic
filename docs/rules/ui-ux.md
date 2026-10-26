@@ -1,5 +1,9 @@
 # Livewire UI/UX and Theme
 
+## Form validation
+
+- Form submission uses Livewire/server validation and inline theme errors. Set `novalidate` on forms; browser constraint-validation popups must never block submission. Keep accessible required-field semantics and server validation rules.
+
 ## Contextual representation and composition
 
 - A table is a tool, not the default representation of a database model. There is no default component for displaying a collection; select the representation from the user's task, the meaning and scale of the data, and the required interaction.
@@ -190,7 +194,7 @@ separate interaction and may follow the active theme.
 - Every modal must be closable by clicking anywhere on the backdrop (outside the modal dialog). For a modal managed manually by Livewire, apply `wire:click.self` to that theme's outer backdrop owner—not to an assumed vendor class—so only outside clicks close it.
 - For long forms that require vertical scrolling (exceeding one viewport), the primary action button (Submit/Save) must be easily accessible without scrolling to the bottom. Use either a sticky/floating action bar at the bottom or dual submit buttons (one in the Page Header and one at the bottom of the form).
 - Modal state must resolve before a global loader takes focus. Show validation next to the field and preserve submitted state on validation failures.
-- Requests originating within an open modal use that dialog's busy state without activating the page-wide action mask.
+- Requests originating within an open modal use that dialog's busy/disabled states without activating the page-wide action mask. Isolate media browsing/upload/selection from its parent editor so modal interactions preserve the underlying form, editor, focus, and scroll. This does not make authenticated modal actions passive or exempt them from audit and request guards.
 - Use the existing runtime loader for explicit user actions. Do not add duplicate loaders, global DOM manipulation, or `wire:ignore` except for an isolated third-party widget controlled outside Livewire.
 - Livewire navigation is only for guaranteed same-origin URLs. Root/auth/App-subdomain navigation must use normal browser navigation; do not solve cross-origin navigation with CORS.
 - Error pages for `400`, `401`, `403`, `404`, `405`, `408`, `419`, `422`, `429`, `500`, `503`, and fallback `4xx`/`5xx` use `resources/themes/<theme>/views/starter/errors/layout.blade.php`, Indonesian text, safe return action, `noindex`, and no internal exception/path/query/credential disclosure.
@@ -218,8 +222,8 @@ separate interaction and may follow the active theme.
 
 ### Tabler modal consistency
 
-- Tabler dialogs use the native `modal-blur` and `modal-backdrop fade show` pair. Bootstrap-managed dialogs let Bootstrap create the backdrop; Livewire/Alpine-managed dialogs render one while open and remove it on close. Use the same treatment for role/access dialogs, activity logs, settings confirmations, and image cropping.
-- A modal header with title plus supporting text uses native `py-3` spacing. Keep close controls, body scrolling, focus containment, and Escape/return-focus behavior usable at small viewport sizes.
+- Tabler dialogs use the native `modal-blur` and `modal-backdrop fade show` pair. Bootstrap-managed dialogs let Bootstrap create the backdrop; Livewire/Alpine-managed dialogs render one while open and remove it on close. Do not combine a custom dark overlay with the native backdrop. This includes CMS actions, media, role/access dialogs, activity logs, settings confirmations, and image cropping.
+- A modal header with title plus supporting text uses native `py-3` spacing; Tabler's zero-vertical-padding single-line header is too tight for two lines. Keep close controls, body scrolling, focus containment, and Escape/return-focus behavior usable at small viewport sizes.
 
 ### Cross-theme notification preferences
 

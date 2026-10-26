@@ -8,6 +8,8 @@ use Aldhi88\StarterKit\Models\Starter\AppMenu;
 use Aldhi88\StarterKit\Models\Starter\AppMod;
 use Aldhi88\StarterKit\Models\Starter\AppRoute;
 use Aldhi88\StarterKit\Rules\Starter\StarterPasswordRules;
+use Aldhi88\StarterKit\Services\Cms\CmsManager;
+use Aldhi88\StarterKit\Services\Starter\StarterCmsInstaller;
 use Aldhi88\StarterKit\Services\Starter\StarterDeploymentService;
 use Aldhi88\StarterKit\Services\Starter\StarterIdentityService;
 use Aldhi88\StarterKit\Support\Starter\StarterInternalRunContext;
@@ -48,6 +50,8 @@ class SyncCommand extends Command
         StarterIdentityService $identities,
         StarterDatabaseProvisioner $databases,
         StarterInternalRunContext $internal,
+        CmsManager $cms,
+        StarterCmsInstaller $cmsInstaller,
     ): int {
         $prepared = (bool) $this->option('prepared');
         $deploying = (bool) $this->option('deploying');
@@ -69,6 +73,20 @@ class SyncCommand extends Command
             $this->line('Gunakan php artisan starter:deploy agar seluruh validasi production dijalankan.');
 
             return self::FAILURE;
+        }
+
+        if (StarterCmsInstaller::enabled() && ! app()->isProduction() && ! $prepared) {
+            try {
+                $cmsInstaller->plan();
+
+                if (! $this->option('dry-run')) {
+                    $cmsInstaller->prepare();
+                }
+            } catch (Throwable $exception) {
+                $this->components->error($exception->getMessage());
+
+                return self::FAILURE;
+            }
         }
 
         if (! $this->option('dry-run')) {
@@ -130,6 +148,12 @@ class SyncCommand extends Command
 
             $this->applyPlan($subdomain, $plan);
             $this->info("Synced app: {$subdomain}");
+        }
+
+        if (! $this->option('dry-run')
+            && StarterCmsInstaller::enabled()
+            && in_array($this->argument('subdomain'), [null, 'cms'], true)) {
+            $cms->installDefaults();
         }
 
         if (! $this->option('dry-run')

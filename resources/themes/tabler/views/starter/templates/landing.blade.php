@@ -17,6 +17,9 @@
                 <h1 class="display-5 fw-bold mb-3">{{ $hasStarterApps ? 'Aplikasi tim siap digunakan' : 'Starterkit siap dikembangkan' }}</h1>
                 <p class="text-secondary mb-4">{{ $hasStarterApps ? 'Masuk untuk melanjutkan ke App yang tersedia.' : 'Buat App pertama untuk memulai struktur module dan menu.' }}</p>
                 <a href="{{ \Aldhi88\StarterKit\Support\Starter\StarterNavigation::authLoginUrl() }}" class="btn btn-primary">Masuk ke aplikasi</a>
+                @if (\Aldhi88\StarterKit\Services\Starter\StarterCmsInstaller::enabled() && \Illuminate\Support\Facades\Route::has('starter.cms.documentation'))
+                    <a href="{{ route('starter.cms.documentation') }}" class="btn btn-outline-secondary ms-2">Panduan Penggunaan CMS</a>
+                @endif
             </div>
         </div>
     </section>

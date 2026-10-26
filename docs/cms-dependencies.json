@@ -1,0 +1,44 @@
+{
+  "libraries": {
+    "quill": {
+      "version": "2.0.3",
+      "license": "BSD-3-Clause"
+    },
+    "sortable": {
+      "version": "1.15.7",
+      "license": "MIT"
+    }
+  },
+  "files": [
+    {
+      "file": "public/assets/starter/vendor/quill/quill.js",
+      "source": "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js",
+      "sha256": "f6157c72ac9b3f51cdead426335688a027b12405d9d6a4daadd38a676b2d7ff2",
+      "bytes": 209274
+    },
+    {
+      "file": "public/assets/starter/vendor/quill/quill.snow.css",
+      "source": "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css",
+      "sha256": "1c7948cd13aa92fac6390319bc1e5e461823da171519d3a768db56164f871636",
+      "bytes": 24606
+    },
+    {
+      "file": "public/assets/starter/vendor/quill/LICENSE",
+      "source": "https://raw.githubusercontent.com/slab/quill/v2.0.3/LICENSE",
+      "sha256": "395c12b616d6f58238b4be39284d4d9221b58dd6e1f1e34d9ab537e34abbb022",
+      "bytes": 1561
+    },
+    {
+      "file": "public/assets/starter/vendor/sortable/Sortable.min.js",
+      "source": "https://raw.githubusercontent.com/SortableJS/Sortable/1.15.7/Sortable.min.js",
+      "sha256": "bf4241bc73fef7f11c59a283a69fe8051cdd31c6d8ff5a2b9ba219e7831fcf76",
+      "bytes": 45478
+    },
+    {
+      "file": "public/assets/starter/vendor/sortable/LICENSE",
+      "source": "https://raw.githubusercontent.com/SortableJS/Sortable/1.15.7/LICENSE",
+      "sha256": "199071e94a4d6ba6f634acd6020842efc55161b9fb639a432c50da687781219d",
+      "bytes": 1085
+    }
+  ]
+}

@@ -61,6 +61,7 @@ function fixture(authShell, pathname = '/auth/login') {
         intercept({
             request: livewireRequest,
             onSend: (callback) => { hooks.send = callback; },
+            onSuccess: (callback) => { hooks.success = callback; },
             onError: (callback) => { hooks.error = callback; },
             onRedirect: (callback) => { hooks.redirect = callback; },
             onFinish: (callback) => { hooks.finish = callback; },
@@ -71,13 +72,21 @@ function fixture(authShell, pathname = '/auth/login') {
     return { window, attributes, componentAttributes, classes, listeners, navigation, request };
 }
 
-for (const [action, pathname] of [['authenticate', '/auth/login'], ['unlock', '/lock-screen']]) {
+for (const [action, pathname] of [
+    ['authenticate', '/auth/login'],
+    ['verifyOtp', '/auth/login'],
+    ['verifyAuthenticator', '/auth/login'],
+    ['unlock', '/lock-screen'],
+]) {
     const successful = fixture(true, pathname);
     const request = successful.request(action);
     request.send();
     assert.equal(successful.attributes.get('aria-hidden'), 'false');
-    request.redirect({ url: 'https://example.test/dashboard', preventDefault() {} });
+    request.success({ json: { components: [{ effects: { redirect: 'https://example.test/dashboard' } }] } });
     request.finish();
+    assert.equal(successful.attributes.get('aria-hidden'), 'false', `${action}: request finish before Livewire redirect must not reveal the form`);
+    assert(successful.classes.has('starter-livewire-is-loading'));
+    request.redirect({ url: 'https://example.test/dashboard', preventDefault() {} });
     assert.deepEqual(successful.navigation, ['https://example.test/dashboard']);
     assert.equal(successful.attributes.get('aria-hidden'), 'false', `${action}: loader stays visible while the destination has not loaded`);
     assert(successful.classes.has('starter-livewire-is-loading'));
@@ -93,14 +102,17 @@ for (const [action, pathname] of [['authenticate', '/auth/login'], ['unlock', '/
     const failed = fixture(true, pathname);
     const retry = failed.request(action);
     retry.send();
+    retry.success({ json: { components: [{ effects: {} }] } });
     retry.finish();
     assert.equal(failed.attributes.get('aria-hidden'), 'true', `${action}: invalid password reveals the form for correction`);
     assert.equal(failed.componentAttributes.has('aria-busy'), false);
     assert.equal(failed.navigation.length, 0);
     const corrected = failed.request(action);
     corrected.send();
-    corrected.redirect({ url: 'https://example.test/dashboard', preventDefault() {} });
+    corrected.success({ json: { components: [{ effects: { redirect: 'https://example.test/dashboard' } }] } });
     corrected.finish();
+    assert.equal(failed.attributes.get('aria-hidden'), 'false', `${action}: retry must keep loader between request finish and redirect`);
+    corrected.redirect({ url: 'https://example.test/dashboard', preventDefault() {} });
     assert.equal(failed.attributes.get('aria-hidden'), 'false', `${action}: retry retains the loader through successful navigation`);
     assert.deepEqual(failed.navigation, ['https://example.test/dashboard']);
 }

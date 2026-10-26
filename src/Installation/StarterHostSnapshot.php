@@ -25,6 +25,7 @@ class StarterHostSnapshot
         'routes',
         'storage/framework/cache/starterkit',
         'storage/app/public/starter',
+        'storage/app/private/cms',
         'tests',
     ];
 

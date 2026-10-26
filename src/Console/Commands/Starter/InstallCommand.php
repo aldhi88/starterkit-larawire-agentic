@@ -264,7 +264,7 @@ class InstallCommand extends Command
             $this->line('Reset akan menghapus seluruh instalasi aplikasi sebelumnya, termasuk:');
             $this->line('  - seluruh tabel dan data pada database target;');
             $this->line('  - seluruh source App pada config, route, PHP, view, migration, asset, bahasa, dan test;');
-            $this->line('  - seluruh logo dan foto profil yang di-upload melalui starterkit; serta');
+            $this->line('  - seluruh logo, foto profil, dan file CMS yang di-upload melalui starterkit; serta');
             $this->line('  - role, user, pengaturan, menu, dan log aktivitas yang tersimpan.');
             $this->line('Project kemudian dipasang ulang menggunakan wizard instalasi baru.');
         } else {
@@ -358,6 +358,7 @@ class InstallCommand extends Command
 
         $this->installation['app'] = $app;
         $this->installation['app_name'] = $appName;
+        $this->installation['cms'] = $this->confirm('Sertakan CMS untuk manajemen konten website?', false);
         $this->showIdentitySummary($appUrl);
 
         return true;
@@ -493,6 +494,8 @@ class InstallCommand extends Command
 
             if ($app === 'api') {
                 $this->components->error('Domain [api] digunakan oleh API gateway. Pilih nama lain.');
+            } elseif ($app === 'cms') {
+                $this->components->error('Domain [cms] disediakan untuk CMS opsional. Pilih subdomain App dashboard lain.');
             } elseif (preg_match('/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/', $app) === 1) {
                 return $app;
             } else {
@@ -522,6 +525,7 @@ class InstallCommand extends Command
         $this->line('Nama App           : '.$this->installation['app_name']);
         $this->line('Domain App         : '.$this->installation['app']);
         $this->line('Alamat App         : '.$appUrl);
+        $this->line('CMS opsional       : '.($this->installation['cms'] ? 'Ya (cms.'.$host.')' : 'Tidak'));
     }
 
     /** @param array<string, string|null> $summary */
@@ -619,6 +623,7 @@ class InstallCommand extends Command
             base_path('tests/Feature/Apps'),
             public_path('assets/apps'),
             storage_path('app/public/starter'),
+            storage_path('app/private/cms'),
             ...(glob(app_path('*/Apps')) ?: []),
             ...(glob(app_path('*/*/Apps')) ?: []),
             ...(glob(lang_path('*/apps')) ?: []),

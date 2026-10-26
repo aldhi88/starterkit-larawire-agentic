@@ -67,6 +67,11 @@ class AuditLogService
 
         [$oldValues, $newValues] = $this->modelChanges($event, $model);
 
+        if (str_starts_with($model->getTable(), 'cms_')) {
+            $oldValues = $this->cmsAuditValues($oldValues);
+            $newValues = $this->cmsAuditValues($newValues);
+        }
+
         if ($event === 'updated' && $oldValues === [] && $newValues === []) {
             return;
         }
@@ -221,6 +226,26 @@ class AuditLogService
         }
 
         return false;
+    }
+
+    /** @param array<string, mixed> $values @return array<string, mixed> */
+    private function cmsAuditValues(array $values): array
+    {
+        foreach ($values as $key => $value) {
+            if (in_array($key, [
+                'body', 'content', 'excerpt', 'description', 'caption',
+                'author_email', 'email', 'path', 'original_name',
+                'url', 'link_url', 'action_url', 'items',
+            ], true)) {
+                $values[$key] = $value === null ? null : '[REDACTED]';
+            } elseif (is_string($value) && mb_strlen($value) > 512) {
+                $values[$key] = '[CONTENT: '.mb_strlen($value).' characters]';
+            } elseif (is_array($value)) {
+                $values[$key] = $this->cmsAuditValues($value);
+            }
+        }
+
+        return $values;
     }
 
     /**

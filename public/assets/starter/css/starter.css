@@ -209,6 +209,30 @@ body.starter-is-navigating .starter-slot-area > [wire\:id] {
     pointer-events: none;
 }
 
+body.starter-is-navigating:has([data-cms-content-page]) .starter-slot-area > [wire\:id] {
+    filter: none;
+    opacity: 1;
+}
+
+body.starter-is-navigating:has([data-cms-content-page]) .starter-navigate-loader {
+    align-items: stretch;
+    background: transparent;
+    bottom: auto;
+    height: 3px;
+    pointer-events: none;
+}
+
+body.starter-is-navigating:has([data-cms-content-page]) .starter-navigate-loader-panel {
+    display: none;
+}
+
+body.starter-is-navigating:has([data-cms-content-page]) .starter-navigate-progress {
+    border-radius: 0;
+    height: 3px;
+    margin: 0;
+    width: 100%;
+}
+
 @keyframes starter-navigate-spin {
     to { transform: rotate(360deg); }
 }

@@ -34,7 +34,8 @@
         "laravel-lang/common": "^6.8",
         "laravel/framework": ">=13.30 <14.0",
         "livewire/livewire": "^4.4.8",
-        "power-components/livewire-powergrid": "^6.10"
+        "power-components/livewire-powergrid": "^6.10",
+        "symfony/html-sanitizer": "^7.4.12"
     },
     "require-dev": {
         "laravel/pint": "^1.27",

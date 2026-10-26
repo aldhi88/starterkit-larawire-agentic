@@ -5,6 +5,41 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-10-27
+
+### Added
+
+- Add an optional, package-maintained CMS with dashboard, posts, pages, reusable
+  Cards, hierarchical categories, private media and galleries, menus, and
+  moderated comments across DashCode, Tabler, and Vuexy.
+- Add the additive `starter:cms` activation workflow for existing local hosts,
+  including dry-run collision checks, host-owned App registry/routes/migrations,
+  rollback-safe publication, and production deployment support.
+- Add a documented public reader contract, safe rich-content rendering, private
+  media delivery, local Quill and SortableJS runtimes, and CMS browser/feature
+  coverage.
+
+### Changed
+
+- Extend the install wizard with an explicit CMS opt-in while preserving the
+  requested first dashboard App and the existing root landing page.
+- Include CMS-owned source, tables, uploads, and registry state in guarded
+  synchronization, deployment, snapshots, and destructive local reset scope.
+
+### Security
+
+- Sanitize rich HTML with `symfony/html-sanitizer`, restrict media to validated
+  image/PDF uploads and non-sequential delivery identifiers, and enforce the
+  existing module authorization, actor ownership, and audit contracts on CMS
+  reads and mutations.
+
+### Upgrade notes
+
+- This release adds the `symfony/html-sanitizer` runtime dependency but no new
+  environment variables. Existing hosts remain unchanged until CMS is activated
+  locally with `php artisan starter:cms`; production then receives the reviewed
+  host source and runs `php artisan starter:deploy`.
+
 ## [1.11.3] - 2026-10-26
 
 ### Fixed

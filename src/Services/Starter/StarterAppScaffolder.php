@@ -17,8 +17,8 @@ class StarterAppScaffolder
      */
     public function create(string $subdomain, string $name, ?string $description = null, string $icon = 'apps'): array
     {
-        if ($subdomain === 'api') {
-            throw new RuntimeException('Subdomain [api] is reserved for the shared API gateway.');
+        if (in_array($subdomain, ['api', 'cms'], true)) {
+            throw new RuntimeException('Subdomain [api/cms] is reserved for the API gateway and optional CMS.');
         }
 
         $className = Str::studly($subdomain);

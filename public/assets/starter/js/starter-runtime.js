@@ -308,13 +308,23 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
     showNavigateLoader() {
         this.navigating = true;
         clearTimeout(this.navigateLoaderTimer);
-        this.positionNavigateLoader();
-        document.querySelector('.starter-navigate-loader')?.setAttribute('aria-hidden', 'false');
-        document.body?.classList.add('starter-is-navigating');
+        clearTimeout(this.navigateLoaderShowTimer);
+        const reveal = () => {
+            if (! this.navigating) return;
+            this.positionNavigateLoader();
+            document.querySelector('.starter-navigate-loader')?.setAttribute('aria-hidden', 'false');
+            document.body?.classList.add('starter-is-navigating');
+        };
+        if (document.querySelector('[data-cms-content-page]')) {
+            this.navigateLoaderShowTimer = setTimeout(reveal, 180);
+        } else {
+            reveal();
+        }
     },
     hideNavigateLoader() {
         this.navigating = false;
         clearTimeout(this.navigateLoaderTimer);
+        clearTimeout(this.navigateLoaderShowTimer);
         this.navigateLoaderTimer = setTimeout(() => {
             if (! this.navigating) {
                 document.querySelector('.starter-navigate-loader')?.setAttribute('aria-hidden', 'true');
@@ -1268,7 +1278,7 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
 
         this.activeLivewireRequests ||= new Set();
 
-        window.Livewire.interceptRequest(({ request, onSend, onError, onRedirect, onFinish }) => {
+        window.Livewire.interceptRequest(({ request, onSend, onSuccess, onError, onRedirect, onFinish }) => {
             const messages = Array.from(request?.messages || []);
             const passive = messages.length > 0 && messages.every((message) => this.isPassiveLivewireMessage(message));
             const actionMessages = messages.filter((message) => (
@@ -1282,6 +1292,7 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             const dialogs = [...new Set(messages.map((message) => this.dialogForLivewireMessage(message)).filter(Boolean))];
             let started = false;
             let dialogsStarted = false;
+            let authRedirectPending = false;
 
             request.options.headers['X-Starter-Page-Url'] = window.location.href;
 
@@ -1306,6 +1317,14 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
 
                 started = true;
                 this.showLivewireLoader(components);
+            });
+
+            onSuccess(({ json }) => {
+                // Livewire can finish the request before it processes the redirect effect.
+                authRedirectPending = started
+                    && document.body?.hasAttribute('data-starter-auth-shell')
+                    && Array.isArray(json?.components)
+                    && json.components.some((component) => Boolean(component?.effects?.redirect));
             });
 
             onError(({ response, body, preventDefault }) => {
@@ -1335,7 +1354,7 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
                 this.activeLivewireRequests.delete(request);
                 if (dialogsStarted) dialogs.forEach((dialog) => this.setDialogBusy(dialog, false));
 
-                if (started) {
+                if (started && ! authRedirectPending) {
                     this.hideLivewireLoader();
                 }
             });

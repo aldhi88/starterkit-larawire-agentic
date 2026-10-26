@@ -10,6 +10,7 @@ This repository is the Composer package source, not a runnable business applicat
 - Use the versions locked by the host dependencies. Inspect the active source before assuming a brand, framework/package API, theme, or icon set.
 - Access is module-based: a role can own many modules; routes and menus follow modules. Superuser is a hidden system account and non-superusers cannot view, modify, or delete it.
 - App/module/route/menu metadata is code-first and synchronized to the database. UI is Indonesian except familiar terms such as username, password, email, role, and module.
+- CMS is an optional starter capability. Installation always creates the requested dashboard App and root landing; opting into CMS adds the separate `cms` App. Read `docs/rules/cms.md` for CMS ownership, content mapping, lifecycle, and installation behavior.
 - Do not enable config cache in development; use it only for production deployment.
 - The core repository may contain only package source, small deterministic package-maintenance tools, core migrations/routes/views/assets, installer templates, package tests, and documentation/rules; never add a Laravel shell, sample business app, development database, or host feature issue.
 
@@ -84,6 +85,8 @@ Read [project context](docs/rules/project-context.md) once when unfamiliar with 
 | Task | Read |
 |---|---|
 | App feature | `feature-development.md` |
+| Optional CMS, content/media/menu integration | `cms.md`, `architecture.md`, `audit-logging.md` |
+| Optional CMS, content mapping, CMS installer | `cms.md`, `architecture.md`, `access-control.md`, `audit-logging.md` |
 | New App/subdomain | `app-subdomain.md` |
 | Route/menu/module/role | `access-control.md` |
 | Model/mutation/transaction | `audit-logging.md` |

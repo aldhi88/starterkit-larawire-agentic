@@ -36,12 +36,16 @@
         'home',
         'file-plus',
         'player-play',
+        'file-text',
         'info-circle',
         'layout-dashboard',
+        'layout-cards',
         'key',
         'lock',
         'logout',
         'menu-2',
+        'messages',
+        'photo',
         'clipboard-text',
         'report-analytics',
         'refresh',
@@ -70,6 +74,24 @@
     @switch($icon)
         @case('player-play')
             <path d="M7 4v16l13-8z" />
+            @break
+
+        @case('file-text')
+            <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+            <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2M9 9h1m-1 4h6m-6 4h6" />
+            @break
+
+        @case('layout-cards')
+            <path d="M4 6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm10 0a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z" />
+            @break
+
+        @case('messages')
+            <path d="m21 14l-3-3h-7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1zm-7 1v2a1 1 0 0 1-1 1H6l-3 3V11a1 1 0 0 1 1-1h2" />
+            @break
+
+        @case('photo')
+            <path d="M15 8h.01M3 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z" />
+            <path d="m3 16l5-5c.928-.893 2.072-.893 3 0l5 5m-2-2l1-1c.928-.893 2.072-.893 3 0l3 3" />
             @break
 
         @case('apps')

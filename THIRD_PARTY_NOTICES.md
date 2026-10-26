@@ -4,6 +4,21 @@ Starterkit Larawire Agentic depends on open-source Composer packages whose
 licenses are installed with those packages under `vendor/` and declared by
 their package metadata.
 
+## CMS editing libraries
+
+The optional CMS editor uses [Quill 2.0.3](https://github.com/slab/quill/tree/v2.0.3),
+copyright Slab and the contributors named in its BSD 3-Clause license. Its
+runtime and full license are included in `public/assets/starter/vendor/quill/`.
+Menu ordering uses [SortableJS 1.15.7](https://github.com/SortableJS/Sortable/tree/1.15.7),
+copyright its contributors, under the MIT License retained in
+`public/assets/starter/vendor/sortable/LICENSE`.
+Pinned source URLs and SHA-256 checksums are recorded in `docs/cms-dependencies.json`.
+These libraries are served locally; neither requires a cloud service or API key.
+
+Server-side rich-content cleaning uses Symfony HTML Sanitizer under its MIT
+License and its Composer-managed dependencies. Their license texts are retained
+in `vendor/` by Composer.
+
 Authenticator enrollment QR codes use
 [BaconQrCode](https://github.com/Bacon/BaconQrCode), licensed under the
 BSD 2-Clause License, together with its transitive

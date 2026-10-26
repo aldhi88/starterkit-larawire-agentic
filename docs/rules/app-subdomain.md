@@ -9,7 +9,8 @@
 php artisan starter:app
 ```
 
-- The wizard asks for the App name and a short subdomain, then displays the computed URL. A subdomain contains lowercase letters, digits, and internal hyphens only; `api` is reserved. The generator creates App config/web/API routes, dashboard Livewire/view, and route test, then runs `starter:sync`. If sync fails, every newly generated file is rolled back.
+- The wizard asks for the App name and a short subdomain, then displays the computed URL. A subdomain contains lowercase letters, digits, and internal hyphens only; `api` is reserved for the API gateway and `cms` for the optional CMS. The generator creates App config/web/API routes, dashboard Livewire/view, and route test, then runs `starter:sync`. If sync fails, every newly generated file is rolled back.
+- Installation separately offers CMS after the required first App. Selecting it adds `cms` as a second App and preserves the first App and root landing; declining it creates no CMS source/migration/table. See `cms.md` for the activation and content contracts.
 - Complete config modules/menus and routes named `<subdomain>.<module>.<action>`, dry-run then force sync, assign modules to roles, configure DNS/vhost to `public`, confirm session cookie scope, and test generator, route, authorization, and browser behavior.
 
 ## App migration and navigation

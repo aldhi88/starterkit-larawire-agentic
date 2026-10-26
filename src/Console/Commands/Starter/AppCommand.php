@@ -108,6 +108,8 @@ class AppCommand extends Command
 
             if ($value === 'api') {
                 $this->components->error('Subdomain [api] digunakan oleh API gateway.');
+            } elseif ($value === 'cms') {
+                $this->components->error('Subdomain [cms] disediakan untuk CMS. Gunakan starter:cms untuk menambahkannya.');
             } elseif (preg_match('/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/', $value) === 1) {
                 return $value;
             } else {
