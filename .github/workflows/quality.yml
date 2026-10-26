@@ -71,7 +71,7 @@ jobs:
         run: |
           php -r '$path = ".env"; $env = file_get_contents($path); $env = preg_replace("/^APP_URL=.*$/m", "APP_URL=http://company.test:8123", $env); file_put_contents($path, $env);'
           php -r 'file_put_contents("database/database.sqlite", "");'
-      - run: php tests/Integration/install-fresh-host.php "$GITHUB_WORKSPACE/host"
+      - run: php tests/Integration/install-fresh-host.php "$GITHUB_WORKSPACE/host" --cms
       - name: Verify project-owned view overrides
         working-directory: host
         run: |
@@ -99,8 +99,9 @@ jobs:
       - name: Verify destructive reset wizard
         working-directory: host
         run: |
-          printf 'yes\nRESET\nyes\n0\n0\nStarterkit Reset\nreset@example.test\nreset-password\nreset-password\nOperations\nops\nyes\n' | php artisan starter:reset
+          printf 'yes\nRESET\nyes\n0\n0\nStarterkit Reset\nreset@example.test\nreset-password\nreset-password\nOperations\nops\nno\nyes\n' | php artisan starter:reset
           test -f config/apps/ops.php
+          test ! -e config/apps/cms.php
           test ! -e config/apps/hr.php
           test ! -e config/apps/finance.php
           php artisan test --compact
