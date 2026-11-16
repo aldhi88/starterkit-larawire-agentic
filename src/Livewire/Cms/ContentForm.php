@@ -5,6 +5,7 @@ namespace Aldhi88\StarterKit\Livewire\Cms;
 use Aldhi88\StarterKit\Services\Cms\CmsManager;
 use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
 use Aldhi88\StarterKit\Support\Cms\CmsCategoryTree;
+use Aldhi88\StarterKit\Support\Cms\CmsPermalink;
 use Aldhi88\StarterKit\Support\Cms\CmsResource;
 use Aldhi88\StarterKit\Support\Cms\CmsTime;
 use Aldhi88\StarterKit\Support\Starter\StarterTheme;
@@ -32,6 +33,18 @@ class ContentForm extends Component
 
     /** @var array<string, mixed> */
     public array $form = [];
+
+    #[Locked]
+    public ?string $savedPermalink = null;
+
+    #[Locked]
+    public string $moderatorName = '';
+
+    #[Locked]
+    public ?string $commentReplyKey = null;
+
+    #[Locked]
+    public ?string $originalCommentStatus = null;
 
     public string $publishedAtDisplay = '';
 
@@ -76,11 +89,28 @@ class ContentForm extends Component
         $this->contentId = $contentId;
         $editor = $this->manager->editor($this->authenticatedLogins->current(), CmsResource::from($resource), $contentId);
         $this->form = $editor['data'];
+        if ($resource === 'comments') {
+            $this->moderatorName = $this->authenticatedLogins->current()->name;
+            $this->commentReplyKey = (string) Str::uuid();
+            $this->originalCommentStatus = $this->form['status'];
+            $this->form['reply_body'] = '';
+        }
+        if ($contentId === null && $resource === 'cards') {
+            $this->form['card_data']['items'][] = ['key' => $this->getId().'-first', 'title' => ''];
+        }
+        if ($contentId === null && $resource === 'menus') {
+            $this->form['items'][] = $this->emptyMenuItem($this->getId().'-first');
+        }
+        $this->savedPermalink = $contentId && in_array($resource, ['posts', 'pages'], true)
+            ? CmsPermalink::for(CmsResource::from($resource)->kind(), (string) ($this->form['slug'] ?? '')) : null;
         if ($resource === 'posts' && StarterTheme::key() === 'tabler') {
             $this->form['category_ids'] = CmsCategoryTree::forSelection($this->form['category_ids'] ?? [], $editor['categories']);
             $this->publishedAtDisplay = CmsTime::forMaskedInput($this->form['published_at'] ?? null);
         } else {
             unset($this->form['category_ids']);
+        }
+        if ($resource === 'pages' && StarterTheme::key() === 'tabler') {
+            $this->publishedAtDisplay = CmsTime::forMaskedInput($this->form['published_at'] ?? null);
         }
         $this->mediaChoices = $editor['media'];
         $this->referenceChoices = [
@@ -96,9 +126,13 @@ class ContentForm extends Component
         $resource = CmsResource::from($this->resource);
 
         try {
-            $form = $this->form;
-            if ($resource === CmsResource::Posts) {
-                $form['published_at'] = StarterTheme::key() === 'tabler'
+            $form = $this->submissionForm();
+            if ($resource === CmsResource::Comments) {
+                $form['reply_key'] = $this->commentReplyKey;
+                $form['original_status'] = $this->originalCommentStatus;
+            }
+            if (in_array($resource, [CmsResource::Posts, CmsResource::Pages, CmsResource::Cards], true)) {
+                $form['published_at'] = StarterTheme::key() === 'tabler' && $resource !== CmsResource::Cards
                     ? CmsTime::fromMaskedInput($this->publishedAtDisplay)
                     : CmsTime::fromInput($form['published_at'] ?? null);
             }
@@ -120,7 +154,45 @@ class ContentForm extends Component
 
         session()->flash('starter-toast', ['type' => 'success', 'message' => $resource->singular().' berhasil disimpan.']);
 
-        return $this->redirectRoute($resource->routePrefix().'.index', navigate: true);
+        return $this->redirectRoute($resource->managementIndexRoute(), navigate: true);
+    }
+
+    /** @return array<string, mixed> */
+    private function submissionForm(): array
+    {
+        $form = $this->form;
+        if (! in_array($this->resource, ['cards', 'menus'], true)) {
+            return $form;
+        }
+        $menu = $this->resource === 'menus';
+        $path = $menu ? 'items' : 'card_data.items';
+        $items = data_get($form, $path);
+        if (! is_array($items) || ! array_is_list($items)) {
+            return $form;
+        }
+
+        $parents = $menu ? array_column($items, 'parent_key') : [];
+        foreach ($items as $index => $item) {
+            $key = $item['key'] ?? null;
+            if (! is_string($key) || ! str_starts_with($key, $this->getId().'-') || in_array($key, $parents, true)) {
+                continue;
+            }
+            unset($item['key']);
+            if ($menu && ($item['target_type'] ?? null) === 'custom') {
+                unset($item['target_type']);
+            }
+            if (collect($item)->every(fn ($value): bool => $value === null || (is_string($value) && trim($value) === ''))) {
+                unset($items[$index]);
+            }
+        }
+        $items = array_values($items);
+        data_set($form, $path, $items);
+        // Keep row-level validation errors attached to the same visible entries.
+        if ($items !== []) {
+            data_set($this->form, $path, $items);
+        }
+
+        return $form;
     }
 
     public function createPostCategory(): void
@@ -151,6 +223,24 @@ class ContentForm extends Component
         $this->form['category_ids'] = CmsCategoryTree::forSelection($this->form['category_ids'], $this->referenceChoices['categories']);
         $this->newCategoryName = '';
         $this->newCategoryParentId = '';
+        $this->dispatch('starter-toast', type: 'success', message: 'Kategori dibuat dan dipilih.');
+    }
+
+    public function createPageCategory(): void
+    {
+        abort_unless($this->resource === 'pages', 422);
+        $this->resetErrorBag('newCategoryName');
+        try {
+            $category = $this->manager->saveCategoryName($this->authenticatedLogins->current(), CmsResource::PageCategories, $this->newCategoryName);
+        } catch (ValidationException $exception) {
+            $this->addError('newCategoryName', $exception->validator->errors()->first());
+
+            return;
+        }
+        $this->referenceChoices['categories'][] = ['id' => $category->getKey(), 'name' => $category->getAttribute('name')];
+        $this->form['category_id'] = (int) $category->getKey();
+        $this->newCategoryName = '';
+        $this->resetErrorBag('form.category_id');
         $this->dispatch('starter-toast', type: 'success', message: 'Kategori dibuat dan dipilih.');
     }
 
@@ -232,14 +322,28 @@ class ContentForm extends Component
         }
     }
 
+    #[Renderless]
+    public function searchMenuTargets(string $type, string $search = ''): array
+    {
+        abort_unless($this->resource === 'menus', 422);
+
+        return $this->manager->menuTargetOptions($this->authenticatedLogins->current(), $type, $search);
+    }
+
     public function addMenuItem(): void
     {
         $this->manager->authorize($this->authenticatedLogins->current(), CmsResource::from($this->resource));
         abort_unless($this->resource === 'menus', 422);
 
         if (count($this->form['items'] ?? []) < 100) {
-            $this->form['items'][] = ['key' => (string) Str::uuid(), 'label' => '', 'url' => '', 'parent_key' => ''];
+            $this->form['items'][] = $this->emptyMenuItem((string) Str::uuid());
         }
+    }
+
+    /** @return array<string, string> */
+    private function emptyMenuItem(string $key): array
+    {
+        return ['key' => $key, 'label' => '', 'url' => '', 'parent_key' => '', 'target_type' => 'custom'];
     }
 
     public function removeMenuItem(int $index): void
@@ -424,8 +528,9 @@ class ContentForm extends Component
             'cmsResource' => $resource,
             'options' => $options,
             'isCreating' => $this->contentId === null,
+            'savedPermalink' => $this->savedPermalink,
             'menuTree' => $resource === CmsResource::Menus ? $this->menuTree() : [],
             'postCategoryTree' => $resource === CmsResource::Posts && StarterTheme::key() === 'tabler' ? CmsCategoryTree::flatten($options['categories']) : [],
-        ])->title(($this->contentId === null ? 'Tambah ' : 'Edit ').$resource->singular());
+        ])->title($resource === CmsResource::Comments ? 'Moderasi Komentar' : ($this->contentId === null ? 'Tambah ' : 'Edit ').$resource->singular());
     }
 }

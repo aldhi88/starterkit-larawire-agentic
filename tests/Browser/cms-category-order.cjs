@@ -10,7 +10,7 @@ async function check(browser, width) {
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     try {
-        await page.setContent(`<style>body{margin:12px;font:14px sans-serif}table{border-collapse:collapse;width:100%;table-layout:fixed}td{padding:10px;border:1px solid #ddd}td:first-child{width:24px}button{min-height:28px}.d-flex{display:flex}.gap-2{gap:8px}.cms-category-name{min-width:0}</style><div id="fixture" wire:id="category"><div data-cms-category-feedback role="status"></div><table><tbody></tbody></table></div>`);
+        await page.setContent(`<style>body{margin:12px;font:14px sans-serif}table{border-collapse:collapse;width:100%;table-layout:fixed}td{padding:10px;border:1px solid #ddd}td:first-child{width:24px}button{min-height:28px}.d-flex{display:flex}.gap-2{gap:8px}.cms-category-name{min-width:0}</style><div id="fixture" wire:id="category"><div data-cms-category-feedback role="status"></div><div data-cms-category-root-drop style="padding:20px">Kategori utama</div><table><tbody></tbody></table></div>`);
         await page.evaluate(() => {
             window.calls = []; window.outcome = 'success'; window.revision = 1;
             window.records = [
@@ -33,8 +33,15 @@ async function check(browser, width) {
                     let end = start + 1;
                     while (end < rows.length && rows[end].depth > rows[start].depth) end++;
                     const subtree = rows.splice(start, end - start);
+                    const destination = rows.find(row => row.id === targetId);
                     let target = rows.findIndex(row => row.id === targetId);
-                    if (placement === 'after') {
+                    const parent = placement === 'root' ? 0 : placement === 'inside' ? targetId : destination.parent;
+                    const depth = placement === 'root' ? 0 : placement === 'inside' ? destination.depth + 1 : destination.depth;
+                    const delta = depth - subtree[0].depth;
+                    subtree[0].parent = parent;
+                    subtree.forEach(row => row.depth += delta);
+                    if (placement === 'root') target = rows.length;
+                    else if (placement === 'after' || placement === 'inside') {
                         const depth = rows[target].depth;
                         target++;
                         while (target < rows.length && rows[target].depth > depth) target++;
@@ -49,12 +56,12 @@ async function check(browser, width) {
         await page.addScriptTag({ path: asset('vendor/sortable/Sortable.min.js') });
         await page.addScriptTag({ path: asset('js/cms-workspace.js') });
         const ids = () => page.locator('[data-cms-category-row]').evaluateAll(items => items.map(item => Number(item.dataset.id)));
-        const drag = async (source, target) => {
+        const drag = async (source, target, placement = "before") => {
             const handle = await page.getByRole('button', { name: `Geser ${source}`, exact: true }).boundingBox();
-            const destination = await page.getByRole('button', { name: `Geser ${target}`, exact: true }).boundingBox();
+            const destination = await (placement === 'root' ? page.locator('[data-cms-category-root-drop]') : page.locator('tr').filter({ has: page.getByRole('button', { name: `Geser ${target}`, exact: true }) })).boundingBox();
             await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
             await page.mouse.down();
-            await page.mouse.move(destination.x + destination.width / 2, destination.y + 2, { steps: 25 });
+            await page.mouse.move(destination.x + destination.width / 2, destination.y + (placement === 'before' ? 2 : destination.height / 2), { steps: 25 });
             await page.mouse.up();
         };
         await page.waitForSelector('[data-cms-draggable-row]');
@@ -83,19 +90,24 @@ async function check(browser, width) {
         await page.keyboard.press('Alt+ArrowDown');
         await page.waitForFunction(() => window.calls.length === 5 && ! document.querySelector('[data-cms-category-saving]'));
         assert.deepEqual(await ids(), [1, 3, 2, 4]);
-        // Cross-parent drops cannot silently reparent a child.
-        await drag('Teknologi', 'Artikel');
-        assert.equal(await page.evaluate(() => window.calls.length), 5);
-        assert.deepEqual(await ids(), [1, 3, 2, 4]);
+        // Reparent into a child, then promote the entire branch back to root.
+        await page.evaluate(() => { window.outcome = 'success'; });
+        await drag('Berita', 'Teknologi', 'inside');
+        await page.waitForFunction(() => window.calls.length === 6 && !document.querySelector('[data-cms-category-saving]'));
+        assert.deepEqual(await page.evaluate(() => window.calls[5]), { id: 4, targetId: 3, placement: 'inside', version: 'v4' });
+        assert.equal(await page.locator('[data-id="4"]').getAttribute('data-parent'), '3');
+        await drag('Berita', '', 'root');
+        await page.waitForFunction(() => window.calls.length === 7 && !document.querySelector('[data-cms-category-saving]'));
+        assert.equal(await page.locator('[data-id="4"]').getAttribute('data-parent'), '0');
         assert.equal(await page.locator('#filters').count(), 1);
         assert.equal(await page.locator('tr[hidden]').count(), 0);
         await page.evaluate(() => { document.dispatchEvent(new Event('livewire:navigating')); window.outcome = 'success'; StarterCms.init(); });
         await page.getByRole('button', { name: 'Geser Artikel', exact: true }).focus();
         await page.keyboard.press('Alt+ArrowDown');
-        await page.waitForFunction(() => window.calls.length === 6 && ! document.querySelector('[data-cms-category-saving]'));
+        await page.waitForFunction(() => window.calls.length === 8 && ! document.querySelector('[data-cms-category-saving]'));
         assert.deepEqual(await ids(), [4, 1, 3, 2]);
         assert.deepEqual(errors, []);
-        console.log(`PASS direct category rows ${width}px: drag/autosave, keyboard, hierarchy, rerender, retry, cross-parent guard, cleanup`);
+        console.log(`PASS direct category rows ${width}px: drag/autosave, keyboard, hierarchy, rerender, retry, nested reparenting and root promotion, cleanup`);
     } finally { await page.close(); }
 }
 (async () => {

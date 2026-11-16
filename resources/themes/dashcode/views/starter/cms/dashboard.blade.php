@@ -1,20 +1,21 @@
 @php
     $shortcuts = [
-        'posts' => ['label' => 'Postingan', 'description' => 'Berita, artikel, dan publikasi terjadwal.', 'icon' => 'file-text'],
-        'pages' => ['label' => 'Halaman', 'description' => 'Konten tetap untuk kebutuhan website.', 'icon' => 'file-text'],
-        'cards' => ['label' => 'Card', 'description' => 'Slide, layanan, sambutan, dan logo klien.', 'icon' => 'layout-cards'],
-        'media' => ['label' => 'Pustaka Media', 'description' => 'Gambar dan dokumen yang dapat dipakai ulang.', 'icon' => 'photo'],
-        'galleries' => ['label' => 'Galeri', 'description' => 'Kumpulan foto dan urutan penampilannya.', 'icon' => 'photo'],
-        'menus' => ['label' => 'Menu', 'description' => 'Kelompok tautan dan susunan dropdown.', 'icon' => 'menu-2'],
-        'comments' => ['label' => 'Komentar', 'description' => 'Tinjau dan moderasi komentar postingan.', 'icon' => 'messages'],
+        'posts' => ['label' => 'Konten', 'description' => 'Berita, artikel, dan publikasi terjadwal.'],
+        'pages' => ['label' => 'Halaman', 'description' => 'Konten tetap untuk kebutuhan website.'],
+        'cards' => ['label' => 'Card', 'description' => 'Slide, layanan, sambutan, dan logo klien.'],
+        'media' => ['label' => 'Pustaka Media', 'description' => 'Gambar dan dokumen yang dapat dipakai ulang.'],
+        'galleries' => ['label' => 'Album Foto', 'description' => 'Kumpulan foto dan urutan penampilannya.'],
+        'menus' => ['label' => 'Menu', 'description' => 'Kelompok tautan dan susunan dropdown.'],
+        'comments' => ['label' => 'Komentar', 'description' => 'Tinjau dan moderasi komentar konten.'],
     ];
 @endphp
-<div>
+<div data-cms-workspace>
+    @include('starter-shared::cms.assets')
     <div class="page-header mb-5" data-starter-region="page-header">
         <div class="dashcode-page-heading w-full">
-            <div class="min-w-0"><h2 class="page-title">Beranda</h2><div class="text-secondary mt-1">Kelola konten website dari satu tempat.</div></div>
+            <div class="min-w-0"><h2 class="page-title">Beranda</h2><div class="text-secondary mt-1">Pilih modul untuk mengelola isi website.</div></div>
             @if (\Illuminate\Support\Facades\Route::has('starter.cms.documentation'))
-                <div class="shrink-0"><a href="{{ route('starter.cms.documentation') }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Panduan Penggunaan CMS</a></div>
+                <div class="shrink-0 cms-header-actions"><a href="{{ route('starter.cms.documentation') }}" target="_blank" rel="noopener noreferrer" class="btn cms-btn-neutral">@include('starter.cms.action-icon', ['action' => 'guide']) Panduan Penggunaan CMS</a></div>
             @endif
         </div>
     </div>
@@ -23,13 +24,17 @@
             @if (array_key_exists($key, $summary))
                 @php($itemResource = \Aldhi88\StarterKit\Support\Cms\CmsResource::from($key))
                 <div class="min-w-0">
-                    <div class="card h-full">
-                        <div class="card-body p-6">
-                            <div class="flex items-center justify-between gap-3 mb-4"><span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-primary-500">@include('starter.templates.layouts.icon', ['name' => $shortcut['icon'], 'class' => 'icon'])</span><span class="text-3xl font-semibold text-slate-900">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($summary[$key]) }}</span></div>
-                            <h3 class="card-title">{{ $shortcut['label'] }}</h3><p class="text-secondary mb-0">{{ $shortcut['description'] }}</p>
+                    <a class="card cms-dashboard-link" href="{{ route($itemResource->managementIndexRoute()) }}" data-starter-navigate>
+                        <div class="card-body p-5 cms-dashboard-tile">
+                            @include('starter-shared::cms.module-icon', ['module' => $key])
+                            <div class="cms-dashboard-details">
+                                <h3 class="card-title">{{ $shortcut['label'] }}</h3>
+                                <p class="text-secondary">{{ $shortcut['description'] }}</p>
+                            </div>
+                            <strong class="cms-dashboard-count">{{ \Aldhi88\StarterKit\Support\Starter\StarterNumber::decimal($summary[$key]) }}</strong>
+                            <span class="cms-dashboard-arrow" aria-hidden="true">@include('starter.templates.layouts.icon', ['name' => 'chevron-right', 'class' => 'icon'])</span>
                         </div>
-                        <div class="card-footer p-4 border-t border-slate-200"><a href="{{ route($itemResource->routePrefix().'.index') }}" class="text-primary-500 font-medium" data-starter-navigate>Kelola {{ $shortcut['label'] }} →</a></div>
-                    </div>
+                    </a>
                 </div>
             @endif
         @endforeach

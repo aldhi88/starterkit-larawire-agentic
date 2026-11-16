@@ -1,7 +1,7 @@
 @if ($detailId !== null)
-    <div class="modal modal-blur fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="cms-media-detail-title" wire:click.self="closeDetails" x-data @keydown.escape.window="$wire.closeDetails()">
+    <div class="modal modal-blur fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="cms-media-detail-title" wire:click.self="closeDetails" x-data x-trap.noscroll="true" @keydown.escape.window="$wire.closeDetails()">
         <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
-            <form class="modal-content" wire:submit="saveDetails">
+            <form novalidate class="modal-content" wire:submit="saveDetails">
                 <div class="modal-header"><h3 id="cms-media-detail-title" class="modal-title">Detail Media</h3><button type="button" class="btn-close" wire:click="closeDetails" aria-label="Tutup detail media"></button></div>
                 <div class="modal-body">
                     <div class="cms-media-detail-layout">
@@ -19,7 +19,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" wire:click="prepareAction('archive',false,{{ $detailId }})">Arsipkan Media</button><button type="button" class="btn btn-outline-secondary" wire:click="closeDetails">Batal</button><button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="replacement,saveDetails">Simpan Perubahan</button></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-warning me-auto" wire:click="prepareAction('archive',false,{{ $detailId }})">
+                        @include('starter.cms.action-icon', ['action' => 'archive']) Arsipkan Media
+                    </button>
+                    <button type="button" class="btn cms-btn-neutral" wire:click="closeDetails">Batal</button>
+                    <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="replacement,saveDetails">
+                        @include('starter.cms.action-icon', ['action' => 'save']) Simpan Perubahan
+                    </button>
+                </div>
             </form>
         </div>
     </div>

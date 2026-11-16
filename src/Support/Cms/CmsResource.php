@@ -37,10 +37,28 @@ enum CmsResource: string
         };
     }
 
+    public function managementIndexRoute(): string
+    {
+        return $this === self::Galleries ? 'cms.media.albums.index' : $this->routePrefix().'.index';
+    }
+
+    public function indexDescription(): string
+    {
+        return match ($this) {
+            self::Posts => 'Tulis artikel, jadwalkan publikasi, dan kelola arsip konten.',
+            self::Pages => 'Kelola halaman tetap seperti profil, visi, dan misi.',
+            self::Cards => 'Susun slide, layanan, profil tim, dan bagian website lainnya.',
+            self::Galleries => 'Kelompokkan foto dalam album dan atur urutan tampilnya.',
+            self::Menus => 'Susun tautan dan submenu untuk navigasi website.',
+            self::Comments => 'Tinjau, balas, dan atur visibilitas komentar pembaca.',
+            default => $this->label(),
+        };
+    }
+
     public function label(): string
     {
         return match ($this) {
-            self::Posts => 'Postingan', self::PostCategories => 'Kategori Post',
+            self::Posts => 'Konten', self::PostCategories => 'Kategori Konten',
             self::Pages => 'Halaman', self::PageCategories => 'Kategori Halaman',
             self::Cards => 'Card', self::CardCategories => 'Kategori Card',
             self::Media => 'Pustaka Media', self::Galleries => 'Galeri',
@@ -51,7 +69,7 @@ enum CmsResource: string
 
     public function singular(): string
     {
-        return $this->label();
+        return $this === self::Galleries ? 'Album' : $this->label();
     }
 
     public function isContent(): bool
@@ -87,7 +105,7 @@ enum CmsResource: string
     {
         return match ($this) {
             self::Posts, self::Pages, self::Cards, self::Galleries => ['draft' => 'Draf', 'published' => 'Terbit'],
-            self::Comments => ['pending' => 'Menunggu', 'approved' => 'Disetujui', 'rejected' => 'Ditolak'],
+            self::Comments => ['pending' => 'Menunggu', 'approved' => 'Terbit', 'hidden' => 'Disembunyikan', 'rejected' => 'Diblokir'],
             default => ['active' => 'Aktif', 'inactive' => 'Nonaktif'],
         };
     }

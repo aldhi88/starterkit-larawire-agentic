@@ -6,6 +6,7 @@ use Aldhi88\StarterKit\Support\Cms\CmsAppDefinition;
 use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Schema;
 use RuntimeException;
 use Throwable;
 
@@ -21,6 +22,10 @@ class StarterCmsInstaller
     /** @return array<string, string> */
     public function plan(): array
     {
+        if (is_file(base_path('routes/apps/cms.api.php')) && ! is_file(config_path('apps/cms.php'))) {
+            throw new RuntimeException('Target CMS sudah digunakan oleh source lain: routes/apps/cms.api.php');
+        }
+
         $files = [
             config_path('apps/cms.php') => "<?php\n\n// Optional CMS managed by Starterkit Larawire.\nreturn ".var_export(CmsAppDefinition::configuration(), true).";\n",
             base_path('routes/apps/cms.php') => <<<'PHP'
@@ -31,14 +36,8 @@ require \Aldhi88\StarterKit\Support\Starter\StarterPaths::path('routes/cms.php')
 PHP.PHP_EOL,
         ];
 
-        $migrations = $this->files->glob(StarterPaths::path('installer/templates/cms/*.php'));
-
-        if ($migrations === []) {
-            throw new RuntimeException('Template migration CMS tidak tersedia.');
-        }
-
-        foreach ($migrations as $migration) {
-            $files[database_path('migrations/apps/cms/'.basename($migration))] = $this->files->get($migration);
+        foreach ($this->migrations() as $target => $source) {
+            $files[$target] = $this->files->get($source);
         }
 
         foreach (array_keys($files) as $path) {
@@ -59,6 +58,42 @@ PHP.PHP_EOL,
         }
 
         return $files;
+    }
+
+    public function checkExistingTables(): void
+    {
+        // MySQL commits DDL individually. Detect occupied names before running the first CREATE.
+        $creates = [
+            '2026_10_25_000000_create_cms_tables' => [
+                'cms_categories', 'cms_media', 'cms_contents', 'cms_galleries',
+                'cms_gallery_media', 'cms_menu_categories', 'cms_menus', 'cms_comments',
+            ],
+            '2026_10_25_000001_add_cms_rich_content' => ['cms_content_media'],
+            '2026_10_25_000002_add_post_category_hierarchy' => ['cms_content_categories'],
+        ];
+        $ran = $this->migrator->repositoryExists() ? $this->migrator->getRepository()->getRan() : [];
+        foreach (array_diff_key($creates, array_flip($ran)) as $migration => $tables) {
+            foreach ($tables as $table) {
+                if (Schema::hasTable($table)) {
+                    throw new RuntimeException("Tabel [{$table}] sudah ada, tetapi migration [{$migration}] belum tercatat. Periksa tabel tersebut sebelum mengaktifkan CMS.");
+                }
+            }
+        }
+    }
+
+    /** @return array<string, string> Host migration paths mapped to their package templates. */
+    public function migrations(): array
+    {
+        $migrations = [];
+        foreach ($this->files->glob(StarterPaths::path('installer/templates/cms/*.php')) as $source) {
+            $migrations[database_path('migrations/apps/cms/'.basename($source))] = $source;
+        }
+
+        if ($migrations === []) {
+            throw new RuntimeException('Template migration CMS tidak tersedia.');
+        }
+
+        return $migrations;
     }
 
     /** @return list<string> */

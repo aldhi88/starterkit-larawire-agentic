@@ -51,6 +51,21 @@ class CmsRepository implements CmsRepositoryInterface
     public function categoryTable(string $kind, string $archive): Builder
     {
         $query = $this->archiveScope(Category::query()->where('kind', $kind)->select('cms_categories.*', 'name as title', 'code as slug', 'position as sort_order'), $archive);
+        if (in_array($kind, ['post', 'page'], true)) {
+            // Count each assigned entry once, including drafts, excluding the trash.
+            $usage = Content::query()->selectRaw('COUNT(*)')->where('cms_contents.kind', $kind)
+                ->where(function (Builder $contents) use ($kind): void {
+                    $contents->whereColumn('cms_contents.category_id', 'cms_categories.id');
+                    if ($kind === 'post') {
+                        $contents->orWhereExists(function ($assignments): void {
+                            $assignments->selectRaw('1')->from('cms_content_categories')
+                                ->whereColumn('cms_content_categories.content_id', 'cms_contents.id')
+                                ->whereColumn('cms_content_categories.category_id', 'cms_categories.id');
+                        });
+                    }
+                });
+            $query->addSelect(['usage_count' => $usage]);
+        }
         if ($kind !== 'post') {
             return $query;
         }
@@ -290,6 +305,8 @@ class CmsRepository implements CmsRepositoryInterface
         } else {
             if ($record instanceof Content) {
                 Comment::withTrashed()->where('content_id', $record->getKey())->forceDelete();
+            } elseif ($record instanceof Comment && ! $record->getAttribute('parent_id')) {
+                $record->replies()->withTrashed()->forceDelete();
             }
             $record->forceDelete();
         }
@@ -316,6 +333,9 @@ class CmsRepository implements CmsRepositoryInterface
 
     public function relationCounts(Content|Category|Media|Gallery|Menu|MenuCategory|Comment $record): array
     {
+        if ($record instanceof Comment && ! $record->getAttribute('parent_id')) {
+            return ['replies' => $record->replies()->withTrashed()->count()];
+        }
         if ($record instanceof Content) {
             return ['comments' => Comment::withTrashed()->where('content_id', $record->getKey())->count(), 'embedded_media' => DB::table('cms_content_media')->where('content_id', $record->getKey())->count()];
         }
@@ -352,7 +372,7 @@ class CmsRepository implements CmsRepositoryInterface
         $matching = Media::query()->where('status', 'active')
             ->when($search !== '', fn ($query) => $query->where('name', 'like', '%'.mb_substr(trim($search), 0, 100).'%'))
             ->latest('id')->limit(100)->get();
-        $selected = $include === [] ? collect() : Media::query()->where('status', 'active')->whereIn('id', array_slice($include, 0, 100))->get();
+        $selected = $include === [] ? collect() : Media::query()->where('status', 'active')->whereIn('id', array_slice(array_values(array_unique($include)), 0, 153))->get();
 
         return $selected->merge($matching)->unique('id')->values();
     }

@@ -327,7 +327,7 @@ lima identitas berikut:
 | Password Superuser | Tidak | dimasukkan melalui prompt tersembunyi |
 
 Setelah App pertama ditentukan, wizard menawarkan **CMS opsional**. Pilihan
-**Tidak** mempertahankan landing page di domain utama dan satu App dashboard.
+**Tidak** (default saat menekan Enter) mempertahankan landing page di domain utama dan satu App dashboard.
 Pilihan **Ya** menambahkan App kedua bernama CMS pada `cms.<domain-utama>`;
 App pertama tetap menggunakan nama dan subdomain yang dipilih pengguna.
 Subdomain `cms` disediakan khusus untuk CMS dan tidak dapat dipakai sebagai App
@@ -338,14 +338,17 @@ kategorinya, pustaka media, galeri, susunan menu, kategori menu, dan moderasi
 komentar. Seluruh tabelnya memakai prefix `cms_`. Tampilan website publik
 dikembangkan sendiri oleh programmer; CMS menyediakan data kontennya.
 
-Untuk menambahkan CMS pada instalasi lokal yang sudah ada tanpa menghapus data:
+Pada proyek yang sudah memakai LaraWire, perbarui package sesuai batas versi di
+`composer.json`. Update Composer sendiri mempertahankan pilihan CMS proyek.
+Untuk mengaktifkannya kemudian, jalankan di local:
 
 ```bash
+composer update aldhi88/starterkit-larawire-agentic
 php artisan starter:cms --dry-run
 php artisan starter:cms
 ```
 
-Perintah ini memeriksa benturan source, menyiapkan migration tambahan, menampilkan
+Perintah ini memeriksa benturan source, menjalankan hanya migration CMS bawaan, menampilkan
 rencana sinkronisasi registry, dan menambahkan CMS ke daftar App. Instalasi ulang
 tidak diperlukan. Commit source host yang dihasilkan bersama App lalu gunakan
 `starter:deploy` untuk production. Tanpa pilihan CMS, source dan migration CMS
@@ -564,3 +567,7 @@ Livewire minimum: **4.4.8** (perbaikan authorization advisory GHSA-mhf7-xp6r-6qr
 Suara notifikasi default adalah **Ting tung jelas** dua nada, sekitar 2,2 detik
 termasuk peluruhan. Pilihan pengguna tetap tersimpan per akun dan dapat dipulihkan
 ke default. Tidak ada audio otomatis ketika membuka halaman atau menyimpan pilihan.
+
+### Activity Log integration
+
+See [audit logging](docs/rules/audit-logging.md#noise-control-and-integration) for per-model technical-attribute exclusions, human-readable labels, categories, explicit automated actors, opt-in repeated-access aggregation, transaction boundaries, and the additive migration/upgrade procedure.

@@ -25,11 +25,11 @@ class CmsAppDefinition
                     'menus' => [$group('Dashboard', 'layout-dashboard', [$link('Beranda', 'cms.dashboard')])],
                 ],
                 'posts' => [
-                    'name' => 'Konten', 'desc' => 'Kelola postingan dan kategori post.',
+                    'name' => 'Konten', 'desc' => 'Kelola konten dan kategori konten.',
                     'menus' => [$group('Konten', 'clipboard-text', [
-                        $link('Semua Postingan', 'cms.posts.index'),
-                        $link('Post Baru', 'cms.posts.create'),
-                        $link('Kategori Post', 'cms.posts.categories.index'),
+                        $link('Semua Konten', 'cms.posts.index'),
+                        $link('Konten Baru', 'cms.posts.create'),
+                        $link('Kategori Konten', 'cms.posts.categories.index'),
                     ])],
                 ],
                 'pages' => [
@@ -63,7 +63,7 @@ class CmsAppDefinition
                     ])],
                 ],
                 'comments' => [
-                    'name' => 'Komentar', 'desc' => 'Moderasi komentar postingan.',
+                    'name' => 'Komentar', 'desc' => 'Moderasi komentar konten.',
                     'menus' => [[...$link('Komentar', 'cms.comments.index'), 'icon' => 'messages']],
                 ],
             ],

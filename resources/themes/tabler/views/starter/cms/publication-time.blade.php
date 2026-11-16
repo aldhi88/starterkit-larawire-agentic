@@ -1,0 +1,1 @@
+@include('starter-shared::cms.datetime-field', ['dateField' => 'published_at', 'dateLabel' => 'Waktu Terbit (WIB)', 'dateModel' => 'publishedAtDisplay', 'dateFormat' => 'masked', 'dateHelp' => 'Tanggal mendatang menjadwalkan publikasi.'])

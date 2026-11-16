@@ -11,6 +11,7 @@ use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Services\Starter\NavigationAuthorizedRedirectService;
 use Aldhi88\StarterKit\Support\Cms\CmsResource;
 use Aldhi88\StarterKit\Support\Starter\StarterNavigation;
+use Illuminate\Routing\Route as PageRoute;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', function () {
@@ -31,8 +32,13 @@ Route::middleware(['auth:web', 'starter.active', 'starter.password-change', 'sta
     Route::middleware('starter.authorize')->group(function () {
         Route::livewire('/dashboard', Dashboard::class)->name('cms.dashboard');
 
-        Route::livewire('/media/galleries/albums', ContentIndex::class)
+        $useIndexMenu = static function (PageRoute $page, CmsResource $resource): void {
+            $page->setAction([...$page->getAction(), 'starter_menu_route' => $resource->routePrefix().'.index']);
+        };
+
+        $albums = Route::livewire('/media/galleries/albums', ContentIndex::class)
             ->defaults('resource', 'galleries')->name('cms.media.albums.index');
+        $useIndexMenu($albums, CmsResource::Galleries);
 
         foreach (CmsResource::cases() as $resource) {
             $path = str_replace('.', '/', substr($resource->routePrefix(), 4));
@@ -43,15 +49,20 @@ Route::middleware(['auth:web', 'starter.active', 'starter.password-change', 'sta
             $mode = $resource === CmsResource::Galleries ? 'gallery' : 'upload';
             $indexRoute = Route::livewire('/'.$path, $indexComponent)
                 ->defaults('resource', $resource->value)->name($resource->routePrefix().'.index');
-            $createRoute = Route::livewire('/'.$path.'/baru', $formComponent)
-                ->defaults('resource', $resource->value)->name($resource->routePrefix().'.create');
+            if ($resource !== CmsResource::Comments) {
+                $createRoute = Route::livewire('/'.$path.'/baru', $formComponent)
+                    ->defaults('resource', $resource->value)->name($resource->routePrefix().'.create');
+                if (! $resource->isContent()) {
+                    $useIndexMenu($createRoute, $resource);
+                }
+            }
             $editRoute = Route::livewire('/'.$path.'/{contentId}/edit', $formComponent)
                 ->whereNumber('contentId')->defaults('resource', $resource->value)->name($resource->routePrefix().'.edit');
+            $useIndexMenu($editRoute, $resource);
             if ($library) {
                 $indexRoute->defaults('mode', $mode);
             }
             if ($resource === CmsResource::Media) {
-                $createRoute->defaults('mode', 'upload');
                 $editRoute->defaults('mode', 'upload');
             }
         }

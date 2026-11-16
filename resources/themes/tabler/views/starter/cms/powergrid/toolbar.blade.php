@@ -2,10 +2,10 @@
     <div class="row g-2 align-items-center">
         <div class="col-auto" data-starter-region="bulk-actions">
             <div class="dropdown" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
-                <button type="button" class="btn dropdown-toggle" @click="open = !open" :aria-expanded="open" aria-haspopup="menu">Aksi</button>
+                <button type="button" class="btn dropdown-toggle" :class="$store.pgBulkActions.count(@js($tableName)) > 0 ? 'btn-dark' : 'cms-btn-neutral'" @click="open = !open" :aria-expanded="open" aria-haspopup="menu">Aksi</button>
                 <ul class="dropdown-menu top-100 start-0 mt-1" :class="{ 'show': open }" x-show="open" x-cloak role="menu">
                     @if ($resource === 'posts')
-                        @foreach ([false => 'Postingan terpilih', true => 'Semua hasil filter'] as $filteredScope => $scopeLabel)
+                        @foreach ([false => 'Konten terpilih', true => 'Semua hasil filter'] as $filteredScope => $scopeLabel)
                             @if ($filteredScope)<li><hr class="dropdown-divider my-1"></li>@endif
                             <li class="px-3 py-2 bg-light" role="presentation">
                                 <div class="fw-bold text-body d-flex align-items-center gap-2 text-nowrap">
@@ -48,19 +48,24 @@
         </div>
         <div class="col-12 col-md-4">
             <label class="visually-hidden" for="{{ $tableName }}-search">Cari {{ \Aldhi88\StarterKit\Support\Cms\CmsResource::from($resource)->label() }}</label>
-            <input id="{{ $tableName }}-search" type="search" class="form-control" placeholder="{{ $resource === 'posts' ? 'Cari judul postingan…' : ($resource === 'post_categories' ? 'Cari nama kategori…' : 'Cari nama…') }}" maxlength="100" wire:model.live.debounce.350ms="search">
+            <input id="{{ $tableName }}-search" type="search" class="form-control" placeholder="{{ $resource === 'posts' ? 'Cari judul konten…' : ($resource === 'pages' ? 'Cari judul halaman…' : ($resource === 'post_categories' ? 'Cari nama kategori…' : 'Cari nama…')) }}" maxlength="100" wire:model.live.debounce.350ms="search">
         </div>
     </div>
     @if ($resource === 'post_categories')
-        <div class="text-secondary small mt-2" id="cms-category-drag-help">
+        <div class="cms-category-tools small mt-2">
+            <div class="cms-category-help text-secondary" id="cms-category-drag-help">
+                @if ($this->categoryRowsReorderable())
+                    <span title="Seret ke tengah baris untuk menjadi subkategori; ke tepi atas/bawah untuk menyisipkan sejajar. Tersimpan otomatis.">Seret: tengah = subkategori · tepi = sejajar</span>
+                    <span class="visually-hidden">Alt + atas/bawah mengurutkan; Alt + kanan/kiri mengubah tingkat.</span>
+                @elseif ($archiveStatus === 'active')
+                    <button type="button" class="btn btn-link btn-sm p-0" wire:click="showCategoryOrder">Tampilkan urutan hierarki</button>
+                @endif
+                <span data-cms-category-feedback role="status" aria-live="polite"></span>
+            </div>
             @if ($this->categoryRowsReorderable())
-                Seret pegangan baris untuk mengubah urutan dalam induk yang sama. Tersimpan otomatis.
-                <span class="visually-hidden">Pada pegangan, gunakan Alt dan panah atas atau bawah untuk memindahkan dengan keyboard.</span>
-            @elseif ($archiveStatus === 'active')
-                <button type="button" class="btn btn-link btn-sm p-0" wire:click="showCategoryOrder">Tampilkan urutan hierarki</button> untuk menggeser baris.
+                <div class="cms-category-root-drop" data-cms-category-root-drop title="Lepaskan kategori di sini untuk menjadikannya kategori utama">↥ Jadikan kategori utama</div>
             @endif
         </div>
-        <div data-cms-category-feedback class="small mt-2" role="status" aria-live="polite"></div>
         @error('order')<div class="alert alert-danger mt-2 mb-0" role="alert">{{ $message }}</div>@enderror
     @endif
 </div>

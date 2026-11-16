@@ -1,5 +1,6 @@
 <?php
 
+use Aldhi88\StarterKit\Contracts\Cms\CmsReadRepositoryInterface;
 use Aldhi88\StarterKit\Contracts\Cms\CmsRepositoryInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
 use Aldhi88\StarterKit\Livewire\Cms\ContentForm;
@@ -7,6 +8,8 @@ use Aldhi88\StarterKit\Livewire\Cms\ContentIndex;
 use Aldhi88\StarterKit\Livewire\Cms\ContentTable;
 use Aldhi88\StarterKit\Livewire\Cms\Dashboard;
 use Aldhi88\StarterKit\Livewire\Cms\MediaPicker;
+use Aldhi88\StarterKit\Models\Cms\Category;
+use Aldhi88\StarterKit\Models\Cms\Comment;
 use Aldhi88\StarterKit\Models\Cms\Content;
 use Aldhi88\StarterKit\Models\Cms\Gallery;
 use Aldhi88\StarterKit\Models\Cms\Media;
@@ -16,6 +19,7 @@ use Aldhi88\StarterKit\Models\Starter\App as StarterApp;
 use Aldhi88\StarterKit\Models\Starter\AppMod;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Models\Starter\ClientRole;
+use Aldhi88\StarterKit\Repositories\Cms\CmsReadRepository;
 use Aldhi88\StarterKit\Repositories\Cms\CmsRepository;
 use Aldhi88\StarterKit\Repositories\Starter\ClientLoginRepository;
 use Aldhi88\StarterKit\Services\Cms\CmsManager;
@@ -41,14 +45,17 @@ beforeEach(function (): void {
     config(['app.key' => 'base64:'.base64_encode(str_repeat('u', 32))]);
     app()->register(LivewireServiceProvider::class);
     app()->register(PowerGridServiceProvider::class);
-    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185233_create_starter_app_metadata_tables.php', '2026_07_27_185235_create_starter_logs_table.php'] as $migration) {
+    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185233_create_starter_app_metadata_tables.php', '2026_07_27_185235_create_starter_logs_table.php', '2026_11_02_000000_add_access_aggregation_to_starter_logs.php'] as $migration) {
         (require StarterPaths::path('database/migrations/starter/'.$migration))->up();
     }
     (require StarterPaths::path('installer/templates/cms/2026_10_25_000000_create_cms_tables.php'))->up();
     (require StarterPaths::path('installer/templates/cms/2026_10_25_000001_add_cms_rich_content.php'))->up();
     (require StarterPaths::path('installer/templates/cms/2026_10_25_000002_add_post_category_hierarchy.php'))->up();
+    (require StarterPaths::path('installer/templates/cms/2026_11_04_000003_add_card_presets.php'))->up();
+    (require StarterPaths::path('installer/templates/cms/2026_11_16_000004_add_cms_comment_replies.php'))->up();
     View::addNamespace('starter-shared', StarterPaths::path('resources/views'));
     app()->bind(ClientLoginInterface::class, ClientLoginRepository::class);
+    app()->bind(CmsReadRepositoryInterface::class, CmsReadRepository::class);
     app()->bind(CmsRepositoryInterface::class, CmsRepository::class);
     app()->scoped(AuditLogService::class);
     $role = ClientRole::create(['code' => 'superuser', 'name' => 'Superuser', 'is_system' => true]);
@@ -60,11 +67,14 @@ beforeEach(function (): void {
     }
     foreach (CmsResource::cases() as $resource) {
         Route::get('/'.$resource->value, fn () => 'index')->name($resource->routePrefix().'.index');
-        Route::get('/'.$resource->value.'/create', fn () => 'create')->name($resource->routePrefix().'.create');
+        if ($resource !== CmsResource::Comments) {
+            Route::get('/'.$resource->value.'/create', fn () => 'create')->name($resource->routePrefix().'.create');
+        }
         Route::get('/'.$resource->value.'/{contentId}/edit', fn () => 'edit')->name($resource->routePrefix().'.edit');
     }
     Route::get('/', fn () => 'landing')->name('landing');
     Route::get('/cms/media/{publicId}', fn () => 'media')->name('starter.cms.media');
+    Route::get('/media/galleries/albums', fn () => 'albums')->name('cms.media.albums.index');
     Route::get('/cms/documentation', fn () => 'documentation')->name('starter.cms.documentation');
     Livewire::component('cms.table', ContentTable::class);
     Livewire::component('cms.media-picker', MediaPicker::class);
@@ -83,11 +93,32 @@ function cmsWorkspaceTheme(string $theme): void
 it('renders every CMS editor with its native theme and dedicated form actions', function (string $theme): void {
     cmsWorkspaceTheme($theme);
     foreach (CmsResource::cases() as $resource) {
-        Livewire::test(ContentForm::class, ['resource' => $resource->value])
+        if ($resource === CmsResource::Comments) {
+            continue; // Visitor comments have a dedicated moderation-only editor.
+        }
+        $editor = Livewire::test(ContentForm::class, ['resource' => $resource->value])
             ->assertOk()->assertSee('Simpan '.$resource->singular())->assertSee('Kembali')->assertDontSee('CMS /')
-            ->assertSeeHtml('data-starter-region="content-form"');
+            ->assertSeeHtml('data-starter-region="content-form"')->assertSeeInOrder(['Kembali', 'Simpan '.$resource->singular()]);
+        $document = new DOMDocument;
+        @$document->loadHTML($editor->html());
+        $xpath = new DOMXPath($document);
+        $formId = $xpath->evaluate('string(//form[starts-with(@id, "cms-content-form-")]/@id)');
+        $saveButtons = $xpath->query('//button[@type="submit" and (@form="'.$formId.'" or ancestor::form[@id="'.$formId.'"])]');
+        expect($formId)->not->toBe('')->and($saveButtons->length)->toBe(1)
+            ->and($saveButtons->item(0)->getAttribute('data-starter-region'))->toBe('page-actions');
     }
 })->with(['tabler', 'vuexy', 'dashcode']);
+
+it('distinguishes archive, restore, and permanent deletion in every theme', function (string $action, string $variant, string $label, string $theme): void {
+    cmsWorkspaceTheme($theme);
+    $html = View::make('starter.cms.confirmation-actions', ['pendingAction' => $action])->render();
+    expect($html)->toContain('cms-btn-neutral', 'class="btn '.$variant.'"', 'cms-action-icon', $label)
+        ->and(strpos($html, 'Batal'))->toBeLessThan(strpos($html, $label));
+})->with([
+    ['archive', 'btn-warning', 'Arsipkan'],
+    ['restore', 'btn-success', 'Pulihkan'],
+    ['delete_permanently', 'btn-danger', 'Hapus Permanen'],
+])->with(['tabler', 'vuexy', 'dashcode']);
 
 it('provides a visual editor and integrated media picker for every content type', function (string $theme): void {
     cmsWorkspaceTheme($theme);
@@ -98,10 +129,10 @@ it('provides a visual editor and integrated media picker for every content type'
             ->assertSeeHtml('data-cms-media-base="'.route('starter.cms.media', ['publicId' => str_repeat('0', 26)]).'"')
             ->assertSet('form.body_format', 'html')
             ->assertSeeHtml('data-starter-dialog-component');
-        if ($theme === 'tabler' && $resource === 'posts') {
+        if (in_array($resource, ['posts', 'pages'], true)) {
             $parent->assertSeeHtml('data-cms-toolbar-media')->assertDontSeeHtml('cms-editor-heading');
         } else {
-            $parent->assertSee('Tambahkan Media');
+            $parent->assertSeeHtml('data-cms-toolbar-media');
         }
         $parent->call('openMediaPicker')->assertDispatched('cms-open-media-picker');
         Livewire::test(MediaPicker::class, ['ownerId' => 'cms-editor-owner', 'resource' => $resource])
@@ -178,6 +209,38 @@ it('selects one active image for a thumbnail and rejects a PDF before dispatch',
         ->assertDispatched('cms-editor-picker-closed');
 });
 
+it('opens new collection and menu editors with an initial input and saves only its content', function (): void {
+    cmsWorkspaceTheme('tabler');
+    Livewire::test(ContentForm::class, ['resource' => 'cards'])
+        ->assertCount('form.card_data.items', 1)
+        ->set('form.name', 'Daftar layanan')
+        ->set('form.status', 'published')->call('save')->assertHasErrors('form.card_data.items')
+        ->set('form.status', 'draft')->call('save')->assertHasNoErrors();
+    $record = Content::where('kind', 'card')->firstOrFail();
+    expect($record->card_data['items'])->toBe([]);
+    Livewire::test(ContentForm::class, ['resource' => 'cards', 'contentId' => $record->id])
+        ->assertCount('form.card_data.items', 0);
+    Livewire::test(ContentForm::class, ['resource' => 'cards'])
+        ->set('form.name', 'Tim kampus')->set('form.card_data.items.0.title', 'Ratna')
+        ->call('save')->assertHasNoErrors();
+    expect(Content::where('name', 'Tim kampus')->firstOrFail()->card_data['items'][0]['title'])->toBe('Ratna');
+
+    Livewire::test(ContentForm::class, ['resource' => 'menus'])
+        ->assertCount('form.items', 1)->assertSee('Label Menu')
+        ->set('form.name', 'Menu kampus')->call('save')->assertHasNoErrors();
+    $savedMenu = Menu::where('name', 'Menu kampus')->firstOrFail();
+    expect($savedMenu->items)->toBe([]);
+    Livewire::test(ContentForm::class, ['resource' => 'menus', 'contentId' => $savedMenu->id])
+        ->assertCount('form.items', 0);
+
+    Livewire::test(ContentForm::class, ['resource' => 'menus'])
+        ->set('form.name', 'Menu utama')->call('addMenuItem')
+        ->set('form.items.1.url', '/beranda')->call('save')
+        ->assertHasErrors('form.items.0.label')->assertSet('form.items.0.url', '/beranda')
+        ->set('form.items.0.label', 'Beranda')->call('save')->assertHasNoErrors();
+    expect(Menu::where('name', 'Menu utama')->firstOrFail()->items)->toHaveCount(1);
+});
+
 it('reorders and nests menu items without losing their labels or allowing cycles', function (): void {
     cmsWorkspaceTheme('tabler');
     $component = Livewire::test(ContentForm::class, ['resource' => 'menus'])
@@ -250,7 +313,8 @@ it('orders gallery photos and menu items while preserving their content mapping'
     Livewire::test(ContentForm::class, ['resource' => 'galleries'])
         ->set('form.name', 'Kegiatan')->set('form.slug', 'kegiatan')->set('selectedMediaId', (string) $first->id)->call('addGalleryMedia')
         ->set('selectedMediaId', (string) $second->id)->call('addGalleryMedia')->call('moveGalleryMedia', 1, -1)
-        ->assertSet('form.media_ids', [$second->id, $first->id])->call('save')->assertHasNoErrors();
+        ->assertSet('form.media_ids', [$second->id, $first->id])->call('save')->assertHasNoErrors()
+        ->assertRedirectToRoute('cms.media.albums.index');
     expect(Gallery::firstOrFail()->media()->orderByPivot('position')->pluck('cms_media.id')->all())->toBe([$second->id, $first->id]);
 
     $category = $this->cmsManager->save($this->cmsActor, CmsResource::MenuCategories, ['name' => 'Utama', 'code' => 'main', 'status' => 'active']);
@@ -287,7 +351,7 @@ it('shows and saves post publication time in WIB across themes', function (strin
     config(['app.timezone' => 'UTC']);
     $component = Livewire::test(ContentForm::class, ['resource' => 'posts'])
         ->assertSee('Waktu Terbit (WIB)')
-        ->assertSee('Draf belum tampil di website.')
+        ->assertSee('Belum ditampilkan')->assertSee('Sesuai waktu terbit')
         ->set('form.title', 'Jadwal WIB');
     $component->set($theme === 'tabler' ? 'publishedAtDisplay' : 'form.published_at', $theme === 'tabler' ? '25/10/2026 17:30' : '2026-10-25T17:30')
         ->call('save')->assertHasNoErrors();
@@ -334,7 +398,7 @@ it('uses the real PowerGrid date event state for inclusive filtered actions', fu
 it('shows comment content and post context and preserves its filtered moderation scope', function (): void {
     cmsWorkspaceTheme('tabler');
     $post = $this->cmsManager->save($this->cmsActor, CmsResource::Posts, ['title' => 'Pengumuman', 'status' => 'published']);
-    $this->cmsManager->save($this->cmsActor, CmsResource::Comments, ['content_id' => $post->id, 'author_name' => 'Pengunjung', 'author_email' => 'reader@example.test', 'body' => 'Komentar yang perlu ditinjau', 'status' => 'pending']);
+    Comment::create(['content_id' => $post->id, 'author_name' => 'Pengunjung', 'author_email' => 'reader@example.test', 'body' => 'Komentar yang perlu ditinjau', 'status' => 'pending']);
     Livewire::test(ContentTable::class, ['resource' => 'comments'])
         ->assertSee('Pengunjung')->assertSee('Pengumuman')->assertSee('Komentar yang perlu ditinjau')
         ->set('filters.input_text.cms_comments.body', 'perlu ditinjau')
@@ -362,7 +426,7 @@ it('escapes editor supplied names and comment text in raw PowerGrid cells', func
     cmsWorkspaceTheme('tabler');
     $payload = '<img src=x onerror=alert(1)>';
     $post = $this->cmsManager->save($this->cmsActor, CmsResource::Posts, ['title' => 'Safe Post', 'status' => 'published']);
-    $this->cmsManager->save($this->cmsActor, CmsResource::Comments, ['content_id' => $post->id, 'author_name' => $payload, 'author_email' => 'reader@example.test', 'body' => $payload, 'status' => 'pending']);
+    Comment::create(['content_id' => $post->id, 'author_name' => $payload, 'author_email' => 'reader@example.test', 'body' => $payload, 'status' => 'pending']);
     $html = Livewire::test(ContentTable::class, ['resource' => 'comments'])->assertOk()->html();
     $document = new DOMDocument;
     @$document->loadHTML($html);
@@ -398,13 +462,16 @@ it('rejects malformed table enum number date sort and unbounded page size before
 
 it('keeps the Dashcode CMS icon composition native and excludes unshipped link utilities', function (): void {
     $root = StarterPaths::path('resources/themes/dashcode/views/starter/cms');
-    expect(file_get_contents($root.'/dashboard.blade.php'))->toContain('rounded-full bg-primary-100 text-primary-500')
+    expect(file_get_contents($root.'/dashboard.blade.php'))->toContain('starter-shared::cms.module-icon')
+        ->and(file_get_contents(StarterPaths::path('resources/views/cms/module-icon.blade.php')))->toContain('inline-flex items-center justify-center rounded bg-')
         ->and(file_get_contents($root.'/form.blade.php'))->not->toContain('link-primary');
 });
 
 it('renders the dashboard shortcuts and public usage guide in every theme', function (string $theme): void {
     cmsWorkspaceTheme($theme);
-    Livewire::test(Dashboard::class)->assertOk()->assertSee('Beranda')->assertSee('Panduan Penggunaan CMS');
+    Livewire::test(Dashboard::class)->assertOk()->assertSee('Beranda')->assertSee('Panduan Penggunaan CMS')
+        ->assertSee('Album Foto')->assertSeeHtml('<h2 class="page-title">Beranda</h2>')
+        ->assertSeeHtml('href="'.route('cms.media.albums.index').'"');
     $html = View::make('starter.cms.documentation', ['clientLogoUrl' => null, 'clientName' => 'CMS Test'])->render();
     expect($html)->toContain('beranda-carousel', 'beranda-klien', 'CmsReader', 'menuTree');
 })->with(['tabler', 'vuexy', 'dashcode']);
@@ -528,7 +595,7 @@ it('rejects invalid taxonomy and rolls back publishing if a later row is invalid
 
 it('rechecks access and bounds the selection for post quick actions', function (): void {
     $post = $this->cmsManager->save($this->cmsActor, CmsResource::Posts, ['title' => 'Permission check', 'status' => 'draft']);
-    $page = $this->cmsManager->save($this->cmsActor, CmsResource::Pages, ['name' => 'Not a post', 'status' => 'draft']);
+    $page = $this->cmsManager->save($this->cmsActor, CmsResource::Pages, ['category_id' => Category::firstOrCreate(['kind' => 'page', 'code' => 'test-profil'], ['name' => 'Profil', 'status' => 'active'])->id, 'title' => 'Not a post', 'status' => 'draft']);
     $actions = app(CmsPostActions::class);
     expect(fn () => $actions->prepare($this->cmsActor, [$page->id]))->toThrow(ValidationException::class);
     expect(fn () => $actions->prepare($this->cmsActor, range(1, 1001)))->toThrow(ValidationException::class);
@@ -605,3 +672,19 @@ it('loads the Tabler CMS runtime in the head and the Bootstrap singleton once', 
     $assets = file_get_contents(__DIR__.'/../../resources/views/cms/runtime-assets.blade.php');
     expect(substr_count($assets, 'data-navigate-track'))->toBe(2);
 });
+
+it('moderates visitor comments without a dashboard creation or visitor editing form', function (string $theme): void {
+    cmsWorkspaceTheme($theme);
+    $post = $this->cmsManager->save($this->cmsActor, CmsResource::Posts, ['title' => 'Kabar kampus', 'status' => 'published']);
+    $comment = Comment::create(['content_id' => $post->id, 'author_name' => 'Pembaca', 'body' => 'Kapan dibuka?', 'status' => 'pending']);
+    Livewire::test(ContentIndex::class, ['resource' => 'comments'])->assertOk()->assertDontSee('Tambah Komentar');
+    Livewire::test(ContentForm::class, ['resource' => 'comments'])->assertNotFound();
+    Livewire::test(ContentForm::class, ['resource' => 'comments', 'contentId' => $comment->id])
+        ->assertSee('Kapan dibuka?')->assertSee('Kabar kampus')->assertSee('Balas sebagai')->assertDontSee('Nama Pengirim')
+        ->set('form.author_name', 'Nama palsu')->set('form.body', 'Teks palsu')
+        ->set('form.status', 'approved')->set('form.reply_body', 'Pendaftaran dibuka Senin.')
+        ->call('save')->assertHasNoErrors()->assertRedirect(route('cms.comments.index'));
+    expect($comment->fresh()->body)->toBe('Kapan dibuka?')->and($comment->fresh()->author_name)->toBe('Pembaca')
+        ->and($comment->replies()->sole()->author_name)->toBe($this->cmsActor->name);
+    Livewire::test(ContentTable::class, ['resource' => 'comments'])->assertSee('Balasan editor')->assertSee('Tinjau dan balas');
+})->with(['tabler', 'vuexy', 'dashcode']);

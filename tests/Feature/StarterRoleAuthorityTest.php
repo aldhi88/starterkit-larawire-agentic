@@ -29,6 +29,7 @@ beforeEach(function (): void {
     foreach (['185232_create_starter_identity_tables', '185233_create_starter_app_metadata_tables', '185235_create_starter_logs_table'] as $name) {
         (require StarterPaths::path('database/migrations/starter/2026_07_27_'.$name.'.php'))->up();
     }
+    (require StarterPaths::path('database/migrations/starter/2026_11_02_000000_add_access_aggregation_to_starter_logs.php'))->up();
     app()->bind(ClientLoginInterface::class, ClientLoginRepository::class);
     app()->bind(ClientRoleInterface::class, ClientRoleRepository::class);
     app()->bind(AppModInterface::class, AppModRepository::class);

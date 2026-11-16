@@ -6,6 +6,7 @@ use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Services\Cms\CmsManager;
 use Aldhi88\StarterKit\Services\Cms\CmsPostActions;
 use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Support\Cms\CmsCardPresets;
 use Aldhi88\StarterKit\Support\Cms\CmsCategoryTree;
 use Aldhi88\StarterKit\Support\Cms\CmsResource;
 use Aldhi88\StarterKit\Support\Cms\CmsTime;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View as ViewFactory;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -183,21 +185,29 @@ class ContentTable extends PowerGridComponent
         return true;
     }
 
-    public function noDataLabel(): string|View
+    public function noDataLabel(): string
     {
-        return match ($this->resource) {
-            'posts' => view()->make('starter-shared::cms.empty-table', [
-                'icon' => 'file-plus',
-                'heading' => 'Belum ada postingan',
-                'hint' => 'Ubah pencarian atau klik Tambah Postingan untuk mulai.',
-            ]),
-            'post_categories' => view()->make('starter-shared::cms.empty-table', [
-                'icon' => 'folder',
-                'heading' => 'Belum ada kategori',
-                'hint' => 'Isi Nama Kategori pada formulir untuk mulai.',
-            ]),
-            default => parent::noDataLabel(),
+        $resource = $this->cmsResource();
+        [$icon, $hint] = match ($resource) {
+            CmsResource::Posts, CmsResource::Pages => ['file-plus', 'Gunakan tombol Tambah '.$resource->singular().' untuk mulai menulis.'],
+            CmsResource::Cards => ['layout-cards', 'Gunakan Tambah Card untuk menyusun bagian website.'],
+            CmsResource::Menus => ['menu-2', 'Gunakan Tambah Menu untuk menyusun tautan navigasi.'],
+            CmsResource::Comments => ['messages', 'Komentar pembaca akan muncul di sini untuk ditinjau.'],
+            CmsResource::Galleries => ['photo', 'Gunakan Tambah Album untuk mengelompokkan foto.'],
+            CmsResource::Media => ['photo', 'Unggah gambar atau PDF ke pustaka.'],
+            default => ['folder', 'Isi Nama Kategori pada formulir untuk mulai.'],
         };
+        $filtered = filled($this->search) || collect($this->filters)->flatten()->contains(fn ($value) => filled($value));
+        $heading = 'Belum ada '.strtolower($resource->singular());
+        if ($filtered) {
+            $heading = 'Tidak ada hasil yang cocok';
+            $hint = 'Ubah kata pencarian atau filter tabel.';
+        } elseif ($this->archiveStatus === 'archived') {
+            $heading = 'Arsip kosong';
+            $hint = 'Data yang diarsipkan akan muncul di sini.';
+        }
+
+        return view()->make('starter-shared::cms.empty-table', compact('icon', 'heading', 'hint'))->render();
     }
 
     public function datasource(): Builder
@@ -214,7 +224,9 @@ class ContentTable extends PowerGridComponent
         return PowerGrid::fields()->add('id')
             ->add('name', fn (Model $row): string => $this->resource === 'post_categories' && StarterTheme::key() === 'tabler'
                 ? view(StarterTheme::viewName('starter.cms.powergrid.category-name'), ['category' => $row, 'reorderable' => $this->categoryRowsReorderable()])->render()
-                : e((string) $row->getAttribute('name')))
+                : (in_array($this->resource, ['posts', 'pages'], true) && $row->getAttribute('deleted_at') === null
+                    ? ViewFactory::make('starter-shared::cms.title-link', ['row' => $row, 'kind' => $this->cmsResource()->kind()])->render()
+                    : e((string) $row->getAttribute('name'))))
             ->add('category_name', function (Model $row): string {
                 $label = $this->resource === 'posts' && $row->relationLoaded('categories')
                     ? ($row->getRelation('categories')->pluck('name')->implode(', ') ?: ($row->getAttribute('category_name') ?: 'Tanpa kategori'))
@@ -224,12 +236,14 @@ class ContentTable extends PowerGridComponent
                     ? view(StarterTheme::viewName('starter.cms.powergrid.post-categories'), ['row' => $row, 'label' => $label])->render()
                     : e($label);
             })
+            ->add('card_preset_label', fn (Model $row): string => e(CmsCardPresets::all()[$row->getAttribute('card_preset') ?: 'free']['label'] ?? 'Bebas'))
+            ->add('usage_count', fn (Model $row): int => (int) $row->getAttribute('usage_count'))
             ->add('position')->add('deleted_at')
             ->add('content_name', fn (Model $row): string => e((string) $row->getAttribute('content_name')))
-            ->add('body_excerpt', fn (Model $row): string => e(Str::limit((string) $row->getAttribute('body'), 160)))
-            ->add('status_label', fn (Model $row): string => $this->resource === 'posts' && StarterTheme::key() === 'tabler'
+            ->add('body_excerpt', fn (Model $row): string => e(($row->getAttribute('parent_id') ? 'Balasan editor · ' : '').Str::limit((string) $row->getAttribute('body'), 160)))
+            ->add('status_label', fn (Model $row): string => in_array($this->resource, ['posts', 'pages'], true) && StarterTheme::key() === 'tabler'
                 ? view(StarterTheme::viewName('starter.cms.powergrid.post-status'), ['row' => $row])->render()
-                : e($statuses[$row->getAttribute('status')] ?? (string) $row->getAttribute('status')))
+                : ViewFactory::make('starter-shared::cms.status', ['row' => $row, 'resource' => $this->resource, 'statuses' => $statuses])->render())
             ->add('published_label', fn (Model $row): string => $row->getAttribute('published_at') ? CmsTime::forTable($row->getAttribute('published_at')) : '—')
             ->add('updated_label', function (Model $row): string {
                 $updatedAt = $row->getAttribute('updated_at');
@@ -237,7 +251,7 @@ class ContentTable extends PowerGridComponent
                     return '—';
                 }
 
-                return in_array($this->resource, ['posts', 'post_categories'], true)
+                return in_array($this->resource, ['posts', 'pages', 'post_categories', 'page_categories'], true)
                     ? CmsTime::forTable($updatedAt)
                     : $updatedAt->format('d/m/Y H:i');
             });
@@ -252,12 +266,21 @@ class ContentTable extends PowerGridComponent
         }
         $columns = [
             Column::action('Aksi'),
-            Column::make($this->resource === 'comments' ? 'Pengirim' : ($this->resource === 'posts' ? 'Judul' : 'Nama'), 'name', $fields['name'])->searchable()->sortable(),
+            Column::make($this->resource === 'comments' ? 'Pengirim' : (in_array($this->resource, ['posts', 'pages'], true) ? 'Judul' : 'Nama'), 'name', $fields['name'])->searchable()->sortable(),
             $status,
         ];
 
+        if (in_array($this->resource, ['post_categories', 'page_categories'], true)) {
+            $columns[] = Column::make($this->resource === 'post_categories' ? 'Jumlah<br>Konten' : 'Jumlah<br>Halaman', 'usage_count')
+                ->headerAttribute('cms-count-column')->bodyAttribute('cms-count-column');
+        }
+
+        if ($this->resource === 'cards') {
+            $columns[] = Column::make('Jenis Card', 'card_preset_label');
+        }
+
         if ($this->cmsResource() === CmsResource::Comments) {
-            $columns[] = Column::make('Postingan', 'content_name', 'cms_comments.content_id');
+            $columns[] = Column::make('Konten', 'content_name', 'cms_comments.content_id');
             $columns[] = Column::make('Komentar', 'body_excerpt', 'cms_comments.body');
         }
 
@@ -265,15 +288,15 @@ class ContentTable extends PowerGridComponent
             $columns[] = Column::make('Kategori', 'category_name', $fields['category_id']);
         }
 
-        if (isset($fields['position']) && $this->resource !== 'posts') {
+        if (isset($fields['position']) && ! in_array($this->resource, ['posts', 'pages'], true)) {
             $columns[] = Column::make('Urutan', 'position', $fields['position'])->sortable();
         }
 
-        if ($this->resource === 'posts') {
+        if (in_array($this->resource, ['posts', 'pages'], true)) {
             $columns[] = Column::make('Waktu Terbit (WIB)', 'published_label', 'cms_contents.published_at')->sortable();
         }
 
-        $columns[] = Column::make(in_array($this->resource, ['posts', 'post_categories'], true) ? 'Diperbarui (WIB)' : 'Diperbarui', 'updated_label', $fields['updated_at'])->sortable();
+        $columns[] = Column::make(in_array($this->resource, ['posts', 'pages', 'post_categories', 'page_categories'], true) ? 'Diperbarui (WIB)' : 'Diperbarui', 'updated_label', $fields['updated_at'])->sortable();
 
         return $columns;
     }
@@ -305,7 +328,7 @@ class ContentTable extends PowerGridComponent
             $filters[] = Filter::inputText('body_excerpt', 'cms_comments.body')->operators(['contains']);
         }
 
-        if (isset($fields['position']) && $resource !== CmsResource::Posts) {
+        if (isset($fields['position']) && ! in_array($resource, [CmsResource::Posts, CmsResource::Pages], true)) {
             $filters[] = Filter::number('position', $fields['position'])->placeholder('Min', 'Max');
         }
 
@@ -463,7 +486,7 @@ class ContentTable extends PowerGridComponent
         $this->clearSelection();
         $this->resetPage();
         $this->refresh();
-        $this->dispatch('starter-toast', type: 'success', message: $changed.' postingan berhasil diperbarui.');
+        $this->dispatch('starter-toast', type: 'success', message: $changed.' konten berhasil diperbarui.');
     }
 
     public function prepareBulkAction(string $action, bool $filtered = false): void
@@ -562,7 +585,7 @@ class ContentTable extends PowerGridComponent
         if (isset($fields['category_id'])) {
             $filters['category_id'] = $this->filterValue('select', $fields['category_id']);
         }
-        if (isset($fields['position']) && $this->resource !== 'posts') {
+        if (isset($fields['position']) && ! in_array($this->resource, ['posts', 'pages'], true)) {
             $range = $this->filterValue('number', $fields['position']);
             $filters['position_min'] = data_get($range, 'start');
             $filters['position_max'] = data_get($range, 'end');
@@ -651,7 +674,7 @@ class ContentTable extends PowerGridComponent
                 data_set($clean, 'select.'.$field, $values[$key]);
             }
         }
-        if (isset($fields['position']) && $resource !== CmsResource::Posts) {
+        if (isset($fields['position']) && ! in_array($resource, [CmsResource::Posts, CmsResource::Pages], true)) {
             $range = $this->filterValue('number', $fields['position']);
             if ($range !== null && ! is_array($range)) {
                 throw ValidationException::withMessages(['tableFilters' => 'Format rentang urutan tidak valid.']);
@@ -686,8 +709,8 @@ class ContentTable extends PowerGridComponent
             $resource === CmsResource::PostCategories ? 'hierarchy_order' : null,
             $resource === CmsResource::Posts ? 'published_label' : null,
             $resource === CmsResource::Posts ? 'cms_contents.published_at' : null,
-            isset($fields['position']) && $resource !== CmsResource::Posts ? 'position' : null,
-            $resource !== CmsResource::Posts ? ($fields['position'] ?? null) : null,
+            isset($fields['position']) && ! in_array($resource, [CmsResource::Posts, CmsResource::Pages], true) ? 'position' : null,
+            ! in_array($resource, [CmsResource::Posts, CmsResource::Pages], true) ? ($fields['position'] ?? null) : null,
         ]))];
         $values['sort_direction'] = $this->sortDirection;
         $rules['sort_direction'] = ['required', Rule::in(['asc', 'desc'])];

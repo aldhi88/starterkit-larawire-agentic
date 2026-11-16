@@ -1,5 +1,6 @@
 <?php
 
+use Aldhi88\StarterKit\Contracts\Cms\CmsReadRepositoryInterface;
 use Aldhi88\StarterKit\Contracts\Cms\CmsRepositoryInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
 use Aldhi88\StarterKit\Livewire\Cms\Categories;
@@ -15,15 +16,19 @@ use Aldhi88\StarterKit\Models\Starter\App as StarterApp;
 use Aldhi88\StarterKit\Models\Starter\AppMod;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Models\Starter\ClientRole;
+use Aldhi88\StarterKit\Repositories\Cms\CmsReadRepository;
 use Aldhi88\StarterKit\Repositories\Cms\CmsRepository;
 use Aldhi88\StarterKit\Repositories\Starter\ClientLoginRepository;
 use Aldhi88\StarterKit\Services\Cms\CmsManager;
 use Aldhi88\StarterKit\Services\Starter\AuditLogService;
+use Aldhi88\StarterKit\Support\Cms\CmsCardPresets;
+use Aldhi88\StarterKit\Support\Cms\CmsPermalink;
 use Aldhi88\StarterKit\Support\Cms\CmsResource;
 use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use Aldhi88\StarterKit\Themes\Starter\DashcodePowerGridTheme;
 use Aldhi88\StarterKit\Themes\Starter\TablerPowerGridTheme;
 use Aldhi88\StarterKit\Themes\Starter\VuexyPowerGridTheme;
+use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Facades\Route;
@@ -38,13 +43,14 @@ beforeEach(function (): void {
     config(['app.key' => 'base64:'.base64_encode(str_repeat('m', 32))]);
     app()->register(LivewireServiceProvider::class);
     app()->register(PowerGridServiceProvider::class);
-    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185233_create_starter_app_metadata_tables.php', '2026_07_27_185235_create_starter_logs_table.php'] as $file) {
+    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185233_create_starter_app_metadata_tables.php', '2026_07_27_185235_create_starter_logs_table.php', '2026_11_02_000000_add_access_aggregation_to_starter_logs.php'] as $file) {
         (require StarterPaths::path('database/migrations/starter/'.$file))->up();
     }
     foreach (glob(StarterPaths::path('installer/templates/cms/*.php')) as $file) {
         (require $file)->up();
     }
     app()->bind(ClientLoginInterface::class, ClientLoginRepository::class);
+    app()->bind(CmsReadRepositoryInterface::class, CmsReadRepository::class);
     app()->bind(CmsRepositoryInterface::class, CmsRepository::class);
     app()->scoped(AuditLogService::class);
     $role = ClientRole::create(['code' => 'superuser', 'name' => 'Superuser', 'is_system' => true]);
@@ -149,7 +155,7 @@ it('renders upload and searchable visual library surfaces in every theme', funct
 it('focuses post authoring on the title and editor while keeping optional details beside it', function (string $theme): void {
     cmsLibraryTheme($theme);
     $component = Livewire::test(ContentForm::class, ['resource' => 'posts'])
-        ->assertSee('Judul Postingan')->assertSee('Sekarang')->assertSee('Pilih Thumbnail')
+        ->assertSee('Judul Konten')->assertSee('Sekarang')->assertSee('Pilih Thumbnail')
         ->assertDontSee('Nama Internal')->assertDontSee('Media dan Tautan');
     $document = new DOMDocument;
     $previous = libxml_use_internal_errors(true);
@@ -167,10 +173,10 @@ it('focuses post authoring on the title and editor while keeping optional detail
         expect($xpath->query('//*[@id="'.$id.'"]')->length)->toBe(0);
     }
     expect($xpath->query('//*[@data-starter-region="post-details-form"]//*[@id="cms-subtitle" or @id="cms-excerpt"]')->length)->toBe(2)
-        ->and($xpath->query('//*[@data-starter-region="publication-form"]//input[@id="cms-published_at" and @type="'.($theme === 'tabler' ? 'text' : 'datetime-local').'"]')->length)->toBe(1)
+        ->and($xpath->query('//*[@data-starter-region="publication-form"]//input[@id="cms-published_at" and @type="text"]')->length)->toBe(1)
         ->and($xpath->query('//*[@data-starter-dialog-component][@*[name()="wire:id"]]')->length)->toBe(1);
-    Livewire::test(ContentForm::class, ['resource' => 'cards'])->assertSee('Nama Internal')
-        ->assertSee('Media dan Tautan')->assertSee('Urutan')->assertSeeHtml('id="cms-logo_id"');
+    Livewire::test(ContentForm::class, ['resource' => 'cards'])->assertSee('Nama Card')
+        ->assertSee('Gambar & Identitas Visual')->assertSee('Urutan')->assertSeeHtml('id="cms-logo_id"');
 })->with(['tabler', 'vuexy', 'dashcode']);
 
 it('keeps interactive category and media workspaces inside their Livewire snapshot owner', function (string $theme): void {
@@ -221,6 +227,30 @@ it('mounts actual CMS workspace HTTP routes with route defaults and complete int
             $owners = (new DOMXPath($document))->query('//*[@data-starter-region="'.$region.'"]/ancestor::*[@*[name()="wire:snapshot"]]');
             expect($owners->length)->toBe(1);
         }
+    }
+});
+
+it('links nested CMS screens to their visible sidebar entries and preserves direct create shortcuts', function (): void {
+    config(['app.domain' => 'example.test']);
+    Route::setRoutes(new RouteCollection);
+    Route::domain('cms.example.test')->group(StarterPaths::path('routes/cms.php'));
+    Route::getRoutes()->refreshNameLookups();
+
+    foreach ([
+        'cms.media.albums.index' => 'cms.media.galleries.index',
+        'cms.media.galleries.create' => 'cms.media.galleries.index',
+        'cms.media.galleries.edit' => 'cms.media.galleries.index',
+        'cms.media.edit' => 'cms.media.index',
+        'cms.media.create' => 'cms.media.index',
+        'cms.posts.edit' => 'cms.posts.index',
+        'cms.cards.categories.edit' => 'cms.cards.categories.index',
+        'cms.menus.create' => 'cms.menus.index',
+        'cms.comments.edit' => 'cms.comments.index',
+    ] as $screen => $menu) {
+        expect(Route::getRoutes()->getByName($screen)->getAction('starter_menu_route'))->toBe($menu);
+    }
+    foreach (['cms.media.index', 'cms.media.galleries.index', 'cms.posts.create', 'cms.pages.create', 'cms.cards.create'] as $direct) {
+        expect(Route::getRoutes()->getByName($direct)->getAction('starter_menu_route'))->toBeNull();
     }
 });
 
@@ -384,8 +414,8 @@ it('moves a row directly and preserves hidden siblings and descendants', functio
     // A stale browser cannot overwrite the order saved by another request.
     $table->call('moveCategory', $article->id, $travel->id, 'before', $state['version'])->assertHasErrors('order');
     $newState = $this->libraryManager->postCategoryOrder($this->libraryActor);
-    $table->call('moveCategory', $tech->id, $travel->id, 'after', $newState['version'])->assertHasErrors('order');
-    expect($tech->fresh()->parent_id)->toBe($article->id);
+    $table->call('moveCategory', $tech->id, $travel->id, 'after', $newState['version'])->assertHasNoErrors();
+    expect($tech->fresh()->parent_id)->toBeNull();
 });
 
 it('keeps row dragging unavailable in archived and manually sorted tables', function (): void {
@@ -399,4 +429,244 @@ it('keeps row dragging unavailable in archived and manually sorted tables', func
     Livewire::test(ContentTable::class, ['resource' => 'post_categories'])->set('archiveStatus', 'archived')
         ->call('moveCategory', $a->id, $b->id, 'after', $version)->assertStatus(422);
     expect($a->fresh()->position)->toBe(0);
+});
+
+it('reparents whole category branches and promotes them back to roots', function (): void {
+    $a = $this->libraryManager->saveCategoryName($this->libraryActor, CmsResource::PostCategories, 'A');
+    $b = $this->libraryManager->saveCategoryName($this->libraryActor, CmsResource::PostCategories, 'B');
+    $c = $this->libraryManager->saveCategoryName($this->libraryActor, CmsResource::PostCategories, 'C', parentId: $a->id, updateParent: true);
+    $d = $this->libraryManager->saveCategoryName($this->libraryActor, CmsResource::PostCategories, 'D', parentId: $b->id, updateParent: true);
+    $version = fn () => $this->libraryManager->postCategoryOrder($this->libraryActor)['version'];
+    $this->libraryManager->movePostCategory($this->libraryActor, $a->id, $d->id, 'inside', $version());
+    expect($a->fresh()->parent_id)->toBe($d->id)->and($c->fresh()->parent_id)->toBe($a->id);
+    $this->libraryManager->movePostCategory($this->libraryActor, $a->id, $a->id, 'root', $version());
+    expect($a->fresh()->parent_id)->toBeNull()->and($c->fresh()->parent_id)->toBe($a->id);
+});
+
+it('rejects category cycles and unavailable destinations without changing hierarchy', function (): void {
+    $a = $this->libraryManager->saveCategoryName($this->libraryActor, CmsResource::PostCategories, 'A');
+    $b = $this->libraryManager->saveCategoryName($this->libraryActor, CmsResource::PostCategories, 'B', parentId: $a->id, updateParent: true);
+    $version = $this->libraryManager->postCategoryOrder($this->libraryActor)['version'];
+    foreach ([[$b->id, 'inside'], [$b->id, 'after'], [$a->id, 'inside'], [999999, 'inside']] as [$target, $placement]) {
+        expect(fn () => $this->libraryManager->movePostCategory($this->libraryActor, $a->id, $target, $placement, $version))->toThrow(ValidationException::class);
+    }
+    expect($a->fresh()->parent_id)->toBeNull()->and($b->fresh()->parent_id)->toBe($a->id);
+});
+
+it('authors static pages using the focused editor in every theme', function (string $theme): void {
+    cmsLibraryTheme($theme);
+    $category = $this->libraryManager->saveCategoryName($this->libraryActor, CmsResource::PageCategories, 'Profil');
+    $component = Livewire::test(ContentForm::class, ['resource' => 'pages'])
+        ->assertSee('Judul Halaman')->assertSee('Pilih Thumbnail')->assertDontSee('Nama Internal')->assertDontSee('Media dan Tautan')
+        ->set('form.title', 'Visi dan Misi')->set('form.body', '<p>Menjadi kampus unggul.</p>')
+        ->set('form.category_id', $category->id)->set('form.status', 'published');
+    $component->call('save')->assertHasNoErrors()->assertRedirect(route('cms.pages.index'));
+    $page = Content::where('kind', 'page')->firstOrFail();
+    expect($page->name)->toBe('Visi dan Misi')->and($page->slug)->toBe('visi-dan-misi')
+        ->and($page->category_id)->toBe($category->id)->and($page->published_at)->not->toBeNull();
+    Livewire::test(ContentForm::class, ['resource' => 'pages', 'contentId' => $page->id])
+        ->assertSee('Salin tautan')->assertSee('/halaman/visi-dan-misi')
+        ->set('form.title', 'Visi Kampus')->call('save')->assertHasNoErrors();
+    expect($page->fresh()->slug)->toBe('visi-dan-misi')->and($page->fresh()->name)->toBe('Visi Kampus');
+})->with(['tabler', 'vuexy', 'dashcode']);
+
+it('validates page titles category kind and duplicate slugs while preserving legacy positions', function (): void {
+    $page = $this->libraryManager->save($this->libraryActor, CmsResource::Pages, ['category_id' => Category::firstOrCreate(['kind' => 'page', 'code' => 'test-profil'], ['name' => 'Profil', 'status' => 'active'])->id, 'title' => 'Profil', 'status' => 'draft']);
+    $page->update(['position' => 17]);
+    $this->libraryManager->save($this->libraryActor, CmsResource::Pages, ['category_id' => Category::firstOrCreate(['kind' => 'page', 'code' => 'test-profil'], ['name' => 'Profil', 'status' => 'active'])->id, 'title' => 'Profil', 'slug' => 'profil', 'status' => 'draft'], $page->id);
+    expect($page->fresh()->position)->toBe(17);
+    foreach ([['title' => ''], ['title' => 'Lain', 'slug' => 'profil']] as $data) {
+        expect(fn () => $this->libraryManager->save($this->libraryActor, CmsResource::Pages, $data + ['status' => 'draft']))->toThrow(ValidationException::class);
+    }
+    $wrong = $this->libraryManager->saveCategoryName($this->libraryActor, CmsResource::PostCategories, 'Berita');
+    expect(fn () => $this->libraryManager->save($this->libraryActor, CmsResource::Pages, ['title' => 'Lain', 'status' => 'draft', 'category_id' => $wrong->id]))->toThrow(ValidationException::class);
+});
+
+it('builds configurable root website permalinks without using the cms request host', function (): void {
+    config(['app.url' => 'https://campus.test', 'starter.cms.permalinks.page' => '/profil/{slug}']);
+    expect(CmsPermalink::for('page', 'visi-misi'))->toBe('https://campus.test/profil/visi-misi')
+        ->and(CmsPermalink::for('post', 'berita'))->toBe('https://campus.test/konten/berita')
+        ->and(CmsPermalink::for('page', ''))->toBeNull();
+    config(['starter.cms.permalinks.page' => '//other.test/{slug}']);
+    expect(CmsPermalink::for('page', 'profil'))->toBeNull();
+});
+
+it('requires a page category and creates one inline without losing editor input', function (string $theme): void {
+    cmsLibraryTheme($theme);
+    $this->travelTo(Carbon::parse('2026-11-04 13:45:00', 'Asia/Jakarta'));
+    try {
+        $form = Livewire::test(ContentForm::class, ['resource' => 'pages'])
+            ->assertSeeHtml('data-cms-toolbar-media')->assertDontSee('Tanpa kategori')
+            ->assertSet('form.published_at', '2026-11-04T13:45')
+            ->set('form.title', 'Profil Kampus')->set('form.body', '<p>Profil kampus contoh.</p>')
+            ->call('save')->assertHasErrors('form.category_id')
+            ->set('newCategoryName', 'Profil Institusi')->call('createPageCategory')->assertHasNoErrors('newCategoryName')
+            ->assertSet('form.title', 'Profil Kampus')->assertSet('form.body', '<p>Profil kampus contoh.</p>');
+        $category = Category::where('kind', 'page')->where('name', 'Profil Institusi')->firstOrFail();
+        $form->assertSet('form.category_id', $category->id)->call('save')->assertHasNoErrors();
+        expect(Content::where('kind', 'page')->firstOrFail()->category_id)->toBe($category->id);
+    } finally {
+        $this->travelBack();
+    }
+})->with(['tabler', 'vuexy', 'dashcode']);
+
+it('renders edit forms with a valid single root and permalink outside the slug input', function (string $theme, string $kind): void {
+    cmsLibraryTheme($theme);
+    config(['app.debug' => true]);
+    $category = $this->libraryManager->saveCategoryName($this->libraryActor, $kind === 'pages' ? CmsResource::PageCategories : CmsResource::PostCategories, 'Akademik');
+    $resource = CmsResource::from($kind);
+    $record = $this->libraryManager->save($this->libraryActor, $resource, ['title' => 'Profil Akademik', 'status' => 'draft', 'category_id' => $category->id]);
+    $form = Livewire::test(ContentForm::class, ['resource' => $kind, 'contentId' => $record->id])
+        ->assertSee('Salin tautan')->assertSeeHtml('class="cms-permalink"');
+    $dom = new DOMDocument;
+    @$dom->loadHTML($form->html());
+    $xpath = new DOMXPath($dom);
+    expect($xpath->query('//input[@id="cms-slug"]')->length)->toBe(1)
+        ->and($xpath->query('//div[@class="cms-permalink"]')->length)->toBe(1);
+    $form->set('form.subtitle', 'Informasi kampus')->call('save')->assertHasNoErrors();
+    expect($record->fresh()->subtitle)->toBe('Informasi kampus');
+    Livewire::test(ContentTable::class, ['resource' => $kind])->assertSeeHtml('cms-title-copy')->assertSee('Salin tautan');
+})->with(['tabler', 'vuexy', 'dashcode'])->with(['posts', 'pages']);
+
+it('counts assigned category entries once including drafts but excluding trash and other kinds', function (string $kind): void {
+    $category = Category::create(['kind' => $kind, 'name' => 'Akademik', 'code' => 'akademik', 'status' => 'active']);
+    $empty = Category::create(['kind' => $kind, 'name' => 'Kosong', 'code' => 'kosong', 'status' => 'active']);
+    foreach (['draft', 'published', 'draft'] as $index => $status) {
+        $entry = Content::create(['kind' => $kind, 'name' => 'Entri '.$index, 'title' => 'Entri '.$index, 'slug' => 'entri-'.$index, 'status' => $status, 'category_id' => $category->id]);
+        if ($kind === 'post') {
+            $entry->categories()->attach($category->id);
+        }
+        if ($index === 2) {
+            $entry->delete();
+        }
+    }
+    Content::create(['kind' => 'card', 'name' => 'Lain', 'slug' => 'lain', 'status' => 'draft', 'category_id' => $category->id]);
+    if ($kind === 'post') {
+        $additional = Content::create(['kind' => 'post', 'name' => 'Multi', 'slug' => 'multi', 'status' => 'draft']);
+        $additional->categories()->attach($category->id);
+    }
+    $counts = app(CmsRepository::class)->categoryTable($kind, 'active')->get()->keyBy('id');
+    expect((int) $counts[$category->id]->usage_count)->toBe($kind === 'post' ? 3 : 2)
+        ->and((int) $counts[$empty->id]->usage_count)->toBe(0);
+    foreach (['tabler', 'vuexy', 'dashcode'] as $theme) {
+        cmsLibraryTheme($theme);
+        Livewire::test(ContentTable::class, ['resource' => $kind === 'post' ? 'post_categories' : 'page_categories'])
+            ->assertSeeHtml($kind === 'post' ? 'Jumlah<br>Konten' : 'Jumlah<br>Halaman');
+    }
+})->with(['post', 'page']);
+
+it('uses matching publication status badges for content and pages', function (string $resource): void {
+    cmsLibraryTheme('tabler');
+    $kind = $resource === 'posts' ? 'post' : 'page';
+    foreach ([['draft', null], ['published', now()->subDay()], ['published', now()->addDay()]] as $index => [$status, $date]) {
+        Content::create(['kind' => $kind, 'name' => 'Status '.$index, 'title' => 'Status '.$index, 'slug' => 'status-'.$index, 'status' => $status, 'published_at' => $date]);
+    }
+    Livewire::test(ContentTable::class, ['resource' => $resource])
+        ->assertSeeHtml('<span class="badge bg-secondary-lt"><span class="cms-status-label">Draf</span></span>')
+        ->assertSeeHtml('<span class="badge bg-green-lt"><span class="cms-status-label">Terbit</span></span>')
+        ->assertSeeHtml('<span class="badge bg-azure-lt"><span class="cms-status-label">Terjadwal</span></span>');
+})->with(['posts', 'pages']);
+
+it('persists every card preset and structured fields without changing order or losing hidden content', function (string $theme): void {
+    cmsLibraryTheme($theme);
+    $category = $this->libraryManager->saveCategoryName($this->libraryActor, CmsResource::CardCategories, 'Beranda Kampus');
+    foreach (array_keys(CmsCardPresets::all()) as $preset) {
+        $card = $this->libraryManager->save($this->libraryActor, CmsResource::Cards, ['name' => 'Card '.$preset, 'card_preset' => $preset, 'card_data' => ['person' => 'Ratna', 'value' => '12.500'], 'body' => '<p>Isi tersimpan</p>', 'body_format' => 'html', 'status' => 'draft', 'position' => 8, 'category_id' => $category->id]);
+        expect($card->fresh()->card_preset)->toBe($preset)->and($card->fresh()->card_data['value'])->toBe('12.500')->and($card->fresh()->position)->toBe(8);
+        $form = Livewire::test(ContentForm::class, ['resource' => 'cards', 'contentId' => $card->id])
+            ->assertSeeHtml('data-cms-card-form')->assertSet('form.card_preset', $preset)
+            ->set('form.card_preset', 'faq')->call('save')->assertHasNoErrors();
+        expect($card->fresh()->card_data['person'])->toBe('Ratna')->and($card->fresh()->body)->toContain('Isi tersimpan');
+    }
+})->with(['tabler', 'vuexy', 'dashcode']);
+
+it('rejects unknown card presets metadata and invalid event dates without saving', function (): void {
+    foreach ([['card_preset' => 'unknown'], ['card_data' => ['untrusted' => 'value']], ['card_data' => ['starts_at' => '2026-11-10T09:00', 'ends_at' => '2026-11-09T10:00']], ['card_data' => ['person' => ['invalid']]]] as $bad) {
+        expect(fn () => $this->libraryManager->save($this->libraryActor, CmsResource::Cards, $bad + ['name' => 'Invalid', 'status' => 'draft']))->toThrow(ValidationException::class);
+    }
+    expect(Content::where('kind', 'card')->count())->toBe(0);
+});
+
+it('keeps invalid optional editorial fields accessible and preserves card inputs after validation', function (string $theme): void {
+    cmsLibraryTheme($theme);
+    foreach (['posts', 'pages'] as $resource) {
+        $component = Livewire::test(ContentForm::class, ['resource' => $resource])
+            ->set('form.title', 'Profil Kampus')
+            ->set('form.subtitle', str_repeat('a', 256))
+            ->call('save')->assertHasErrors('form.subtitle');
+        $document = new DOMDocument;
+        $previous = libxml_use_internal_errors(true);
+        $document->loadHTML('<?xml encoding="utf-8" ?><html><body>'.$component->html().'</body></html>');
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+        $xpath = new DOMXPath($document);
+        expect($xpath->query('//*[@data-starter-region="post-details-form"]/details[@open]')->length)->toBe(1)
+            ->and($xpath->query('//*[@data-starter-region="publication-form"]//input[@type="radio"]')->length)->toBe(2);
+    }
+    Livewire::test(ContentForm::class, ['resource' => 'cards'])
+        ->set('form.name', '')
+        ->set('form.card_preset', 'profile')
+        ->set('form.title', 'Dr. Ratna Pratiwi')
+        ->set('form.card_data.value', '12.500')
+        ->call('save')->assertHasErrors('form.name')
+        ->assertSet('form.title', 'Dr. Ratna Pratiwi')
+        ->assertSet('form.card_data.value', '12.500')
+        ->assertSeeHtml('data-cms-preset-option="profile"');
+})->with(['tabler', 'vuexy', 'dashcode']);
+
+it('stores repeatable entries in one Card and preserves ordering and legacy values on edit', function (string $theme): void {
+    cmsLibraryTheme($theme);
+    foreach (array_keys(CmsCardPresets::collectionLabels()) as $preset) {
+        $items = [
+            ['key' => 'second', 'title' => 'Pendidikan dan Riset', 'subtitle' => 'Bidang Akademik', 'body' => 'Keterangan lengkap', 'starts_at' => '2026-11-10T08:30', 'ends_at' => '2026-11-10T09:00'],
+            ['key' => 'first', 'title' => 'Kemahasiswaan', 'link_url' => '/kemahasiswaan'],
+        ];
+        $card = $this->libraryManager->save($this->libraryActor, CmsResource::Cards, [
+            'name' => 'Kelompok '.$preset, 'card_preset' => $preset, 'status' => 'published',
+            'body' => 'Isi tunggal sebelumnya', 'card_data' => ['mode' => 'collection', 'items' => $items],
+        ]);
+        expect($card->card_data['items'])->toBe($items)->and($card->category_id)->toBeNull();
+        $component = Livewire::test(ContentForm::class, ['resource' => 'cards', 'contentId' => $card->id])
+            ->assertSet('form.card_data.mode', 'collection')
+            ->assertSet('form.card_data.items.0.key', 'second')
+            ->set('form.card_data.items', array_reverse($items))
+            ->set('form.card_data.mode', 'single')->call('save')->assertHasNoErrors();
+        expect($card->fresh()->card_data['items'][0]['key'])->toBe('first')
+            ->and($card->fresh()->body)->toContain('Isi tunggal sebelumnya');
+    }
+})->with(['tabler', 'vuexy', 'dashcode']);
+
+it('rejects malformed repeatable items without partially changing a saved Card', function (): void {
+    $base = ['name' => 'Tim Pimpinan', 'status' => 'published', 'card_preset' => 'profile', 'card_data' => ['mode' => 'collection', 'items' => [['key' => 'rektor', 'title' => 'Ratna Pratiwi']]]];
+    $card = $this->libraryManager->save($this->libraryActor, CmsResource::Cards, $base);
+    foreach ([
+        [],
+        [['key' => 'empty', 'title' => '']],
+        [['key' => 'same', 'title' => 'A'], ['key' => 'same', 'title' => 'B']],
+        [['key' => 'bad', 'title' => 'A', 'link_url' => 'javascript:alert(1)']],
+        [['key' => 'bad', 'title' => 'A', 'image_id' => 99999]],
+        [['key' => 'bad', 'title' => 'A', 'untrusted' => 'value']],
+        [['key' => 'bad', 'title' => 'A', 'starts_at' => '2026-11-10T10:00', 'ends_at' => '2026-11-09T10:00']],
+        array_map(fn ($i) => ['key' => 'item-'.$i, 'title' => 'Anggota '.$i], range(1, 51)),
+    ] as $items) {
+        $bad = $base;
+        $bad['card_data']['items'] = $items;
+        expect(fn () => $this->libraryManager->save($this->libraryActor, CmsResource::Cards, $bad, $card->id))->toThrow(ValidationException::class);
+        expect($card->fresh()->card_data['items'])->toBe($base['card_data']['items']);
+    }
+});
+
+it('protects images referenced by Card items and releases them only when removed', function (): void {
+    Storage::fake('local');
+    $this->libraryManager->uploadMediaBatch($this->libraryActor, [UploadedFile::fake()->image('rektor.png')]);
+    $image = Media::firstOrFail();
+    $data = ['name' => 'Tim', 'status' => 'draft', 'card_preset' => 'profile', 'card_data' => ['mode' => 'collection', 'items' => [['key' => 'rektor', 'title' => 'Ratna', 'image_id' => $image->id]]]];
+    $card = $this->libraryManager->save($this->libraryActor, CmsResource::Cards, $data);
+    expect($card->embeddedMedia()->pluck('cms_media.id')->all())->toBe([$image->id]);
+    expect(fn () => $this->libraryManager->lifecycle($this->libraryActor, CmsResource::Media, 'archive', [$image->id]))->toThrow(ValidationException::class);
+    $this->libraryManager->save($this->libraryActor, CmsResource::Cards, ['name' => 'Tim baru', 'status' => 'draft'], $card->id);
+    expect($card->fresh()->embeddedMedia()->pluck('cms_media.id')->all())->toBe([$image->id]);
+    $data['card_data']['items'] = [];
+    $this->libraryManager->save($this->libraryActor, CmsResource::Cards, $data, $card->id);
+    expect($this->libraryManager->lifecycle($this->libraryActor, CmsResource::Media, 'archive', [$image->id]))->toBe(1);
 });

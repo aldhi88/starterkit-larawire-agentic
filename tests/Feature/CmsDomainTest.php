@@ -37,12 +37,14 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function (): void {
     config(['app.key' => 'base64:'.base64_encode(str_repeat('c', 32))]);
-    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185233_create_starter_app_metadata_tables.php', '2026_07_27_185235_create_starter_logs_table.php'] as $migration) {
+    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185233_create_starter_app_metadata_tables.php', '2026_07_27_185235_create_starter_logs_table.php', '2026_11_02_000000_add_access_aggregation_to_starter_logs.php'] as $migration) {
         (require StarterPaths::path('database/migrations/starter/'.$migration))->up();
     }
     (require StarterPaths::path('installer/templates/cms/2026_10_25_000000_create_cms_tables.php'))->up();
     (require StarterPaths::path('installer/templates/cms/2026_10_25_000001_add_cms_rich_content.php'))->up();
     (require StarterPaths::path('installer/templates/cms/2026_10_25_000002_add_post_category_hierarchy.php'))->up();
+    (require StarterPaths::path('installer/templates/cms/2026_11_04_000003_add_card_presets.php'))->up();
+    (require StarterPaths::path('installer/templates/cms/2026_11_16_000004_add_cms_comment_replies.php'))->up();
     app()->bind(ClientLoginInterface::class, ClientLoginRepository::class);
     app()->bind(CmsRepositoryInterface::class, CmsRepository::class);
     app()->bind(CmsReadRepositoryInterface::class, CmsReadRepository::class);
@@ -101,7 +103,7 @@ it('defaults a new draft post date to local now and preserves the publication fa
     try {
         $editor = $this->cms->editor($this->actor, CmsResource::Posts);
         expect($editor['data']['published_at'])->toBe('2026-10-25T17:26')->and($editor['data']['status'])->toBe('draft');
-        expect($this->cms->editor($this->actor, CmsResource::Pages)['data']['published_at'])->toBeNull();
+        expect($this->cms->editor($this->actor, CmsResource::Pages)['data']['published_at'])->toBe('2026-10-25T17:26');
         $draft = $this->cms->save($this->actor, CmsResource::Posts, ['title' => 'Draft without date', 'status' => 'draft', 'published_at' => null]);
         expect($this->cms->editor($this->actor, CmsResource::Posts, $draft->id)['data']['published_at'])->toBeNull();
         $published = $this->cms->save($this->actor, CmsResource::Posts, ['title' => 'Published without date', 'status' => 'published', 'published_at' => '']);
@@ -125,6 +127,7 @@ it('orders public posts by publication time rather than legacy position with sta
 it('treats a cleared optional position as zero for every ordered CMS resource', function (string $resourceName, mixed $position): void {
     $resource = CmsResource::from($resourceName);
     $record = $this->cms->save($this->actor, $resource, cmsData([
+        'category_id' => $resource === CmsResource::Pages ? Category::firstOrCreate(['kind' => 'page', 'code' => 'test-profil'], ['name' => 'Profil', 'status' => 'active'])->id : null,
         'name' => 'Without ordering',
         'status' => array_key_first($resource->statusOptions()),
         'position' => $position,
@@ -146,7 +149,7 @@ it('uses readable CMS field names in validation messages', function (): void {
         $this->cms->save($this->actor, CmsResource::Cards, cmsData(['name' => '']));
         $this->fail('The internal name must be required.');
     } catch (ValidationException $exception) {
-        expect($exception->errors()['name'][0])->toContain('nama internal');
+        expect($exception->errors()['name'][0])->toContain('nama Card');
     }
 });
 
@@ -287,7 +290,7 @@ it('validates nested menu keys cycles depth URLs and exposes a frontend tree', f
 
 it('keeps approved comments private until their post is public and never exposes email', function (): void {
     $post = $this->cms->save($this->actor, CmsResource::Posts, cmsData(['name' => 'Posting']));
-    $comment = $this->cms->save($this->actor, CmsResource::Comments, ['content_id' => $post->id, 'author_name' => 'Pembaca', 'author_email' => 'private@example.test', 'body' => 'Komentar', 'status' => 'approved']);
+    $comment = Comment::create(['content_id' => $post->id, 'author_name' => 'Pembaca', 'author_email' => 'private@example.test', 'body' => 'Komentar', 'status' => 'approved']);
     expect($this->reader->comments('posting')->total())->toBe(0);
     $this->cms->save($this->actor, CmsResource::Posts, cmsData(['name' => 'Posting', 'status' => 'published']), $post->id);
     expect($this->reader->comments('posting')->total())->toBe(1)->and($this->reader->comments('posting')->first()->toArray())->not->toHaveKey('author_email');
@@ -367,7 +370,7 @@ it('rejects submissions to drafts scheduled archived and nonpost content', funct
     $this->cms->save($this->actor, CmsResource::Posts, cmsData(['name' => 'Terjadwal', 'status' => 'published', 'published_at' => now()->addDay()->toDateTimeString()]));
     $post = $this->cms->save($this->actor, CmsResource::Posts, cmsData(['name' => 'Arsip', 'status' => 'published']));
     $this->cms->lifecycle($this->actor, CmsResource::Posts, 'archive', [$post->id]);
-    $this->cms->save($this->actor, CmsResource::Pages, cmsData(['name' => 'Halaman', 'status' => 'published']));
+    $this->cms->save($this->actor, CmsResource::Pages, cmsData(['category_id' => Category::firstOrCreate(['kind' => 'page', 'code' => 'test-profil'], ['name' => 'Profil', 'status' => 'active'])->id, 'name' => 'Halaman', 'status' => 'published']));
     $submission = app(CmsCommentSubmission::class);
     foreach (['draf', 'terjadwal', 'arsip', 'halaman'] as $slug) {
         expect(fn () => $submission->submit($slug, 'Name', null, 'Body'))->toThrow(HttpException::class);
@@ -412,8 +415,8 @@ it('rejects filtered action count drift inside its transaction without changing 
 it('applies moderation post and body filters to counts and mutations consistently', function (): void {
     $post = $this->cms->save($this->actor, CmsResource::Posts, cmsData(['name' => 'Berita A']));
     $otherPost = $this->cms->save($this->actor, CmsResource::Posts, cmsData(['name' => 'Berita B']));
-    $first = $this->cms->save($this->actor, CmsResource::Comments, ['content_id' => $post->id, 'author_name' => 'Pembaca', 'body' => 'Target komentar', 'status' => 'pending']);
-    $this->cms->save($this->actor, CmsResource::Comments, ['content_id' => $otherPost->id, 'author_name' => 'Pembaca', 'body' => 'Target komentar', 'status' => 'pending']);
+    $first = Comment::create(['content_id' => $post->id, 'author_name' => 'Pembaca', 'body' => 'Target komentar', 'status' => 'pending']);
+    Comment::create(['content_id' => $otherPost->id, 'author_name' => 'Pembaca', 'body' => 'Target komentar', 'status' => 'pending']);
     expect($this->cms->tableQuery($this->actor, CmsResource::Comments)->first()->getAttribute('content_name'))->toBe('Berita A')
         ->and($this->cms->countFiltered($this->actor, CmsResource::Comments, ['content_id' => $post->id, 'body' => 'Target']))->toBe(1)
         ->and($this->cms->lifecycleFiltered($this->actor, CmsResource::Comments, 'archive', ['content_id' => $post->id, 'body' => 'Target'], 'active', 1))->toBe(1)
@@ -434,11 +437,11 @@ it('keeps independently named content paginators on the same page isolated', fun
 });
 
 it('supports custom page and comment paginator names and rejects malformed identifiers', function (): void {
-    $this->cms->save($this->actor, CmsResource::Pages, cmsData(['name' => 'Page One', 'status' => 'published']));
-    $this->cms->save($this->actor, CmsResource::Pages, cmsData(['name' => 'Page Two', 'status' => 'published']));
+    $this->cms->save($this->actor, CmsResource::Pages, cmsData(['category_id' => Category::firstOrCreate(['kind' => 'page', 'code' => 'test-profil'], ['name' => 'Profil', 'status' => 'active'])->id, 'name' => 'Page One', 'status' => 'published']));
+    $this->cms->save($this->actor, CmsResource::Pages, cmsData(['category_id' => Category::firstOrCreate(['kind' => 'page', 'code' => 'test-profil'], ['name' => 'Profil', 'status' => 'active'])->id, 'name' => 'Page Two', 'status' => 'published']));
     $post = $this->cms->save($this->actor, CmsResource::Posts, cmsData(['name' => 'Comment Target', 'status' => 'published']));
     foreach (['First', 'Second'] as $author) {
-        $this->cms->save($this->actor, CmsResource::Comments, ['content_id' => $post->id, 'author_name' => $author, 'body' => 'Comment', 'status' => 'approved']);
+        Comment::create(['content_id' => $post->id, 'author_name' => $author, 'body' => 'Comment', 'status' => 'approved']);
     }
     request()->merge(['customPages' => 2, 'discussionPage' => 2]);
     expect($this->reader->pages(perPage: 1, pageName: 'customPages')->currentPage())->toBe(2)
@@ -470,4 +473,78 @@ it('derives an optional post excerpt without persisting or freezing the fallback
     $post->kind = 'card';
     $post->body = 'Card tetap opsional.';
     expect($post->excerpt)->toBeNull();
+});
+
+it('reads a Card directly by ID or slug while enforcing publication and category visibility', function (): void {
+    $card = Content::create(['kind' => 'card', 'name' => 'Tim Pimpinan', 'slug' => 'tim-pimpinan', 'status' => 'published', 'published_at' => now()->subMinute(), 'card_preset' => 'profile', 'card_data' => ['mode' => 'collection', 'items' => [['key' => 'a', 'title' => 'Ratna'], ['key' => 'b', 'title' => 'Bima']]]]);
+    expect($this->reader->card($card->id)?->id)->toBe($card->id)
+        ->and($this->reader->card('tim-pimpinan')?->card_data['items'])->toHaveCount(2);
+    $card->update(['status' => 'draft']);
+    expect($this->reader->card($card->id))->toBeNull();
+    $card->update(['status' => 'published', 'published_at' => now()->addDay()]);
+    expect($this->reader->card('tim-pimpinan'))->toBeNull();
+    $category = Category::create(['kind' => 'card', 'name' => 'Tim', 'code' => 'tim', 'status' => 'inactive']);
+    $card->update(['published_at' => now()->subMinute(), 'category_id' => $category->id]);
+    expect($this->reader->card($card->id))->toBeNull();
+    $category->update(['status' => 'active']);
+    expect($this->reader->card($card->id)?->id)->toBe($card->id);
+    $card->delete();
+    expect($this->reader->card('tim-pimpinan'))->toBeNull();
+    $post = Content::create(['kind' => 'post', 'name' => 'Berita', 'slug' => 'berita', 'status' => 'published', 'published_at' => now()->subMinute()]);
+    expect($this->reader->card($post->id))->toBeNull();
+});
+
+it('resolves menu references by ID and removes unavailable branches from flat and nested public navigation', function (): void {
+    config(['app.url' => 'https://kampus.test', 'starter.cms.permalinks.page_category' => '/profil/{code}']);
+    $this->cms->installDefaults();
+    $category = Category::create(['kind' => 'post', 'name' => 'Riset', 'code' => 'riset.it', 'status' => 'active']);
+    $pages = Category::create(['kind' => 'page', 'name' => 'Kampus', 'code' => 'kampus', 'status' => 'active']);
+    $article = Content::create(['kind' => 'post', 'name' => 'Riset', 'title' => 'Riset', 'slug' => 'riset', 'status' => 'published', 'published_at' => now()->subDay(), 'category_id' => $category->id]);
+    $page = Content::create(['kind' => 'page', 'name' => 'Visi', 'title' => 'Visi', 'slug' => 'visi', 'status' => 'published', 'published_at' => now()->subDay(), 'category_id' => $pages->id]);
+    $items = [
+        ['key' => 'home', 'label' => 'Beranda', 'url' => '/'],
+        ['key' => 'news', 'label' => 'Riset terbaru', 'target_type' => 'post', 'target_id' => $article->id, 'url' => '/diabaikan'],
+        ['key' => 'child', 'label' => 'Laporan', 'parent_key' => 'news', 'url' => '/laporan'],
+        ['key' => 'profile', 'label' => 'Profil', 'target_type' => 'page', 'target_id' => $page->id],
+        ['key' => 'research', 'label' => 'Arsip riset', 'target_type' => 'post_category', 'target_id' => $category->id],
+        ['key' => 'campus', 'label' => 'Kampus', 'target_type' => 'page_category', 'target_id' => $pages->id],
+    ];
+    $form = ['name' => 'Navigasi', 'code' => 'navigasi', 'status' => 'active', 'category_id' => MenuCategory::where('code', 'main')->firstOrFail()->id, 'items' => $items];
+    $menu = $this->cms->save($this->actor, CmsResource::Menus, $form);
+    expect($menu->items[1])->not->toHaveKey('url')->and($menu->items[1]['target_id'])->toBe($article->id);
+    $article->update(['slug' => 'riset-baru']);
+    $public = $this->reader->menu('navigasi');
+    expect(array_column($public->items, 'url'))->toBe(['/', 'https://kampus.test/konten/riset-baru', '/laporan', 'https://kampus.test/halaman/visi', 'https://kampus.test/konten/kategori/riset.it', 'https://kampus.test/profil/kampus'])
+        ->and($this->reader->menuTree($public)[1]['children'][0]['url'])->toBe('/laporan');
+    $article->update(['status' => 'draft']);
+    $pages->update(['status' => 'inactive']);
+    expect(array_column($this->reader->menus('main')->first()->items, 'key'))->toBe(['home', 'research'])
+        ->and($this->cms->menuTargetOptions($this->actor, 'post', 'Riset'))->toBe([]);
+    $form['items'][1]['target_type'] = 'page';
+    expect(fn () => $this->cms->save($this->actor, CmsResource::Menus, $form, $menu->id))->toThrow(ValidationException::class);
+    expect($menu->fresh()->items[1]['target_type'])->toBe('post');
+});
+
+it('publishes moderated replies only with their visible parent and makes retries idempotent', function (): void {
+    $post = $this->cms->save($this->actor, CmsResource::Posts, cmsData(['name' => 'Diskusi', 'status' => 'published']));
+    $comment = app(CmsCommentSubmission::class)->submit('diskusi', 'Rina', null, 'Apakah pendaftaran sudah buka?');
+    $moderation = ['status' => 'approved', 'original_status' => 'pending', 'reply_body' => 'Sudah dibuka.', 'reply_key' => (string) Str::uuid()];
+    $this->cms->save($this->actor, CmsResource::Comments, $moderation, $comment->id);
+    $this->cms->save($this->actor, CmsResource::Comments, $moderation, $comment->id);
+    $reply = $comment->replies()->sole();
+    expect($reply->created_by)->toBe($this->actor->id)->and($reply->content_id)->toBe($post->id);
+    $visible = $this->reader->comments('diskusi');
+    expect($visible->total())->toBe(1)->and($visible->first()->replies->sole()->body)->toBe('Sudah dibuka.')
+        ->and($visible->first()->replies->sole()->toArray())->not->toHaveKeys(['author_email', 'reply_key']);
+    foreach (['hidden', 'rejected'] as $status) {
+        $this->cms->save($this->actor, CmsResource::Comments, ['status' => $status], $comment->id);
+        expect($this->reader->comments('diskusi')->total())->toBe(0);
+    }
+    $this->cms->save($this->actor, CmsResource::Comments, ['status' => 'approved'], $comment->id);
+    $this->cms->save($this->actor, CmsResource::Comments, ['status' => 'hidden'], $reply->id);
+    expect($this->reader->comments('diskusi')->first()->replies)->toHaveCount(0);
+    $this->cms->lifecycle($this->actor, CmsResource::Comments, 'archive', [$comment->id]);
+    expect($this->reader->comments('diskusi')->total())->toBe(0);
+    $this->cms->lifecycle($this->actor, CmsResource::Comments, 'delete_permanently', [$comment->id]);
+    expect(Comment::withTrashed()->find($reply->id))->toBeNull();
 });

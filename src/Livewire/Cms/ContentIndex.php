@@ -39,6 +39,6 @@ class ContentIndex extends Component
         $this->manager->authorize($this->authenticatedLogins->current(), $resource);
 
         return view(StarterTheme::viewName('starter.cms.index'), ['cmsResource' => $resource])
-            ->title($resource->label());
+            ->title($resource === CmsResource::Galleries ? 'Album Foto' : $resource->label());
     }
 }

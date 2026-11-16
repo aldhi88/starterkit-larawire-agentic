@@ -319,6 +319,9 @@ layout, then these five identities:
 | Superuser email | No | `admin@company.test` |
 | Superuser password | No | entered through a hidden prompt |
 
+The wizard also offers a CMS. Press Enter to keep the root landing page and the
+first dashboard only. Select Yes to add a second App at `cms.<APP_DOMAIN>`.
+
 For the App domain, enter only the subdomain part without dots or the main
 domain. For example, `hr` becomes `hr.company.test` when `APP_URL` uses
 `company.test`.
@@ -399,6 +402,11 @@ php artisan starter:sync
 
 Review and commit both `composer.json` and `composer.lock` in the Laravel
 application repository.
+
+To enable CMS later, run `php artisan starter:cms --dry-run` to preview the
+files, then `php artisan starter:cms` locally to activate it. Composer updates
+preserve the host’s existing CMS choice. Include the generated host files in
+your normal production deployment.
 
 ### Customize starter-owned views
 

@@ -2,7 +2,7 @@
     <div class="row g-2 align-items-center">
         <div class="col-auto" data-starter-region="bulk-actions">
             <div class="dropdown" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
-                <button type="button" class="btn dropdown-toggle" @click="open = !open" :aria-expanded="open" aria-haspopup="menu">Aksi</button>
+                <button type="button" class="btn dropdown-toggle" :class="$store.pgBulkActions.count(@js($tableName)) > 0 ? 'btn-dark' : 'cms-btn-neutral'" @click="open = !open" :aria-expanded="open" aria-haspopup="menu">Aksi</button>
                 <ul class="dropdown-menu top-100 start-0 mt-1" :class="{ 'show': open }" x-show="open" x-cloak role="menu">
                     @if ($archiveStatus !== 'archived')
                         <li><button type="button" class="dropdown-item" wire:click="prepareBulkAction('archive')" @click="open = false" :disabled="$store.pgBulkActions.count(@js($tableName)) === 0" role="menuitem">Arsipkan Terpilih</button></li>
@@ -24,7 +24,7 @@
         </div>
         <div class="col-12 col-md-4">
             <label class="visually-hidden" for="{{ $tableName }}-search">Cari {{ \Aldhi88\StarterKit\Support\Cms\CmsResource::from($resource)->label() }}</label>
-            <input id="{{ $tableName }}-search" type="search" class="form-control" placeholder="{{ $resource === 'posts' ? 'Cari judul postingan…' : ($resource === 'post_categories' ? 'Cari nama kategori…' : 'Cari nama…') }}" maxlength="100" wire:model.live.debounce.350ms="search">
+            <input id="{{ $tableName }}-search" type="search" class="form-control" placeholder="{{ $resource === 'posts' ? 'Cari judul konten…' : ($resource === 'pages' ? 'Cari judul halaman…' : ($resource === 'post_categories' ? 'Cari nama kategori…' : 'Cari nama…')) }}" maxlength="100" wire:model.live.debounce.350ms="search">
         </div>
     </div>
 </div>

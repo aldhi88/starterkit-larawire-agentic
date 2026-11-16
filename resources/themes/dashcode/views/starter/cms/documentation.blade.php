@@ -1,9 +1,10 @@
 @php
     $examples = [
-        ['title' => 'Postingan dan kategori', 'description' => 'Ambil daftar terbit dengan pagination, atau batasi berdasarkan kode kategori.', 'code' => '$posts = $cms->posts(perPage: 12);
+        ['title' => 'Konten dan kategori', 'description' => 'Ambil daftar terbit dengan pagination, atau batasi berdasarkan kode kategori.', 'code' => '$posts = $cms->posts(perPage: 12);
 $news = $cms->posts(category: \'berita\', perPage: 12);
-$post = $cms->post(\'judul-postingan\');
+$post = $cms->post(\'judul-konten\');
 $categories = $cms->postCategories();'],
+        ['title' => 'Permalink', 'description' => 'Pola bawaan: /konten/{slug} dan /halaman/{slug} pada domain utama. Pengembang menyesuaikan starter.cms.permalinks dan membuat route publik yang memakai reader CMS; tautan tidak otomatis membuat halaman publik.', 'code' => '\\Aldhi88\\StarterKit\\Support\\Cms\\CmsPermalink::for(\'page\', \'tentang-kami\');'],
         ['title' => 'Halaman', 'description' => 'Ambil halaman berdasarkan slug atau kelompok kategorinya.', 'code' => '$pages = $cms->pages(category: \'profil\');
 $page = $cms->page(\'tentang-kami\');
 $categories = $cms->pageCategories();'],
@@ -13,18 +14,21 @@ $categories = $cms->cardCategories();'],
         ['title' => 'Media dan galeri', 'description' => 'Gunakan URL media yang aman. Foto galeri tersedia sesuai urutan yang disimpan.', 'code' => '$imageUrl = $cms->mediaUrl($card->image);
 $logoUrl = $cms->mediaUrl($card->logo);
 $gallery = $cms->gallery(\'kegiatan\');'],
-        ['title' => 'Menu bertingkat', 'description' => 'Kategori menu bawaan: main, other, footer. Kode menu dan struktur induk-anak dapat diambil untuk navigasi Anda.', 'code' => '$menus = $cms->menus(\'main\');
+        ['title' => 'Menu bertingkat', 'description' => 'Item menu dapat menuju URL khusus, konten, halaman, atau kategori. Tujuan CMS mengikuti alamat terbarunya. Ambil menu lewat kode, lalu gunakan url dan children untuk navigasi.', 'code' => '$menus = $cms->menus(\'main\');
 $menu = $cms->menu(\'navigasi-utama\');
 $tree = $menu ? $cms->menuTree($menu) : [];'],
-        ['title' => 'Konten panjang dan komentar', 'description' => 'Render konten editor melalui renderer HTML yang aman, termasuk konten lama. Pembaca hanya mengembalikan komentar yang disetujui.', 'code' => '$safeHtml = $cms->renderBody($post);
-$comments = $cms->comments(\'judul-postingan\');'],
+        ['title' => 'Konten panjang dan komentar', 'description' => 'Render konten editor melalui renderer HTML yang aman, termasuk konten lama. Daftar memuat komentar utama yang terbit beserta balasan editornya.', 'code' => '$safeHtml = $cms->renderBody($post);
+$comments = $cms->comments(\'judul-konten\');
+foreach ($comments as $comment) {
+    $replies = $comment->replies;
+}'],
     ];
 @endphp
 <main class="dashcode-landing-page">
     <header class="dashcode-landing-nav" data-starter-region="page-header">
 
             @include('starter.templates.components.company-brand')
-            <a href="{{ url('/') }}" class="btn btn-secondary">Kembali ke Beranda</a>
+            @include('starter-shared::cms.back-link', ['backUrl' => url('/'), 'backLabel' => 'Kembali ke Beranda', 'backClass' => 'btn-light ml-auto', 'backNavigate' => false])
 
     </header>
     <section class="container mx-auto p-6 space-y-5" data-starter-region="primary-content">
@@ -34,6 +38,7 @@ $comments = $cms->comments(\'judul-postingan\');'],
             @foreach ($examples as $example)
                 <div class="min-w-0"><article class="card h-full"><div class="card-body p-6 space-y-4"><h2 class="card-title">{{ $example['title'] }}</h2><p class="text-secondary">{{ $example['description'] }}</p><pre class="overflow-x-auto rounded bg-slate-100 p-4 text-sm"><code>{{ $example['code'] }}</code></pre></div></article></div>
             @endforeach
-        </div>
+        @include('starter-shared::cms.card-documentation')
+</div>
     </section>
 </main>

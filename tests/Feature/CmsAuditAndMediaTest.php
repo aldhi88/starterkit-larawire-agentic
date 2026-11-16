@@ -24,9 +24,12 @@ beforeEach(function (): void {
     foreach (['185232_create_starter_identity_tables', '185233_create_starter_app_metadata_tables', '185235_create_starter_logs_table'] as $name) {
         (require StarterPaths::path('database/migrations/starter/2026_07_27_'.$name.'.php'))->up();
     }
+    (require StarterPaths::path('database/migrations/starter/2026_11_02_000000_add_access_aggregation_to_starter_logs.php'))->up();
     (require StarterPaths::path('installer/templates/cms/2026_10_25_000000_create_cms_tables.php'))->up();
     (require StarterPaths::path('installer/templates/cms/2026_10_25_000001_add_cms_rich_content.php'))->up();
     (require StarterPaths::path('installer/templates/cms/2026_10_25_000002_add_post_category_hierarchy.php'))->up();
+    (require StarterPaths::path('installer/templates/cms/2026_11_04_000003_add_card_presets.php'))->up();
+    (require StarterPaths::path('installer/templates/cms/2026_11_16_000004_add_cms_comment_replies.php'))->up();
     app()->bind(ClientLoginInterface::class, ClientLoginRepository::class);
     app()->bind(CmsReadRepositoryInterface::class, CmsReadRepository::class);
     app()->bind(CmsRepositoryInterface::class, CmsRepository::class);

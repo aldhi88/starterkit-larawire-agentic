@@ -641,9 +641,15 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
     activateNavigation() {
         const navigations = Array.from(document.querySelectorAll('[data-starter-navigation]'));
 
-        document.querySelectorAll('[data-starter-menu-url]').forEach((link) => {
+        const links = Array.from(document.querySelectorAll('[data-starter-menu-url]'));
+        const directLinks = links.filter(link => this.isSameUrl(link.dataset.starterMenuUrl));
+        // Secondary pages such as album management use the owning menu selected by the server.
+        const activeLinks = directLinks.length ? directLinks : links.filter(link => link.dataset.current === 'true');
+
+        links.forEach((link) => {
             link.classList.remove('active');
             link.removeAttribute('data-current');
+            link.removeAttribute('aria-current');
             link.closest('[data-starter-menu-item]')?.classList.remove('active');
         });
 
@@ -653,12 +659,10 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
             });
         });
 
-        const activeLinks = Array.from(document.querySelectorAll('[data-starter-menu-url]'))
-            .filter((link) => this.isSameUrl(link.dataset.starterMenuUrl));
-
         activeLinks.forEach((activeLink) => {
             activeLink.classList.add('active');
             activeLink.setAttribute('data-current', 'true');
+            activeLink.setAttribute('aria-current', this.isSameUrl(activeLink.href) ? 'page' : 'location');
             activeLink.closest('[data-starter-menu-item]')?.classList.add('active');
 
             const navigation = activeLink.closest('[data-starter-navigation]');

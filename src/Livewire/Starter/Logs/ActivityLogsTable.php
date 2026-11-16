@@ -6,6 +6,7 @@ use Aldhi88\StarterKit\Contracts\Starter\ActivityLogInterface;
 use Aldhi88\StarterKit\Models\Starter\ActivityLog;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
+use Aldhi88\StarterKit\Support\Starter\ActivityLogPresentation;
 use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -68,8 +69,11 @@ class ActivityLogsTable extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('action_id')->add('action_label')->add('action_key')->add('actor_name')->add('actor_role')
+            ->add('action_id')->add('action_key')->add('actor_name')->add('actor_role')
             ->add('app_key')->add('route_name')->add('ip_address')->add('changes_count')->add('tables_count')
+            ->add('category')
+            ->add('category_label', fn (ActivityLog $log): string => ActivityLogPresentation::CATEGORIES[$log->category] ?? 'Tidak diketahui')
+            ->add('action_label', fn (ActivityLog $log): string => e(ActivityLogPresentation::summary($log)))
             ->add('created_at')
             ->add('created_at_label', fn (ActivityLog $log): string => $log->created_at->format('d M Y H:i:s'));
     }
@@ -78,8 +82,12 @@ class ActivityLogsTable extends PowerGridComponent
     {
         return [
             Column::action('Aksi'),
-            Column::make('Waktu', 'created_at_label', 'created_at')->sortable(),
-            Column::make('Aktivitas', 'action_label')->searchable()->sortable(),
+            Column::make('Waktu', 'created_at_label', 'created_at')->sortable()
+                ->headerAttribute('', 'min-width: 11rem;')->bodyAttribute('', 'min-width: 11rem;'),
+            Column::make('Aktivitas', 'action_label')->searchable()->sortable()
+                ->headerAttribute('', 'min-width: 20rem;')->bodyAttribute('', 'min-width: 20rem; white-space: normal;'),
+            Column::make('Kategori', 'category_label', 'category')->sortable()
+                ->headerAttribute('', 'min-width: 12rem;')->bodyAttribute('', 'min-width: 12rem;'),
             Column::make('Aktor', 'actor_name')->searchable()->sortable(),
             Column::make('Role', 'actor_role')->searchable()->sortable(),
             Column::make('Aplikasi', 'app_key')->searchable()->sortable(),
@@ -96,6 +104,7 @@ class ActivityLogsTable extends PowerGridComponent
 
         return [
             Filter::datetimepicker('created_at_label', 'created_at')->params(['mode' => 'range']),
+            Filter::select('category_label', 'category')->dataSource(collect(ActivityLogPresentation::CATEGORIES)->map(fn (string $label, string $value): array => compact('value', 'label'))->values())->optionValue('value')->optionLabel('label'),
             Filter::inputText('action_label')->operators(['contains']),
             Filter::select('actor_name')->dataSource(
                 $options['actors']

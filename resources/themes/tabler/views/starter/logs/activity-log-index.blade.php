@@ -477,6 +477,12 @@
                                             @else
                                                 <div class="card-body py-3 text-secondary">Tidak ada payload perubahan yang dapat ditampilkan.</div>
                                             @endif
+                                            @if ($log->access_count !== null)
+                                                <p class="mb-2">Akses dirangkum: {{ $log->access_count }} kali.
+                                                    Pertama: {{ $log->created_at->format('d M Y H:i:s') }}.
+                                                    Terakhir: {{ $log->last_access_at?->format('d M Y H:i:s') }}.
+                                                    Jendela tetap; state identik, bukan jumlah objek yang diubah.</p>
+                                            @endif
                                             @if (filled($log->auditable_type) || filled($log->metadata))
                                                 <details class="border-top px-3 py-2">
                                                     <summary class="small text-secondary cursor-pointer">Atribut teknis item</summary>

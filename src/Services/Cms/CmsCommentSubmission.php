@@ -31,7 +31,7 @@ class CmsCommentSubmission
                     ], [
                         'post_slug' => ['required', 'string', 'max:180'], 'author_name' => ['required', 'string', 'max:255'],
                         'author_email' => ['nullable', 'email', 'max:255'], 'body' => ['required', 'string', 'max:10000'],
-                    ], [], ['post_slug' => 'postingan', 'author_name' => 'nama pengirim', 'author_email' => 'email pengirim', 'body' => 'komentar'])->validate();
+                    ], [], ['post_slug' => 'konten', 'author_name' => 'nama pengirim', 'author_email' => 'email pengirim', 'body' => 'komentar'])->validate();
                     $post = $this->records->publishedPostForSubmission($data['post_slug']);
                     abort_unless($post !== null, 404);
                     $comment = $this->records->storeSubmittedComment($post->getKey(), [

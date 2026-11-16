@@ -2,6 +2,7 @@
 
 namespace Aldhi88\StarterKit\Repositories\Cms;
 
+use Aldhi88\StarterKit\Contracts\Cms\CmsContentLookupInterface;
 use Aldhi88\StarterKit\Contracts\Cms\CmsReadRepositoryInterface;
 use Aldhi88\StarterKit\Models\Cms\Category;
 use Aldhi88\StarterKit\Models\Cms\Comment;
@@ -9,11 +10,12 @@ use Aldhi88\StarterKit\Models\Cms\Content;
 use Aldhi88\StarterKit\Models\Cms\Gallery;
 use Aldhi88\StarterKit\Models\Cms\Media;
 use Aldhi88\StarterKit\Models\Cms\Menu;
+use Aldhi88\StarterKit\Support\Cms\CmsPermalink;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
-class CmsReadRepository implements CmsReadRepositoryInterface
+class CmsReadRepository implements CmsContentLookupInterface, CmsReadRepositoryInterface
 {
     /** @return Builder<Content> */
     private function published(string $kind): Builder
@@ -70,6 +72,11 @@ class CmsReadRepository implements CmsReadRepositoryInterface
             ->orderByDesc('published_at')->orderByDesc('id')->paginate($perPage, ['*'], $pageName);
     }
 
+    public function publishedById(string $kind, int $id): ?Content
+    {
+        return $this->published($kind)->whereKey($id)->first();
+    }
+
     public function publishedBySlug(string $kind, string $slug): ?Content
     {
         return $this->published($kind)->where('slug', $slug)->first();
@@ -90,6 +97,36 @@ class CmsReadRepository implements CmsReadRepositoryInterface
         return Menu::query()->where('status', 'active')->whereHas('category', fn (Builder $query) => $query->where('code', $category)->where('status', 'active'))->with('category')->orderBy('position')->orderBy('id')->limit($limit)->get();
     }
 
+    public function menuTargets(string $type, ?array $ids, string $search = ''): array
+    {
+        if (in_array($type, ['post', 'page'], true)) {
+            $query = $this->published($type)->withoutEagerLoads();
+            $name = 'title';
+            $path = 'slug';
+        } elseif (in_array($type, ['post_category', 'page_category'], true)) {
+            $query = Category::query()->where('kind', str_replace('_category', '', $type))->where('status', 'active');
+            $name = 'name';
+            $path = 'code';
+        } else {
+            return [];
+        }
+        if ($ids !== null) {
+            $query->whereIntegerInRaw('id', $ids);
+        } else {
+            $query->when($search !== '', fn ($q) => $q->where($name, 'like', '%'.$search.'%'))->limit(25);
+        }
+
+        $options = [];
+        foreach ($query->orderBy($name)->orderBy('id')->get(['id', $name, $path]) as $row) {
+            $url = CmsPermalink::for($type, (string) $row->getAttribute($path));
+            if ($url !== null) {
+                $options[] = ['id' => (int) $row->getKey(), 'name' => (string) ($row->getAttribute($name) ?: $row->getAttribute($path)), 'url' => $url];
+            }
+        }
+
+        return $options;
+    }
+
     public function publicMenu(string $code): ?Menu
     {
         return Menu::query()->where('code', $code)->where('status', 'active')->where(fn (Builder $query) => $query->whereNull('category_id')->orWhereHas('category', fn (Builder $category) => $category->where('status', 'active')))->with('category')->first();
@@ -107,12 +144,15 @@ class CmsReadRepository implements CmsReadRepositoryInterface
 
     public function approvedComments(string $postSlug, int $perPage, string $pageName): LengthAwarePaginator
     {
-        return Comment::query()->where('status', 'approved')->whereHas('content', function (Builder $query) use ($postSlug): void {
-            $query->where('kind', 'post')->where('slug', $postSlug)->where('status', 'published')->whereNotNull('published_at')->where('published_at', '<=', now())
-                ->where(fn (Builder $content) => $content->whereHas('categories', fn (Builder $category) => $category->where('kind', 'post')->where('status', 'active'))
-                    ->orWhere(fn (Builder $legacy) => $legacy->whereDoesntHave('categories')
-                        ->where(fn (Builder $single) => $single->whereNull('category_id')->orWhereHas('category', fn (Builder $category) => $category->where('kind', 'post')->where('status', 'active')))));
-        })->orderByDesc('created_at')->orderByDesc('id')->paginate($perPage, ['id', 'content_id', 'author_name', 'body', 'created_at'], $pageName);
+        return Comment::query()->whereNull('parent_id')->where('status', 'approved')
+            ->with(['replies' => fn ($query) => $query->where('status', 'approved')->orderBy('id')
+                ->select(['id', 'parent_id', 'content_id', 'author_name', 'body', 'created_at'])])
+            ->whereHas('content', function (Builder $query) use ($postSlug): void {
+                $query->where('kind', 'post')->where('slug', $postSlug)->where('status', 'published')->whereNotNull('published_at')->where('published_at', '<=', now())
+                    ->where(fn (Builder $content) => $content->whereHas('categories', fn (Builder $category) => $category->where('kind', 'post')->where('status', 'active'))
+                        ->orWhere(fn (Builder $legacy) => $legacy->whereDoesntHave('categories')
+                            ->where(fn (Builder $single) => $single->whereNull('category_id')->orWhereHas('category', fn (Builder $category) => $category->where('kind', 'post')->where('status', 'active')))));
+            })->orderByDesc('created_at')->orderByDesc('id')->paginate($perPage, ['id', 'content_id', 'author_name', 'body', 'created_at'], $pageName);
     }
 
     public function publicMediaById(int $id): ?Media

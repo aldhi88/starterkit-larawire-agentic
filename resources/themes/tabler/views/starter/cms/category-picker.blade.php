@@ -11,7 +11,7 @@
                 $branches[array_key_last($branches)][] = $item;
             }
         @endphp
-        <div @class(['cms-category-tree', 'cms-category-tree-columns' => $twoColumns ?? false]) role="group" aria-label="Kategori postingan">
+        <div @class(['cms-category-tree', 'cms-category-tree-columns' => $twoColumns ?? false]) role="group" aria-label="Kategori konten">
             @foreach ($branches as $branch)
                 <div @class(['cms-category-branch', 'border rounded p-1' => $twoColumns ?? false]) x-show="visible.includes({{ $branch[0]['id'] }})" x-cloak>
                     @foreach ($branch as $category)

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 use Livewire\LivewireServiceProvider;
+use PowerComponents\LivewirePowerGrid\DataSource\Processors\Database\Pipelines\Filters;
 use PowerComponents\LivewirePowerGrid\DataSource\Processors\Database\Pipelines\Sorting;
 use PowerComponents\LivewirePowerGrid\Providers\PowerGridServiceProvider;
 use PowerComponents\LivewirePowerGrid\Themes\Bootstrap5;
@@ -44,6 +45,7 @@ function activitySortingTable(): ActivityLogsTable
 it('orders grouped activity by the latest timestamp before paginating rather than insertion ID', function (): void {
     Schema::create('starter_client_logins', fn (Blueprint $table) => $table->id());
     (require StarterPaths::path('database/migrations/starter/2026_07_27_185235_create_starter_logs_table.php'))->up();
+    (require StarterPaths::path('database/migrations/starter/2026_11_02_000000_add_access_aggregation_to_starter_logs.php'))->up();
 
     foreach ([
         [1, 'newest', '2026-10-16 15:30:00'],
@@ -91,3 +93,32 @@ it('repairs the persisted implicit ID sort while keeping filters and explicit co
     ['created_at', 'asc', 'created_at', 'asc'],
     ['action_label', 'desc', 'action_label', 'desc'],
 ]);
+
+it('filters categories before pagination and persists the selection across table mounts', function (): void {
+    Schema::create('starter_client_logins', fn (Blueprint $table) => $table->id());
+    (require StarterPaths::path('database/migrations/starter/2026_07_27_185235_create_starter_logs_table.php'))->up();
+    (require StarterPaths::path('database/migrations/starter/2026_11_02_000000_add_access_aggregation_to_starter_logs.php'))->up();
+    foreach (['business' => ['updated', 'web'], 'access' => ['access', 'web'], 'security' => ['security', 'web'], 'automated' => ['updated', 'automated']] as $category => [$event, $source]) {
+        for ($i = 0; $i < 3; $i++) {
+            DB::table('starter_logs')->insert([
+                'action_id' => $category.'-'.$i, 'action_key' => 'test.'.$category,
+                'action_label' => $category, 'event' => $event, 'source' => $source,
+                'auditable_type' => 'Request', 'auditable_id' => '1', 'created_at' => now(),
+            ]);
+        }
+    }
+    foreach (['business', 'access', 'security', 'automated'] as $category) {
+        $table = activitySortingTable();
+        $table->filters = ['select' => ['category' => $category]];
+        $table->setPage(2);
+        $table->filterSelect('category', 'Kategori');
+        expect($table->getPage())->toBe(1);
+        $restored = activitySortingTable();
+        expect($restored->filters)->toBe($table->filters);
+        $query = (new Filters($restored))->handle($restored->datasource(), fn ($query) => $query);
+        $first = (clone $query)->paginate(2);
+        $last = (clone $query)->paginate(2, ['*'], 'page', 2);
+        expect($first->total())->toBe(3)->and($first->count())->toBe(2)
+            ->and($last->count())->toBe(1)->and($last->first()->category)->toBe($category);
+    }
+});

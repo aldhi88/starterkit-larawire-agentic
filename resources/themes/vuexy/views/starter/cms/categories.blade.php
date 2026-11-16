@@ -1,12 +1,12 @@
-<div @if ($resource === 'post_categories') data-cms-content-page @endif>
+<div data-cms-workspace @if ($resource === 'post_categories') data-cms-content-page @endif>
     @include('starter-shared::cms.assets')
     <div class="page-header mt-0 mb-3" data-starter-region="page-header">
         <h2 class="page-title">{{ $cmsResource->label() }}</h2>
-        <p class="text-secondary">Kelompokkan postingan agar mudah ditemukan. Tambah kategori di sini atau ubah nama melalui menu Aksi.</p>
+        <p class="text-secondary">Kelompokkan konten agar mudah ditemukan. Tambah kategori di sini atau ubah nama melalui menu Aksi.</p>
     </div>
     <div class="cms-category-layout" data-starter-region="category-workspace">
         <section class="card" data-starter-region="category-form" aria-labelledby="category-form-title">
-            <form wire:submit="save">
+            <form novalidate wire:submit="save">
                 <div class="card-header"><h3 id="category-form-title" class="card-title">{{ $contentId ? 'Edit Kategori' : 'Tambah Kategori' }}</h3></div>
                 <div class="card-body vstack gap-3">
                     <div>
@@ -20,9 +20,12 @@
                         <p class="text-secondary small">Anda cukup mengisi nama. Kode untuk pengembang dibuat otomatis.</p>
                     @endif
                 </div>
-                <div class="card-footer d-flex flex-wrap gap-2">
-                    <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="save">{{ $contentId ? 'Simpan Perubahan' : 'Tambah Kategori' }}</button>
-                    @if ($contentId)<button type="button" class="btn btn-outline-secondary" wire:click="cancelEditing">Batal</button>@endif
+                <div class="card-footer d-flex justify-content-end flex-wrap gap-2">
+                    @if ($contentId)<button type="button" class="btn cms-btn-neutral" wire:click="cancelEditing">Batal</button>@endif
+                    <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="save">
+                        @include('starter.cms.action-icon', ['action' => $contentId ? 'save' : 'add'])
+                        {{ $contentId ? 'Simpan Perubahan' : 'Tambah Kategori' }}
+                    </button>
                 </div>
             </form>
         </section>

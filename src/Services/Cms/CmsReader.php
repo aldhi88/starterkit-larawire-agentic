@@ -2,6 +2,7 @@
 
 namespace Aldhi88\StarterKit\Services\Cms;
 
+use Aldhi88\StarterKit\Contracts\Cms\CmsContentLookupInterface;
 use Aldhi88\StarterKit\Contracts\Cms\CmsReadRepositoryInterface;
 use Aldhi88\StarterKit\Models\Cms\Category;
 use Aldhi88\StarterKit\Models\Cms\Comment;
@@ -15,7 +16,12 @@ use Illuminate\Support\Str;
 
 class CmsReader
 {
-    public function __construct(private readonly CmsReadRepositoryInterface $contents, private readonly CmsRichContent $richContent) {}
+    private readonly CmsMenuLinks $links;
+
+    public function __construct(private readonly CmsReadRepositoryInterface $contents, private readonly CmsRichContent $richContent, ?CmsMenuLinks $links = null)
+    {
+        $this->links = $links ?? new CmsMenuLinks($contents);
+    }
 
     /** @return LengthAwarePaginator<int,Content> */
     public function posts(?string $category = null, int $perPage = 12, string $pageName = 'postsPage'): LengthAwarePaginator
@@ -45,6 +51,16 @@ class CmsReader
         return $this->contents->cardsForCategory($category, max(1, min(100, $limit)));
     }
 
+    /** Resolve one published Card by its integer ID or stable slug. */
+    public function card(int|string $identifier): ?Content
+    {
+        if (is_string($identifier)) {
+            return $this->contents->publishedBySlug('card', $identifier);
+        }
+
+        return $this->contents instanceof CmsContentLookupInterface ? $this->contents->publishedById('card', $identifier) : null;
+    }
+
     public function gallery(string $slug): ?Gallery
     {
         return $this->contents->publicGallery($slug);
@@ -53,12 +69,17 @@ class CmsReader
     /** @return Collection<int,Menu> */
     public function menus(string $category, int $limit = 100): Collection
     {
-        return $this->contents->menusForCategory($category, max(1, min(100, $limit)));
+        $menus = $this->contents->menusForCategory($category, max(1, min(100, $limit)));
+        $targets = $this->links->targets($menus->flatMap(fn (Menu $menu) => $menu->getAttribute('items') ?? [])->all());
+
+        return $menus->map(fn (Menu $menu) => $this->links->project($menu, $targets));
     }
 
     public function menu(string $code): ?Menu
     {
-        return $this->contents->publicMenu($code);
+        $menu = $this->contents->publicMenu($code);
+
+        return $menu ? $this->links->project($menu, $this->links->targets($menu->getAttribute('items') ?? [])) : null;
     }
 
     /** @return Collection<int,Category> */
@@ -137,6 +158,9 @@ class CmsReader
     public function menuTree(Menu $menu): array
     {
         $items = $menu->getAttribute('items') ?? [];
+        if (array_column($items, 'target_type') !== []) {
+            $items = $this->links->forPublic($items, $this->links->targets($items));
+        }
         $tree = function (?string $parent, int $depth) use (&$tree, $items): array {
             if ($depth > 3) {
                 return [];

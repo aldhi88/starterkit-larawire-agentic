@@ -6,7 +6,7 @@
                     <div class="modal-header">
                         <div>
                             <h3 class="modal-title" id="cms-picker-title-{{ $ownerId }}">{{ $purpose === 'thumbnail' ? 'Pilih Thumbnail' : 'Tambahkan Media' }}</h3>
-                            <p class="text-secondary small mb-0 mt-1">{{ $purpose === 'thumbnail' ? 'Pilih satu gambar untuk sampul postingan.' : 'Pilih gambar atau PDF, lalu sisipkan semua media yang dipilih.' }}</p>
+                            <p class="text-secondary small mb-0 mt-1">{{ $purpose === 'thumbnail' ? 'Pilih satu gambar untuk sampul konten.' : 'Pilih gambar atau PDF, lalu sisipkan semua media yang dipilih.' }}</p>
                         </div>
                         <button type="button" class="btn-close" wire:click="closeMediaPicker" aria-label="Tutup pemilih media"></button>
                     </div>
@@ -29,14 +29,14 @@
                             <div class="form-label cms-picker-upload-heading">Unggah ke Pustaka Media</div>
                             <div class="cms-picker-upload-controls">
                                 <input id="cms-editor-uploads-{{ $ownerId }}" type="file" multiple class="cms-picker-file-input" wire:model="editorUploads" aria-label="Pilih file media untuk diunggah" x-on:change="filenames = Array.from($event.target.files).map(file => file.name).join(', ') || 'Belum ada file dipilih'" accept="{{ $purpose === 'thumbnail' ? 'image/jpeg,image/png,image/webp,image/gif' : 'image/jpeg,image/png,image/webp,image/gif,application/pdf' }}">
-                                <label for="cms-editor-uploads-{{ $ownerId }}" class="btn btn-outline-secondary">Pilih File</label>
+                                <label for="cms-editor-uploads-{{ $ownerId }}" class="btn cms-btn-neutral">Pilih File</label>
                                 <span class="text-secondary small cms-picker-file-names" x-text="filenames">Belum ada file dipilih</span>
                             </div>
                             <div class="text-secondary small">Maksimal 20 file, 10 MB per file. File tersimpan di pustaka media.</div>
                             <div wire:loading wire:target="editorUploads" class="text-secondary small" role="status">Mengunggah <span x-text="progress">0</span>%…</div>
                             @error('editorUploads')<div class="alert alert-danger mb-0" role="alert">{{ $message }}</div>@enderror
                             @foreach ($editorUploadErrors as $editorUploadError)<div class="alert alert-danger mb-0" role="alert">{{ $editorUploadError['name'] }}: {{ $editorUploadError['message'] }}</div>@endforeach
-                            @if (count($editorUploads))<div><button type="button" class="btn btn-outline-secondary" wire:click="finishEditorUploads" wire:loading.attr="disabled" wire:target="editorUploads,finishEditorUploads">Unggah {{ count($editorUploads) }} File</button></div>@endif
+                            @if (count($editorUploads))<div><button type="button" class="btn btn-secondary" wire:click="finishEditorUploads" wire:loading.attr="disabled" wire:target="editorUploads,finishEditorUploads">@include('starter.cms.action-icon', ['action' => 'upload']) Unggah {{ count($editorUploads) }} File</button></div>@endif
                         </div>
                         @error('selectedMediaIds')<div class="alert alert-danger mb-0" role="alert">{{ $message }}</div>@enderror
                         <div class="cms-picker-grid" role="group" aria-label="{{ $purpose === 'thumbnail' ? 'Pilih satu gambar thumbnail' : 'Pilih media untuk disisipkan' }}">
@@ -72,8 +72,8 @@
                             @endif
                             <div class="d-flex flex-wrap align-items-center gap-2 cms-picker-footer-actions">
                                 <span class="text-secondary small cms-picker-selection-count" x-text="$wire.selectedMediaIds.filter(Boolean).length + ' dipilih'">0 dipilih</span>
-                                <button type="button" class="btn btn-outline-secondary cms-picker-cancel" wire:click="closeMediaPicker">Batal</button>
-                                <button type="button" class="btn btn-primary cms-picker-submit" wire:click="insertSelectedMedia" wire:loading.attr="disabled" wire:target="insertSelectedMedia,editorUploads,finishEditorUploads" x-bind:disabled="$wire.selectedMediaIds.filter(Boolean).length === 0">{{ $purpose === 'thumbnail' ? 'Gunakan Thumbnail' : 'Sisipkan Media Terpilih' }}</button>
+                                <button type="button" class="btn cms-btn-neutral cms-picker-cancel" wire:click="closeMediaPicker">Batal</button>
+                                <button type="button" class="btn btn-primary cms-picker-submit" wire:click="insertSelectedMedia" wire:loading.attr="disabled" wire:target="insertSelectedMedia,editorUploads,finishEditorUploads" x-bind:disabled="$wire.selectedMediaIds.filter(Boolean).length === 0">@include('starter.cms.action-icon', ['action' => 'check']) {{ $purpose === 'thumbnail' ? 'Gunakan Thumbnail' : 'Sisipkan Media Terpilih' }}</button>
                             </div>
                         </div>
                     </div>

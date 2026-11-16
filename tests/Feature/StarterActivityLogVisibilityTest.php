@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function (): void {
-    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185235_create_starter_logs_table.php'] as $migration) {
+    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185235_create_starter_logs_table.php', '2026_11_02_000000_add_access_aggregation_to_starter_logs.php'] as $migration) {
         (require StarterPaths::path('database/migrations/starter/'.$migration))->up();
     }
 
@@ -83,6 +83,8 @@ it('hides complete Superuser actions from every delegated query while preserving
     foreach ([$operator, $superuser] as $viewer) {
         $expected = $viewer->role->isSuperuser() ? $visible->merge($hidden) : $visible;
         expect($repository->tableQueryForViewer($viewer)->pluck('action_id')->all())->toEqualCanonicalizing($expected->all());
+        expect($repository->tableQueryForViewer($viewer)->where('category', 'access')->paginate(2)->total())->toBe($expected->count());
+        expect($repository->tableQueryForViewer($viewer)->where('category', 'access')->where('action_label', 'like', '%Confidential%')->count())->toBe($viewer->role->isSuperuser() ? $hidden->count() : 0);
         $page = $repository->paginateActionsForViewer($viewer, visibilityFilters(), 25, 'logsPage');
         expect($page->total())->toBe($expected->count())
             ->and($page->pluck('action_id')->all())->toEqualCanonicalizing($expected->all());

@@ -627,6 +627,7 @@
         const restoreDrag = () => {
             if (! drag) return;
             drag.hidden.forEach(row => row.hidden = false);
+            root.querySelectorAll("[data-cms-drop-placement]").forEach(row => row.removeAttribute("data-cms-drop-placement"));
             // Restore the server's DOM before Livewire morphs its wire:replace rows.
             if (drag.original.every(row => row.parentElement === body)) {
                 drag.original.forEach(row => body.appendChild(row));
@@ -674,33 +675,69 @@
                     drag = { original: Array.from(body.children).filter(row => ! row.classList.contains('cms-category-row-fallback')), hidden, peers: peers(event.item), source: marker(event.item) };
                     hidden.forEach(row => row.hidden = true);
                     root.setAttribute('data-cms-category-dragging', '');
-                    feedback('Lepaskan pada kategori lain dengan induk yang sama.');
+                    feedback('Tengah baris: jadikan subkategori. Tepi atas/bawah: sisipkan sejajar.');
                 },
-                onMove(event) {
-                    return marker(event.related)?.dataset.parent === marker(event.dragged)?.dataset.parent;
-                },
-                onEnd(event) {
+                onMove() { return false; },
+                onEnd() {
                     if (! drag) return;
-                    const siblings = peers(event.item), previousIndex = drag.peers.indexOf(event.item), index = siblings.indexOf(event.item);
-                    const target = marker(index > previousIndex ? siblings[index - 1] : siblings[index + 1]);
-                    const source = drag.source;
+                    const { source, target, placement } = drag;
                     restoreDrag();
-                    if (index !== previousIndex && target) move(source, target, index > previousIndex ? 'after' : 'before');
+                    if (target) move(source, target, placement);
                     else feedback('');
                 },
             });
         };
+        const pointMove = event => {
+            if (! drag) return;
+            const point = event.touches?.[0] || event;
+            root.querySelectorAll('[data-cms-drop-placement]').forEach(row => row.removeAttribute('data-cms-drop-placement'));
+            drag.target = null;
+            const within = element => {
+                const box = element.getBoundingClientRect();
+                return point.clientX >= box.left && point.clientX <= box.right && point.clientY >= box.top && point.clientY <= box.bottom;
+            };
+            const rootZone = root.querySelector('[data-cms-category-root-drop]');
+            if (rootZone && within(rootZone)) {
+                drag.target = drag.source; drag.placement = 'root';
+                rootZone.dataset.cmsDropPlacement = 'inside';
+                feedback('Lepaskan untuk menjadi kategori utama.');
+                return;
+            }
+            const targetRow = rows().find(row => !row.hidden && marker(row) !== drag.source && within(row));
+            if (!targetRow) return;
+            const box = targetRow.getBoundingClientRect(), ratio = (point.clientY - box.top) / box.height;
+            const placement = ratio < .25 ? 'before' : ratio > .75 ? 'after' : 'inside';
+            drag.target = marker(targetRow); drag.placement = placement;
+            targetRow.dataset.cmsDropPlacement = placement;
+            const name = targetRow.querySelector('.cms-category-name')?.textContent.trim() || 'kategori';
+            feedback((placement === 'inside' ? 'Jadikan subkategori dari ' : placement === 'before' ? 'Sisipkan sebelum ' : 'Sisipkan setelah ') + name);
+        };
+        document.addEventListener('pointermove', pointMove, true);
+        document.addEventListener('mousemove', pointMove, true);
+        document.addEventListener('touchmove', pointMove, { capture: true, passive: true });
         const keydown = event => {
             const handle = event.target.closest('[data-cms-category-handle]');
-            if (! handle || ! event.altKey || ! ['ArrowUp', 'ArrowDown'].includes(event.key) || busy) return;
+            if (! handle || ! event.altKey || ! ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key) || busy) return;
             event.preventDefault();
-            const row = handle.closest('tr'), siblings = peers(row), direction = event.key === 'ArrowUp' ? -1 : 1;
+            const row = handle.closest('tr'), siblings = peers(row);
+            if (event.key === 'ArrowRight') {
+                const target = siblings[siblings.indexOf(row) - 1];
+                if (target) move(marker(row), marker(target), 'inside');
+                return;
+            }
+            if (event.key === 'ArrowLeft') {
+                const parent = rows().find(candidate => marker(candidate).dataset.id === marker(row).dataset.parent);
+                if (parent) move(marker(row), marker(parent), 'after');
+                return;
+            }
+            const direction = event.key === 'ArrowUp' ? -1 : 1;
             const target = siblings[siblings.indexOf(row) + direction];
             if (target) move(marker(row), marker(target), direction === -1 ? 'before' : 'after');
         };
         root.addEventListener('keydown', keydown);
         categoryOrders.set(root, { refresh, destroy() {
             restoreDrag(); sortable?.destroy(); root.removeEventListener('keydown', keydown);
+            document.removeEventListener('pointermove', pointMove, true); document.removeEventListener('mousemove', pointMove, true); document.removeEventListener('touchmove', pointMove, true);
             root.removeAttribute('data-cms-category-saving'); categoryOrders.delete(root);
         } });
         refresh();
@@ -793,12 +830,20 @@
         const wire = wireFor(root);
         const input = root.querySelector('[data-cms-publish-input]');
         const nowButton = root.querySelector('[data-cms-publish-now]');
+        const clearButton = root.querySelector('[data-cms-date-clear]');
+        const field = () => root.dataset.cmsDateField || 'publishedAtDisplay';
+        const iso = root.dataset.cmsDateFormat === 'iso';
+        const displayValue = () => {
+            const value = wire?.$get?.(field());
+            return value === undefined ? input?.value || '' : (iso ? window.StarterCms.maskDateTime(value || '') : value || '');
+        };
+        const storeValue = (dates, value) => wire.$set(field(), iso ? (dates.length ? window.flatpickr.formatDate(dates[0], 'Y-m-d\\TH:i') : '') : value, false);
         if (! wire || ! input) return;
         const currentWib = () => window.StarterCms.maskDateTime(window.StarterCms.localDateTime('Asia/Jakarta'));
         const instance = window.flatpickr(input, {
             enableTime: true, time_24hr: true, minuteIncrement: 1, disableMobile: true,
             dateFormat: 'd/m/Y H:i', ariaDateFormat: 'j F Y',
-            defaultDate: wire.$get?.('publishedAtDisplay') || input.value || undefined,
+            defaultDate: displayValue() || undefined,
             now: currentWib(),
             locale: {
                 firstDayOfWeek: 1,
@@ -807,16 +852,16 @@
                 yearAriaLabel: 'Tahun', monthAriaLabel: 'Bulan', hourAriaLabel: 'Jam', minuteAriaLabel: 'Menit',
                 scrollTitle: 'Gulir untuk mengubah', toggleTitle: 'Klik untuk mengganti',
             },
-            onChange: (_dates, value) => wire.$set('publishedAtDisplay', value, false),
-            onValueUpdate: (_dates, value) => wire.$set('publishedAtDisplay', value, false),
+            onChange: storeValue,
+            onValueUpdate: storeValue,
             onOpen: () => input.setAttribute('aria-expanded', 'true'),
             onClose: () => input.setAttribute('aria-expanded', 'false'),
             onReady: (_dates, _value, picker) => {
                 const calendar = picker.calendarContainer;
                 calendar.classList.add('cms-publication-calendar');
-                calendar.id = `cms-publication-calendar-${owner(root).getAttribute('wire:id')}`;
+                calendar.id = `cms-publication-calendar-${owner(root).getAttribute('wire:id')}-${input.id || 'publication'}`;
                 calendar.setAttribute('role', 'dialog');
-                calendar.setAttribute('aria-label', 'Pilih tanggal dan jam terbit (WIB)');
+                calendar.setAttribute('aria-label', root.dataset.cmsDateLabel || 'Pilih tanggal dan jam terbit (WIB)');
                 input.setAttribute('aria-controls', calendar.id);
                 const footer = document.createElement('div');
                 footer.className = 'cms-publication-calendar-footer';
@@ -832,15 +877,18 @@
             },
         });
         const setNow = () => instance.setDate(currentWib(), true);
+        const clear = () => instance.clear();
         nowButton?.addEventListener('click', setNow);
+        clearButton?.addEventListener('click', clear);
         publicationPickers.set(root, {
             refresh() {
                 if (instance.isOpen) return;
-                const value = wire.$get?.('publishedAtDisplay') ?? input.value;
+                const value = displayValue();
                 if (value !== input.value) instance.setDate(value, false);
             },
             destroy() {
                 nowButton?.removeEventListener('click', setNow);
+                clearButton?.removeEventListener('click', clear);
                 instance.destroy();
                 publicationPickers.delete(root);
             },
@@ -861,7 +909,243 @@
         for (const [root, state] of postDialogs) if (! root.isConnected) state.destroy();
         for (const [root, state] of publicationPickers) if (! root.isConnected) state.destroy();
     };
+    function menuDestination(wire, key) {
+        return {
+            open: false, busy: false, options: [], message: '', request: 0, timer: null,
+            get index() { return wire.form.items.findIndex(item => item.key === key); },
+            get item() { return wire.form.items[this.index]; },
+            get type() { return this.item?.target_type || 'custom'; },
+            update(field, value) {
+                if (this.index >= 0) wire.$set('form.items.' + this.index + '.' + field, value, false);
+            },
+            changeType(type) {
+                this.dismiss(false);
+                this.update('target_type', type);
+                this.update('target_id', null);
+                this.update('target_name', '');
+                this.update('url', '');
+                if (type !== 'custom') this.browse();
+            },
+            browse() {
+                this.open = true;
+                this.$nextTick(() => { this.$refs.query.value = ''; this.$refs.query.focus(); });
+                this.queue('', 0);
+            },
+            queue(query, delay = 250) {
+                clearTimeout(this.timer);
+                const ticket = ++this.request;
+                this.busy = true;
+                this.options = [];
+                this.message = '';
+                this.timer = setTimeout(async () => {
+                    try {
+                        const options = await wire.searchMenuTargets(this.type, query);
+                        if (ticket !== this.request) return;
+                        this.options = options;
+                        this.message = options.length ? '' : 'Tidak ada tujuan yang cocok. Coba kata lain.';
+                    } catch {
+                        if (ticket === this.request) this.message = 'Pencarian gagal. Ketik kembali untuk mencoba lagi.';
+                    } finally {
+                        if (ticket === this.request) this.busy = false;
+                    }
+                }, delay);
+            },
+            select(option) {
+                this.update('target_id', option.id);
+                this.update('target_name', option.name);
+                this.update('url', option.url);
+                if (!this.item.label?.trim()) this.update('label', option.name);
+                this.dismiss();
+            },
+            dismiss(restoreFocus = true) {
+                clearTimeout(this.timer);
+                ++this.request;
+                this.open = false;
+                this.busy = false;
+                if (restoreFocus) this.$nextTick(() => this.$refs.trigger.focus());
+            },
+            destroy() { clearTimeout(this.timer); ++this.request; },
+        };
+    }
+
+    function cardItemSorting() {
+        let pointer, handle, frame, x, y;
+        const clear = () => {
+            cancelAnimationFrame(frame);
+            if (handle?.hasPointerCapture(pointer)) handle.releasePointerCapture(pointer);
+            handle = null;
+            pointer = null;
+        };
+        return {
+            draggingKey: null, dropKey: null, dropEdge: null,
+            startSort(event, key) {
+                if (!event.isPrimary || event.button !== 0) return;
+                handle = event.currentTarget;
+                pointer = event.pointerId;
+                handle.setPointerCapture(pointer);
+                this.draggingKey = key;
+                x = event.clientX;
+                y = event.clientY;
+                const track = () => {
+                    // Scroll only while the grip is held near a viewport edge.
+                    const speed = y < 56 ? -12 : y > innerHeight - 56 ? 12 : 0;
+                    if (speed) {
+                        window.scrollBy({ top: speed, behavior: 'instant' });
+                        this.findDrop();
+                    }
+                    frame = requestAnimationFrame(track);
+                };
+                frame = requestAnimationFrame(track);
+            },
+            findDrop() {
+                const target = document.elementFromPoint(x, y)?.closest('[data-cms-card-item]');
+                if (!target || target.parentElement !== handle?.closest('.cms-card-item-list') || target.dataset.cmsCardItem === this.draggingKey) {
+                    this.dropKey = null;
+                    return;
+                }
+                const bounds = target.getBoundingClientRect();
+                this.dropKey = target.dataset.cmsCardItem;
+                this.dropEdge = y < bounds.top + bounds.height / 2 ? 'before' : 'after';
+            },
+            trackSort(event) {
+                if (pointer !== event.pointerId) return;
+                x = event.clientX;
+                y = event.clientY;
+                this.findDrop();
+            },
+            finishSort(event, apply) {
+                if (pointer !== event.pointerId) return;
+                if (apply) this.trackSort(event);
+                const from = this.items.findIndex(item => item.key === this.draggingKey);
+                const over = this.items.findIndex(item => item.key === this.dropKey);
+                if (apply && from >= 0 && over >= 0) {
+                    const to = over + (this.dropEdge === 'after' ? 1 : 0) - (from < over ? 1 : 0);
+                    if (to !== from) this.moveItem(from, to - from);
+                }
+                clear();
+                this.draggingKey = this.dropKey = this.dropEdge = null;
+            },
+            destroy: clear,
+        };
+    }
+
+    function cardForm(wire, config) {
+        return {
+            preset: wire.entangle('form.card_preset'), mode: wire.entangle('form.card_data.mode'),
+            items: wire.entangle('form.card_data.items'), presets: config.presets, collections: config.collections,
+            more: config.hasErrors, autoName: config.autoName, preferredMode: wire.$get('form.card_data.mode'),
+            choosing: false, search: '', mediaTarget: null, selected: config.media,
+            mediaIds: { image_id: wire.entangle('form.image_id'), thumbnail_id: wire.entangle('form.thumbnail_id'), logo_id: wire.entangle('form.logo_id') },
+            openItem: null, removedItem: null,
+            init() {
+                if (this.isCollection && this.items[0]?.key === config.componentId + '-first') {
+                    this.openItem = this.items[0].key;
+                }
+                this.$watch('preset', () => {
+                    this.mode = this.repeatable ? this.preferredMode : 'single';
+                    this.prepareCollection();
+                });
+            },
+            get repeatable() { return Object.hasOwn(this.collections, this.preset); },
+            get isCollection() { return this.repeatable && this.mode === 'collection'; },
+            get itemLabel() { return this.collections[this.preset] || 'item'; },
+            chooseMode(value) {
+                if (this.mode === value) return;
+                this.preferredMode = value;
+                this.mode = value;
+                this.prepareCollection();
+            },
+            prepareCollection() {
+                if (!this.isCollection) return;
+                if (this.items.length === 0) this.addItem(true);
+                else if (!this.items.some(item => item.key === this.openItem)) this.openItem = this.items[0].key;
+            },
+            visible(field) {
+                if (this.isCollection) return field === 'title' || (['subtitle', 'excerpt'].includes(field) && (this.more || Boolean(wire.$get('form.' + field))));
+                return this.more || this.preset === 'free' || (this.presets[this.preset]?.fields || []).includes(field);
+            },
+            itemVisible(field) { return this.more || (this.presets[this.preset]?.fields || []).includes(field); },
+            label(field, fallback) {
+                if (this.isCollection) return ({ title: 'Judul bagian', subtitle: 'Subjudul bagian', excerpt: 'Pengantar bagian' })[field] || fallback;
+                return this.itemFieldLabel(field, fallback);
+            },
+            itemFieldLabel(field, fallback) { return this.presets[this.preset]?.labels?.[field] || fallback; },
+            itemTitle(item, index) { return item.title || item.person || item.value || this.itemLabel + ' ' + (index + 1); },
+            itemImage(item) {
+                for (const field of ['image_id', 'logo_id', 'thumbnail_id']) {
+                    if (this.itemVisible(field) && this.selected[item[field]]?.url) return this.selected[item[field]];
+                }
+            },
+            itemMark(item, index) {
+                if (this.preset === 'profile' && item.title?.trim()) {
+                    return item.title.trim().split(/\s+/).slice(0, 2).map(word => Array.from(word)[0]).join('').toLocaleUpperCase('id');
+                }
+                return String(index + 1).padStart(2, '0');
+            },
+            itemDescription(item) {
+                const detail = {
+                    profile: item.subtitle, partner: item.link_url, banner: item.subtitle || item.excerpt,
+                    testimonial: item.role || item.excerpt, faq: item.body,
+                    statistic: [item.value, item.unit].filter(Boolean).join(' '),
+                    timeline: item.period, event: item.location, contact: item.contact,
+                };
+                return detail[this.preset] ?? (item.excerpt || item.subtitle || '');
+            },
+            addItem(automatic = false) {
+                if (this.items.length >= 50) return;
+                const id = Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
+                const item = { key: automatic ? config.componentId + '-' + id : id, title: '', subtitle: '', excerpt: '', body: '', image_id: null, thumbnail_id: null, logo_id: null, link_label: '', link_url: '' };
+                this.items = [...this.items, item]; this.openItem = item.key;
+                if (automatic) return;
+                this.$nextTick(() => {
+                    const row = this.$el.closest('[data-cms-card-form]').querySelector(`[data-cms-card-item="${item.key}"]`);
+                    Array.from(row?.querySelectorAll('input:not([readonly]), textarea') || []).find(field => field.getClientRects().length)?.focus();
+                });
+            },
+            moveItem(index, offset) {
+                const target = index + offset;
+                if (target < 0 || target >= this.items.length) return;
+                const items = [...this.items];
+                const [moved] = items.splice(index, 1);
+                items.splice(target, 0, moved);
+                this.items = items;
+            },
+            removeItem(index) {
+                this.removedItem = { item: this.items[index], index };
+                this.items = this.items.filter((_item, i) => i !== index);
+            },
+            undoRemove() {
+                if (! this.removedItem || this.items.length >= 50) return;
+                const items = [...this.items]; items.splice(Math.min(this.removedItem.index, items.length), 0, this.removedItem.item);
+                this.items = items; this.openItem = this.removedItem.item.key; this.removedItem = null;
+            },
+            chooseMedia(field) {
+                this.mediaTarget = field;
+                this.$dispatch('cms-open-media-picker', { componentId: config.componentId, type: 'image', purpose: 'thumbnail' });
+            },
+            chooseItemMedia(key, field) {
+                this.mediaTarget = { key, field };
+                this.$dispatch('cms-open-media-picker', { componentId: config.componentId, type: 'image', purpose: 'thumbnail' });
+            },
+            acceptMedia(detail) {
+                if (detail.componentId !== config.componentId || ! this.mediaTarget) return;
+                this.selected[detail.media.id] = detail.media;
+                if (typeof this.mediaTarget === 'string') this.mediaIds[this.mediaTarget] = detail.media.id;
+                else {
+                    const item = this.items.find(item => item.key === this.mediaTarget.key);
+                    if (item) item[this.mediaTarget.field] = detail.media.id;
+                }
+                this.mediaTarget = null;
+            },
+            matches(key) {
+                return (this.presets[key].label + ' ' + this.presets[key].help).toLocaleLowerCase('id').includes(this.search.trim().toLocaleLowerCase('id'));
+            },
+            closeChooser() { this.choosing = false; this.$nextTick(() => this.$refs.presetTrigger.focus()); },
+        };
+    }
+
     window.StarterCms = {
+        cardForm, cardItemSorting, menuDestination,
         init,
         categoryPicker(selected) {
             return {

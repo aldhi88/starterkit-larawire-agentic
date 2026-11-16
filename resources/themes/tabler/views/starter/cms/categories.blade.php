@@ -1,8 +1,8 @@
-<div @if ($resource === 'post_categories') data-cms-content-page @endif>
+<div data-cms-workspace @if ($resource === 'post_categories') data-cms-content-page @endif>
     @include('starter-shared::cms.assets', ['cmsSortableAssets' => $resource === 'post_categories'])
     <div class="page-header mt-0 mb-3" data-starter-region="page-header">
         <div class="row g-2 align-items-center">
-            <div class="col"><h2 class="page-title">{{ $cmsResource->label() }}</h2><p class="text-secondary mb-0">Kelompokkan postingan dan susun subkategori di bawah kategori induknya.</p></div>
+            <div class="col"><h2 class="page-title">{{ $cmsResource->label() }}</h2><p class="text-secondary mb-0">{{ $resource === 'post_categories' ? 'Kelompokkan konten dan susun subkategori di bawah kategori induknya.' : 'Tambahkan kategori atau pilih Edit pada daftar untuk mengubah namanya.' }}</p></div>
         </div>
     </div>
     <div class="cms-category-layout" data-starter-region="category-workspace">
@@ -36,13 +36,16 @@
                         <p class="text-secondary small mb-0">Kode untuk pengembang dibuat otomatis.</p>
                     @endif
                 </div>
-                <div class="card-footer d-flex flex-wrap gap-2">
-                    <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="save">{{ $contentId ? 'Simpan Perubahan' : 'Tambah Kategori' }}</button>
-                    @if ($contentId)<button type="button" class="btn btn-outline-secondary" wire:click="cancelEditing">Batal</button>@endif
+                <div class="card-footer d-flex justify-content-end flex-wrap gap-2">
+                    @if ($contentId)<button type="button" class="btn cms-btn-neutral" wire:click="cancelEditing">Batal</button>@endif
+                    <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="save">
+                        @include('starter.cms.action-icon', ['action' => $contentId ? 'save' : 'add'])
+                        {{ $contentId ? 'Simpan Perubahan' : 'Tambah Kategori' }}
+                    </button>
                 </div>
             </form>
         </section>
-        <section class="card" data-starter-region="data-table" aria-label="Daftar kategori">
+        <section class="card cms-category-table-compact" data-starter-region="data-table" aria-label="Daftar kategori">
             <p class="cms-table-scroll-hint text-secondary small mb-0 px-3 pt-3">Geser tabel ke samping untuk melihat status dan tanggal kategori.</p>
             <livewire:cms.table :resource="$resource" :key="'cms-category-table-'.$resource" />
         </section>

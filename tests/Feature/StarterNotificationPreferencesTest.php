@@ -25,7 +25,7 @@ use Livewire\LivewireServiceProvider;
 beforeEach(function (): void {
     config(['app.key' => 'base64:'.base64_encode(str_repeat('n', 32))]);
     app()->register(LivewireServiceProvider::class);
-    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185235_create_starter_logs_table.php', '2026_10_24_000000_add_notification_sound_to_starter_client_logins.php', '2026_10_24_000001_add_notification_sound_path_to_starter_client_logins.php'] as $name) {
+    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185235_create_starter_logs_table.php', '2026_11_02_000000_add_access_aggregation_to_starter_logs.php', '2026_10_24_000000_add_notification_sound_to_starter_client_logins.php', '2026_10_24_000001_add_notification_sound_path_to_starter_client_logins.php'] as $name) {
         (require StarterPaths::path('database/migrations/starter/'.$name))->up();
     }
     app()->bind(ClientLoginInterface::class, ClientLoginRepository::class);

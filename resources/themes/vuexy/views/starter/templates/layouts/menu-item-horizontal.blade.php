@@ -1,4 +1,4 @@
-<li class="menu-item {{ ($menu['active'] ?? false) ? 'active' : '' }}" data-starter-menu-item>
+<li class="menu-item {{ ($menu['expanded'] ?? false) || ($menu['active'] ?? false) ? 'active' : '' }}" data-starter-menu-item>
     @if ($menu['hasChildren'])
         <button class="menu-link menu-toggle border-0 bg-transparent" type="button" data-vuexy-submenu aria-expanded="{{ ($menu['expanded'] ?? false) ? 'true' : 'false' }}">
             @include('starter.templates.layouts.icon', ['name' => $menu['icon'] ?? 'folder', 'class' => 'menu-icon'])<div>{{ $menu['label'] }}</div>

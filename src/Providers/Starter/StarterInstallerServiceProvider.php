@@ -27,6 +27,15 @@ class StarterInstallerServiceProvider extends ServiceProvider
             return;
         }
 
+        $status = StarterInstallState::status();
+        if ($status !== null) {
+            if ($status === 'installed' && $this->app->environment('local') && ! is_file(config_path('apps/cms.php'))) {
+                fwrite(STDERR, 'CMS opsional dapat ditambahkan dengan php artisan starter:cms.'.PHP_EOL);
+            }
+
+            return;
+        }
+
         $message = PHP_EOL
             ."\033[36;1mStarterkit Larawire siap dipasang.\033[0m".PHP_EOL
             .'Atur APP_URL dan koneksi database, lalu jalankan php artisan starter:install.'.PHP_EOL

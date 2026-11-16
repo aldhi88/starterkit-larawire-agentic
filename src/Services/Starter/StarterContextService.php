@@ -275,10 +275,13 @@ class StarterContextService
      */
     private function sidebarPayload(EloquentCollection $mods): Collection
     {
+        $menuRoute = request()->route()?->getAction('starter_menu_route');
+        $menuContextUrl = rtrim(is_string($menuRoute) && Route::has($menuRoute) ? route($menuRoute) : url()->current(), '/');
+
         return $mods
-            ->map(function (AppMod $mod): array {
+            ->map(function (AppMod $mod) use ($menuContextUrl): array {
                 $menus = $mod->menus
-                    ->map(fn (AppMenu $menu): ?array => $this->menuPayload($menu))
+                    ->map(fn (AppMenu $menu): ?array => $this->menuPayload($menu, $menuContextUrl))
                     ->filter(fn (?array $menu): bool => $menu !== null)
                     ->values();
 
@@ -295,7 +298,7 @@ class StarterContextService
     /**
      * @return array<string, mixed>|null
      */
-    private function menuPayload(AppMenu $menu): ?array
+    private function menuPayload(AppMenu $menu, string $menuContextUrl): ?array
     {
         if (! $menu->is_visible) {
             return null;
@@ -303,7 +306,7 @@ class StarterContextService
 
         $children = $menu->childrenRecursive;
         $childPayload = $children
-            ->map(fn (AppMenu $child): ?array => $this->menuPayload($child))
+            ->map(fn (AppMenu $child): ?array => $this->menuPayload($child, $menuContextUrl))
             ->filter(fn (?array $child): bool => $child !== null)
             ->values();
 
@@ -311,27 +314,19 @@ class StarterContextService
             return null;
         }
 
-        $isActive = $this->isCurrentUrl($this->menuUrl($menu));
+        $url = $this->menuUrl($menu);
+        $isActive = $url !== '#' && rtrim($url, '/') === $menuContextUrl;
         $isExpanded = $isActive || $childPayload->contains(fn (array $child): bool => $child['active'] || $child['expanded']);
 
         return [
             'label' => $menu->label,
             'icon' => $this->normalizeIcon($menu->icon, 'circle'),
-            'url' => $this->menuUrl($menu),
+            'url' => $url,
             'children' => $childPayload,
             'hasChildren' => $childPayload->isNotEmpty(),
             'active' => $isActive,
             'expanded' => $isExpanded,
         ];
-    }
-
-    private function isCurrentUrl(?string $url): bool
-    {
-        if (! $url || $url === '#') {
-            return false;
-        }
-
-        return rtrim($url, '/') === rtrim(url()->current(), '/');
     }
 
     private function normalizeIcon(?string $icon, string $fallback): string

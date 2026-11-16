@@ -27,7 +27,7 @@ class Content extends Model
     /** @return array<string,string> */
     protected function casts(): array
     {
-        return ['published_at' => 'datetime', 'position' => 'integer'];
+        return ['published_at' => 'datetime', 'position' => 'integer', 'card_data' => 'array'];
     }
 
     protected function excerpt(): Attribute

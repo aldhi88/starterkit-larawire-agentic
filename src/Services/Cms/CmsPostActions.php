@@ -53,7 +53,7 @@ class CmsPostActions
             $ids = $this->scopeIds($actor, $ids, null);
             $categoryIds = array_map('intval', $categoryIds);
 
-            return $this->auditLogs->withinAction('cms.posts.quick_'.$action, 'Mengubah postingan dari tabel', function () use ($actor, $action, $ids, $version, $categoryMode, $categoryIds, $filters): int {
+            return $this->auditLogs->withinAction('cms.posts.quick_'.$action, 'Mengubah konten dari tabel', function () use ($actor, $action, $ids, $version, $categoryMode, $categoryIds, $filters): int {
                 return DB::transaction(function () use ($actor, $action, $ids, $version, $categoryMode, $categoryIds, $filters): int {
                     if ($filters !== null && $this->scopeIds($actor, [], $filters) !== $ids) {
                         throw ValidationException::withMessages(['action' => 'Hasil filter telah berubah. Tutup dialog dan pilih aksi kembali.']);
@@ -61,7 +61,7 @@ class CmsPostActions
                     $posts = $this->records->postsForUpdate($ids, true);
                     $this->ensureComplete($posts, $ids);
                     if (! hash_equals($this->version($posts), $version)) {
-                        throw ValidationException::withMessages(['action' => 'Ada postingan yang telah berubah. Tutup dialog dan pilih aksi kembali.']);
+                        throw ValidationException::withMessages(['action' => 'Ada konten yang telah berubah. Tutup dialog dan pilih aksi kembali.']);
                     }
                     if ($action === 'categories' && $categoryMode !== 'clear') {
                         if ($categoryIds === []) {
@@ -82,7 +82,7 @@ class CmsPostActions
                         $categories = $old['category_ids'];
                         if ($action === 'publish_now') {
                             if (blank($post->getAttribute('title')) || blank($post->getAttribute('slug'))) {
-                                throw ValidationException::withMessages(['action' => 'Lengkapi judul dan alamat postingan sebelum menerbitkan.']);
+                                throw ValidationException::withMessages(['action' => 'Lengkapi judul dan alamat konten sebelum menerbitkan.']);
                             }
                             $data['status'] = 'published';
                             if ($old['status'] !== 'published' || ! $post->getAttribute('published_at') || $post->getAttribute('published_at')->isFuture()) {
@@ -99,7 +99,7 @@ class CmsPostActions
                                 default => throw ValidationException::withMessages(['category_ids' => 'Mode perubahan kategori tidak valid.']),
                             };
                             if (count($categories) > 100) {
-                                throw ValidationException::withMessages(['category_ids' => 'Satu postingan maksimal memiliki 100 kategori.']);
+                                throw ValidationException::withMessages(['category_ids' => 'Satu konten maksimal memiliki 100 kategori.']);
                             }
                             $data['category_id'] = $categories[0] ?? null;
                         }
@@ -110,7 +110,7 @@ class CmsPostActions
                         $before[$post->getKey()] = $old;
                         $after[$post->getKey()] = ['status' => $post->getAttribute('status'), 'published_at' => $post->getRawOriginal('published_at'), 'category_ids' => $categories];
                     }
-                    $this->auditLogs->recordManual('quick_'.$action, Content::class, 'bulk', oldValues: ['posts' => $before], newValues: ['posts' => $after], tableName: 'cms_contents', auditableLabel: 'Postingan', metadata: ['outcome' => 'success', 'count' => count($ids), 'category_mode' => $action === 'categories' ? $categoryMode : null]);
+                    $this->auditLogs->recordManual('quick_'.$action, Content::class, 'bulk', oldValues: ['posts' => $before], newValues: ['posts' => $after], tableName: 'cms_contents', auditableLabel: 'Konten', metadata: ['outcome' => 'success', 'count' => count($ids), 'category_mode' => $action === 'categories' ? $categoryMode : null]);
 
                     return count($ids);
                 });
@@ -129,7 +129,7 @@ class CmsPostActions
             $ids = $this->records->filteredIds(CmsResource::Posts, $filters, 'active', 1001);
         }
         Validator::make(['ids' => $ids], ['ids' => ['required', 'array', 'min:1', 'max:1000'], 'ids.*' => ['integer', 'min:1', 'distinct']], [
-            'ids.required' => 'Pilih minimal satu postingan.', 'ids.max' => 'Batasi pilihan atau filter hingga 1.000 postingan.',
+            'ids.required' => 'Pilih minimal satu konten.', 'ids.max' => 'Batasi pilihan atau filter hingga 1.000 konten.',
         ])->validate();
         $ids = array_map('intval', $ids);
         sort($ids, SORT_NUMERIC);
@@ -141,7 +141,7 @@ class CmsPostActions
     private function ensureComplete(Collection $posts, array $ids): void
     {
         if ($posts->count() !== count($ids)) {
-            throw ValidationException::withMessages(['action' => 'Ada postingan yang tidak tersedia atau sudah diarsipkan. Perbarui pilihan Anda.']);
+            throw ValidationException::withMessages(['action' => 'Ada konten yang tidak tersedia atau sudah diarsipkan. Perbarui pilihan Anda.']);
         }
     }
 
@@ -166,7 +166,7 @@ class CmsPostActions
     /** @param array<string,mixed> $metadata */
     private function audit(string $event, array $metadata): void
     {
-        $this->auditLogs->withinAction('cms.posts.'.$event, 'Aksi cepat postingan', fn () => $this->auditLogs->recordManual($event, Content::class, 'bulk', tableName: 'cms_contents', auditableLabel: 'Postingan', metadata: $metadata));
+        $this->auditLogs->withinAction('cms.posts.'.$event, 'Aksi cepat konten', fn () => $this->auditLogs->recordManual($event, Content::class, 'bulk', tableName: 'cms_contents', auditableLabel: 'Konten', metadata: $metadata));
     }
 
     private function failed(Throwable $exception): void

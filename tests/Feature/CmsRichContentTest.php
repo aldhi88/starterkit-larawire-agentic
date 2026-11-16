@@ -3,6 +3,7 @@
 use Aldhi88\StarterKit\Contracts\Cms\CmsReadRepositoryInterface;
 use Aldhi88\StarterKit\Contracts\Cms\CmsRepositoryInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
+use Aldhi88\StarterKit\Models\Cms\Category;
 use Aldhi88\StarterKit\Models\Cms\Content;
 use Aldhi88\StarterKit\Models\Cms\Media;
 use Aldhi88\StarterKit\Models\Starter\ActivityLog;
@@ -28,7 +29,7 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function (): void {
-    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185233_create_starter_app_metadata_tables.php', '2026_07_27_185235_create_starter_logs_table.php'] as $migration) {
+    foreach (['2026_07_27_185232_create_starter_identity_tables.php', '2026_07_27_185233_create_starter_app_metadata_tables.php', '2026_07_27_185235_create_starter_logs_table.php', '2026_11_02_000000_add_access_aggregation_to_starter_logs.php'] as $migration) {
         (require StarterPaths::path('database/migrations/starter/'.$migration))->up();
     }
     foreach (glob(StarterPaths::path('installer/templates/cms/*.php')) as $migration) {
@@ -69,7 +70,7 @@ it('keeps visual editor formatting as safe standalone HTML without Quill CSS', f
 });
 
 it('sanitizes scripts links and CSS while preserving normal text', function (): void {
-    $content = $this->richManager->save($this->richActor, CmsResource::Pages, cmsRichData(['body' => '<script>alert(1)</script><p onclick="evil()" style="background-image:url(javascript:evil());color:red">Text <a href="javascript:evil()" onmouseover="evil()">link</a><iframe src="https://evil.test"></iframe></p>']));
+    $content = $this->richManager->save($this->richActor, CmsResource::Pages, cmsRichData(['category_id' => Category::firstOrCreate(['kind' => 'page', 'code' => 'test-profil'], ['name' => 'Profil', 'status' => 'active'])->id, 'body' => '<script>alert(1)</script><p onclick="evil()" style="background-image:url(javascript:evil());color:red">Text <a href="javascript:evil()" onmouseover="evil()">link</a><iframe src="https://evil.test"></iframe></p>']));
     $html = $this->richReader->renderBody($content);
     expect($html)->toContain('Text ', 'link', 'color:red')->not->toContain('<script', 'alert(1)', 'javascript:', 'onclick', 'onmouseover', 'background-image', '<iframe');
 });

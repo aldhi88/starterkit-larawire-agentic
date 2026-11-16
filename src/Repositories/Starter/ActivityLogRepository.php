@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ActivityLogRepository implements ActivityLogInterface
 {
@@ -25,11 +26,28 @@ class ActivityLogRepository implements ActivityLogInterface
     /** @return Builder<ActivityLog> */
     public function tableQueryForViewer(ClientLogin $viewer): Builder
     {
+        $outcome = DB::connection()->getDriverName() === 'sqlite'
+            ? "json_extract(metadata, '$.outcome')"
+            : "JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.outcome'))";
         $actions = $this->viewerQuery($viewer)
             ->selectRaw('MAX(id) as id')
             ->selectRaw('action_id')
             ->selectRaw('MAX(created_at) as created_at')
-            ->selectRaw('MAX(action_label) as action_label')
+            ->selectRaw("CASE WHEN COUNT(DISTINCT action_label) > 1 THEN 'Aktivitas gabungan' ELSE MAX(action_label) END as original_label")
+            ->selectRaw('MAX(auditable_label) as target_label')
+            ->selectRaw('COUNT(DISTINCT auditable_type) as target_types')
+            ->selectRaw('COUNT(DISTINCT auditable_id) as target_ids')
+            ->selectRaw('COUNT(auditable_label) as labelled_count')
+            ->selectRaw('COUNT(DISTINCT auditable_label) as target_labels')
+            ->selectRaw('SUM(COALESCE(access_count, 1)) as occurrences')
+            ->selectRaw('MAX(last_access_at) as last_access_at')
+            ->selectRaw('MIN(created_at) as first_activity_at')
+            ->selectRaw('MAX(event) as event')
+            ->selectRaw('COUNT(DISTINCT event) as event_count')
+            ->selectRaw("CASE WHEN COUNT(DISTINCT {$outcome}) > 1 THEN 'mixed' WHEN COUNT({$outcome}) = COUNT(*) THEN MAX({$outcome}) END as outcome")
+            ->selectRaw('MAX(source) as source')
+            ->selectRaw('COUNT(DISTINCT ('.$this->categoryExpression().')) as category_count')
+            ->selectRaw('MAX('.$this->categoryExpression().') as category_value')
             ->selectRaw('MAX(action_key) as action_key')
             ->selectRaw('MAX(actor_name) as actor_name')
             ->selectRaw('MAX(actor_username) as actor_username')
@@ -44,7 +62,33 @@ class ActivityLogRepository implements ActivityLogInterface
         $activity = new ActivityLog;
         $activity->setTable('starter_activity_log_actions');
 
-        return $activity->newQuery()->fromSub($actions, 'starter_activity_log_actions');
+        $concat = DB::connection()->getDriverName() === 'sqlite'
+            ? "COALESCE(original_label, 'Aktivitas') || ' — ' || target_label"
+            : "CONCAT(COALESCE(original_label, 'Aktivitas'), ' — ', target_label)";
+        $multiple = DB::connection()->getDriverName() === 'sqlite'
+            ? "COALESCE(original_label, 'Aktivitas') || ' — beberapa objek/tabel'"
+            : "CONCAT(COALESCE(original_label, 'Aktivitas'), ' — beberapa objek/tabel')";
+        $contains = DB::connection()->getDriverName() === 'sqlite'
+            ? 'instr(LOWER(original_label), LOWER(target_label)) > 0'
+            : 'LOCATE(LOWER(target_label), LOWER(original_label)) > 0';
+
+        $summaries = DB::query()->fromSub($actions, 'grouped_actions')->select('*')
+            ->selectRaw("CASE
+                WHEN target_types > 1 OR target_ids > 1 OR tables_count > 1 THEN {$multiple}
+                WHEN target_labels = 1 AND labelled_count = changes_count AND target_label <> ''
+                    AND NOT COALESCE({$contains}, 0) THEN {$concat}
+                ELSE COALESCE(original_label, 'Aktivitas') END as action_label")
+            ->selectRaw("CASE WHEN category_count > 1 THEN 'mixed' ELSE category_value END as category");
+
+        return $activity->newQuery()->fromSub($summaries, 'starter_activity_log_actions');
+    }
+
+    private function categoryExpression(): string
+    {
+        return "CASE WHEN event = 'security' THEN 'security'
+            WHEN source IN ('automated', 'console') THEN 'automated'
+            WHEN event IN ('access', 'browse', 'view', 'read', 'search', 'filter', 'sort', 'paginate') THEN 'access'
+            ELSE 'business' END";
     }
 
     public function paginateActionsForViewer(

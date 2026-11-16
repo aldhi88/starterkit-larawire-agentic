@@ -2,14 +2,15 @@
 
 use Aldhi88\StarterKit\Console\Commands\Starter\CmsCommand;
 use Aldhi88\StarterKit\Installation\StarterInstallState;
-use Aldhi88\StarterKit\Services\Cms\CmsManager;
 use Aldhi88\StarterKit\Services\Starter\StarterAppScaffolder;
 use Aldhi88\StarterKit\Services\Starter\StarterCmsInstaller;
 use Aldhi88\StarterKit\Services\Starter\StarterDeploymentService;
 use Aldhi88\StarterKit\Support\Cms\CmsAppDefinition;
 use Aldhi88\StarterKit\Support\Cms\CmsResource;
 use Illuminate\Database\Migrations\Migrator;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
@@ -22,6 +23,7 @@ beforeEach(function (): void {
     File::ensureDirectoryExists($this->cmsFixture);
     app()->setBasePath($this->cmsFixture);
     config(['apps.cms' => null, 'app.domain' => 'company.test']);
+    view()->addNamespace('starter-shared', __DIR__.'/../../resources/views');
 });
 
 afterEach(function (): void {
@@ -35,12 +37,13 @@ it('leaves the ordinary installation untouched until CMS is explicitly prepared'
     $plan = $installer->plan();
 
     expect(StarterCmsInstaller::enabled())->toBeFalse()
-        ->and($plan)->toHaveCount(5)
+        ->and($plan)->toHaveCount(7)
         ->and(is_file(config_path('apps/cms.php')))->toBeFalse()
         ->and(is_file(base_path('routes/apps/cms.php')))->toBeFalse()
         ->and(is_dir(database_path('migrations/apps/cms')))->toBeFalse()
         ->and(Schema::hasTable('cms_contents'))->toBeFalse()
-        ->and(Schema::hasTable('cms_categories'))->toBeFalse();
+        ->and(Schema::hasTable('cms_categories'))->toBeFalse()
+        ->and(trim(view('starter-shared::cms.runtime-assets')->render()))->toBe('');
 });
 
 it('publishes only the optional CMS App metadata route shim and host migration', function (): void {
@@ -48,13 +51,14 @@ it('publishes only the optional CMS App metadata route shim and host migration',
     $created = $installer->prepare();
     $definition = require config_path('apps/cms.php');
 
-    expect($created)->toHaveCount(5)
+    expect($created)->toHaveCount(7)
         ->and(StarterCmsInstaller::enabled())->toBeTrue()
+        ->and(view('starter-shared::cms.runtime-assets')->render())->toContain('cms-workspace.js', 'cms-workspace.css')
         ->and(array_keys($definition['mods']))->toBe(['dashboard', 'posts', 'pages', 'cards', 'media', 'menus', 'comments'])
         ->and($definition['mods']['posts']['menus'][0]['children'])->toHaveCount(3)
         ->and($definition['mods']['dashboard']['menus'][0]['children'][0]['route'])->toBe('cms.dashboard')
         ->and(File::get(base_path('routes/apps/cms.php')))->toContain("StarterPaths::path('routes/cms.php')")
-        ->and(File::glob(database_path('migrations/apps/cms/*.php')))->toHaveCount(3)
+        ->and(File::glob(database_path('migrations/apps/cms/*.php')))->toHaveCount(5)
         ->and(is_dir(app_path('Livewire/Apps/Cms')))->toBeFalse()
         ->and(app(Migrator::class)->paths())->toContain(database_path('migrations/apps/cms'));
 });
@@ -78,6 +82,16 @@ it('rejects a conflicting CMS App before writing any other file', function (): v
     expect(fn () => app(StarterCmsInstaller::class)->prepare())->toThrow(RuntimeException::class, 'Target CMS sudah digunakan')
         ->and(is_file(base_path('routes/apps/cms.php')))->toBeFalse()
         ->and(is_dir(database_path('migrations/apps/cms')))->toBeFalse();
+});
+
+it('leaves a pre-existing CMS API route on an existing host untouched', function (): void {
+    $api = base_path('routes/apps/cms.api.php');
+    File::ensureDirectoryExists(dirname($api));
+    File::put($api, '<?php // Host API');
+
+    expect(fn () => app(StarterCmsInstaller::class)->prepare())->toThrow(RuntimeException::class, 'routes/apps/cms.api.php')
+        ->and(File::get($api))->toBe('<?php // Host API')
+        ->and(is_file(config_path('apps/cms.php')))->toBeFalse();
 });
 
 it('rolls back new source files when optional CMS publication fails', function (): void {
@@ -117,7 +131,6 @@ it('reserves the CMS subdomain for the optional installer', function (): void {
 it('keeps activation dry runs free of file and database mutations', function (): void {
     File::ensureDirectoryExists(config_path());
     StarterInstallState::write('installed');
-    app()->instance(CmsManager::class, Mockery::mock(CmsManager::class));
     app()->instance(StarterDeploymentService::class, Mockery::mock(StarterDeploymentService::class));
     $command = new CmsCommand;
     $command->setLaravel(app());
@@ -128,13 +141,31 @@ it('keeps activation dry runs free of file and database mutations', function ():
         ->and(is_dir(database_path('migrations/apps/cms')))->toBeFalse();
 });
 
+it('detects an occupied CMS table before publishing or migrating on an existing host', function (): void {
+    config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
+    File::ensureDirectoryExists(config_path());
+    StarterInstallState::write('installed');
+    Schema::create('cms_media', fn (Blueprint $table) => $table->string('legacy_data'));
+    DB::table('cms_media')->insert(['legacy_data' => 'keep']);
+    $command = new CmsCommand;
+    $command->setLaravel(app());
+    $tester = new CommandTester($command);
+
+    expect($tester->execute(['--force' => true]))->toBe(1)
+        ->and($tester->getDisplay())->toContain('Tabel [cms_media] sudah ada')
+        ->and(DB::table('cms_media')->value('legacy_data'))->toBe('keep')
+        ->and(Schema::hasTable('cms_categories'))->toBeFalse()
+        ->and(is_file(config_path('apps/cms.php')))->toBeFalse();
+});
+
 it('removes only new CMS source when activation preflight fails', function (): void {
     File::ensureDirectoryExists(config_path());
     StarterInstallState::write('installed');
     app()->register(LivewireServiceProvider::class);
-    app()->instance(CmsManager::class, Mockery::mock(CmsManager::class));
     $deployment = Mockery::mock(StarterDeploymentService::class);
-    $deployment->shouldReceive('prepare')->once()->andReturn(1);
+    $deployment->shouldReceive('prepare')
+        ->with(Mockery::type(CmsCommand::class), false, array_keys(app(StarterCmsInstaller::class)->migrations()))
+        ->once()->andReturn(1);
     app()->instance(StarterDeploymentService::class, $deployment);
     $command = new CmsCommand;
     $command->setLaravel(app());
@@ -163,5 +194,6 @@ it('registers CMS resource routes and keeps public helpers on the root domain', 
 
     expect(Route::getRoutes()->getByName('starter.cms.documentation')->getDomain())->toBe('company.test')
         ->and(Route::getRoutes()->getByName('starter.cms.media')->getDomain())->toBe('company.test')
-        ->and(Route::getRoutes()->getByName('cms.public.media'))->toBeNull();
+        ->and(Route::getRoutes()->getByName('cms.public.media'))->toBeNull()
+        ->and(Route::has('cms.comments.create'))->toBeFalse();
 });

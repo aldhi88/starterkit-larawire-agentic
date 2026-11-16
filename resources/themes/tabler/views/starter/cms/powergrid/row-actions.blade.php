@@ -4,11 +4,17 @@
     </button>
     <template x-teleport="body">
         <ul x-ref="menu" class="dropdown-menu" x-effect="if (open) { const menu = $el; $nextTick(() => requestAnimationFrame(() => { if (!open) return; const rect = $refs.trigger.getBoundingClientRect(); const viewport = window.visualViewport; const height = viewport?.height || window.innerHeight; const width = viewport?.width || window.innerWidth; left = Math.max(8, Math.min(rect.left, width - menu.offsetWidth - 8)); top = Math.max(8, Math.min(rect.bottom + 4, height - menu.offsetHeight - 8)); })); }" :class="{ 'show': open }" x-show="open" x-cloak :style="{ position: 'fixed', top: `${top}px`, left: `${left}px`, zIndex: 1060, maxHeight: 'calc(100dvh - 16px)', overflowY: 'auto' }" @click.outside="open = false" role="menu">
+            @if (in_array($cmsResource->value, ['posts', 'pages'], true) && ! $row->trashed())
+                @php($permalink = \Aldhi88\StarterKit\Support\Cms\CmsPermalink::for($cmsResource->kind(), (string) $row->slug))
+                @if ($permalink)
+                    <li><button type="button" class="dropdown-item" x-data="{ copied: false }" @click="(async () => { try { await navigator.clipboard.writeText(@js($permalink)); copied = true; } catch { $dispatch('starter-toast', { type: 'warning', message: 'Buka Edit untuk menyalin alamat secara manual.' }); } })()" x-text="copied ? 'Tautan tersalin' : 'Salin tautan'" role="menuitem">Salin tautan</button></li>
+                @endif
+            @endif
             @if (! $row->trashed())
                 @if ($cmsResource->isCategory() || $cmsResource === \Aldhi88\StarterKit\Support\Cms\CmsResource::MenuCategories)
                     <li><button type="button" class="dropdown-item" wire:click="$dispatch('cms-edit-category', { resource: '{{ $cmsResource->value }}', id: {{ $row->id }} })" @click="open = false" role="menuitem">Edit</button></li>
                 @else
-                    <li><a class="dropdown-item" href="{{ route($cmsResource->routePrefix().'.edit', ['contentId' => $row->id]) }}" @click="open = false" role="menuitem" data-starter-navigate>Edit</a></li>
+                    <li><a class="dropdown-item" href="{{ route($cmsResource->routePrefix().'.edit', ['contentId' => $row->id]) }}" @click="open = false" role="menuitem" data-starter-navigate>{{ $cmsResource->value === 'comments' ? ($row->parent_id ? 'Tinjau balasan' : 'Tinjau dan balas') : 'Edit' }}</a></li>
                 @endif
                 @if ($cmsResource === \Aldhi88\StarterKit\Support\Cms\CmsResource::Posts)
                     @if ($row->status !== 'published' || ! $row->published_at || $row->published_at->isFuture())

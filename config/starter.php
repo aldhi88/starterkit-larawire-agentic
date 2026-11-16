@@ -11,6 +11,18 @@ $domain = $configuredDomain !== ''
     : StarterDomain::host((string) env('APP_URL', 'http://localhost'));
 
 return [
+    // Public routes/rendering are implemented by the host website developer.
+    'cms' => ['permalinks' => ['post' => '/konten/{slug}', 'page' => '/halaman/{slug}', 'post_category' => '/konten/kategori/{code}', 'page_category' => '/halaman/kategori/{code}']],
+
+    'audit' => [
+        // Exact model class keys; exclusions apply only to updated events.
+        'models' => [],
+        'event_labels' => [],
+        // Opt-in successful reads only. Never add mutation/security action keys.
+        'access_window_seconds' => 0,
+        'access_actions' => [],
+    ],
+
     'domain' => $domain,
 
     'theme' => env('STARTER_THEME', 'tabler'),

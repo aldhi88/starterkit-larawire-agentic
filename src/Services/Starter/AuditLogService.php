@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Throwable;
 
 class AuditLogService
@@ -26,6 +27,9 @@ class AuditLogService
         'authorization',
         'cookie',
         'session',
+        'credential',
+        'api_key',
+        'private_key',
     ];
 
     /**
@@ -34,6 +38,10 @@ class AuditLogService
     private ?array $actionContext = null;
 
     private ?string $requestId = null;
+
+    private bool $automated = false;
+
+    private ?ClientLogin $initiator = null;
 
     public function __construct(
         private readonly Application $application,
@@ -51,17 +59,117 @@ class AuditLogService
         ];
 
         try {
-            return $callback();
+            return DB::transaction($callback);
         } finally {
             $this->actionContext = $previousContext;
         }
     }
 
+    /** Run background work with an explicit initiating actor; never borrow a worker's authentication. */
+    public function withinAutomatedAction(string $key, string $label, Closure $callback, ?ClientLogin $initiator = null, ?string $actionId = null): mixed
+    {
+        $previous = [$this->automated, $this->initiator];
+        $this->automated = true;
+        $this->initiator = $initiator;
+
+        try {
+            if ($actionId !== null) {
+                return DB::transaction(function () use ($actionId, $initiator, $key, $label, $callback): mixed {
+                    // All continuations lock the first entry before assigning subsequent sequences.
+                    $first = DB::table('starter_logs')->where('action_id', $actionId)->orderBy('sequence')->orderBy('id')->lockForUpdate()->first();
+                    if ($first === null || (string) $first->client_login_id !== (string) $initiator?->getKey()
+                        || $first->action_key !== $key || $first->action_label !== $label) {
+                        throw new InvalidArgumentException('An automated continuation must match its original action and actor.');
+                    }
+                    $previousContext = $this->actionContext;
+                    $this->actionContext = [
+                        'id' => $actionId, 'key' => $key, 'label' => $label,
+                        'sequence' => (int) DB::table('starter_logs')->where('action_id', $actionId)->max('sequence'),
+                    ];
+                    try {
+                        return $callback();
+                    } finally {
+                        $this->actionContext = $previousContext;
+                    }
+                });
+            }
+
+            return $this->actionContext !== null ? DB::transaction($callback) : $this->withinAction($key, $label, $callback);
+        } finally {
+            [$this->automated, $this->initiator] = $previous;
+        }
+    }
+
+    /**
+     * Explicit successful read boundary. State is HMACed, never persisted as plaintext.
+     * Fixed windows may split nearby reads at a boundary; they never extend indefinitely.
+     *
+     * @param  array<string, mixed>  $state  Normalized search/filter/sort/page state, without credentials.
+     */
+    public function recordAccess(string $key, string $label, string $auditableType, string|int $auditableId, ?string $auditableLabel = null, array $state = [], ?string $sessionScope = null): void
+    {
+        $login = $this->automated ? $this->initiator : Auth::user();
+        if (! $login instanceof ClientLogin) {
+            if (! $this->automated) {
+                return;
+            }
+            $login = null;
+        }
+        $seconds = max(0, min(3600, (int) config('starter.audit.access_window_seconds', 0)));
+        $allowed = config('starter.audit.access_actions', []);
+        $sessionScope ??= request()->hasSession() ? request()->session()->getId() : null;
+        $fingerprint = null;
+        // Never merge into a multi-entry business action or an automated/security boundary.
+        if ($login instanceof ClientLogin && $seconds > 0 && in_array($key, $allowed, true) && filled($sessionScope) && $this->actionContext === null && ! $this->automated) {
+            $secret = (string) config('app.key');
+            if ($secret === '') {
+                throw new InvalidArgumentException('Access aggregation requires an application key.');
+            }
+            $fingerprint = hash_hmac('sha256', json_encode([
+                $login->getKey(), $login->client_role_id, $this->clientLogins->loadRole($login)->role->isSuperuser(),
+                $sessionScope, request()->getHost(), request()->path(), request()->route()?->getName(), $key, $label,
+                $auditableType, (string) $auditableId, $auditableLabel,
+                $this->canonicalState($state), intdiv(now()->timestamp, $seconds), $seconds,
+            ], JSON_THROW_ON_ERROR), $secret);
+        }
+        $this->insert(
+            login: $login, event: 'access', auditableType: $auditableType,
+            auditableId: (string) $auditableId, auditableLabel: $auditableLabel,
+            tableName: null, oldValues: [], newValues: [], actionLabel: $label,
+            metadata: ['outcome' => 'success', 'aggregation' => $fingerprint ? 'fixed_window' : 'none', 'window_seconds' => $seconds],
+            actionKey: $key, accessFingerprint: $fingerprint,
+        );
+    }
+
+    /** @param array<mixed> $state @return array<mixed> */
+    private function canonicalState(array $state): array
+    {
+        if (! array_is_list($state)) {
+            ksort($state);
+        }
+        foreach ($state as $key => $value) {
+            if (is_array($value)) {
+                $state[$key] = $this->canonicalState($value);
+            } elseif (! is_scalar($value) && $value !== null) {
+                throw new InvalidArgumentException('Access state must contain only arrays and scalar values.');
+            }
+        }
+
+        return $state;
+    }
+
     public function recordModelEvent(string $event, Model $model): void
     {
-        $login = Auth::user();
+        $login = $this->automated ? $this->initiator : Auth::user();
 
-        if (! $login instanceof ClientLogin || $model instanceof ActivityLog || $model->getTable() === 'starter_logs') {
+        if (! $login instanceof ClientLogin) {
+            if (! $this->automated) {
+                return;
+            }
+            $login = null;
+        }
+
+        if ($model instanceof ActivityLog || $model->getTable() === 'starter_logs') {
             return;
         }
 
@@ -108,10 +216,13 @@ class AuditLogService
         ?string $auditableLabel = null,
         array $metadata = [],
     ): void {
-        $login = Auth::user();
+        $login = $this->automated ? $this->initiator : Auth::user();
 
         if (! $login instanceof ClientLogin) {
-            return;
+            if (! $this->automated) {
+                return;
+            }
+            $login = null;
         }
 
         $this->insert(
@@ -184,6 +295,13 @@ class AuditLogService
 
         $changes = $model->getChanges();
         unset($changes['updated_at']);
+        $models = config('starter.audit.models', []);
+        foreach (($models[$model::class]['ignore_updated'] ?? []) as $attribute) {
+            // Sensitive/lifecycle changes must remain evidence even under a mistaken configuration.
+            if (! $this->isSensitive($attribute) && ! in_array($attribute, ['deleted_at', 'created_by', 'updated_by'], true)) {
+                unset($changes[$attribute]);
+            }
+        }
 
         $oldValues = [];
 
@@ -265,12 +383,13 @@ class AuditLogService
         string $actionLabel,
         array $metadata = [],
         ?string $actionKey = null,
+        ?string $accessFingerprint = null,
     ): void {
         $request = $this->application->runningInConsole() ? null : request();
         $role = $login ? $this->clientLogins->loadRole($login)->role : null;
         $action = $this->action($event, $auditableType, $actionLabel, $actionKey);
 
-        DB::table('starter_logs')->insert([
+        $values = [
             'client_login_id' => $login?->getKey(),
             'actor_name' => $login?->name,
             'actor_username' => $login?->username,
@@ -295,9 +414,20 @@ class AuditLogService
             'request_path' => $request ? '/'.ltrim($request->path(), '/') : null,
             'ip_address' => $request?->ip(),
             'user_agent' => $request?->userAgent(),
-            'source' => $this->source($request),
+            'source' => $this->automated ? 'automated' : $this->source($request),
             'created_at' => now(),
-        ]);
+        ];
+
+        if ($accessFingerprint !== null) {
+            $values['access_fingerprint'] = $accessFingerprint;
+            $values['access_count'] = 1;
+            $values['last_access_at'] = now();
+            DB::table('starter_logs')->upsert([$values], ['access_fingerprint'], [
+                'access_count' => DB::raw('access_count + 1'), 'last_access_at',
+            ]);
+        } else {
+            DB::table('starter_logs')->insert($values);
+        }
 
         Cache::forget(ActivityLog::FILTER_OPTIONS_CACHE_KEY.'.superuser');
         Cache::forget(ActivityLog::FILTER_OPTIONS_CACHE_KEY.'.delegated');
@@ -332,23 +462,40 @@ class AuditLogService
 
     private function defaultActionLabel(string $event, ?string $auditableLabel, string $auditableType): string
     {
-        $verb = match ($event) {
+        $verb = config('starter.audit.event_labels', [])[$event] ?? match ($event) {
             'created' => 'Membuat',
             'deleted' => 'Menghapus',
             'restored' => 'Memulihkan',
-            default => 'Mengubah',
+            'updated' => 'Mengubah',
+            'access', 'browse', 'view' => 'Mengakses',
+            'approved' => 'Menyetujui',
+            'rejected', 'denied' => 'Menolak',
+            'failed' => 'Gagal memproses',
+            'queued' => 'Mengantrekan',
+            'skipped' => 'Melewati',
+            default => 'Aktivitas',
         };
-        $subject = $auditableLabel ?: Str::headline(class_basename($auditableType));
+        $models = config('starter.audit.models', []);
+        $subject = $models[$auditableType]['label'] ?? ($auditableLabel ?: Str::headline(class_basename($auditableType)));
+        if (isset($models[$auditableType]['label']) && filled($auditableLabel)) {
+            $subject .= ' — '.$auditableLabel;
+        }
 
-        return "{$verb} {$subject}";
+        return Str::limit("{$verb} {$subject}", 255, '');
     }
 
     private function modelLabel(Model $model): ?string
     {
-        foreach (['name', 'title', 'label', 'username', 'code', 'email'] as $attribute) {
-            $value = $model->getAttribute($attribute);
+        $models = config('starter.audit.models', []);
+        foreach (($models[$model::class]['label_attributes'] ?? ['name', 'title', 'label', 'username', 'code', 'email']) as $attribute) {
+            if ($this->isSensitive($attribute)) {
+                continue;
+            }
+            $value = isset($models[$model::class]['label_attributes'])
+                ? ($model->getAttributes()[$attribute] ?? null)
+                : $model->getAttribute($attribute);
 
-            if (filled($value)) {
+            if (is_scalar($value) && filled($value)) {
                 return Str::limit((string) $value, 255, '');
             }
         }

@@ -31,6 +31,12 @@ use Illuminate\Support\Carbon;
  * @property string|null $request_path
  * @property string|null $ip_address
  * @property string|null $user_agent
+ * @property string|null $outcome
+ * @property string $category
+ * @property int|string $occurrences
+ * @property int|string $event_count
+ * @property int|null $access_count
+ * @property Carbon|null $last_access_at
  * @property string $source
  * @property string|null $app_key
  * @property Carbon $created_at
@@ -60,6 +66,8 @@ class ActivityLog extends Model
             'new_values' => 'array',
             'metadata' => 'array',
             'created_at' => 'datetime',
+            'last_access_at' => 'datetime',
+            'access_count' => 'integer',
         ];
     }
 

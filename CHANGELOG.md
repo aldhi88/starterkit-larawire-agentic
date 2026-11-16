@@ -5,6 +5,31 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-11-16
+
+### Added
+
+- Add configurable activity-log labels and aggregation of repeated successful reads.
+  The default aggregation window is zero. An additive core migration adds the
+  access fingerprint, count, and last-access timestamp.
+- Author single-item and collection Cards, map menus to published content and
+  categories, copy permalinks, and moderate or reply to visitor comments.
+- Use consistent primary, return, and confirmation actions across Tabler, Dashcode,
+  and Vuexy. The CMS stays optional in both new and existing applications.
+
+### Upgrade
+
+- Run `composer update aldhi88/starterkit-larawire-agentic` and
+  `php artisan starter:sync` locally. Existing CMS hosts receive additive
+  migrations for Card presets and comment replies. Commit generated migrations
+  and the host lockfile, then run `php artisan starter:deploy` in production.
+- Existing hosts can enable CMS with `php artisan starter:cms`; use `--dry-run`
+  to preview. Activation checks table-name conflicts, preserves existing registry
+  entries, and runs only package-owned CMS migrations.
+- Existing CMS read repositories remain compatible. Custom readers can implement
+  `CmsContentLookupInterface` to support Card lookup by ID and menu targets.
+  No new environment variables are required.
+
 ## [1.12.0] - 2026-10-27
 
 ### Added

@@ -1,8 +1,13 @@
 <div class="cms-editor" data-cms-editor data-cms-media-base="{{ route('starter.cms.media', ['publicId' => str_repeat('0', 26)]) }}" wire:ignore>
+    @if (in_array($resource, ['posts', 'pages', 'cards'], true))
+        <span class="cms-editor-accessible-label" id="cms-body-label-{{ $this->getId() }}">{{ $resource === 'pages' ? 'Isi halaman' : 'Isi konten' }}</span>
+        <template data-cms-toolbar-media><button type="button" class="ql-cms-media" data-cms-open-media aria-label="Sisipkan media" title="Sisipkan media dari pustaka">@include('starter-shared::cms.media-plus-icon')</button></template>
+    @else
     <div class="cms-editor-heading d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
         <span class="cms-editor-accessible-label" id="cms-body-label-{{ $this->getId() }}">Isi konten</span>
         <div class="cms-editor-actions"><button type="button" class="btn cms-editor-media-button" data-cms-open-media>@include('starter-shared::cms.media-plus-icon')<span>Tambahkan Media</span></button></div>
     </div>
+    @endif
     <textarea class="cms-editor-initial" data-cms-editor-initial aria-hidden="true" tabindex="-1">{{ $form['body'] ?? '' }}</textarea>
     <div class="cms-editor-canvas" data-cms-editor-canvas>
         <div data-cms-editor-surface aria-labelledby="cms-body-label-{{ $this->getId() }}"></div>

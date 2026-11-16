@@ -62,7 +62,7 @@ class SyncCommand extends Command
             return self::FAILURE;
         }
 
-        if ($prepared && ! $internal->allows('app', 'deploy', 'install')) {
+        if ($prepared && ! $internal->allows('app', 'cms', 'deploy', 'install')) {
             $this->components->error('Flag internal preparation tidak dapat dipanggil langsung.');
 
             return self::FAILURE;
@@ -136,6 +136,12 @@ class SyncCommand extends Command
                 ]);
 
                 continue;
+            }
+
+            if ($internal->allows('cms') && array_sum($plan['delete']) > 0) {
+                $this->components->error('Aktivasi CMS memerlukan penghapusan entri registry yang sudah ada. Periksa perbedaan source dan registry CMS.');
+
+                return self::FAILURE;
             }
 
             if (! $this->confirmDeletes($subdomain, $plan)) {

@@ -3,7 +3,6 @@
 namespace Aldhi88\StarterKit\Console\Commands\Starter;
 
 use Aldhi88\StarterKit\Installation\StarterInstallState;
-use Aldhi88\StarterKit\Services\Cms\CmsManager;
 use Aldhi88\StarterKit\Services\Starter\StarterCmsInstaller;
 use Aldhi88\StarterKit\Services\Starter\StarterDeploymentService;
 use Aldhi88\StarterKit\Support\Starter\StarterInternalRunContext;
@@ -24,7 +23,6 @@ class CmsCommand extends Command
 
     public function handle(
         StarterCmsInstaller $installer,
-        CmsManager $cms,
         StarterDeploymentService $deployment,
         StarterInternalRunContext $internal,
     ): int {
@@ -44,6 +42,7 @@ class CmsCommand extends Command
 
         try {
             $plan = $installer->plan();
+            $installer->checkExistingTables();
             $this->table(['Source CMS', 'Tindakan'], array_map(
                 fn (string $path): array => [str_replace(base_path().'/', '', $path), is_file($path) ? 'Pertahankan' : 'Buat'],
                 array_keys($plan),
@@ -54,13 +53,15 @@ class CmsCommand extends Command
             }
 
             if (! $this->option('force') && ! $this->confirm('Tambahkan App CMS dan jalankan migration tambahannya?', false)) {
-                return self::FAILURE;
+                $this->components->info('Aktivasi CMS dibatalkan.');
+
+                return self::SUCCESS;
             }
 
             $created = $installer->prepare();
             StarterRouteRegistrar::register('cms');
 
-            if ($deployment->prepare($this) !== self::SUCCESS) {
+            if ($deployment->prepare($this, migrationPaths: array_keys($installer->migrations())) !== self::SUCCESS) {
                 throw new RuntimeException('Persiapan atau migration CMS gagal.');
             }
 
@@ -68,10 +69,8 @@ class CmsCommand extends Command
                 throw new RuntimeException('Rencana sinkronisasi CMS tidak valid.');
             }
 
-            DB::transaction(function () use ($cms, $internal): void {
-                $cms->installDefaults();
-
-                $result = $internal->run('app', fn (): int => $this->call('starter:sync', [
+            DB::transaction(function () use ($internal): void {
+                $result = $internal->run('cms', fn (): int => $this->call('starter:sync', [
                     'subdomain' => 'cms', '--force' => true, '--prepared' => true,
                 ]));
 

@@ -20,7 +20,7 @@ async function check(browser, theme, width) {
             body: '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="600" height="400" fill="blue"/></svg>',
         }));
         let editor = fs.readFileSync(path.join(packageRoot, `resources/themes/${theme}/views/starter/cms/editor.blade.php`), 'utf8').split('@error')[0];
-        if (theme === 'tabler') editor = editor.replace(/@if \(\$resource === 'posts'\)([\s\S]*?)@else[\s\S]*?@endif/, '$1');
+        editor = editor.replace(/@if \(in_array\(\$resource, \['posts', 'pages'(?:, 'cards')?\], true\)\)([\s\S]*?)@else[\s\S]*?@endif/, '$1');
         editor = editor.replaceAll("@include('starter-shared::cms.media-plus-icon')", fs.readFileSync(path.join(packageRoot, 'resources/views/cms/media-plus-icon.blade.php'), 'utf8'));
         editor = editor.replace(/data-cms-media-base="[^"]+"/, 'data-cms-media-base="https://root.example.test/cms/media/00000000000000000000000000"')
             .replaceAll('{{ $this->getId() }}', 'fixture')
@@ -166,14 +166,14 @@ async function check(browser, theme, width) {
     }
 }
 
-async function checkPublicationPicker(browser, timezoneId) {
+async function checkPublicationPicker(browser, timezoneId, storage = 'masked') {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, timezoneId });
     try {
-        await page.setContent('<div wire:id="publication"><div data-cms-publish-picker><input data-cms-publish-input readonly><button data-cms-publish-now>Sekarang</button></div></div>');
-        await page.evaluate(() => {
-            window.value = '25/10/2026 19:00';
+        await page.setContent(`<div wire:id="publication"><div data-cms-publish-picker ${storage === 'iso' ? 'data-cms-date-field="form.published_at" data-cms-date-format="iso"' : ''}><input data-cms-publish-input readonly><button data-cms-publish-now>Sekarang</button><button data-cms-date-clear>Kosongkan</button></div></div>`);
+        await page.evaluate(storage => {
+            window.value = storage === 'iso' ? '2026-10-25T19:00' : '25/10/2026 19:00';
             window.Livewire = { find: () => ({ $get: () => window.value, $set: (key, value) => { window.value = value; } }) };
-        });
+        }, storage);
         await page.addStyleTag({ path: asset('vendor/flatpickr/flatpickr.min.css') });
         await page.addScriptTag({ path: asset('vendor/flatpickr/flatpickr.min.js') });
         await page.addScriptTag({ path: asset('js/cms-workspace.js') });
@@ -187,17 +187,20 @@ async function checkPublicationPicker(browser, timezoneId) {
         await page.locator('.flatpickr-minute').press('Tab');
         await page.getByRole('button', { name: 'Selesai' }).click();
         assert.equal(await input.inputValue(), '28/10/2026 21:45');
-        assert.equal(await page.evaluate(() => window.value), '28/10/2026 21:45');
+        assert.equal(await page.evaluate(() => window.value), storage === 'iso' ? '2026-10-28T21:45' : '28/10/2026 21:45');
         assert.equal(await input.getAttribute('aria-expanded'), 'false');
         await page.locator('[data-cms-publish-now]').click();
         assert.equal(await input.inputValue(), await page.evaluate(() => StarterCms.maskDateTime(StarterCms.localDateTime('Asia/Jakarta'))));
-        await page.evaluate(() => { window.value = '30/10/2026 10:15'; StarterCms.init(); });
+        await page.evaluate(storage => { window.value = storage === 'iso' ? '2026-10-30T10:15' : '30/10/2026 10:15'; StarterCms.init(); }, storage);
         assert.equal(await input.inputValue(), '30/10/2026 10:15');
         await page.evaluate(() => document.dispatchEvent(new Event('livewire:navigating')));
         assert.equal(await page.locator('.flatpickr-calendar').count(), 0);
         await page.evaluate(() => StarterCms.init());
         assert.equal(await page.locator('.flatpickr-calendar').count(), 1);
-        console.log(`PASS publication picker ${timezoneId}: calendar, 24h time, WIB now, refresh, cleanup`);
+        await page.locator('[data-cms-date-clear]').click();
+        assert.equal(await page.evaluate(() => window.value), '');
+        assert.equal(await input.inputValue(), '');
+        console.log(`PASS publication picker ${timezoneId} ${storage}: calendar, 24h time, WIB now, refresh, cleanup`);
     } finally { await page.close(); }
 }
 
@@ -205,7 +208,7 @@ async function checkPublicationPicker(browser, timezoneId) {
     const browser = await chromium.launch({ headless: true,
         executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
     try {
-        for (const timezoneId of ['Asia/Jakarta', 'America/Los_Angeles']) await checkPublicationPicker(browser, timezoneId);
+        for (const timezoneId of ['Asia/Jakarta', 'America/Los_Angeles']) for (const storage of ['masked', 'iso']) await checkPublicationPicker(browser, timezoneId, storage);
         for (const theme of ['tabler', 'vuexy', 'dashcode']) {
             for (const width of [1280, 390]) await check(browser, theme, width);
         }

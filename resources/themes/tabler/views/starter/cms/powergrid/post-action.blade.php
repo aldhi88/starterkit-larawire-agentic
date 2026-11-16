@@ -11,25 +11,26 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <strong>{{ count($postIds) }} postingan</strong>
+                        <strong>{{ count($postIds) }} konten</strong>
                         <span class="text-secondary">{{ $postFiltered ? 'dari semua hasil filter aktif, termasuk halaman lain.' : 'dipilih.' }}</span>
                         @if ($postTitle !== '')<div class="text-secondary small mt-1 text-break">{{ $postTitle }}</div>@endif
                     </div>
                     @if ($postAction === 'publish_now')
-                        <p class="mb-0">Postingan akan langsung tampil di website. Tanggal postingan yang sudah terbit tetap dipertahankan.</p>
-                        @if ($postScheduled > 0)<div class="alert alert-warning mt-3 mb-0">{{ $postScheduled }} postingan terjadwal akan diterbitkan sekarang, tanpa menunggu jadwalnya.</div>@endif
+                        <p class="mb-0">Konten akan langsung tampil di website. Tanggal konten yang sudah terbit tetap dipertahankan.</p>
+                        @if ($postScheduled > 0)<div class="alert alert-warning mt-3 mb-0">{{ $postScheduled }} konten terjadwal akan diterbitkan sekarang, tanpa menunggu jadwalnya.</div>@endif
                     @elseif ($postAction === 'draft')
-                        <p class="mb-0">Postingan tidak tampil di website dan tidak akan terbit otomatis selama berstatus draf. Isi dan kategori tetap tersimpan.</p>
+                        <p class="mb-0">Konten tidak tampil di website dan tidak akan terbit otomatis selama berstatus draf. Isi dan kategori tetap tersimpan.</p>
                     @else
-                        <p class="text-secondary small mb-3">Pilihan ini mengganti kategori postingan. Tanpa centang berarti tanpa kategori.</p>
+                        <p class="text-secondary small mb-3">Pilihan ini mengganti kategori konten. Tanpa centang berarti tanpa kategori.</p>
                         @include('starter.cms.category-picker', ['categories' => $postCategories, 'field' => 'postCategoryIds', 'pickerId' => 'cms-quick-categories', 'twoColumns' => true])
                         @error('postCategoryIds')<div class="text-danger small mt-2" role="alert">{{ $message }}</div>@enderror
                     @endif
                     @error('postAction')<div class="alert alert-danger mt-3 mb-0" role="alert">{{ $message }}</div>@enderror
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-ghost-secondary" wire:click="cancelPostAction" wire:loading.attr="disabled">Batal</button>
-                    <button type="submit" class="btn btn-sm btn-primary" wire:loading.attr="disabled">
+                    <button type="button" class="btn cms-btn-neutral" wire:click="cancelPostAction" wire:loading.attr="disabled">Batal</button>
+                    <button type="submit" class="btn {{ match ($postAction) { 'publish_now' => 'btn-success', 'draft' => 'btn-secondary', default => 'btn-primary' } }}" wire:loading.attr="disabled">
+                        @include('starter.cms.action-icon', ['action' => match ($postAction) { 'publish_now' => 'check', 'draft' => 'draft', default => 'save' }])
                         <span wire:loading.remove wire:target="executePostAction">{{ $postAction === 'categories' ? 'Simpan kategori' : $actionLabel }}</span>
                         <span wire:loading wire:target="executePostAction">Menyimpan…</span>
                     </button>

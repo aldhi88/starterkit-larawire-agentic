@@ -12,6 +12,7 @@ use Aldhi88\StarterKit\Models\Cms\Menu;
 use Aldhi88\StarterKit\Models\Cms\MenuCategory;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Services\Starter\AuditLogService;
+use Aldhi88\StarterKit\Support\Cms\CmsCardPresets;
 use Aldhi88\StarterKit\Support\Cms\CmsCategoryTree;
 use Aldhi88\StarterKit\Support\Cms\CmsResource;
 use Aldhi88\StarterKit\Support\Cms\CmsTime;
@@ -32,7 +33,12 @@ use Throwable;
 
 class CmsManager
 {
-    public function __construct(private readonly CmsRepositoryInterface $records, private readonly AuditLogService $auditLogs, private readonly CmsRichContent $richContent) {}
+    private readonly CmsMenuLinks $menuLinks;
+
+    public function __construct(private readonly CmsRepositoryInterface $records, private readonly AuditLogService $auditLogs, private readonly CmsRichContent $richContent, ?CmsMenuLinks $menuLinks = null)
+    {
+        $this->menuLinks = $menuLinks ?? app(CmsMenuLinks::class);
+    }
 
     public function authorize(ClientLogin $actor, CmsResource $resource): void
     {
@@ -60,6 +66,14 @@ class CmsManager
     {
         $this->authorize($actor, $resource);
         $this->audit($resource, 'browse', ['outcome' => 'success', 'state' => array_intersect_key($state, array_flip(['archive', 'page', 'perPage', 'sortField', 'sortDirection']))]);
+    }
+
+    public function menuTargetOptions(ClientLogin $actor, string $type, string $query): array
+    {
+        $this->authorize($actor, CmsResource::Menus);
+        abort_unless(isset(CmsMenuLinks::TYPES[$type]) && mb_strlen($query) <= 100, 422);
+
+        return $this->menuLinks->search($type, trim($query));
     }
 
     public function invalidBrowse(ClientLogin $actor, CmsResource $resource): void
@@ -92,6 +106,7 @@ class CmsManager
     public function editor(ClientLogin $actor, CmsResource $resource, ?int $id = null): array
     {
         $this->authorize($actor, $resource);
+        abort_if($resource === CmsResource::Comments && $id === null, 404);
         $record = $id ? $this->find($resource, $id) : null;
         if ($id !== null && $record === null) {
             $this->audit($resource, 'not_found', ['outcome' => 'not_found']);
@@ -103,11 +118,18 @@ class CmsManager
             'published_at' => null, 'position' => 0, 'code' => '', 'description' => '', 'alt_text' => '', 'caption' => '',
             'media_ids' => [], 'items' => [], 'content_id' => null, 'author_name' => '', 'author_email' => ''];
         $data = $record ? array_replace($defaults, array_intersect_key($record->getAttributes(), $defaults)) : $defaults;
-        if ($resource === CmsResource::Posts && $record === null) {
+        if ($resource === CmsResource::Cards) {
+            $data['card_preset'] = $record ? ($record->getAttribute('card_preset') ?: 'free') : 'service';
+            $data['card_data'] = array_replace(['mode' => $record ? 'single' : 'collection', 'items' => []], $record?->getAttribute('card_data') ?: []);
+        }
+        if ($resource === CmsResource::Pages && $record && blank($data['title'])) {
+            $data['title'] = $data['name'];
+        }
+        if (in_array($resource, [CmsResource::Posts, CmsResource::Pages, CmsResource::Cards], true) && $record === null) {
             $data['published_at'] = CmsTime::nowForInput();
         }
         if ($record instanceof Content && $record->getAttribute('published_at')) {
-            $data['published_at'] = $resource === CmsResource::Posts
+            $data['published_at'] = in_array($resource, [CmsResource::Posts, CmsResource::Pages, CmsResource::Cards], true)
                 ? CmsTime::forInput($record->getAttribute('published_at'))
                 : $record->getAttribute('published_at')->format('Y-m-d\TH:i');
         }
@@ -127,6 +149,14 @@ class CmsManager
         }
         if ($record instanceof Menu) {
             $data['items'] = $record->getAttribute('items') ?? [];
+            $targets = $this->menuLinks->targets($data['items']);
+            foreach ($data['items'] as &$item) {
+                $item['target_type'] ??= 'custom';
+                $target = $targets[$item['target_type']][$item['target_id'] ?? 0] ?? null;
+                $item['target_name'] = $target['name'] ?? '';
+                $item['url'] = $target['url'] ?? ($item['url'] ?? '');
+            }
+            unset($item);
         }
         if ($record instanceof Media) {
             $data['url'] = $this->mediaUrl($record);
@@ -135,7 +165,13 @@ class CmsManager
             $data['original_name'] = $record->getAttribute('original_name');
         }
         $options = $this->options($actor, $resource);
-        $include = array_filter([$data['image_id'], $data['thumbnail_id'], $data['logo_id'], ...$data['media_ids']]);
+        $itemImages = [];
+        foreach (data_get($data, 'card_data.items', []) as $item) {
+            foreach (['image_id', 'thumbnail_id', 'logo_id'] as $field) {
+                $itemImages[] = $item[$field] ?? null;
+            }
+        }
+        $include = array_filter([$data['image_id'], $data['thumbnail_id'], $data['logo_id'], ...$data['media_ids'], ...$itemImages]);
         if ($include !== []) {
             $options['media'] = $this->mediaRows($this->records->mediaOptions('', array_map('intval', $include)));
         }
@@ -151,11 +187,12 @@ class CmsManager
                 $options['menuCategories'][] = ['id' => $category->getKey(), 'name' => $category->getAttribute('name')];
             }
         }
-        if ($record instanceof Comment && $data['content_id']) {
-            $content = $this->records->content((int) $data['content_id'], 'post', true);
-            if ($content && ! in_array($content->getKey(), array_column($options['contents'], 'id'), true)) {
-                $options['contents'][] = ['id' => $content->getKey(), 'name' => $content->getAttribute('name')];
-            }
+        if ($record instanceof Comment) {
+            $data['content_title'] = $record->content()->withTrashed()->value('name');
+            $data['parent_id'] = $record->getAttribute('parent_id');
+            $data['parent_available'] = $data['parent_id'] && $this->records->comment((int) $data['parent_id']) !== null;
+            $data['replies'] = $record->replies()->latest('id')->limit(10)
+                ->get(['id', 'author_name', 'body', 'status'])->reverse()->values()->toArray();
         }
         $this->audit($resource, $id ? 'read' : 'create_form', ['outcome' => 'success', 'record_id' => $id]);
 
@@ -196,6 +233,8 @@ class CmsManager
     {
         $this->authorize($actor, $resource);
 
+        abort_if($resource === CmsResource::Comments && $id === null, 404);
+
         return $this->persist($actor, $resource, $data, $id, $upload);
     }
 
@@ -211,6 +250,9 @@ class CmsManager
                     if ($id !== null) {
                         abort_unless($record !== null, 404);
                     }
+                    if ($record instanceof Comment) {
+                        return $this->moderateComment($actor, $record, $data);
+                    }
                     if ($record instanceof Content && ! array_key_exists('body_format', $data)) {
                         $data['body_format'] = $record->getAttribute('body_format') ?: 'markdown';
                     }
@@ -224,7 +266,7 @@ class CmsManager
                         && (int) $record->getAttribute('category_id') !== (int) ($payload['category_id'] ?? null)) {
                         $categoryIds = $payload['category_id'] ? [(int) $payload['category_id']] : [];
                     }
-                    if ($resource === CmsResource::Posts && $record === null) {
+                    if (in_array($resource, [CmsResource::Posts, CmsResource::Pages], true) && $record === null) {
                         $payload['position'] = 0;
                     }
                     $embeddedMediaIds = [];
@@ -232,6 +274,15 @@ class CmsManager
                         $rich = $this->richContent->prepare((string) ($payload['body'] ?? $record?->getAttribute('body')));
                         $payload['body'] = $rich['html'];
                         $embeddedMediaIds = $rich['mediaIds'];
+                    }
+                    if ($resource === CmsResource::Cards) {
+                        foreach (data_get($payload, 'card_data.items', data_get($record?->getAttribute('card_data'), 'items', [])) as $item) {
+                            foreach (['image_id', 'thumbnail_id', 'logo_id'] as $field) {
+                                if (! empty($item[$field])) {
+                                    $embeddedMediaIds[] = (int) $item[$field];
+                                }
+                            }
+                        }
                     }
                     if ($resource === CmsResource::Media) {
                         if ($record === null && $upload === null) {
@@ -259,7 +310,7 @@ class CmsManager
                         CmsResource::Galleries => $this->records->storeGallery($record instanceof Gallery ? $record : null, $payload, array_map('intval', $data['media_ids'] ?? []), $actor->id),
                         CmsResource::Menus => $this->records->storeMenu($record instanceof Menu ? $record : null, $payload, $actor->id),
                         CmsResource::MenuCategories => $this->records->storeMenuCategory($record instanceof MenuCategory ? $record : null, $payload, $actor->id),
-                        CmsResource::Comments => $this->records->storeComment($record instanceof Comment ? $record : null, $payload, $actor->id),
+                        CmsResource::Comments => throw new \LogicException('Moderasi memerlukan komentar yang sudah ada.'),
                     };
                     if ($saved instanceof Content) {
                         $this->records->syncContentMedia($saved, $embeddedMediaIds, $actor->id);
@@ -284,6 +335,46 @@ class CmsManager
             $this->failure($resource, $exception);
             throw $exception;
         }
+    }
+
+    /** @param array<string,mixed> $data */
+    private function moderateComment(ClientLogin $actor, Comment $record, array $data): Comment
+    {
+        $valid = Validator::make($data, [
+            'status' => ['required', Rule::in(array_keys(CmsResource::Comments->statusOptions()))],
+            'reply_body' => ['nullable', 'string', 'max:10000'],
+            'reply_key' => ['required_with:reply_body', 'nullable', 'uuid'],
+        ], [], ['reply_body' => 'balasan'])->validate();
+        $reply = trim((string) ($valid['reply_body'] ?? ''));
+        if ($reply !== '') {
+            if ($record->getAttribute('parent_id') !== null) {
+                throw ValidationException::withMessages(['reply_body' => 'Balas melalui komentar utama.']);
+            }
+            // The parent is already locked. A retried submission must not publish a second reply.
+            if ($record->replies()->withTrashed()->where('reply_key', $valid['reply_key'])->exists()) {
+                return $record;
+            }
+        }
+        if (isset($data['original_status']) && $record->getAttribute('status') !== $data['original_status']
+            && $record->getAttribute('status') !== $valid['status']) {
+            throw ValidationException::withMessages(['status' => 'Status komentar sudah berubah. Muat ulang sebelum menyimpan.']);
+        }
+        $before = $record->getAttribute('status');
+        if ($valid['status'] !== $before) {
+            $this->records->storeComment($record, ['status' => $valid['status']], $actor->id);
+        }
+        $savedReply = $reply === '' ? null : $this->records->storeComment(null, [
+            'content_id' => $record->getAttribute('content_id'), 'parent_id' => $record->getKey(),
+            'reply_key' => $valid['reply_key'], 'author_name' => $actor->name,
+            'body' => $reply, 'status' => 'approved',
+        ], $actor->id);
+        if ($before !== $valid['status'] || $savedReply !== null) {
+            $this->auditLogs->recordManual('updated', Comment::class, $record->getKey(), tableName: 'cms_comments',
+                auditableLabel: 'Moderasi komentar', metadata: ['outcome' => 'success', 'before_status' => $before,
+                    'status' => $valid['status'], 'reply_id' => $savedReply?->getKey()]);
+        }
+
+        return $record;
     }
 
     /** @return LengthAwarePaginator<int,array<string,mixed>> */
@@ -390,23 +481,59 @@ class CmsManager
     {
         $this->authorize($actor, CmsResource::PostCategories);
         try {
-            Validator::make(['placement' => $placement], ['placement' => ['required', Rule::in(['before', 'after'])]])->validate();
-            $state = $this->categoryOrderState($this->records->postCategoriesForOrdering());
-            $rows = collect($state['categories'])->keyBy('id');
-            $source = $rows->get($id);
-            $target = $rows->get($targetId);
-            if (! $source || ! $target || $id === $targetId || $source['parent_id'] !== $target['parent_id']) {
-                throw ValidationException::withMessages(['order' => 'Geser kategori ke kategori lain dalam induk yang sama.']);
-            }
-            $ids = array_values(array_filter(array_column($state['categories'], 'id'), fn (int $rowId): bool => $rowId !== $id));
-            $index = array_search($targetId, $ids, true);
-            array_splice($ids, $index + ($placement === 'after' ? 1 : 0), 0, [$id]);
+            Validator::make(['placement' => $placement], ['placement' => ['required', Rule::in(['before', 'after', 'inside', 'root'])]])->validate();
+            $this->auditLogs->withinAction('cms.post_categories.reorder', 'Mengatur susunan kategori konten', function () use ($actor, $id, $targetId, $placement, $version): void {
+                DB::transaction(function () use ($actor, $id, $targetId, $placement, $version): void {
+                    $records = $this->records->postCategoriesForOrdering(true);
+                    $state = $this->categoryOrderState($records);
+                    if (! hash_equals($state['version'], $version)) {
+                        throw ValidationException::withMessages(['order' => 'Daftar kategori telah berubah. Silakan geser kembali.']);
+                    }
+                    $byId = $records->keyBy('id');
+                    $source = $byId->get($id);
+                    $target = $byId->get($targetId);
+                    if (! $source || ($placement !== 'root' && (! $target || $id === $targetId))) {
+                        throw ValidationException::withMessages(['order' => 'Kategori tujuan tidak tersedia.']);
+                    }
+                    $parentId = match ($placement) {
+                        'root' => null,
+                        'inside' => $targetId,
+                        default => $target->parent_id,
+                    };
+                    $cursor = $parentId;
+                    $seen = [$id];
+                    while ($cursor) {
+                        if (in_array($cursor, $seen, true) || ! $byId->has($cursor)) {
+                            throw ValidationException::withMessages(['order' => 'Kategori tidak dapat dipindahkan ke dalam dirinya atau turunannya.']);
+                        }
+                        $seen[] = $cursor;
+                        $cursor = $byId->get($cursor)->parent_id;
+                    }
+                    if ($parentId && $byId->get($parentId)->status !== 'active') {
+                        throw ValidationException::withMessages(['order' => 'Kategori induk harus aktif.']);
+                    }
+                    $oldParent = $source->parent_id;
+                    $siblings = array_values(array_filter($state['categories'], fn (array $row): bool => $row['id'] !== $id && $row['parent_id'] === $parentId));
+                    $ids = array_column($siblings, 'id');
+                    $index = in_array($placement, ['inside', 'root'], true) ? count($ids) : array_search($targetId, $ids, true) + ($placement === 'after' ? 1 : 0);
+                    array_splice($ids, $index, 0, [$id]);
+                    $before = [];
+                    $after = [];
+                    foreach ($ids as $offset => $categoryId) {
+                        $category = $byId->get($categoryId);
+                        $before[$categoryId] = ['parent_id' => $category->parent_id, 'position' => $category->position];
+                        $after[$categoryId] = ['parent_id' => $parentId, 'position' => $offset + 1];
+                        if ($before[$categoryId] !== $after[$categoryId]) {
+                            $this->records->storeCategory($category, $after[$categoryId], $actor->id);
+                        }
+                    }
+                    $this->auditLogs->recordManual('reordered', Category::class, $id, tableName: 'cms_categories', auditableLabel: $source->name, oldValues: $before, newValues: $after, metadata: ['outcome' => 'success', 'previous_parent_id' => $oldParent, 'parent_id' => $parentId]);
+                });
+            });
         } catch (Throwable $exception) {
             $this->failure(CmsResource::PostCategories, $exception);
             throw $exception;
         }
-        // The locked save rechecks the snapshot, including siblings outside this table page/filter.
-        $this->reorderPostCategories($actor, $ids, $version);
     }
 
     /** @param list<int> $ids */
@@ -438,7 +565,7 @@ class CmsManager
                             $this->records->storeCategory($category, ['position' => $position], $actor->id);
                         }
                     }
-                    $this->auditLogs->recordManual('reordered', Category::class, 'post', tableName: 'cms_categories', auditableLabel: 'Kategori Post', oldValues: ['positions' => $before], newValues: ['positions' => $after], metadata: ['outcome' => 'success', 'count' => count($ids)]);
+                    $this->auditLogs->recordManual('reordered', Category::class, 'post', tableName: 'cms_categories', auditableLabel: 'Kategori Konten', oldValues: ['positions' => $before], newValues: ['positions' => $after], metadata: ['outcome' => 'success', 'count' => count($ids)]);
                 });
             });
         } catch (Throwable $exception) {
@@ -600,7 +727,7 @@ class CmsManager
             }
         }
         $rules = ['name' => ['required', 'string', 'max:255'], 'status' => ['required', Rule::in(array_keys($resource->statusOptions()))], 'position' => ['nullable', 'integer', 'min:0', 'max:1000000']];
-        if ($resource === CmsResource::Posts) {
+        if (in_array($resource, [CmsResource::Posts, CmsResource::Pages], true)) {
             unset($data['name'], $data['position'], $rules['name'], $rules['position']);
         }
         $unique = fn (string $field) => Rule::unique($resource->table(), $field)->ignore($id)->when($resource->kind() !== null, fn ($rule) => $rule->where('kind', $resource->kind()));
@@ -609,7 +736,38 @@ class CmsManager
             $rules['body_format'] = ['required', Rule::in(['markdown', 'html'])];
             $slugSource = filled($data['title'] ?? null) ? $data['title'] : ($data['name'] ?? '');
             $data['slug'] = filled($data['slug'] ?? null) ? $data['slug'] : ($resource === CmsResource::Cards ? null : Str::slug(is_string($slugSource) ? $slugSource : ''));
-            $rules += ['title' => [$resource === CmsResource::Posts ? 'required' : 'nullable', 'string', 'max:255'], 'subtitle' => ['nullable', 'string', 'max:255'], 'slug' => [$resource === CmsResource::Cards ? 'nullable' : 'required', 'string', 'max:180', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $unique('slug')], 'excerpt' => ['nullable', 'string', 'max:2000'], 'body' => ['nullable', 'string', 'max:100000'], 'category_id' => ['nullable', 'integer'], 'image_id' => ['nullable', 'integer'], 'thumbnail_id' => ['nullable', 'integer'], 'logo_id' => ['nullable', 'integer'], 'link_label' => ['nullable', 'string', 'max:100'], 'link_url' => ['nullable', 'string', 'max:2000'], 'published_at' => ['nullable', 'date']];
+            $rules += ['title' => [in_array($resource, [CmsResource::Posts, CmsResource::Pages], true) ? 'required' : 'nullable', 'string', 'max:255'], 'subtitle' => ['nullable', 'string', 'max:255'], 'slug' => [$resource === CmsResource::Cards ? 'nullable' : 'required', 'string', 'max:180', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $unique('slug')], 'excerpt' => ['nullable', 'string', 'max:2000'], 'body' => ['nullable', 'string', 'max:100000'], 'category_id' => ['nullable', 'integer'], 'image_id' => ['nullable', 'integer'], 'thumbnail_id' => ['nullable', 'integer'], 'logo_id' => ['nullable', 'integer'], 'link_label' => ['nullable', 'string', 'max:100'], 'link_url' => ['nullable', 'string', 'max:2000'], 'published_at' => ['nullable', 'date']];
+            if ($resource === CmsResource::Cards) {
+                $rules['card_preset'] = ['sometimes', 'required', 'string', Rule::in(array_keys(CmsCardPresets::all()))];
+                $rules['card_data'] = ['sometimes', 'array:mode,items,'.implode(',', array_keys(CmsCardPresets::extraFields()))];
+                foreach (CmsCardPresets::extraFields() as $key => $field) {
+                    $rules['card_data.'.$key] = ['nullable', 'string', 'max:500'];
+                }
+                $rules['card_data.mode'] = ['sometimes', 'required', Rule::in(['single', 'collection'])];
+                $rules['card_data.items'] = ['sometimes', 'array', 'list', 'max:50'];
+                if (data_get($data, 'card_data.mode') === 'collection' && ($data['status'] ?? '') === 'published') {
+                    $rules['card_data.items'] = ['required', 'array', 'list', 'min:1', 'max:50'];
+                }
+                $rules['card_data.items.*'] = ['required', 'array:key,'.implode(',', CmsCardPresets::itemFields())];
+                $rules['card_data.items.*.key'] = ['required', 'string', 'max:64', 'regex:/^[a-zA-Z0-9_-]+$/', 'distinct'];
+                foreach (CmsCardPresets::itemFields() as $field) {
+                    $rules['card_data.items.*.'.$field] = match ($field) {
+                        'image_id', 'thumbnail_id', 'logo_id' => ['nullable', 'integer', 'min:1'],
+                        'starts_at', 'ends_at' => ['nullable', 'date_format:Y-m-d\TH:i'],
+                        'body' => ['nullable', 'string', 'max:10000'],
+                        'excerpt', 'link_url' => ['nullable', 'string', 'max:2000'],
+                        default => ['nullable', 'string', 'max:500'],
+                    };
+                }
+                $rules['card_data.starts_at'] = ['nullable', 'date_format:Y-m-d\TH:i'];
+                $rules['card_data.ends_at'] = ['nullable', 'date_format:Y-m-d\TH:i'];
+                if (filled(data_get($data, 'card_data.starts_at'))) {
+                    $rules['card_data.ends_at'][] = 'after_or_equal:card_data.starts_at';
+                }
+            }
+            if ($resource === CmsResource::Pages) {
+                $rules['category_id'] = ['required', 'integer', 'min:1'];
+            }
             if ($resource === CmsResource::Posts && array_key_exists('category_ids', $data)) {
                 $rules += ['category_ids' => ['array', 'max:100'], 'category_ids.*' => ['integer', 'min:1', 'distinct']];
             }
@@ -626,13 +784,26 @@ class CmsManager
             $rules += ['slug' => ['required', 'string', 'max:180', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $unique('slug')], 'description' => ['nullable', 'string', 'max:5000'], 'media_ids' => ['array', 'max:100'], 'media_ids.*' => ['integer', 'min:1', 'distinct']];
         } elseif ($resource === CmsResource::Menus) {
             $data['code'] = filled($data['code'] ?? null) ? $data['code'] : Str::slug($data['name'] ?? '');
-            $rules += ['code' => ['required', 'string', 'max:100', 'regex:/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/', $unique('code')], 'category_id' => ['nullable', 'integer'], 'items' => ['array', 'max:100'], 'items.*.key' => ['required', 'string', 'max:80', 'regex:/^[a-zA-Z0-9_-]+$/', 'distinct'], 'items.*.label' => ['required', 'string', 'max:255'], 'items.*.url' => ['required', 'string', 'max:2000'], 'items.*.parent_key' => ['nullable', 'string', 'max:80']];
-        } else {
-            unset($rules['name'],$rules['position']);
-            $rules += ['content_id' => ['required', 'integer', 'min:1'], 'author_name' => ['required', 'string', 'max:255'], 'author_email' => ['nullable', 'email', 'max:255'], 'body' => ['required', 'string', 'max:10000']];
+            $rules += [
+                'code' => ['required', 'string', 'max:100', 'regex:/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/', $unique('code')],
+                'category_id' => ['nullable', 'integer'],
+                'items' => ['array', 'max:100'],
+                'items.*.key' => ['required', 'string', 'max:80', 'regex:/^[a-zA-Z0-9_-]+$/', 'distinct'],
+                'items.*.label' => ['required', 'string', 'max:255'],
+                'items.*.url' => ['nullable', 'string', 'max:2000'],
+                'items.*.target_type' => ['sometimes', 'required', Rule::in(['custom', ...array_keys(CmsMenuLinks::TYPES)])],
+                'items.*.target_id' => ['nullable', 'integer', 'min:1'],
+                'items.*.parent_key' => ['nullable', 'string', 'max:80'],
+            ];
         }
         $valid = Validator::make($data, $rules, [], [
-            'name' => $resource->isContent() ? 'nama internal' : 'nama',
+            'name' => $resource === CmsResource::Cards ? 'nama Card' : ($resource->isContent() ? 'nama internal' : 'nama'),
+            'card_data.mode' => 'bentuk Card', 'card_data.items' => 'daftar item',
+            'card_data.items.*.key' => 'identitas item',
+            'card_data.items.*.title' => 'judul / nama item', 'card_data.items.*.body' => 'isi item',
+            'card_data.items.*.image_id' => 'gambar item', 'card_data.items.*.logo_id' => 'logo item',
+            'card_data.items.*.thumbnail_id' => 'thumbnail item', 'card_data.items.*.link_url' => 'tautan item',
+            'card_data.items.*.starts_at' => 'waktu mulai kegiatan', 'card_data.items.*.ends_at' => 'waktu selesai kegiatan',
             'title' => 'judul', 'subtitle' => 'subjudul', 'slug' => 'slug',
             'excerpt' => 'ringkasan', 'body' => $resource === CmsResource::Comments ? 'komentar' : 'konten',
             'category_id' => 'kategori', 'category_ids' => 'kategori', 'category_ids.*' => 'kategori', 'parent_id' => 'kategori induk', 'image_id' => 'gambar utama',
@@ -645,14 +816,14 @@ class CmsManager
             'items' => 'item menu', 'items.*.key' => 'identitas item menu',
             'items.*.label' => 'label item menu', 'items.*.url' => 'tautan item menu',
             'items.*.parent_key' => 'induk item menu',
-            'content_id' => 'postingan', 'author_name' => 'nama pengirim', 'author_email' => 'email pengirim',
-        ])->validate();
+            'content_id' => 'konten', 'author_name' => 'nama pengirim', 'author_email' => 'email pengirim',
+        ] + collect(CmsCardPresets::extraFields())->mapWithKeys(fn ($field, $key) => ['card_data.'.$key => $field[0]])->all())->validate();
         foreach ($valid as $key => $value) {
             if ($value === '' && ! in_array($key, ['name', 'author_name', 'body'], true)) {
                 $valid[$key] = null;
             }
         }
-        if ($resource === CmsResource::Posts) {
+        if (in_array($resource, [CmsResource::Posts, CmsResource::Pages], true)) {
             $valid['name'] = $valid['title'];
         } elseif ($resource !== CmsResource::Comments) {
             $valid['position'] = (int) ($valid['position'] ?? 0);
@@ -665,7 +836,7 @@ class CmsManager
                 foreach ($valid['category_ids'] as $categoryId) {
                     $category = $this->records->category((int) $categoryId, 'post', false, true);
                     if (! $category || $category->getAttribute('status') !== 'active') {
-                        throw ValidationException::withMessages(['category_ids' => 'Salah satu kategori tidak tersedia. Pilih kembali kategori postingan.']);
+                        throw ValidationException::withMessages(['category_ids' => 'Salah satu kategori tidak tersedia. Pilih kembali kategori konten.']);
                     }
                 }
                 $valid['category_id'] = $valid['category_ids'][0] ?? null;
@@ -681,6 +852,28 @@ class CmsManager
                     $this->image((int) $valid[$field], $field);
                 } else {
                     $valid[$field] = null;
+                }
+            }
+            if ($resource === CmsResource::Cards) {
+                if (data_get($valid, 'card_data.mode') === 'collection' && ! array_key_exists($valid['card_preset'] ?? 'free', CmsCardPresets::collectionLabels())) {
+                    throw ValidationException::withMessages(['card_data.mode' => 'Jenis Card ini menggunakan satu item. Pilih bentuk Satu item.']);
+                }
+                foreach (data_get($valid, 'card_data.items', []) as $index => $item) {
+                    if (collect($item)->except('key')->filter(fn ($value) => filled($value))->isEmpty()) {
+                        throw ValidationException::withMessages(['card_data.items.'.$index.'.title' => 'Isi nama, teks, atau gambar untuk item ini.']);
+                    }
+                    foreach (['image_id', 'thumbnail_id', 'logo_id'] as $field) {
+                        if (! empty($item[$field])) {
+                            $this->image((int) $item[$field], 'card_data.items.'.$index.'.'.$field);
+                            $valid['card_data']['items'][$index][$field] = (int) $item[$field];
+                        }
+                    }
+                    if (filled($item['link_url'] ?? null)) {
+                        $this->safeUrl($item['link_url'], 'card_data.items.'.$index.'.link_url');
+                    }
+                    if (filled($item['starts_at'] ?? null) && filled($item['ends_at'] ?? null) && $item['ends_at'] < $item['starts_at']) {
+                        throw ValidationException::withMessages(['card_data.items.'.$index.'.ends_at' => 'Waktu selesai tidak boleh sebelum waktu mulai.']);
+                    }
                 }
             }
             if (filled($valid['link_url'] ?? null)) {
@@ -719,9 +912,6 @@ class CmsManager
             }
             $valid['items'] = $this->menuItems($valid['items'] ?? []);
         }
-        if ($resource === CmsResource::Comments && ! $this->records->content((int) $valid['content_id'], 'post', false, true)) {
-            throw ValidationException::withMessages(['content_id' => 'Postingan tidak tersedia.']);
-        }
 
         return $valid;
     }
@@ -741,13 +931,29 @@ class CmsManager
         }
     }
 
-    /** @param list<array<string,mixed>> $items @return list<array{key:string,label:string,url:string,parent_key:?string}> */
+    /** @param list<array<string,mixed>> $items @return list<array<string,mixed>> */
     private function menuItems(array $items): array
     {
+        $targets = $this->menuLinks->targets($items);
+        $normalized = [];
         $parents = [];
         foreach ($items as $index => $item) {
-            $this->safeUrl($item['url'], 'items.'.$index.'.url');
-            $parents[$item['key']] = filled($item['parent_key'] ?? null) ? $item['parent_key'] : null;
+            $type = $item['target_type'] ?? 'custom';
+            $row = ['key' => $item['key'], 'label' => $item['label'], 'parent_key' => filled($item['parent_key'] ?? null) ? $item['parent_key'] : null];
+            if ($type === 'custom') {
+                $url = (string) ($item['url'] ?? '');
+                $this->safeUrl($url, 'items.'.$index.'.url');
+                $row['url'] = $url;
+            } else {
+                $id = (int) ($item['target_id'] ?? 0);
+                if (! isset($targets[$type][$id])) {
+                    throw ValidationException::withMessages(['items.'.$index.'.target_id' => 'Pilih tujuan yang tersedia untuk jenis tautan ini.']);
+                }
+                $row['target_type'] = $type;
+                $row['target_id'] = $id;
+            }
+            $normalized[] = $row;
+            $parents[$item['key']] = $row['parent_key'];
         }
         foreach ($parents as $key => $parent) {
             $seen = [$key];
@@ -760,7 +966,7 @@ class CmsManager
             }
         }
 
-        return array_map(fn ($item): array => ['key' => $item['key'], 'label' => $item['label'], 'url' => $item['url'], 'parent_key' => filled($item['parent_key'] ?? null) ? $item['parent_key'] : null], $items);
+        return $normalized;
     }
 
     /** @return array<string,mixed> */

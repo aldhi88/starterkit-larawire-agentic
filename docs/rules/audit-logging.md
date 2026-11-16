@@ -34,3 +34,52 @@
 - Selected/filtered/all bulk actions use one action group and summary with safe applied scope/filter, success count, and failed/skipped count. Permanent delete runs only from a service, transaction, and archived target (unless an approved append-only/derived lifecycle says otherwise), and must remove or prove cascade of owned relations.
 - Test the physical actor columns, foreign keys/indexes, create/update stamping, immutable `created_by`, unauthenticated/system nullability, actor removal, Eloquent/raw/bulk/pivot paths, and forward-migration backfill behavior.
 - Test action key, authenticated actor and snapshots, target/table/event, read and mutation coverage, denied/failed outcomes, multi-table grouping, transaction rollback, sensitive-data exclusion, success/failure security cases, and bulk scope summaries. A feature is incomplete if any exposed server-side action has no asserted audit path.
+
+## Noise control and integration
+
+- Configure `starter.audit.models` by exact model class. `ignore_updated` removes only explicitly named technical attributes from update diffs; it never suppresses an entire model. Sensitive and ownership/lifecycle attributes cannot be excluded. Creation/deletion evidence remains intact. Use `label` and safe `label_attributes` to give domain names and identifiers; `event_labels` maps event verbs. Never use secret-bearing attributes as labels.
+- `withinAction()` now opens a default-connection database transaction. Existing surrounding transactions remain supported. Both business writes and audit must use that connection. Global post-write Eloquent listeners alone cannot make an unwrapped autocommit write atomic. External side effects require an application outbox/after-commit design; the package cannot roll them back.
+- Use `withinAutomatedAction(key, label, callback, initiator)` for scheduled/worker work. Pass the initiating login explicitly (null only for genuine system work). Nested work retains the enclosing action and ordered sequences; independent jobs start their own group. For a separately dispatched continuation, pass the optional `actionId` with the same original key, label and initiating actor, after the original transaction commits. The service locks the original entry and appends ordered sequences in the same action; a missing action or mismatched actor/key/label is rejected. Distinct job actions may instead use safe correlation metadata. Do not rely on a queue worker's ambient authentication.
+- The grid groups before pagination, uses target snapshots without target-model queries, adds a target only for a proven single target, and marks multiple objects/tables. Category derives from security events, explicit automated/console source, and known read events; remaining legacy/custom events retain the business/user fallback. Mixed groups remain accessible. These are presentation classifications, not invented historical business outcomes. Known metadata outcomes and explicit event outcomes are shown; unknown outcomes stay unspecified.
+- `recordAccess()` is only for a completed, successful read. It has no mutation, security, or failure event parameter. Opt in with both `access_window_seconds` (1–3600; default 0) and `access_actions` (exact action keys). Do not route mutations, approvals, rejected/failed reads, security events, or exports needing individual evidence through this API. Existing `recordManual()`/`recordSecurityEvent()` behavior does not coalesce.
+- Pass normalized search/filter/sort/page/page-size state and a server-derived session scope (defaults to the request session). Missing session, disabled configuration, an unlisted action, an automated boundary, or an enclosing action disables coalescing. State is compared with a keyed SHA-256 digest covering actor, role/protected status, session, host/path/route, action, target, labels, interval and state. Object/map keys are canonicalized; list order is preserved. Do not supply credentials or tokens even though state is not stored. Never copy raw state into labels or metadata. Application-key rotation starts new groups.
+- A fixed time bucket merges identical reads with one atomic indexed upsert, retaining first actor/target snapshots, first timestamp/action ID/sequence, occurrence count and last timestamp. Nearby reads on opposite bucket boundaries remain separate. The summary means repeated identical successful reads, not suppressed failures or changed objects. It intentionally does not retain every request ID/IP/user-agent; the initial request snapshot is retained. Disable aggregation where each occurrence needs that evidence. Counts do not measure unique people or records read.
+- The application still owns invocation placement, push-registration idempotency, completed/debounced access boundaries, normalized state, safe domain labels, explicit outcomes (`success`, `failed`, `denied`/`rejected`, `queued`, `skipped`) and meaningful bulk summaries. Coalescing is not a repair for a logging call in render/hydration or a repeated business mutation.
+
+### Configuration example
+
+Merge these keys into the host's `config/starter.php`; do not edit vendor:
+
+```php
+'audit' => [
+    'models' => [
+        App\Models\Apps\Notifications\PushSubscription::class => [
+            'ignore_updated' => ['last_seen_at'],
+            'label' => 'Langganan notifikasi browser',
+            'label_attributes' => ['device_name'],
+        ],
+    ],
+    'event_labels' => ['approved' => 'Menyetujui'],
+    'access_window_seconds' => 60,
+    'access_actions' => ['requests.browse'],
+],
+```
+
+Model/field names above are illustrative, not package-owned classes. After a successful authorized read:
+
+```php
+$audit->recordAccess(
+    key: 'requests.browse',
+    label: 'Menelusuri daftar request',
+    auditableType: RequestRecord::class,
+    auditableId: 'list',
+    state: ['search' => $normalizedSearch, 'filters' => $filters,
+        'sort' => $sort, 'page' => $page, 'per_page' => $perPage],
+);
+```
+
+### Upgrade
+
+Apply forward migration `2026_11_02_000000_add_access_aggregation_to_starter_logs` before serving the updated grid. It adds three nullable columns and a unique nullable fingerprint index; existing rows are neither rewritten nor merged. MySQL/MariaDB allow multiple nulls in this index. Large tables may require an index-build maintenance window according to the database version and operational policy. Rolling the migration back discards aggregation counters, so retain these columns if reverting code while preserving evidence.
+
+Use `starter:sync` for authorized local demos and the established deployment procedure for production. Review published view overrides with `starter:views-status`; update custom detail views to display `access_count` and first/last timestamps. Existing recording signatures remain valid and aggregation stays disabled by default. The existing `action_label` grid field/filter key remains compatible with persisted filters.

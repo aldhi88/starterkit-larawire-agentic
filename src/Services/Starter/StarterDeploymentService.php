@@ -12,7 +12,8 @@ class StarterDeploymentService
         private readonly StarterSecurityValidator $security,
     ) {}
 
-    public function prepare(Command $command, bool $production = false): int
+    /** @param list<string> $migrationPaths Absolute paths to run instead of all pending host migrations. */
+    public function prepare(Command $command, bool $production = false, array $migrationPaths = []): int
     {
         $command->info('Membersihkan cache config dan route lama...');
         if ($command->call('config:clear') !== Command::SUCCESS
@@ -26,8 +27,14 @@ class StarterDeploymentService
         }
 
         $command->info('Menyinkronkan asset dan migration...');
+        $options = ['--force' => true];
+        if ($migrationPaths !== []) {
+            $options['--path'] = $migrationPaths;
+            $options['--realpath'] = true;
+        }
+
         if (! $this->assets->publish($command)
-            || $command->call('migrate', ['--force' => true]) !== Command::SUCCESS) {
+            || $command->call('migrate', $options) !== Command::SUCCESS) {
             return Command::FAILURE;
         }
 

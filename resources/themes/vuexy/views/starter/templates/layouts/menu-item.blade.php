@@ -1,5 +1,5 @@
 @php($nested = $nested ?? false)
-<li class="menu-item {{ ($menu['active'] ?? false) ? 'active' : '' }} {{ ($menu['expanded'] ?? false) ? 'open' : '' }}" data-starter-menu-item>
+<li class="menu-item {{ ($menu['expanded'] ?? false) || ($menu['active'] ?? false) ? 'active' : '' }} {{ ($menu['expanded'] ?? false) ? 'open' : '' }}" data-starter-menu-item>
     @if ($menu['hasChildren'])
         <button class="menu-link menu-toggle starter-menu-toggle border-0 bg-transparent" type="button" data-vuexy-submenu aria-expanded="{{ ($menu['expanded'] ?? false) ? 'true' : 'false' }}">
             @unless ($nested)@include('starter.templates.layouts.icon', ['name' => $menu['icon'] ?? 'folder', 'class' => 'menu-icon'])@endunless<div>{{ $menu['label'] }}</div>

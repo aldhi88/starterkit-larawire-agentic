@@ -229,6 +229,9 @@ class InstallCommand extends Command
             ? 'Starterkit Larawire berhasil di-reset dan dipasang ulang.'
             : 'Starterkit Larawire berhasil dipasang.');
         $this->line('APP URL: '.$appUrl);
+        if (! $this->installation['cms']) {
+            $this->line('Untuk menambahkan CMS nanti, jalankan php artisan starter:cms.');
+        }
         $this->line('Jalankan php artisan starter:sync setelah setiap update package.');
 
         return self::SUCCESS;
@@ -358,6 +361,8 @@ class InstallCommand extends Command
 
         $this->installation['app'] = $app;
         $this->installation['app_name'] = $appName;
+        $this->line('CMS adalah App tambahan untuk mengelola website pada subdomain cms.'.parse_url($appUrl, PHP_URL_HOST).'.');
+        $this->line('Tekan Enter untuk memasang dashboard dan landing page saja. CMS bisa ditambahkan nanti dengan php artisan starter:cms.');
         $this->installation['cms'] = $this->confirm('Sertakan CMS untuk manajemen konten website?', false);
         $this->showIdentitySummary($appUrl);
 
