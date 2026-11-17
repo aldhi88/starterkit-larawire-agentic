@@ -890,7 +890,7 @@ it('contains wide PowerGrid content inside the Dashcode table frame', function (
         ->toContain("@case('edit')")
         ->and($activityLog)
         ->toContain('class="dashcode-activity-stats"')
-        ->toContain('<table class="min-w-full divide-y divide-slate-100">')
+        ->toContain('<livewire:starter.logs.activity-logs-table', 'starter-shared::logs.activity-detail')
         ->not->toContain('table-fixed')
         ->and($roleForm)->toContain('class="dashcode-access-accordion-panel"');
 

@@ -5,6 +5,14 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.13.2] - 2026-11-17
+
+### Fixed
+
+- Make long activity details scroll within the dialog on all three themes. Show
+  the action, actor, time, and plain-language steps before optional field
+  comparisons and technical references. Historical audit data remains intact.
+
 ## [1.13.1] - 2026-11-17
 
 ### Fixed

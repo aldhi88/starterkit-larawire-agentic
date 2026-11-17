@@ -321,3 +321,41 @@ tr:hover .starter-log-summary,
 [aria-labelledby="activity-log-detail-title"] .modal-body {
     overflow-wrap: anywhere;
 }
+
+[aria-labelledby="activity-log-detail-title"] .modal-content {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 2rem);
+    max-height: calc(100dvh - 2rem);
+    overflow: hidden;
+}
+
+[aria-labelledby="activity-log-detail-title"] :is(.modal-header, .modal-footer) {
+    flex: none;
+}
+
+[aria-labelledby="activity-log-detail-title"] .modal-body {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    text-transform: none;
+}
+
+.starter-log-intro { margin-bottom: 1rem; }
+.starter-log-intro p { margin: .25rem 0 0; }
+.starter-log-steps { list-style: decimal; padding-inline-start: 1.75rem; }
+.starter-log-steps > li { padding: .5rem .25rem; }
+.starter-log-steps > li::marker { font-variant-numeric: tabular-nums; }
+.starter-log-values { margin: .5rem 0; }
+.starter-log-values dd { margin: 0 0 .5rem; }
+.starter-log-values pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+.starter-log-reference { padding-block: .75rem; }
+.starter-log-reference details { margin-block: .5rem; }
+:is(.starter-log-steps, .starter-log-reference) summary {
+    cursor: pointer;
+    display: list-item;
+    list-style: disclosure-closed inside;
+    padding-block: .25rem;
+}
+:is(.starter-log-steps, .starter-log-reference) details[open] > summary,
+.starter-log-reference[open] > summary { list-style-type: disclosure-open; }
