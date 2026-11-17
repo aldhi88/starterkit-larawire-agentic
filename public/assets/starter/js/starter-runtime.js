@@ -1162,6 +1162,19 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         // replacement guarantees the server lock state is rendered immediately.
         this.beginTopLevelNavigation(lockUrl.href, { replace: true });
     },
+    openActivityLogRow(event) {
+        if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+
+        const cell = event.target.closest('td');
+        const summary = cell?.parentElement.querySelector('[data-starter-log-detail]');
+        if (!summary) return;
+
+        const control = event.target.closest('button, a, input, select, textarea, label, [role="button"], [contenteditable="true"]');
+        if (control && control !== summary) return;
+        if (event.detail > 0 && !window.getSelection()?.isCollapsed) return;
+
+        window.Livewire.dispatch('starter-log-detail-request', { actionId: summary.dataset.starterLogDetail });
+    },
     bind() {
         if (this.bound) return;
 
@@ -1179,6 +1192,8 @@ window.StarterTemplate = Object.assign(window.StarterTemplate || {}, {
         });
 
         document.addEventListener('click', (event) => {
+            this.openActivityLogRow(event);
+
             const toastDismiss = event.target.closest('[data-starter-toast-dismiss]');
 
             if (toastDismiss) {

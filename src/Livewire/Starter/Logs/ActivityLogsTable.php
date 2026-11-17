@@ -7,6 +7,7 @@ use Aldhi88\StarterKit\Models\Starter\ActivityLog;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Services\Starter\AuthenticatedLoginService;
 use Aldhi88\StarterKit\Support\Starter\ActivityLogPresentation;
+use Aldhi88\StarterKit\Support\Starter\StarterPaths;
 use Aldhi88\StarterKit\Support\Starter\StarterTheme;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -73,7 +74,10 @@ class ActivityLogsTable extends PowerGridComponent
             ->add('app_key')->add('route_name')->add('ip_address')->add('changes_count')->add('tables_count')
             ->add('category')
             ->add('category_label', fn (ActivityLog $log): string => ActivityLogPresentation::CATEGORIES[$log->category] ?? 'Tidak diketahui')
-            ->add('action_label', fn (ActivityLog $log): string => e(ActivityLogPresentation::summary($log)))
+            ->add('action_label', fn (ActivityLog $log): string => view()->file(StarterPaths::path('resources/views/logs/activity-summary.blade.php'), [
+                'actionId' => $log->action_id,
+                'summary' => ActivityLogPresentation::summary($log),
+            ])->render())
             ->add('created_at')
             ->add('created_at_label', fn (ActivityLog $log): string => $log->created_at->format('d M Y H:i:s'));
     }
@@ -85,7 +89,7 @@ class ActivityLogsTable extends PowerGridComponent
             Column::make('Waktu', 'created_at_label', 'created_at')->sortable()
                 ->headerAttribute('', 'min-width: 11rem;')->bodyAttribute('', 'min-width: 11rem;'),
             Column::make('Aktivitas', 'action_label')->searchable()->sortable()
-                ->headerAttribute('', 'min-width: 20rem;')->bodyAttribute('', 'min-width: 20rem; white-space: normal;'),
+                ->headerAttribute('starter-log-summary-column')->bodyAttribute('starter-log-summary-column'),
             Column::make('Kategori', 'category_label', 'category')->sortable()
                 ->headerAttribute('', 'min-width: 12rem;')->bodyAttribute('', 'min-width: 12rem;'),
             Column::make('Aktor', 'actor_name')->searchable()->sortable(),

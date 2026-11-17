@@ -282,3 +282,42 @@ body.starter-is-navigating:has([data-cms-content-page]) .starter-navigate-progre
 }
 .starter-brand-crop-canvas[width="256"] { inline-size: min(100%, 15rem); justify-self: center; }
 .starter-brand-crop-fit { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .25rem; }
+
+th.starter-log-summary-column,
+td.starter-log-summary-column {
+    width: clamp(14rem, 24vw, 22rem);
+}
+
+.starter-log-summary {
+    display: block;
+    width: clamp(14rem, 24vw, 22rem);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: 1.45;
+    text-align: start;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+tr:has(.starter-log-summary),
+.starter-log-summary {
+    cursor: pointer;
+}
+
+tr:hover .starter-log-summary,
+.starter-log-summary:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: .15em;
+}
+
+.starter-log-summary:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+[aria-labelledby="activity-log-detail-title"] .modal-body {
+    overflow-wrap: anywhere;
+}

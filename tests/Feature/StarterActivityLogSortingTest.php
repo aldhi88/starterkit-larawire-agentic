@@ -2,6 +2,7 @@
 
 use Aldhi88\StarterKit\Contracts\Starter\ActivityLogInterface;
 use Aldhi88\StarterKit\Livewire\Starter\Logs\ActivityLogsTable;
+use Aldhi88\StarterKit\Models\Starter\ActivityLog;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
 use Aldhi88\StarterKit\Models\Starter\ClientRole;
 use Aldhi88\StarterKit\Repositories\Starter\ActivityLogRepository;
@@ -11,6 +12,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Livewire\LivewireServiceProvider;
 use PowerComponents\LivewirePowerGrid\DataSource\Processors\Database\Pipelines\Filters;
 use PowerComponents\LivewirePowerGrid\DataSource\Processors\Database\Pipelines\Sorting;
@@ -121,4 +123,14 @@ it('filters categories before pagination and persists the selection across table
         expect($first->total())->toBe(3)->and($first->count())->toBe(2)
             ->and($last->count())->toBe(1)->and($last->first()->category)->toBe($category);
     }
+});
+
+it('renders the full activity label as escaped text on the detail button for its group', function (): void {
+    $id = (string) Str::ulid();
+    $label = str_repeat('Pembaruan aktivitas ', 8).'<arsip> "terbaru"';
+    $log = new ActivityLog(['action_id' => $id, 'action_label' => $label]);
+    $render = activitySortingTable()->fields()->fields['action_label'];
+
+    expect($render($log))->toContain('data-starter-log-detail="'.$id.'"', '>'.e($label).'</button>')
+        ->not->toContain('<arsip>');
 });

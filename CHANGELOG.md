@@ -5,6 +5,14 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.13.1] - 2026-11-17
+
+### Fixed
+
+- Wrap long activity summaries, including unbroken identifiers, in Tabler,
+  Dashcode, and Vuexy. Click a log row, activate its summary with the keyboard,
+  or choose “Lihat Detail” from its action menu to inspect the same activity.
+
 ## [1.13.0] - 2026-11-16
 
 ### Added
