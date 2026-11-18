@@ -63,7 +63,7 @@ use Illuminate\Support\Carbon;
     'remember_token',
     'auth_version',
 ])]
-#[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
+#[Hidden(['google_subject_hash', 'password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class ClientLogin extends Authenticatable
 {
     use Notifiable, SoftDeletes;

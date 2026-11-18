@@ -46,3 +46,8 @@ The small Oklab conversion implementation in `StarterBrandColor` uses the
 public-domain conversion matrices published by Björn Ottosson at
 https://bottosson.github.io/posts/oklab/ (2021 matrix revision). No external
 color library or runtime dependency is included.
+
+## Sign in with Google
+
+The Google “G” in the sign-in button is a Google brand asset. Its use follows
+the [Sign in with Google branding guidelines](https://developers.google.com/identity/branding-guidelines).

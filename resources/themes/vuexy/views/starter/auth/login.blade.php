@@ -70,6 +70,9 @@
             </button>
         </div>
     @else
+        @if (session('google_notice'))
+            <p role="status">{{ session('google_notice') }}</p>
+        @endif
         <form wire:submit="authenticate" autocomplete="on" data-starter-region="credentials-form">
             <div class="mb-3">
                 <label class="form-label" for="username">Username atau Email</label>
@@ -138,6 +141,9 @@
                 </button>
             </div>
         </form>
+        @if (\Aldhi88\StarterKit\Support\Starter\GoogleLogin::enabled())
+            @include('starter-shared::components.google-login-button')
+        @endif
 
         <div class="text-center text-secondary mt-3" data-starter-region="secondary-help">Hubungi administrator jika lupa password.</div>
     @endif

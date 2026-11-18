@@ -5,6 +5,8 @@ namespace Aldhi88\StarterKit\Services\Starter;
 use Aldhi88\StarterKit\Contracts\Starter\ClientInterface;
 use Aldhi88\StarterKit\Contracts\Starter\ClientLoginInterface;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
+use Aldhi88\StarterKit\Support\Starter\GoogleLogin;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -114,6 +116,24 @@ class AuthLoginService
 
         $this->assertLoginAllowed($login, 'form.identifier');
         RateLimiter::clear($accountThrottleKey);
+        $this->cancelTwoFactor();
+        session()->forget('starter.google_login_id');
+
+        return $this->continueLogin($login, $remember, $redirect);
+    }
+
+    public function attemptGoogle(ClientLogin $login, ?string $redirect): ?string
+    {
+        abort_unless(GoogleLogin::enabled(), 404);
+        $this->assertLoginAllowed($login, 'form.identifier');
+        session()->forget('starter.google_link');
+        session()->put('starter.google_login_id', $login->getKey());
+
+        return $this->continueLogin($login, false, $redirect);
+    }
+
+    private function continueLogin(ClientLogin $login, bool $remember, ?string $redirect): ?string
+    {
 
         if ((bool) config('starter.auth.login_otp_enabled', false)) {
             $this->startOtpChallenge($login, $remember, $redirect);
@@ -512,6 +532,24 @@ class AuthLoginService
         bool $otpVerified,
         bool $twoFactorVerified,
     ): string {
+        $viaGoogle = session()->pull('starter.google_login_id') === $login->getKey();
+        if ($viaGoogle && ! GoogleLogin::enabled()) {
+            throw ValidationException::withMessages(['form.identifier' => 'Login Google dinonaktifkan. Masuk kembali dengan password.']);
+        }
+        $link = session()->pull('starter.google_link');
+        if (! $viaGoogle && GoogleLogin::enabled() && is_array($link) && $link['expires'] >= now()->timestamp
+            && strtolower($login->email) === $link['email']) {
+            try {
+                $attached = ClientLogin::whereKey($login->id)->where('email', $login->email)->whereNull('google_subject_hash')
+                    ->update(['google_subject_hash' => $link['hash']]);
+            } catch (UniqueConstraintViolationException) {
+                $attached = 0;
+            }
+            if ($attached) {
+                $this->auditLogs->recordSecurityEvent('auth.google_linked', 'Akun Google ditautkan', target: $login, actor: $login);
+            }
+        }
+
         Auth::login(
             $login,
             ! $otpVerified
@@ -545,7 +583,11 @@ class AuthLoginService
                 request()->session()->forget(self::SESSION_TWO_FACTOR_VERIFIED_LOGIN_ID);
             }
 
-            request()->session()->passwordConfirmed();
+            if ($viaGoogle) {
+                request()->session()->forget('auth.password_confirmed_at');
+            } else {
+                request()->session()->passwordConfirmed();
+            }
         }
 
         $authenticatedLogin = $this->clientLogins->refreshWithRole($login);

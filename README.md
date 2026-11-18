@@ -183,6 +183,18 @@ opsional berhasil diverifikasi. Nilai `false` menyembunyikan panel aktivasi dan
 melewati tahap authenticator tanpa menghapus secret milik user, sehingga
 proteksi kembali berlaku saat fitur diaktifkan lagi.
 
+### Login dengan Google
+
+Buat OAuth client bertipe **Web application** di Google Auth Platform. Atur audience dan daftarkan alamat callback persis sesuai domain utama, misalnya `https://kampus.ac.id/auth/google/callback`. Isi kredensial milik proyek di `.env` dan ubah sakelar menjadi `true` untuk mengaktifkan tombol login. Untuk proyek lama, jalankan `php artisan starter:sync` agar kolom identitas tersedia. Jika proyek memakai override tampilan login, gabungkan perubahan tombol dari template paket.
+
+Saat pertama kali, pilih akun Google lalu masuk dengan password LaraWire untuk email yang sama. OTP dan Authenticator yang aktif tetap diperlukan. Login berikutnya mengenali ID Google yang telah ditautkan. Nilai `false` menonaktifkan tombol dan kedua endpoint.
+
+```dotenv
+STARTER_LOGIN_GOOGLE_ENABLED=false
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
+
 ### Theme dan layout
 
 Starterkit menyediakan theme dengan layout `vertical` dan `horizontal`:

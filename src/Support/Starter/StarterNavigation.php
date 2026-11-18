@@ -114,6 +114,8 @@ class StarterNavigation
         if (in_array($path, [
             'auth',
             'auth/login',
+            'auth/google',
+            'auth/google/callback',
             'auth/logout',
             'confirm-password',
             'lock-screen',

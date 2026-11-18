@@ -35,6 +35,11 @@ return [
         'accent' => env('STARTER_BRAND_ACCENT'),
     ],
 
+    'google' => [
+        'enabled' => env('STARTER_LOGIN_GOOGLE_ENABLED', false),
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+    ],
     'auth' => [
         'login_human_challenge_enabled' => env('STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED', true),
         'login_otp_enabled' => env('STARTER_LOGIN_OTP_ENABLED', false),

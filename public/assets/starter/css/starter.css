@@ -359,3 +359,36 @@ tr:hover .starter-log-summary,
 }
 :is(.starter-log-steps, .starter-log-reference) details[open] > summary,
 .starter-log-reference[open] > summary { list-style-type: disclosure-open; }
+
+[data-starter-auth-shell] .starter-google-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 44px;
+    margin-top: .75rem;
+    padding: 10px 12px;
+    border: 1px solid #747775;
+    border-radius: var(--tblr-border-radius, var(--bs-border-radius, .375rem));
+    background: #fff;
+    color: #1f1f1f;
+    font: 500 14px/20px "Google Sans", Roboto, Arial, sans-serif;
+    text-decoration: none;
+}
+
+.starter-google-login img {
+    flex: none;
+    object-fit: contain;
+}
+
+[data-starter-auth-shell] .starter-google-login:hover {
+    background: #f8faff;
+    border-color: #54585b;
+}
+
+.starter-google-login:focus-visible {
+    outline: 2px solid #0b57d0;
+    outline-offset: 2px;
+}

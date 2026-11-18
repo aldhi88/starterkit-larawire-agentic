@@ -5,6 +5,26 @@ follows Keep a Changelog and releases follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.14.0] - 2026-11-18
+
+### Added
+
+- Offer optional Google login in Tabler, Dashcode, and Vuexy. The first sign-in
+  links a verified Google identity after local authentication with the same
+  email. Existing OTP and authenticator requirements apply.
+- Store the Google subject hash in a nullable, unique column on
+  `starter_client_logins`. Google login defaults to off.
+
+### Upgrade
+
+- Update the Composer package and run `php artisan starter:sync` locally.
+  Commit the generated migration and lockfile, then use `php artisan starter:deploy`
+  in production. Hosts with a published login view can merge the Google button
+  from the active theme.
+- To enable Google login, configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+  and `STARTER_LOGIN_GOOGLE_ENABLED=true`, and register the main domain's
+  `/auth/google/callback` in Google Cloud.
+
 ## [1.13.2] - 2026-11-17
 
 ### Fixed

@@ -25,6 +25,9 @@ class StarterEnvironmentManager
         'STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED',
         'STARTER_LOGIN_OTP_ENABLED',
         'STARTER_LOGIN_TWO_FACTOR_ENABLED',
+        'STARTER_LOGIN_GOOGLE_ENABLED',
+        'GOOGLE_CLIENT_ID',
+        'GOOGLE_CLIENT_SECRET',
         'SESSION_DRIVER',
         'CACHE_STORE',
         'QUEUE_CONNECTION',
@@ -79,6 +82,9 @@ class StarterEnvironmentManager
             'STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED' => 'true',
             'STARTER_LOGIN_OTP_ENABLED' => 'false',
             'STARTER_LOGIN_TWO_FACTOR_ENABLED' => 'true',
+            'STARTER_LOGIN_GOOGLE_ENABLED' => 'false',
+            'GOOGLE_CLIENT_ID' => '',
+            'GOOGLE_CLIENT_SECRET' => '',
             'SESSION_DRIVER' => 'database',
             'CACHE_STORE' => 'database',
             'QUEUE_CONNECTION' => 'sync',
@@ -126,6 +132,7 @@ class StarterEnvironmentManager
         }
 
         if ($example) {
+            $values['GOOGLE_CLIENT_SECRET'] = '';
             $values['APP_DOMAIN'] = 'null';
             $values['SESSION_DOMAIN'] = 'null';
             $values['SESSION_COOKIE'] = 'larawire_session';
@@ -271,6 +278,9 @@ class StarterEnvironmentManager
                 'STARTER_LOGIN_HUMAN_CHALLENGE_ENABLED',
                 'STARTER_LOGIN_OTP_ENABLED',
                 'STARTER_LOGIN_TWO_FACTOR_ENABLED',
+                'STARTER_LOGIN_GOOGLE_ENABLED',
+                'GOOGLE_CLIENT_ID',
+                'GOOGLE_CLIENT_SECRET',
             ],
             'API gateway' => ['STARTER_API_ENABLED'],
             'Runtime drivers' => ['SESSION_DRIVER', 'CACHE_STORE', 'QUEUE_CONNECTION'],

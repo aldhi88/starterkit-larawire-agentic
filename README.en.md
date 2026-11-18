@@ -180,6 +180,18 @@ after the password and optional email OTP pass. Setting the value to `false`
 hides enrollment and skips the authenticator stage without deleting enrolled
 secrets, so protection resumes when the feature is enabled again.
 
+### Sign in with Google
+
+Create a **Web application** OAuth client in Google Auth Platform. Configure its audience and register the exact main-domain callback, for example `https://campus.example/auth/google/callback`. Set the credentials in the project environment and switch the flag to `true` to enable the button. Existing hosts run `php artisan starter:sync` to install the identity column and merge the button into any published login override.
+
+On first use, choose the Google account and sign in with the local password for the same email. Configured OTP and authenticator checks still apply. Subsequent sign-ins use the linked Google subject. Switching the flag off disables both endpoints and the button.
+
+```dotenv
+STARTER_LOGIN_GOOGLE_ENABLED=false
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
+
 ### Themes and layouts
 
 Starterkit includes themes with `vertical` and `horizontal` layouts:

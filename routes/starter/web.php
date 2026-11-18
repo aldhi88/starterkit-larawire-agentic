@@ -1,5 +1,6 @@
 <?php
 
+use Aldhi88\StarterKit\Http\Controllers\Starter\Auth\GoogleLoginController;
 use Aldhi88\StarterKit\Http\Controllers\Starter\Auth\LogoutController;
 use Aldhi88\StarterKit\Livewire\Starter\Auth\Login;
 use Aldhi88\StarterKit\Models\Starter\ClientLogin;
@@ -23,6 +24,11 @@ Route::prefix('auth')->name('auth.')->group(function (): void {
     Route::livewire('/login', Login::class)
         ->middleware('guest')
         ->name('login');
+
+    Route::middleware(['guest', 'throttle:20,1'])->group(function (): void {
+        Route::get('/google', [GoogleLoginController::class, 'start'])->name('google');
+        Route::get('/google/callback', [GoogleLoginController::class, 'callback'])->name('google.callback');
+    });
 
     Route::post('/logout', LogoutController::class)
         ->middleware('auth:web')

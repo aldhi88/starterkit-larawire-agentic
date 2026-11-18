@@ -35,7 +35,7 @@ class StarterSecurityHeaders
         }
 
         if ($request->user() !== null
-            || $request->routeIs('auth.login', 'password.confirm', 'starter.lock-screen')) {
+            || $request->routeIs('auth.login', 'auth.google', 'auth.google.callback', 'password.confirm', 'starter.lock-screen')) {
             $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
         }
 
